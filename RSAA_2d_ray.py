@@ -3,8 +3,8 @@
 
 ### Paquets à importer ###
 
-#import numpy as np
-#import random as rd
+import numpy as np
+import random as rd
 
 #import pylab as pl
 #from pylab import *
@@ -147,6 +147,42 @@ def remp2D(ex_rseq,dist,dim,C_per):
       A[i,j]=ex[k][2]
  return(A)#[A,z])
 
+#Optimisation : une fonction vectorisée, peu d'intérêt pour de grandes dimensions
 
-
+def Vremp2D(ex_rseq,dist,dim,C_per):#attention à la compatibilité entre dim et l'argument homonyme de RSAA_ph_dist2D
+ #le contenu de chaque cellule de A sera remplacé par le numéro de phase correspondant au point de l'espace repéré par la position de ses coordonnées dans l'ordre lexicographique, écrite initialement dans A
+ A=np.arange(dim[0]*dim[1])
+ ex=ex_rseq[0]
+ #print(A[0:9])
+ #fonction de détermination de phase, à vectoriser
+ def parc_liste(k_lex):
+  i=k_lex//dim[1] 
+  j=k_lex-i*dim[1]
+  #print([k_lex,i,j])
+  k=0
+  C_parc=True
+  a_ph=0
+  while C_parc and k<len(ex):
+   if dist([i,j],ex[k][0])<=ex[k][1]:
+    a_ph=ex[k][2]
+    C_parc=False
+   if C_per=='per':
+    if dist(np.array([i,j]),ex[k][0]+np.array([dim[0],0]))<=ex[k][1]:
+     a_ph=ex[k][2]
+     C_parc=False
+    if dist(np.array([i,j]),ex[k][0]+np.array([-dim[0],0]))<=ex[k][1]:
+     C_parc=False
+     a_ph=ex[k][2]
+    if dist(np.array([i,j]),ex[k][0]+np.array([0,dim[1]]))<=ex[k][1]:
+     a_ph=ex[k][2]
+     C_parc=False
+    if dist(np.array([i,j]),ex[k][0]+np.array([0,-dim[1]]))<=ex[k][1]:
+     a_ph=ex[k][2]
+     C_parc=False
+   k=k+1
+  return(a_ph)
+ V_pl=np.vectorize(parc_liste)
+ A=V_pl(A)
+ A=np.reshape(A,(dim[0],dim[1]))
+ return(A)
 
