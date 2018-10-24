@@ -3,8 +3,8 @@
 
 ### Paquets à importer ###
 
-import numpy as np
-import random as rd
+#import numpy as np
+#import random as rd
 
 #import pylab as pl
 #from pylab import *
@@ -21,9 +21,6 @@ import random as rd
 #Cas périodique ?
 
 ##Remarque : l'arrêt de la procédure principale n'est pas prouvé
-
-#A=np.zeros(27)
-#A=np.reshape(A,(3,3,3))
 
 #Etape préliminaire : fonctions pour générer des nombres aléatoires dans des boucles. Lois éventuellement tronquées pour obtenir des valeurs positives, on cherche à simuler des rayons
 
@@ -77,7 +74,7 @@ def RSAA_ph_dist2D(geom,delta,l_ray,par,frac_vol,dim,temps,C_per):
  #temps écoulé
  tps=0
  #nombre total de phases
- n_phi=1#len(l_ray)
+ n_phi=len(l_ray)
  #contitions d'arrêt de remplissage : fraction volumique par phase
  C_vol=[True]*n_phi
  #arrêt de la boucle principale :
@@ -87,7 +84,7 @@ def RSAA_ph_dist2D(geom,delta,l_ray,par,frac_vol,dim,temps,C_per):
   for phi in range(0,n_phi):
    l=l_ray[phi]
    #position du centre de la sphère
-   cen=[rd.randint(0,dim[0]),rd.randint(0,dim[1])]
+   cen=np.array([rd.randint(0,dim[0]),rd.randint(0,dim[1])])
    ray=max(0,l(par[phi]))
    #condition : par d'entrecoupement des boules
    C_ent=True
@@ -96,15 +93,16 @@ def RSAA_ph_dist2D(geom,delta,l_ray,par,frac_vol,dim,temps,C_per):
    while(C_ent and i<len(liste_ph)):
     if geom[0](liste_ph[i][0],cen)<=delta+liste_ph[i][1]+ray:
      C_ent=False
-    #on ajoute la condition qui correspond à la périodicité : boules traversant les six faces du parallélépipède ambiant
+    #on ajoute la condition qui correspond à la périodicité : boules traversant les quatre faces du rectangle ambiant
     if C_per=='per' :
-     if geom[0](liste_ph[i][0]+[dim[0],0],cen)<=delta+liste_ph[i][1]+ray:
+     #print(C_per)
+     if geom[0](liste_ph[i][0]+np.array([dim[0],0]),cen)<=delta+liste_ph[i][1]+ray:
       C_ent=False
-     if geom[0](liste_ph[i][0]+[-dim[0],0],cen)<=delta+liste_ph[i][1]+ray:
+     if geom[0](liste_ph[i][0]+np.array([-dim[0],0]),cen)<=delta+liste_ph[i][1]+ray:
       C_ent=False
-     if geom[0](liste_ph[i][0]+[0,dim[1]],cen)<=delta+liste_ph[i][1]+ray:
+     if geom[0](liste_ph[i][0]+np.array([0,dim[1]]),cen)<=delta+liste_ph[i][1]+ray:
       C_ent=False
-     if geom[0](liste_ph[i][0]+[0,-dim[1]],cen)<=delta+liste_ph[i][1]+ray:
+     if geom[0](liste_ph[i][0]+np.array([0,-dim[1]]),cen)<=delta+liste_ph[i][1]+ray:
       C_ent=False
     i=i+1
    #On ajoute la nouvelle inclusion, si cela est possible ; on calcule aussi le nouveau volume occupé par les boules
@@ -123,28 +121,11 @@ def RSAA_ph_dist2D(geom,delta,l_ray,par,frac_vol,dim,temps,C_per):
   Cont_ph=any(C_vol) and tps<temps
  return(liste_ph,vol_inc)
 
-##################test
-
-def TestRSAA_ph_dist2D(geom,delta,l_ray,par,frac_vol,dim,temps,C_per):
- #volume initial occupé par les phases 1, 2 ... : pour le cas d'une boucle unique ? Pas d'utilité sinon.
- vol_inc= np.zeros(len(frac_vol))
- #sortie : liste unique, dont on peut extraire la liste des centres et rayons concernant une seule phase, en utilisant une liste définie en compréhension.
- liste_ph=[]
- #temps écoulé
- tps=0
- #nombre total de phases
- n_phi=1#len(l_ray)
- #contitions d'arrêt de remplissage : fraction volumique par phase
- C_vol=[True]*n_phi
- #sortie graphique
- print(n_phi)
- return(liste_ph,vol_inc)
-
-
-##Remplissage d'un parallélépipède avec les inclusions, d'après une sortie de RSAA_ph_dist2D
+##Remplissage d'un rectangle avec les inclusions, d'après une sortie de RSAA_ph_dist2D
 
 def remp2D(ex_rseq,dist,dim,C_per):
  ex=ex_rseq[0]
+ #z=0
  A=np.zeros(dim[0]*dim[1])
  A=np.reshape(A,(dim[0],dim[1]))
  #remplissage : attribution d'une phase, point par point du domaine A
@@ -154,15 +135,17 @@ def remp2D(ex_rseq,dist,dim,C_per):
     if dist([i,j],ex[k][0])<=ex[k][1]:
      A[i,j]=ex[k][2]
     if C_per=='per':
-     if dist([i,j],ex[k][0]+[dim[0],0])<=ex[k][1]:
+     #z=z+1
+     #print(dist([i,j],ex[k][0]+[dim[0],0]),ex[k][1])
+     if dist(np.array([i,j]),ex[k][0]+np.array([dim[0],0]))<=ex[k][1]:
       A[i,j]=ex[k][2]
-     if dist([i,j],ex[k][0]+[-dim[0],0])<=ex[k][1]:
+     if dist(np.array([i,j]),ex[k][0]+np.array([-dim[0],0]))<=ex[k][1]:
       A[i,j]=ex[k][2]
-     if dist([i,j],ex[k][0]+[0,dim[1]])<=ex[k][1]:
-      A[i,j]=1+ex[k][2]
-     if dist([i,j],ex[k][0]+[0,-dim[1]])<=ex[k][1]:
-      A[i,j]=1+ex[k][2]
- return(A)
+     if dist(np.array([i,j]),ex[k][0]+np.array([0,dim[1]]))<=ex[k][1]:
+      A[i,j]=ex[k][2]
+     if dist(np.array([i,j]),ex[k][0]+np.array([0,-dim[1]]))<=ex[k][1]:
+      A[i,j]=ex[k][2]
+ return(A)#[A,z])
 
 
 
