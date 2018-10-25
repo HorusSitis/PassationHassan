@@ -149,40 +149,73 @@ def remp2D(ex_rseq,dist,dim,C_per):
 
 #Optimisation : une fonction vectorisée, peu d'intérêt pour de grandes dimensions
 
+#plus rapide, en vectorisant la liste de boules - phases
+
+def phase_pt(I,liste_ph,n_phi,dist,dim,C_per):
+ phase=0
+ C_ont=True
+ phi=1
+ i=I[0]
+ j=I[1]
+ while C_ont and phi<=n_phi:
+  L=[x for x in liste_ph if x[2]==phi]
+  l=len(L)
+  A=np.array(L)
+  #print(L)
+  #print(A)
+  #on extrait les vecteurs correspondant aux rayons et aux centres
+  cen=A[:,0]
+  ray=A[:,1]
+  #print(cen)
+  #cen=np.reshape(cen,(2,l))
+  #print(cen)
+  #print(cen+np.array([[10,1],[10,1],[10,1],[10,1]]))
+  #fonction distance vectorisée
+  def dist_pt(pt):
+   return(dist([i,j],pt))
+  v_dist_ij_pt=np.vectorize(dist_pt)
+  #calcul des distances aux centres :
+  dist_cen=v_dist_ij_pt(cen)
+  if any(dist_cen<=ray):
+   phase=phi
+   C_ont=False
+  #cas périodique
+  if C_per!='per':
+   if any(v_dist_ij_pt(cen+np.array([dim[0],0]))<=ray):
+    phase=phi
+    C_ont=False
+   elif any(v_dist_ij_pt(cen+np.array([-dim[0],0]))<=ray):
+    phase=phi
+    C_ont=False
+   elif any(v_dist_ij_pt(cen+np.array([0,dim[1]]))<=ray):
+    phase=phi
+    C_ont=False
+   elif any(v_dist_ij_pt(cen+np.array([0,-dim[1]]))<=ray):
+    phase=phi
+    C_ont=False
+  phi=phi+1
+ return(phase)
+
+#version vectorisée du remplissage
+
 def Vremp2D(ex_rseq,dist,dim,C_per):#attention à la compatibilité entre dim et l'argument homonyme de RSAA_ph_dist2D
  #le contenu de chaque cellule de A sera remplacé par le numéro de phase correspondant au point de l'espace repéré par la position de ses coordonnées dans l'ordre lexicographique, écrite initialement dans A
  A=np.arange(dim[0]*dim[1])
- ex=ex_rseq[0]
- #print(A[0:9])
+ #contenu de la liste ex_rseq, sous deux formes différentes
+ L=ex_rseq[0]
+ M=np.array(L)
+ #nombre de phases effectif
+ n_phi=max(M[:,2])
  #fonction de détermination de phase, à vectoriser
  def parc_liste(k_lex):
   i=k_lex//dim[1] 
   j=k_lex-i*dim[1]
-  #print([k_lex,i,j])
-  k=0
-  C_parc=True
-  a_ph=0
-  while C_parc and k<len(ex):
-   if dist([i,j],ex[k][0])<=ex[k][1]:
-    a_ph=ex[k][2]
-    C_parc=False
-   if C_per=='per':
-    if dist(np.array([i,j]),ex[k][0]+np.array([dim[0],0]))<=ex[k][1]:
-     a_ph=ex[k][2]
-     C_parc=False
-    if dist(np.array([i,j]),ex[k][0]+np.array([-dim[0],0]))<=ex[k][1]:
-     C_parc=False
-     a_ph=ex[k][2]
-    if dist(np.array([i,j]),ex[k][0]+np.array([0,dim[1]]))<=ex[k][1]:
-     a_ph=ex[k][2]
-     C_parc=False
-    if dist(np.array([i,j]),ex[k][0]+np.array([0,-dim[1]]))<=ex[k][1]:
-     a_ph=ex[k][2]
-     C_parc=False
-   k=k+1
+  a_ph=phase_pt([i,j],L,n_phi,dist,dim,C_per)
+  print(k_lex)
   return(a_ph)
  V_pl=np.vectorize(parc_liste)
  A=V_pl(A)
  A=np.reshape(A,(dim[0],dim[1]))
  return(A)
+
 
