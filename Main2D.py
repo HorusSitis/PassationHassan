@@ -30,6 +30,11 @@ import RSAA_2d_ray as R2d
 
 R2d = reload(R2d)
 
+#
+
+import threading
+import time
+
 ################## Exemples de remplissage ##################
 
 L=R2d.RSAA_ph_dist2D([R2d.eucl2D,R2d.vol2D],#geom : géométrie
@@ -62,11 +67,26 @@ A=R2d.remp2D(#
 L,#
 R2d.eucl2D,[100,100],'per')
 
-AAA=R2d.remp2D(#
+AAA=R2d.Premp2D(#
 LLL,#
 R2d.eucl2D,#
 [20,20],#
 'per')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+########################################"
 
 ### plus rapide ###
 
