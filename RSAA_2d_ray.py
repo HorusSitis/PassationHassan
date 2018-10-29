@@ -161,15 +161,9 @@ def phase_pt(I,liste_ph,n_phi,dist,dim,C_per):
   L=[x for x in liste_ph if x[2]==phi]
   l=len(L)
   A=np.array(L)
-  #print(L)
-  #print(A)
   #on extrait les vecteurs correspondant aux rayons et aux centres
   cen=A[:,0]
   ray=A[:,1]
-  #print(cen)
-  #cen=np.reshape(cen,(2,l))
-  #print(cen)
-  #print(cen+np.array([[10,1],[10,1],[10,1],[10,1]]))
   #fonction distance vectorisée
   def dist_pt(pt):
    return(dist([i,j],pt))
@@ -196,26 +190,75 @@ def phase_pt(I,liste_ph,n_phi,dist,dim,C_per):
   phi=phi+1
  return(phase)
 
-#version vectorisée du remplissage
 
-def Vremp2D(ex_rseq,dist,dim,C_per):#attention à la compatibilité entre dim et l'argument homonyme de RSAA_ph_dist2D
- #le contenu de chaque cellule de A sera remplacé par le numéro de phase correspondant au point de l'espace repéré par la position de ses coordonnées dans l'ordre lexicographique, écrite initialement dans A
+
+
+#version parallélisée
+
+#import threading
+#import time
+
+def parc_liste(k_lex,L,n_phi,dist,dim,C_per):
+ i=k_lex//dim[1]
+ j=k_lex-i*dim[1]
+ a_ph=phase_pt([i,j],L,n_phi,dist,C_per)
+ return(a_ph)
+
+def Premp2D(ex_rseq,dist,dim,C_per):
  A=np.arange(dim[0]*dim[1])
- #contenu de la liste ex_rseq, sous deux formes différentes
- L=ex_rseq[0]
+ L=ex_rseq[0]#liste des centre-rayon-phase ; on oublie les saturations respectives des phases
  M=np.array(L)
- #nombre de phases effectif
  n_phi=max(M[:,2])
- #fonction de détermination de phase, à vectoriser
- def parc_liste(k_lex):
-  i=k_lex//dim[1] 
-  j=k_lex-i*dim[1]
-  a_ph=phase_pt([i,j],L,n_phi,dist,dim,C_per)
-  print(k_lex)
-  return(a_ph)
- V_pl=np.vectorize(parc_liste)
- A=V_pl(A)
- A=np.reshape(A,(dim[0],dim[1]))
+ #définition et éxécution des threads : huit, pour MECALAC
+ ##
+ def f1():
+  for k in range(0,len(A)//8):
+   A[k]=parc_liste(k,L,n_phi,dist,dim,C_per)
+ def f2():
+  for k in range(len(A)//8,len(A)//4):
+   A[k]=parc_liste(k,L,n_phi,dist,dim,C_per)
+ def f3():
+  for k in range(len(A)//4,len(A)//4+len(A)//8):
+   A[k]=parc_liste(k,L,n_phi,dist,dim,C_per)
+ def f4():
+  for k in range(len(A)//4+len(A)//8,len(A)//2):
+   A[k]=parc_liste(k,L,n_phi,dist,dim,C_per)
+ def f5():
+  for k in range(len(A)//2,len(A)//2+len(A)//8):
+   A[k]=parc_liste(k,L,n_phi,dist,dim,C_per)
+ def f6():
+  for k in range(len(A)//2+len(A)//8,len(A)//2+len(A)//4):
+   A[k]=parc_liste(k,L,n_phi,dist,dim,C_per)
+ def f7():
+  for k in range(len(A)//2+len(A)//4,len(A)//2+len(A)//4+len(A)//8):
+   A[k]=parc_liste(k,L,n_phi,dist,dim,C_per)
+ def f8():
+  for k in range(len(A)//2+len(A)//4+len(A)//8,len(A)):
+   A[k]=parc_liste(k,L,n_phi,dist,dim,C_per)
+ #
+ threading.Thread(None,target=f1).start()
+ threading.Thread(None,target=f2).start()
+ threading.Thread(None,target=f3).start()
+ threading.Thread(None,target=f4).start()
+ threading.Thread(None,target=f5).start()
+ threading.Thread(None,target=f6).start()
+ threading.Thread(None,target=f7).start()
+ threading.Thread(None,target=f8).start()
+ #
+ time.sleep(1)
+ ##
+ #
+ A=np.reshape(A,dim[0],dim[1])
  return(A)
+
+
+
+
+
+
+
+
+
+
 
 
