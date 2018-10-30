@@ -1,13 +1,15 @@
+##Répertoire courant
+
+cd /home/amorea12/Documents/PassationHassan
+
+
+
+
 ### Paquets à importer ###
 
 import numpy as np
 import random as rd
 
-#import numpy.random as rd
-#from math import *
-#import pylab as pl
-#from scipy import *                 
-#from pylab import *
 
 import pylab as pl
 from pylab import *
@@ -15,9 +17,6 @@ from pylab import *
 
 import os
 
-##Répertoire courant
-
-cd /home/amorea12/Documents/PassationHassan
 
 ##Codes pour le remplissage aléatoire : algorithme RSAA
 
@@ -76,21 +75,21 @@ ma.dump(LLL, open("L_20", 'wb')) ## Sauvegarde de la liste
 L_load = ma.load(open("L_20", "rb")) ## Rechargement de la liste
 
 # sauvegarde de la variable maliste sous le nom "maliste" dans le fichier 'L_20_10000'
-with sh.open('L_20_10000') as d_sto:
-    d_sto["maliste"] = LLL
+with sh.open('L_100_10000') as d_sto:
+    d_sto["maliste"] = LL
  
 # chargement de la variable maliste stockée dans le fichier 'L_20_10000'
-with sh.open('L_20_10000') as d_loa:
-    LLL_loa = d_loa["maliste"]
+with sh.open('L_100_10000') as d_loa:
+    LL_loa = d_loa["maliste"]
 
 ###cas d'une grande liste
 
 # sauvegarde de la variable maliste sous le nom "maliste" dans le fichier 'L_1000_1000000'
-with sh.open('L_1000_10000') as d_sto:
+with sh.open('L_1000_1000000') as d_sto:
     d_sto["maliste"] = L
  
 # chargement de la variable maliste stockée dans le fichier 'L_1000_1000000'
-with sh.open('L_1000_10000') as d_loa:
+with sh.open('L_1000_1000000') as d_loa:
     L_loa = d_loa["maliste"]
 
 #test
@@ -103,8 +102,8 @@ N=M[0:10]
 
 ################## Représentation graphique ##################
 
-AA=R2d.remp2D(#
-LL,#
+AA_loa=R2d.Vremp2D(#
+LL_loa,#
 R2d.eucl2D,[100,100],'per')
 
 A=R2d.remp2D(#
@@ -112,7 +111,7 @@ L,#
 R2d.eucl2D,[100,100],'per')
 
 A_loa=R2d.remp2D(#
-LLL_loa,#
+LL_loa,#
 R2d.eucl2D,#
 [20,20],#
 'per')
@@ -147,7 +146,7 @@ bounds=[0,1,2,3]
 norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
 #
 
-pl.imshow(A_loa,interpolation='none',cmap=cmap,norm=norm)
+pl.imshow(AA_loa,interpolation='none',cmap=cmap,norm=norm)
 pl.axis('off')
 
 pl.show()
