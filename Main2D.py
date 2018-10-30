@@ -30,10 +30,21 @@ import RSAA_2d_ray as R2d
 
 R2d = reload(R2d)
 
-#
+#threading
 
 import threading
 import time
+
+#multiprocessing
+
+
+#stockage d'objets python
+
+import marshal as ma
+
+import shelve as sh
+
+
 
 ################## Exemples de remplissage ##################
 
@@ -57,6 +68,39 @@ LLL=R2d.RSAA_ph_dist2D([R2d.eucl2D,R2d.vol2D],#
 10000,#
 'per')
 
+#stockage
+
+###exemple
+
+ma.dump(LLL, open("L_20", 'wb')) ## Sauvegarde de la liste 
+L_load = ma.load(open("L_20", "rb")) ## Rechargement de la liste
+
+# sauvegarde de la variable maliste sous le nom "maliste" dans le fichier 'L_20_10000'
+with sh.open('L_20_10000') as d_sto:
+    d_sto["maliste"] = LLL
+ 
+# chargement de la variable maliste stockée dans le fichier 'L_20_10000'
+with sh.open('L_20_10000') as d_loa:
+    LLL_loa = d_loa["maliste"]
+
+###cas d'une grande liste
+
+# sauvegarde de la variable maliste sous le nom "maliste" dans le fichier 'L_1000_1000000'
+with sh.open('L_1000_10000') as d_sto:
+    d_sto["maliste"] = L
+ 
+# chargement de la variable maliste stockée dans le fichier 'L_1000_1000000'
+with sh.open('L_1000_10000') as d_loa:
+    L_loa = d_loa["maliste"]
+
+#test
+
+M=L_loa[0]
+
+N=M[0:10]
+
+#succès
+
 ################## Représentation graphique ##################
 
 AA=R2d.remp2D(#
@@ -67,8 +111,8 @@ A=R2d.remp2D(#
 L,#
 R2d.eucl2D,[100,100],'per')
 
-AAA=R2d.Premp2D(#
-LLL,#
+A_loa=R2d.remp2D(#
+LLL_loa,#
 R2d.eucl2D,#
 [20,20],#
 'per')
@@ -103,7 +147,7 @@ bounds=[0,1,2,3]
 norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
 #
 
-pl.imshow(AAA,interpolation='none',cmap=cmap,norm=norm)
+pl.imshow(A_loa,interpolation='none',cmap=cmap,norm=norm)
 pl.axis('off')
 
 pl.show()
