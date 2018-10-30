@@ -91,18 +91,26 @@ def RSAA_ph_dist2D(geom,delta,l_ray,par,frac_vol,dim,temps,C_per):
    #test pour toutes les inclusions déjà réalisées : on tient compte des phases délà incluses et on parcourt list_ph
    i=0
    while(C_ent and i<len(liste_ph)):
-    if geom[0](liste_ph[i][0],cen)<=delta+liste_ph[i][1]+ray:
+    if geom[0](np.array(liste_ph[i][0]),np.array(cen))<=delta+liste_ph[i][1]+ray:#une syntaxe avec des tableaux à la place de cen permet d'additionner terme à terme [dim[0],0] et liste_ph[i][0]
+     #print(np.array(cen))
+     #print(ray)
+     #print(liste_ph[i][1])
      C_ent=False
     #on ajoute la condition qui correspond à la périodicité : boules traversant les quatre faces du rectangle ambiant
     if C_per=='per' :
-     #print(C_per)
-     if geom[0](liste_ph[i][0]+np.array([dim[0],0]),cen)<=delta+liste_ph[i][1]+ray:
+     print(np.array(liste_ph[i][0])+np.array([dim[0],0]))
+     print(cen)
+     print(geom[0](np.array(liste_ph[i][0])+np.array([dim[0],0]),cen))#np.array(cen)
+     print(delta+liste_ph[i][1]+ray)
+     if geom[0](np.array(liste_ph[i][0])+np.array([dim[0],0]),cen)<=delta+liste_ph[i][1]+ray:
+      #print(np.array(liste_ph[i][0])+np.array([dim[0],0]))
       C_ent=False
-     if geom[0](liste_ph[i][0]+np.array([-dim[0],0]),cen)<=delta+liste_ph[i][1]+ray:
+      print(C_ent,'per')
+     if geom[0](np.array(liste_ph[i][0])+np.array([-dim[0],0]),cen)<=delta+liste_ph[i][1]+ray:
       C_ent=False
-     if geom[0](liste_ph[i][0]+np.array([0,dim[1]]),cen)<=delta+liste_ph[i][1]+ray:
+     if geom[0](np.array(liste_ph[i][0])+np.array([0,dim[1]]),cen)<=delta+liste_ph[i][1]+ray:
       C_ent=False
-     if geom[0](liste_ph[i][0]+np.array([0,-dim[1]]),cen)<=delta+liste_ph[i][1]+ray:
+     if geom[0](np.array(liste_ph[i][0])+np.array([0,-dim[1]]),cen)<=delta+liste_ph[i][1]+ray:
       C_ent=False
     i=i+1
    #On ajoute la nouvelle inclusion, si cela est possible ; on calcule aussi le nouveau volume occupé par les boules
@@ -149,7 +157,7 @@ def remp2D(ex_rseq,dist,dim,C_per):
 
 #Optimisation : une fonction vectorisée, peu d'intérêt pour de grandes dimensions
 
-#plus rapide, en vectorisant la liste de boules - phases
+#Une fonction intermédiaire : phase au pixel I [i,j]
 
 def phase_pt(I,liste_ph,n_phi,dist,dim,C_per):
  phase=0
@@ -174,7 +182,9 @@ def phase_pt(I,liste_ph,n_phi,dist,dim,C_per):
    phase=phi
    C_ont=False
   #cas périodique
-  if C_per!='per':
+  if C_per=='per':
+   print(cen)
+   print(np.array([dim[0],0]))
    if any(v_dist_ij_pt(cen+np.array([dim[0],0]))<=ray):
     phase=phi
     C_ont=False
@@ -190,6 +200,27 @@ def phase_pt(I,liste_ph,n_phi,dist,dim,C_per):
   phi=phi+1
  return(phase)
 
+#Reformulation : indice k unique pour le parcours de la matrice spatiale dans l'ordre lexicographique, éventuellement à lancer sur des treads indépendants
+
+def parc_liste(k_lex,L,n_phi,dist,dim,C_per):
+ i=k_lex//dim[1]
+ j=k_lex-i*dim[1]
+ a_ph=phase_pt([i,j],L,n_phi,dist,dim,C_per)
+ return(a_ph)
+
+#Remplissage, boucle avec des instructions vectorisées, un seul thread
+
+def Vremp2D(ex_rseq,dist,dim,C_per):
+ A=np.arange(dim[0]*dim[1])
+ L=ex_rseq[0]#liste des centre-rayon-phase ; on oublie les saturations respectives des phases
+ M=np.array(L)
+ n_phi=max(M[:,2])
+ #boucle principale
+ for k in range(0,len(A)):
+  A[k]=parc_liste(k,L,n_phi,dist,dim,C_per)
+ #sortie sous la forme d'une matrice : pixels 
+ A=np.reshape(A,dim[0],dim[1])
+ return(A)
 
 
 
@@ -198,11 +229,7 @@ def phase_pt(I,liste_ph,n_phi,dist,dim,C_per):
 #import threading
 #import time
 
-def parc_liste(k_lex,L,n_phi,dist,dim,C_per):
- i=k_lex//dim[1]
- j=k_lex-i*dim[1]
- a_ph=phase_pt([i,j],L,n_phi,dist,C_per)
- return(a_ph)
+
 
 def Premp2D(ex_rseq,dist,dim,C_per):
  A=np.arange(dim[0]*dim[1])
