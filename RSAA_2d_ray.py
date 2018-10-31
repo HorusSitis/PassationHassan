@@ -3,8 +3,8 @@
 
 ### Paquets à importer ###
 
-import numpy as np
-import random as rd
+#import numpy as np
+#import random as rd
 
 #import pylab as pl
 #from pylab import *
@@ -102,7 +102,7 @@ def RSAA_ph_dist2D(geom,delta,l_ray,par,frac_vol,dim,temps,C_per):
      if geom[0](np.array(liste_ph[i][0])+np.array([dim[0],0]),cen)<=delta+liste_ph[i][1]+ray:
       #print(np.array(liste_ph[i][0])+np.array([dim[0],0]))
       C_ent=False
-      print(C_ent,'per')
+      #print(C_ent,'per')
      if geom[0](np.array(liste_ph[i][0])+np.array([-dim[0],0]),cen)<=delta+liste_ph[i][1]+ray:
       C_ent=False
      if geom[0](np.array(liste_ph[i][0])+np.array([0,dim[1]]),cen)<=delta+liste_ph[i][1]+ray:
@@ -239,7 +239,7 @@ def Vremp2D(ex_rseq,dist,dim,C_per):
  for k in range(0,len(A)):
   A[k]=parc_liste(k,L,n_phi,dist,dim,C_per)
  #sortie sous la forme d'une matrice : pixels 
- #A=np.reshape(A,dim[0],dim[1])
+ A=np.reshape(A,(dim[0],dim[1]))
  return(A)
 
 
@@ -251,7 +251,7 @@ def Vremp2D(ex_rseq,dist,dim,C_per):
 
 
 
-def Premp2D(ex_rseq,dist,dim,C_per):
+def ParVremp2D(ex_rseq,dist,dim,C_per):
  A=np.arange(dim[0]*dim[1])
  L=ex_rseq[0]#liste des centre-rayon-phase ; on oublie les saturations respectives des phases
  M=np.array(L)
