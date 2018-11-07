@@ -1,12 +1,11 @@
 ### Répertoire courant ###
 
-cd /home/amorea12/Documents/PassationHassan
+cd /home/amorea12/Documents/T_LaSIE/PassationHassan
 
 ### Paquets à importer ###
 
 import numpy as np
 import random as rd
-
 
 import pylab as pl
 from pylab import *
@@ -33,6 +32,10 @@ import shelve as sh
 ## Codes à importer
 
 from importlib import reload
+
+###############################################################################################################
+############################### Génération de structures périodiques aléatoires ###############################
+###############################################################################################################
 
 import RSAA_2d_ray as R2d
 
@@ -123,9 +126,55 @@ savefig(save_name)
 pl.show()
 
 
+##############################################################################################################################
+############################### Calculs avec la POD, modèles réduits ; merci à Hassan GHRAIEB. ###############################
+##############################################################################################################################
+
+#Paquets spécifiques à POD-MOR
+
+from fenics import *
+from dolfin import *
+from mshr import *
+import matplotlib.pyplot as plt
+#import numpy as np
+from math import sqrt
+import sys
+
+#Import de codes de Hassan, pas de modification a priori. Reloads ?
+
+cd 2DHassan/
+#import calc_POD as PoD
+#import Lecture_ecriture_homog as LEct
+from calc_POD import *
+from Lecture_ecriture_homog import *
+#POD= reload(POD)
+cd ../
+
+#Imports divers : fonctions, objets etc
+
+from DD_fun_obj import *#attention pas de chiffre au début du nom d'un paquet
+
+
+### Codes éxécutés : cas d'une inclusion circulaire, le rayon du disque central est le paramètre pour la POD ###
+
+## Etape I : réalisation des clichés, avec la méthode des éléments finis. Stockage dans snap2D/ ##
+# Utilise fenics, éventuellement augmenté par dolfin #
 
 
 
+## Etape II : extrapolation des clichés, domaine_fixe ##
+
+#Attention aux codes de Hassan : erreurs ... visibles sur les figures du rapport, s'il s'agit bien des snapshots extrapolés
+
+
+## Etape III : en utilisant la méthode des snapshots, calcul de la POD et des coefficients aléatoires, toujours dans domaine_fixe ##
+
+
+## Etape IV : Prédictions ##
+
+# SE1 : ... #
+
+## etc ##
 
 
 
