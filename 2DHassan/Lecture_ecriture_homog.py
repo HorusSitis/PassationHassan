@@ -44,7 +44,7 @@ def lecture_fichiers_restart_hdf5(u_nmoins1,repertoire_init,T_init,mesh):
 
 	dataset_urestart = "Vitesse/vector_%d"%ilect
 	attr_urestart = URESTART.attributes(dataset_urestart)
-	print 'Retrieving unmoins1 time step:', T_init, attr_urestart['timestamp'],dataset_urestart
+	print('Retrieving unmoins1 time step:', T_init, attr_urestart['timestamp'],dataset_urestart)
 	URESTART.read(u_nmoins1, dataset_urestart) 
 	
 	
@@ -71,7 +71,7 @@ def lecture_solution_restart_hdf5(u_nmoins1,repertoire_init,T_init,mesh):
 
 	dataset_urestart = "Vitesse/vector_%d"%ilect
 	attr_urestart = URESTART.attributes(dataset_urestart)
-	print 'Retrieving unmoins1 time step:', T_init, attr_urestart['timestamp'],dataset_urestart
+	print('Retrieving unmoins1 time step:', T_init, attr_urestart['timestamp'],dataset_urestart)
 	URESTART.read(u_nmoins1, dataset_urestart) 
 	
 	
