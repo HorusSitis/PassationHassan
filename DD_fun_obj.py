@@ -1,8 +1,12 @@
+from fenics import *
+
 ### Une fonction, pour mailler un domaine avec une inclusion circulaire. Il en existe d'autres, voir homog_pod_multi ###
 
-def raffinemment_maillage(r,mesh):
+def raffinemment_maillage(cen,r,mesh):
  markers = CellFunction("bool", mesh)
  markers.set_all(False)
+ c_x=cen[0]
+ c_y=cen[1]
  for c in cells(mesh):
   # Mark cells with facet midpoints near y == 1.0
   for f in facets(c):
