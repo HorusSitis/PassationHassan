@@ -154,11 +154,58 @@ cd ../
 
 from DD_fun_obj import *#attention pas de chiffre au début du nom d'un paquet
 
+import DD_fun_obj as fun_obj
+
+fun_obj=reload(fun_obj)
 
 ### Codes éxécutés : cas d'une inclusion circulaire, le rayon du disque central est le paramètre pour la POD ###
 
 ## Etape I : réalisation des clichés, avec la méthode des éléments finis. Stockage dans snap2D/ ##
 # Utilise fenics, éventuellement augmenté par dolfin #
+
+#Caractérisation de la cellule élémentaire, tolérance ??
+
+tol=1e-10
+
+xinf=0.0
+yinf=0.0
+xsup=1.0
+ysup=1.0
+c_x=0.5
+c_y=0.5
+
+#determiner le domaine fixe pour interpoler la solution
+
+domaine_fixe=Rectangle(Point(xinf,yinf),Point(xsup,ysup))
+mesh_fixe=generate_mesh(domaine_fixe,80)
+V_fixe=VectorFunctionSpace(mesh_fixe, "P", 2, constrained_domain=PeriodicBoundary())
+
+plot(mesh_fixe)
+plt.show()
+
+
+
+for i in range(1,4):#attention le rayon d'un cercle doit être non nul
+ r=i*0.1
+ rect= Rectangle(Point(xinf,yinf),Point(xsup,ysup))
+ circle = Circle(Point(c_x,c_y),r)
+ domain=rect-circle
+ res = 40  # Resolution of mesh
+ mesh = generate_mesh(domain, res)
+ #### Premier raffinement dans l'axe horizontale du cylindre 
+ meshB= fun_obj.raffinemment_maillage(Point(c_x,c_y),r,mesh)
+ mesh=meshB
+ plot(mesh)
+ plt.show()
+
+
+
+
+
+
+
+
+#Stockage
 
 
 
