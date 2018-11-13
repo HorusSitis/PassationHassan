@@ -176,17 +176,59 @@ c_y=0.5
 
 #determiner le domaine fixe pour interpoler la solution
 
+class PeriodicBoundary(SubDomain):
+ # Left boundary is "target domain" G
+ def inside(self, x, on_boundary):
+  return on_boundary and (near(x[0],0,tol) or near(x[1],0,tol))
+ # Map right boundary (H) to left boundary (G)
+ def map(self, x, y):
+  if (near(x[0],1,tol)):
+   y[0] = x[0] - 1.0
+   y[1] = x[1]              
+  else :
+   y[0]=x[0]
+   y[1] = x[1] - 1.0
+
 domaine_fixe=Rectangle(Point(xinf,yinf),Point(xsup,ysup))
 mesh_fixe=generate_mesh(domaine_fixe,80)
 V_fixe=VectorFunctionSpace(mesh_fixe, "P", 2, constrained_domain=PeriodicBoundary())
 
+#représentation graphique du maillage
 plot(mesh_fixe)
 plt.show()
 
+#stockage dans Mesh2D
 
 
-for i in range(1,4):#attention le rayon d'un cercle doit être non nul
- r=i*0.1
+
+
+
+#Créer un maillage : inclusion circulaire.
+
+def creer_maill_circ(cen,r,res):
+ rect=Rectangle(Point(0,0),Point(1,1))
+ circle=Circle(cen,r)
+ domain=rect-circle
+ mesh=generate_mesh(domain,res)
+ #On raffine le long du bord de l'inclusion
+ mesh_aux=fun_obj.raffinement_maillage(cen,r,mesh)
+ mesh=mesh_aux
+ #Sauvegarde du fichier
+ #
+ print("fait")
+ return()
+
+
+
+
+
+
+
+
+#Famille de cellules élémentaires : 8 clichés, inclusion circulaire
+
+for i in range(1,8):#attention le rayon d'un cercle doit être non nul
+ r=i*0.05
  rect= Rectangle(Point(xinf,yinf),Point(xsup,ysup))
  circle = Circle(Point(c_x,c_y),r)
  domain=rect-circle
