@@ -3,8 +3,9 @@
 
 ### Paquets à importer ###
 
-#import numpy as np
-#import random as rd
+#if __name__=='__main__':
+import numpy as np
+import random as rd
 
 #import pylab as pl
 #from pylab import *
@@ -246,9 +247,10 @@ def Vremp2D(ex_rseq,dist,dim,C_per):
 
 #version parallélisée
 
-#import threading
-#import time
 
+#if __name__=='__main__':
+import multiprocessing
+from joblib import Parallel, delayed
 
 
 def ParVremp2D(ex_rseq,dist,dim,C_per):
@@ -258,44 +260,13 @@ def ParVremp2D(ex_rseq,dist,dim,C_per):
  n_phi=max(M[:,2])
  #définition et éxécution des threads : huit, pour MECALAC
  ##
- def f1():
-  for k in range(0,len(A)//8):
-   A[k]=parc_liste(k,L,n_phi,dist,dim,C_per)
- def f2():
-  for k in range(len(A)//8,len(A)//4):
-   A[k]=parc_liste(k,L,n_phi,dist,dim,C_per)
- def f3():
-  for k in range(len(A)//4,len(A)//4+len(A)//8):
-   A[k]=parc_liste(k,L,n_phi,dist,dim,C_per)
- def f4():
-  for k in range(len(A)//4+len(A)//8,len(A)//2):
-   A[k]=parc_liste(k,L,n_phi,dist,dim,C_per)
- def f5():
-  for k in range(len(A)//2,len(A)//2+len(A)//8):
-   A[k]=parc_liste(k,L,n_phi,dist,dim,C_per)
- def f6():
-  for k in range(len(A)//2+len(A)//8,len(A)//2+len(A)//4):
-   A[k]=parc_liste(k,L,n_phi,dist,dim,C_per)
- def f7():
-  for k in range(len(A)//2+len(A)//4,len(A)//2+len(A)//4+len(A)//8):
-   A[k]=parc_liste(k,L,n_phi,dist,dim,C_per)
- def f8():
-  for k in range(len(A)//2+len(A)//4+len(A)//8,len(A)):
-   A[k]=parc_liste(k,L,n_phi,dist,dim,C_per)
- #
- threading.Thread(None,target=f1).start()
- threading.Thread(None,target=f2).start()
- threading.Thread(None,target=f3).start()
- threading.Thread(None,target=f4).start()
- threading.Thread(None,target=f5).start()
- threading.Thread(None,target=f6).start()
- threading.Thread(None,target=f7).start()
- threading.Thread(None,target=f8).start()
- #
- time.sleep(1)
+ num_cores=multiprocessing.cpu_count()
  ##
- #
- A=np.reshape(A,dim[0],dim[1])
+ #boucle principale, parallélisée
+ ##
+ A=Parallel(n_jobs=num_cores)(delayed(parc_liste)(k,L,n_phi,dist,dim,C_per)for k in range(0,len(A)))
+ ##
+ A=np.reshape(A,(dim[0],dim[1]))
  return(A)
 
 
