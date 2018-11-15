@@ -21,6 +21,9 @@ import time
 #multiprocessing
 
 
+import multiprocessing
+from joblib import Parallel, delayed
+
 #stockage d'objets python
 
 import marshal as ma
@@ -46,6 +49,15 @@ R2d = reload(R2d)
 cote=70#500 ; 1000
 Tps=10000#1000000
 
+cote=150
+Tps=20000
+
+cote=500
+Tps=30000
+
+cote=1000
+Tps=1000000
+
 # géométrie euclidienne
 
 geo=[R2d.eucl2D,R2d.vol2D]
@@ -64,7 +76,7 @@ L=R2d.RSAA_ph_dist2D(geo,delta_inc,Lois,Par,frac,[cote,cote],Tps,'per')
 
 l_name='L_'+str(cote)+'_'+str(Tps)
 
-rep_inc='IncAlea'
+rep_inc='IncAlea2D'
 
 # stockage : listes de centres-rayons-phases et fractions volumiques #
 
@@ -88,12 +100,43 @@ with sh.open(rep_inc+'/'+l_name) as l_loa:
 
 A_remp=R2d.Vremp2D(L_loa,R2d.eucl2D,[cote,cote],'per')
 
+#pour avoir une fonction top-level à paralléliser
+
+L=L_loa[0]
+M=np.array(L)
+n_phi=max(M[:,2])
+
+dim=[cote,cote]
+C_per='per'
+dist=R2d.eucl2D
+
+def parc_liste_k(k):
+ return(R2d.parc_liste(k,L,n_phi,dist,dim,C_per))
+
+pool=multiprocessing.Pool(processes=8)
+
+B_par=pool.map(parc_liste_k,(k for k in range(dim[0]*dim[1])))
+
+A_remp=np.array(B_par)
+A_remp=np.reshape(A_remp,(dim[0],dim[1]))
+
+
+
+
+#avec du calcul parallèle : imports avec joblib
+
+#A_remp=R2d.ParVremp2D(L_loa,R2d.eucl2D,[cote,cote],'per')
+
+##70 ; tps 10 000 ; ... inclusions : 20 secondes environ
+##150 ; tps 20 000 ; 1000 inclusions : 2 minutes 20 secondes
+##1000 ; tps 1 000 000 ; 2800 inclusions : 
+
 # stockage de la matrice A #
 
 a_name='VA_'+str(cote)+'_'+str(Tps)
 #répertoire ?
 
-rep_inc='IncAlea'
+rep_inc='IncAlea2D'
 
 with sh.open(rep_inc+'/'+a_name) as a_sto:
     a_sto["maliste"] = A_remp
@@ -118,7 +161,7 @@ pl.imshow(A_remp,interpolation='none',cmap=cmap,norm=norm)
 pl.axis('off')
 
 figname=str(cote)+'f'+str(cote)+'Tps'+str(Tps)+'.png'
-rep='Figures'
+rep='Figures2D'
 save_name=rep+'/'+figname
 
 savefig(save_name)
@@ -179,18 +222,20 @@ c_y=0.5
 class PeriodicBoundary(SubDomain):
  # Left boundary is "target domain" G
  def inside(self, x, on_boundary):
-  return on_boundary and (near(x[0],0,tol) or near(x[1],0,tol))
+  return on_boundary and (near(x[0],xinf,tol) or near(x[1],yinf,tol))
  # Map right boundary (H) to left boundary (G)
  def map(self, x, y):
-  if (near(x[0],1,tol)):
+  if (near(x[0],xsup,tol)):
    y[0] = x[0] - 1.0
    y[1] = x[1]              
   else :
    y[0]=x[0]
    y[1] = x[1] - 1.0
 
+res_fixe=80#résolution du maillage sans obstacle
+
 domaine_fixe=Rectangle(Point(xinf,yinf),Point(xsup,ysup))
-mesh_fixe=generate_mesh(domaine_fixe,80)
+mesh_fixe=generate_mesh(domaine_fixe,res_fixe)
 V_fixe=VectorFunctionSpace(mesh_fixe, "P", 2, constrained_domain=PeriodicBoundary())
 
 #représentation graphique du maillage
@@ -199,11 +244,54 @@ plt.show()
 
 #stockage dans Mesh2D
 
+mesh_name='mesh_'+'fixe'+'_'+str(res_fixe)
+
+rep_inc='Mesh2D'
+
+########################################################################
+### Commandes de Cyrille pour stocker et charger un maillage ###########
+#ECRITURE                                                              #
+#                                                                      #
+#Name_mesh="%s/mesh_cylindre_fixe" %(repertoire_ecriture)+".xdmf"      #
+#File(Name_mesh) << mesh                                               #
+#                                                                      #
+#LECTURE                                                               #
+#                                                                      #
+#Name_mesh="%s/mesh_cylindre_t=" %(repertoire_init)+str(T_init)+".xdmf"#
+#mesh=Mesh(Name_mesh)                                                  #
+########################################################################
+
+### File(rep_inc+'/'+mesh_name+'.xdmf') << mesh_fixe #ne marche pas, contrairement à creation_fichier_pour_ecriture
+
+def creation_fichier_pourecriture_champ_hdf5(repertoire_final,mesh):
+	"Creation des dichiers pour ecrire la solution"
+	ufile = File("%s/velocity.pvd" %(repertoire_final))                       
+	USAVE=HDF5File(mesh.mpi_comm(),"%s/u_save.hdf5" %(repertoire_final), "w")
+	return ufile,USAVE
+
+
+ufile,USAVE=creation_fichier_pourecriture_champ_hdf5(rep_inc,mesh_fixe)
+#file_rayon_ecriture = open("%s/rayon_ecriture.txt" %(repertoire_final), "w")
+kfic=0
+
+
+def ecriture_champ_hdf5(ufile,USAVE,u_n,kfic,file_rayon_ecriture,r):	
+	"Ecriture des differents champs dans des fichiers"
+	ufile << u_n
+	USAVE.write(u_n,"khi",kfic)                                           
+	file_rayon_ecriture.write(str(kfic)+"\t"+str(r)+"\n")
+	return
+
+
 
 
 
 
 #Créer un maillage : inclusion circulaire.
+
+
+
+
 
 def creer_maill_circ(cen,r,res):
  rect=Rectangle(Point(0,0),Point(1,1))
@@ -213,10 +301,12 @@ def creer_maill_circ(cen,r,res):
  #On raffine le long du bord de l'inclusion
  mesh_aux=fun_obj.raffinement_maillage(cen,r,mesh)
  mesh=mesh_aux
- #Sauvegarde du fichier
- #
- print("fait")
- return()
+ #print("fait")
+ return(mesh)
+
+
+#définir : solveurEF
+#définir
 
 
 
