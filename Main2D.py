@@ -120,8 +120,8 @@ B_par=pool.map(parc_liste_k,(k for k in range(dim[0]*dim[1])))
 A_remp=np.array(B_par)
 A_remp=np.reshape(A_remp,(dim[0],dim[1]))
 
-
-
+##500 ; tps 30 000 ; 4600 inclusions : environ 1h sur MECALAC
+##1000 ; tps 1 000 000 ; 2800 inclusions : environ 2 h 40 min pour l'ordinateur fixe 8 x 3,50GHz
 
 #avec du calcul parallèle : imports avec joblib
 
@@ -129,7 +129,7 @@ A_remp=np.reshape(A_remp,(dim[0],dim[1]))
 
 ##70 ; tps 10 000 ; ... inclusions : 20 secondes environ
 ##150 ; tps 20 000 ; 1000 inclusions : 2 minutes 20 secondes
-##1000 ; tps 1 000 000 ; 2800 inclusions : 
+##1000 ; tps 1 000 000 ; 2800 inclusions : 15h ++
 
 # stockage de la matrice A #
 
@@ -196,6 +196,9 @@ cd ../
 #Imports divers : fonctions, objets etc
 
 from DD_fun_obj import *#attention pas de chiffre au début du nom d'un paquet
+r=0.0
+## problème à l'import : r prend la valeur index(6)
+
 
 import DD_fun_obj as fun_obj
 
@@ -214,8 +217,8 @@ xinf=0.0
 yinf=0.0
 xsup=1.0
 ysup=1.0
-c_x=0.5
-c_y=0.5
+#c_x=0.5
+#c_y=0.5
 
 #determiner le domaine fixe pour interpoler la solution
 
@@ -282,27 +285,41 @@ def ecriture_champ_hdf5(ufile,USAVE,u_n,kfic,file_rayon_ecriture,r):
 	file_rayon_ecriture.write(str(kfic)+"\t"+str(r)+"\n")
 	return
 
-
-
-
-
-
 #Créer un maillage : inclusion circulaire.
 
 
 
 
+####################################
 
-def creer_maill_circ(cen,r,res):
- rect=Rectangle(Point(0,0),Point(1,1))
- circle=Circle(cen,r)
- domain=rect-circle
- mesh=generate_mesh(domain,res)
- #On raffine le long du bord de l'inclusion
- mesh_aux=fun_obj.raffinement_maillage(cen,r,mesh)
- mesh=mesh_aux
- #print("fait")
- return(mesh)
+from DD_fun_obj import *
+
+
+
+#tests pour les trois fonctions
+
+c_x=0.01
+c_y=0.01
+
+r=0.35
+
+res=25
+
+mesh_c_r=creer_maill_circ([c_x,c_y],r,res)
+
+plot(mesh_c_r)
+plt.show()
+plt.close()
+
+figname='cx'+str(c_x)+'cy'+str(c_y)+'ray'+str(r)+'.png'
+rep='Figures2D'
+save_name=rep+'/'+figname
+
+savefig(save_name)
+
+#plt.show()
+
+plt.close()
 
 
 #définir : solveurEF
@@ -317,25 +334,53 @@ def creer_maill_circ(cen,r,res):
 
 #Famille de cellules élémentaires : 8 clichés, inclusion circulaire
 
-for i in range(1,8):#attention le rayon d'un cercle doit être non nul
- r=i*0.05
- rect= Rectangle(Point(xinf,yinf),Point(xsup,ysup))
- circle = Circle(Point(c_x,c_y),r)
- domain=rect-circle
- res = 40  # Resolution of mesh
- mesh = generate_mesh(domain, res)
- #### Premier raffinement dans l'axe horizontale du cylindre 
- meshB= fun_obj.raffinemment_maillage(Point(c_x,c_y),r,mesh)
- mesh=meshB
- plot(mesh)
+c_x=0.2
+c_y=0.5
+
+res=40
+
+for i in range(1,3):#attention le rayon d'un cercle doit être non nul
+ r=i*0.15
+ mesh_c_r=creer_maill_circ([c_x,c_y],r,res)
+ plot(mesh_c_r)
+ # on enregistre ... comment ?
  plt.show()
-
-
-
-
-
-
-
+ plt.close()
+ # On pose et on résoud le problème aux éléments finis
+ V=VectorFunctionSpace(mesh_c_r, 'P', 2, constrained_domain=PeriodicBoundary())
+ ## On définit la bordure du domaine, sur laquelle intégrer le second membre "L" de l'équation en dimension finie
+ l_cen=[]
+ cen=[c_x,c_y]
+ for i in range(-1,2):
+  for j in range(-1,2):
+   l_cen.append([cen[0]+i,cen[1]+j])
+ ### Pour hériter de la méthode de marquage des facettes appartenant à Gamma_sf
+ class inclusion_periodique(SubDomain):
+  def inside(self,x,on_boundary):
+   return any([between(sqrt((x[0]-c[0])**2+(x[1]-c[1])**2),(r-tol,r+tol)) for c in l_cen])
+ ### Utilisation de la classe définie précédemment
+ Gamma_sf = inclusion_periodique()
+ boundaries = FacetFunction("size_t", mesh_c_r)
+ boundaries.set_all(0)
+ Gamma_sf.mark(boundaries, 5)
+ ds = Measure("ds")(subdomain_data=boundaries)
+ num_front_cercle=5 # numéro de la frontiere du cylindre
+ ## On résoud le problème en fixant les condisions aux limites
+ khi_bord=Constant((0., 0.))
+ bc = DirichletBC(V, khi_bord, "x[0] < DOLFIN_EPS && x[1] < DOLFIN_EPS", "pointwise")
+ normale = FacetNormal(mesh_c_r)
+ nb_noeuds=V.dim()
+ u = TrialFunction(V)
+ v = TestFunction(V)
+ a=tr(dot((grad(u)).T, grad(v)))*dx
+ L=-dot(normale,v)*ds(num_front_cercle)
+ ### Résolution
+ u=Function(V)
+ solve(a==L,u,bc)
+ # Représentation graphique
+ plot(u)
+ plt.show()
+ plt.close()
 
 #Stockage
 
