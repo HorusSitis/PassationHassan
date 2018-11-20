@@ -22,7 +22,7 @@ if __name__=='__main__':
 ### Une fonction, pour mailler un domaine avec une inclusion circulaire. Il en existe d'autres, voir homog_pod_multi ###
 
 def raffinemment_maillage(cen,r,mesh):
- markers = CellFunction("bool", mesh)
+ markers = MeshFunction("bool", mesh, mesh.topology().dim())
  markers.set_all(False)
  c_x=cen[0]
  c_y=cen[1]
@@ -35,35 +35,7 @@ def raffinemment_maillage(cen,r,mesh):
   new_mesh=refine(mesh, markers, redistribute=True)    
  return new_mesh
 
-### Classes pour caractériser les bordures Gamma_sf et Gamma_ff , cas circulaire ###
 
-# Sub domain for Periodic boundary condition
-class PeriodicBoundary(SubDomain):
- # Left boundary is "target domain" G
- def inside(self, x, on_boundary):
-  return on_boundary and (near(x[0],xinf,tol) or near(x[1],yinf,tol))
- # Map right boundary (H) to left boundary (G)
- def map(self, x, y):
-  if (near(x[0],xsup,tol)):
-   y[0] = x[0] - 1.0
-   y[1] = x[1]              
-  else :
-   y[0]=x[0]
-   y[1] = x[1] - 1.0
-
-# A renommer : interface #
-
-class Obstacle(SubDomain):
- def inside(self, x, on_boundary):
-  return (on_boundary and between((x[0]-c_x), (-r-tol, r+tol)) and between((x[1]-c_x), (-r-tol, r+tol)))
-
-## Cas géométrique plus général, à réécrire ##
-
-# Domaine d'intégration de chi, éventuellement pour des géométries plus compliquées que circulaire #
-
-class Omega_fluide(SubDomain):
- def inside(self, x, on_boundary):
-  return (((sqrt((x[0] - c_x)**2 + (x[1] - c_y)**2)-r) >= 0.0))
 
 
 
@@ -79,7 +51,7 @@ class Omega_fluide(SubDomain):
 
 
 def raffinement_maillage_cellule_centree(r,mesh):# Cellule centrée : un seul paramètre géométrique, le rayon de l'inclusion. 1.2*r<0.5 exigé.
- markers = CellFunction("bool", mesh)
+ markers = MeshFunction("bool", mesh, mesh.topology().dim())
  markers.set_all(False)
  c_x=0.5
  c_y=0.5
@@ -92,7 +64,7 @@ def raffinement_maillage_cellule_centree(r,mesh):# Cellule centrée : un seul pa
  return mesh
 
 def raffinement_maillage_circ_per(cen,r,mesh):# Objectif : montrer que l'emplacement de l'inclusion périodique dans la cellule élémentaire ne change pas le coefficient de diffusion homogénéisé, calculé avec le tenseur khi
- markers = CellFunction("bool", mesh)
+ markers = MeshFunction("bool", mesh, mesh.topology().dim())
  markers.set_all(False)
  # on crée une liste des centres des inclusions voisines de la cellule élémentaire
  l_cen=[]
