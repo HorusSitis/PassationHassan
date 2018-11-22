@@ -16,25 +16,25 @@ if __name__=='__main__':
  yinf=0.0
  xsup=1.0
  ysup=1.0
- c_x=0.5
- c_y=0.5
 
-### Une fonction, pour mailler un domaine avec une inclusion circulaire. Il en existe d'autres, voir homog_pod_multi ###
+tol=1e-10
+xinf=0.0
+yinf=0.0
+xsup=1.0
+ysup=1.0
 
-def raffinemment_maillage(cen,r,mesh):
- markers = MeshFunction("bool", mesh, mesh.topology().dim())
- markers.set_all(False)
- c_x=cen[0]
- c_y=cen[1]
- for c in cells(mesh):
-  # Mark cells with facet midpoints near y == 1.0
-  for f in facets(c):
-   if (sqrt((f.midpoint()[0]-c_x)**2+(f.midpoint()[1]-c_y)**2)<=1.2*r):
-    markers[c] = True
-  #new_mesh=refine(mesh, markers, redistribute=False)  
-  new_mesh=refine(mesh, markers, redistribute=True)    
- return new_mesh
-
+class PeriodicBoundary(SubDomain):
+ # Left boundary is "target domain" G
+ def inside(self, x, on_boundary):
+  return on_boundary and (near(x[0],xinf,tol) or near(x[1],yinf,tol))
+ # Map right boundary (H) to left boundary (G)
+ def map(self, x, y):
+  if (near(x[0],xsup,tol)):
+   y[0] = x[0] - 1.0
+   y[1] = x[1]              
+  else :
+   y[0]=x[0]
+   y[1] = x[1] - 1.0
 
 
 
@@ -81,7 +81,7 @@ def raffinement_maillage_circ_per(cen,r,mesh):# Objectif : montrer que l'emplace
  return mesh
 
 def creer_maill_circ(cen,r,res):#valable quel que soit la position de l'inclusion : centre, choisi aléatoirement. 1.2*r<0.5.
- if cen[0]+r*1.2<1 and cen[1]+r*1.2<1 and cen[0]-0.5*1.2>0 and cen[1]-0.5*1.2>0:#si l'inclusion est comprise dans la cellule
+ if cen[0]+r*1.2<1 and cen[1]+r*1.2<1 and cen[0]-r*1.2>0 and cen[1]-r*1.2>0:#si l'inclusion est comprise dans la cellule
   rect=Rectangle(Point(0,0),Point(1,1))
   circle=Circle(Point(cen[0],cen[1]),r)
   domain=rect-circle
@@ -90,17 +90,17 @@ def creer_maill_circ(cen,r,res):#valable quel que soit la position de l'inclusio
   #mesh_aux=raffinement_maillage_cellule_centree(r,mesh)
   mesh_aux=raffinement_maillage_circ_per(cen,r,mesh)
   mesh=mesh_aux
+  #print('pfffrrh !')
  else:
   # Création de la cellule élémentaire avec inclusion
   rect=Rectangle(Point(-1,-1),Point(2,2))
   domain=rect
-  #circle=Circle(Point(cen[0],cen[1]),r)
-  l_cer=[Circle(Point(cen[0],cen[1]),r)]
+  l_cer=[]#Circle(Point(cen[0],cen[1]),r)]
   for i in range(-1,2):
    for j in range(-1,2):
-    l_cer.append(Circle(Point(cen[0]+i,cen[1]+j),r))
-  #domain_aux=rect-circle
-  for cer_per in l_cer:
+    l_cer.append(Circle(Point(cen[0]+i,cen[1]+j),r)) 
+  print(len(l_cer))
+  for cer_per in l_cer:#[Circle(Point(cen[0],cen[1]),r)]:#l_cer:
    domain=domain-cer_per
   domain=domain*Rectangle(Point(0,0),Point(1,1))
   # Création du permier maillage
@@ -153,8 +153,8 @@ def snapshot_circ_per(cen,r,res):
 
 ############################# Pour tester la périodicité d'un champ en norme l2 ou infinie : erreur relative #############################
 
-def err_per_01(u,norm,Nnoeuds,t_err):
- pas=1/Nnoeuds
+def err_per_01(u,norm,Npas,type_err):
+ pas=1/Npas
  # Périodicité
  ## Essais avec assemble() ou .vector().get_local()
  #mesh_Gamma_ff=UnitIntervalMesh(40)
@@ -162,26 +162,26 @@ def err_per_01(u,norm,Nnoeuds,t_err):
  #def quad_u_x(y):return(sum((u((1,y))-u((0,y)))**2))
  #err_per_x=assemble(quad_u_x(x[0])*dx(degree=2))
  #uv=u.vector().get_local()
- ## Normes l2 et infinie de khi restreint à \{0\}\times ... et à ... \times [0,1] pour l'erreur relative sur le bord vertical
- list_per_x=[sum((u_fixe((1,pas*k))-u_fixe((0,pas*k)))**2) for k in range(0,Nnoeuds)]
- list_0_x=[sum(u_fixe((0,pas*k))**2) for k in range(0,Nnoeuds)]
- list_per_y=[sum((u_fixe((pas*k,1))-u_fixe((pas*k,0)))**2) for k in range(0,Nnoeuds)]
- list_0_y=[sum(u_fixe((pas*k,0))**2) for k in range(0,Nnoeuds)]
+ ## Normes l2 et infinie de khi restreint à \{0\}\times ... , respectivement ... \times [0,1] pour l'erreur sur le bord vertical, respectivement horizontal.
+ list_per_x=[sum((u((1,pas*k))-u((0,pas*k)))**2) for k in range(0,Npas)]
+ list_0_x=[sum(u((0,pas*k))**2) for k in range(0,Npas)]
+ list_per_y=[sum((u((pas*k,1))-u((pas*k,0)))**2) for k in range(0,Npas)]
+ list_0_y=[sum(u((pas*k,0))**2) for k in range(0,Npas)]
  ## Erreur relative ou absolue
  den=[1.0,1.0]
- if t_err=='rel':
+ if type_err=='rel':
   if norm=='l2':
-   den=[sqrt(sum(list_0_x)),sqrt(sum(list_0_y))]
+   den=[sqrt(sum(list_0_x)/Npas),sqrt(sum(list_0_y)/Npas)]
   elif norm=='infty':
    den=[sqrt(max(list_0_x)),sqrt(max(list_0_y))]
  ## Résultats
  if norm=='l2':
-  El2_per_x=sqrt(sum(list_per_x))/den[0]
-  El2_per_y=sqrt(sum(list_per_y))/den[1]
+  El2_per_x=sqrt(sum(list_per_x)/Npas)/den[0]
+  El2_per_y=sqrt(sum(list_per_y)/Npas)/den[1]
   return((El2_per_x,El2_per_y))
  elif norm=='infty':
-  Elinfty_per_x=sqrt(max(list_per_x))/den[0]
-  Elinfty_per_y=sqrt(max(list_per_y))/den[1]
+  Einfty_per_x=sqrt(max(list_per_x))/den[0]
+  Einfty_per_y=sqrt(max(list_per_y))/den[1]
   return((Einfty_per_x,Einfty_per_y))
 
 
