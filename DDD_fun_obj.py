@@ -39,7 +39,7 @@ class PeriodicBoundary(SubDomain):
 
 ############################# Pour créer des maillages, avec des familles de cellules élémentaires #############################
 
-def raffinement_maillage_circ_per(cen,r,mesh):
+def raffinement_maillage_sph_per(cen,r,mesh):
  markers = MeshFunction("bool", mesh, mesh.topology().dim())
  markers.set_all(False)
  # on crée une liste des centres des inclusions voisines de la cellule élémentaire
@@ -57,7 +57,7 @@ def raffinement_maillage_circ_per(cen,r,mesh):
  mesh=refine(mesh, markers, redistribute=True)
  return mesh
 
-def creer_maill_circ(cen,r,res):#valable quel que soit la position de l'inclusion : centre, choisi aléatoirement. 1.2*r<0.5.
+def creer_maill_sph(cen,r,res):#valable quel que soit la position de l'inclusion : centre, choisi aléatoirement. 1.2*r<0.5.
  if cen[0]+r*1.2<1 and cen[1]+r*1.2<1 and cen[2]+r*1.2<1 and cen[0]-r*1.2>0 and cen[1]-r*1.2>0 and cen[1]-r*1.2>0:#si l'inclusion est comprise dans la cellule
   box=Box(Point(0,0,0),Point(1,1,1))
   sphere=Sphere(Point(cen[0],cen[1],cen[2]),r)
@@ -65,7 +65,7 @@ def creer_maill_circ(cen,r,res):#valable quel que soit la position de l'inclusio
   mesh=generate_mesh(domain,res)
   # On raffine le long du bord de l'inclusion
   #mesh_aux=raffinement_maillage_cellule_centree(r,mesh)
-  mesh_aux=raffinement_maillage_circ_per(cen,r,mesh)
+  mesh_aux=raffinement_maillage_sph_per(cen,r,mesh)
   mesh=mesh_aux
   print('pfffrrh !')
  else:
@@ -84,16 +84,16 @@ def creer_maill_circ(cen,r,res):#valable quel que soit la position de l'inclusio
   # Création du permier maillage
   mesh=generate_mesh(domain,res)
   # On raffine le long du bord de l'inclusion
-  mesh_aux=raffinement_maillage_circ_per(cen,r,mesh)
+  mesh_aux=raffinement_maillage_sph_per(cen,r,mesh)
   mesh=mesh_aux
   #
  return(mesh)
 
 ############################# Pour créer des snapshots, inclusion circulaire périodique unique #############################
 
-def snapshot_circ_per(cen,r,res):
- c_x,c_y=cen[0],cen[1]
- mesh_c_r=creer_maill_circ([c_x,c_y],r,res)
+def snapshot_sph_per(cen,r,res):
+ c_x,c_y,c_z=cen[0],cen[1],cen[2]
+ mesh_c_r=creer_maill_sph([c_x,c_y,c_z],r,res)
  # On pose et on résoud le problème aux éléments finis
  V=VectorFunctionSpace(mesh_c_r, 'P', 2, constrained_domain=PeriodicBoundary())
  ## On définit la bordure du domaine, sur laquelle intégrer le second membre "L" de l'équation en dimension finie
@@ -101,27 +101,27 @@ def snapshot_circ_per(cen,r,res):
  #cen=[c_x,c_y]
  for i in range(-1,2):
   for j in range(-1,2):
-   l_cen.append([cen[0]+i,cen[1]+j])
- #print(l_cen)
+   for k in range(-1,2):
+    l_cen.append([cen[0]+i,cen[1]+j,cen[2]+k])
  class inclusion_periodique(SubDomain):
   def inside(self,x,on_boundary):
-   return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]))#[between(sqrt((x[0]-c[0])**2+(x[1]-c[1])**2),(r-tol,r+tol)) for c in l_cen]))
+   return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[2]-c[2]), (-r-tol, r+tol)) for c in l_cen]))#[between(sqrt((x[0]-c[0])**2+(x[1]-c[1])**2),(r-tol,r+tol)) for c in l_cen]))
  ### Utilisation de la classe définie précédemment
  Gamma_sf = inclusion_periodique()
  boundaries = MeshFunction("size_t", mesh_c_r, mesh_c_r.topology().dim()-1)
  boundaries.set_all(0)
  Gamma_sf.mark(boundaries, 5)
  ds = Measure("ds")(subdomain_data=boundaries)
- num_front_cercle=5
+ num_front_sphere=5
  ## On résoud le problème en fixant les condisions aux limites
- khi_bord=Constant((0., 0.))
+ khi_bord=Constant((0., 0., 0.))
  bc = DirichletBC(V, khi_bord, "x[0] < DOLFIN_EPS && x[1] < DOLFIN_EPS && x[2] < DOLFIN_EPS", "pointwise")
  normale = FacetNormal(mesh_c_r)
  nb_noeuds=V.dim()
  u = TrialFunction(V)
  v = TestFunction(V)
  a=tr(dot((grad(u)).T, grad(v)))*dx
- L=-dot(normale,v)*ds(num_front_cercle)
+ L=-dot(normale,v)*ds(num_front_sphere)
  ### Résolution
  u=Function(V)
  solve(a==L,u,bc)
@@ -144,8 +144,10 @@ def err_per_01(u,norm,Npas,type_err):
  list_0_x=[sum(u((0,pas*k))**2) for k in range(0,Npas)]
  list_per_y=[sum((u((pas*k,1))-u((pas*k,0)))**2) for k in range(0,Npas)]
  list_0_y=[sum(u((pas*k,0))**2) for k in range(0,Npas)]
+ list_per_z=[sum((u((pas*k,1))-u((pas*k,0)))**2) for k in range(0,Npas)]
+ list_0_z=[sum(u((pas*k,0))**2) for k in range(0,Npas)]
  ## Erreur relative ou absolue
- den=[1.0,1.0]
+ den=[1.0,1.0,1.0]
  if type_err=='rel':
   if norm=='l2':
    den=[sqrt(sum(list_0_x)/Npas),sqrt(sum(list_0_y)/Npas)]
