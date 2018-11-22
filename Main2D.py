@@ -1,3 +1,14 @@
+
+
+
+
+
+
+
+###############################################################################################################
+############################### Génération de structures périodiques aléatoires ###############################
+###############################################################################################################
+
 ### Répertoire courant ###
 
 cd /home/amorea12/Documents/T_LaSIE/PassationHassan
@@ -6,11 +17,9 @@ cd /home/amorea12/Documents/T_LaSIE/PassationHassan
 
 import numpy as np
 import random as rd
-
 import pylab as pl
 from pylab import *
 #import matplotlib.pylab as pl
-
 import os
 
 #threading
@@ -20,14 +29,12 @@ import time
 
 #multiprocessing
 
-
 import multiprocessing
 from joblib import Parallel, delayed
 
 #stockage d'objets python
 
 import marshal as ma
-
 import shelve as sh
 
 ### Algorithme RSAA arrêté ###
@@ -35,10 +42,6 @@ import shelve as sh
 ## Codes à importer
 
 from importlib import reload
-
-###############################################################################################################
-############################### Génération de structures périodiques aléatoires ###############################
-###############################################################################################################
 
 import RSAA_2d_ray as R2d
 
@@ -173,17 +176,26 @@ pl.show()
 ############################### Calculs avec la POD, modèles réduits ; merci à Hassan GHRAIEB. ###############################
 ##############################################################################################################################
 
-#Paquets spécifiques à POD-MOR
+### Répertoire courant ###
+
+cd /home/amorea12/Documents/T_LaSIE/PassationHassan
+
+### Paquets à importer ###
+
+import numpy as np
+#import random as rd
+import pylab as pl
+from pylab import *
+#import os
+
+## Paquets spécifiques à POD-MOR ##
 
 from fenics import *
 from dolfin import *
 from mshr import *
 import matplotlib.pyplot as plt
-#import numpy as np
 from math import sqrt
 import sys
-
-
 
 #Imports divers : fonctions, objets etc
 
@@ -191,6 +203,7 @@ import sys
 #r=0.0
 ## problème à l'import : r prend la valeur index(6)
 
+from importlib import reload
 
 import DD_fun_obj as F2d
 
@@ -242,23 +255,16 @@ plt.show()
 mesh_name='mesh_'+'fixe'+'_'+str(res_fixe)
 
 rep_inc='Mesh2D'
-sys.exit("fin temporaire")
+#sys.exit("fin temporaire")
 
+c_x=0.5
+c_y=0.5
 
-
-#from DD_fun_obj import *
-
-#######################################
-# Tests pour les trois fonctions
-
-c_x=0.2
-c_y=0.1
-
-r=0.35
+r=0.30
 
 res=25
 
-#mesh_c_r=creer_maill_circ([c_x,c_y],r,res)
+#mesh_c_r=F2d.creer_maill_circ([c_x,c_y],r,res)
 
 #plot(mesh_c_r)
 #plt.show()
@@ -267,14 +273,8 @@ res=25
 ##figname='cx'+str(c_x)+'cy'+str(c_y)+'ray'+str(r)+'.png'
 ##rep='Figures2D'
 ##save_name=rep+'/'+figname
-
 ##savefig(save_name)
 
-
-
-
-# Définir : solveurEF
-## fait avec snapshot_circ_per
 
 # Famille de cellules élémentaires : 8 clichés, inclusion circulaire, paramétrée par le rayon du cercle
 
@@ -285,11 +285,11 @@ res=25
 
 D_k=1.0
 
-for i in range(7,9):#[0.111,0.211,0.316,0.423]:#,0.49]:#range(1,2):#9):#attention le rayon d'un cercle doit être non nul
- r=0.2#i*0.2
- c_x=i*0.1
- c_y=i*0.1
- u=snapshot_circ_per([c_x,c_y],r,res)
+for i in range(2,5):#[0.111,0.211,0.316,0.423]:#,0.49]:#range(1,2):#9):#attention le rayon d'un cercle doit être non nul
+ r=i*0.1
+ c_x=0.2#i*0.1
+ c_y=0.2#i*0.1
+ u=F2d.snapshot_circ_per([c_x,c_y],r,res)
  # Représentation graphique
  plot(u)
  plt.show()
@@ -325,18 +325,23 @@ for i in range(7,9):#[0.111,0.211,0.316,0.423]:#,0.49]:#range(1,2):#9):#attentio
 
 # Attention aux codes de Hassan : erreurs ... visibles sur les figures du rapport, s'il s'agit bien des snapshots extrapolés
 
-c_x=0.0
-c_y=0.0
+c_x=0.5
+c_y=0.5
 
 res=25
 
-for i in range(1,9):
- r=i*0.05
- u=snapshot_circ_per([c_x,c_y],r,res)
+for i in range(1,2):
+ r=i*0.2#05
+ u=F2d.snapshot_circ_per([c_x,c_y],r,res)
  ## chargement du snapshot pour l'indice courant
  # Extrapolation au domaine Omega_fixe : aucune inclusion, khi défini sur [0,1]times[0,1]
  u.set_allow_extrapolation(True)
  u_fixe=interpolate(u,V_fixe)##rapide
+ ## Erreur de périodicité du snapshot calculé par éléments finis
+ print('Erreur l2 absolue :',F2d.err_per_01(u,'l2',100,''))
+ print('Erreur l2 relative :',F2d.err_per_01(u,'l2',100,'rel'))
+ print('Erreur infty absolue :',F2d.err_per_01(u,'infty',100,''))
+ print('Erreur infty relative :',F2d.err_per_01(u,'infty',100,'rel'))
  #u_fixe = project(u, V_fixe)##lent
  plot(u_fixe)
  plt.show()
@@ -346,7 +351,16 @@ for i in range(1,9):
 
 #mesh_fixe = Mesh("Solutions_homog_interp_circulaire/mesh_circulaire.xml.gz")
 
+import Antoine_POD as pod
+pod = reload(pod)
+#from Antoine_POD import *
+
 # Domaine d'interpolation et matrice des snapshots
+
+c_x=0.5
+c_y=0.5
+
+res=25
 
 Nsnap=8
 
@@ -355,13 +369,25 @@ nb_noeuds = V_fixe.dim()
 
 Usnap=np.zeros((nb_noeuds,Nsnap))
 
+for n in range(1,1+Nsnap):
+ r=n*0.05
+ # Cliché sur le domaine avec inclusion
+ u=F2d.snapshot_circ_per([c_x,c_y],r,res)
+ # Extrapolation du cliché : khi prime
+ u.set_allow_extrapolation(True)
+ u_fixe=interpolate(u,V_fixe)
+ # Remplissage de la matrice des snapshots
+ Usnap[:,n-1]=u_fixe.vector().get_local()
 
+# matrice de corrélation
+C=pod.mat_corr_temp(V_fixe,Nsnap,Usnap)
 
-for i in range(0,Nsnap):
- 
+# Calcul des coefficients aléatoires et la base POD
+vp_A_phi=pod.mat_a_mat_phi(R_dim,Usnap,C)
 
-
-
+val_propres=vp_A_phi[0]
+Aleat=vp_A_phi[1]
+phi=vp_A_phi[2]
 
 
 
