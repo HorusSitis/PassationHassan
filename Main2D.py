@@ -285,15 +285,40 @@ res=25
 
 D_k=1.0
 
-for i in range(2,5):#[0.111,0.211,0.316,0.423]:#,0.49]:#range(1,2):#9):#attention le rayon d'un cercle doit être non nul
+for i in range(2,3):#[0.111,0.211,0.316,0.423]:#,0.49]:#range(1,2):#9):#attention le rayon d'un cercle doit être non nul
  r=i*0.1
- c_x=0.2#i*0.1
- c_y=0.2#i*0.1
+ c_x=0.5#i*0.1
+ c_y=0.5#i*0.1
  u=F2d.snapshot_circ_per([c_x,c_y],r,res)
  # Représentation graphique
  plot(u)
  plt.show()
  plt.close()
+ # erreurs de périodicité, point par point
+ Npas=10
+ pas=1/Npas
+ l_x_0=array([u((0,k*pas)) for k in range(0,Npas)])
+ l_x_1=array([u((1,k*pas)) for k in range(0,Npas)])
+ list_per_x=[sum((u((1,pas*k))-u((0,pas*k)))**2) for k in range(0,Npas)]
+ l_x_diff=l_x_1-l_x_0
+ El2_per_x=sqrt(sum(list_per_x)/Npas)/1.0#den[0]
+ list_0_x=[sum(u((0,pas*k))**2) for k in range(0,Npas)]
+ El2_rel_per_x=sqrt(sum(list_per_x)/Npas)/sqrt(sum(list_0_x)/Npas)
+ print('bord vertical :')
+ for k in range(0,11):
+  print(u((0,0.1*k)),u((1,0.1*k)))
+ #print('Différence en x :',l_x_diff)
+ #print('Différence et valeur quadratiques en x :',list_per_x,list_0_x)
+ #print('Différence en moyenne quadratique pour x :',El2_per_x)
+ #print('Différence relative en moyenne quadratique pour x :',El2_rel_per_x)
+ l_y_0=array([u((0.1*k,0)) for k in range(0,10)])
+ l_y_1=array([u((0.1*k,1)) for k in range(0,10)])
+ l_y_diff=l_y_1-l_y_0
+ print('bord horizontal :')
+ for k in range(0,11):
+  print(u((0.1*k,0)),u((0.1*k,1)))
+ #print('Différence en y :',l_y_diff)
+ ##
  # Extrapolation au domaine entier : [0,1]^2
  #u_fixe=u
  u.set_allow_extrapolation(True)
@@ -383,7 +408,7 @@ for n in range(1,1+Nsnap):
 C=pod.mat_corr_temp(V_fixe,Nsnap,Usnap)
 
 # Calcul des coefficients aléatoires et la base POD
-vp_A_phi=pod.mat_a_mat_phi(R_dim,Usnap,C)
+vp_A_phi=pod.mat_a_mat_phi(Nsnap,Usnap,C)
 
 val_propres=vp_A_phi[0]
 Aleat=vp_A_phi[1]
