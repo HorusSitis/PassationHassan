@@ -187,6 +187,7 @@ import numpy as np
 import pylab as pl
 from pylab import *
 #import os
+import multiprocessing
 
 ## Paquets spécifiques à POD-MOR ##
 
@@ -234,8 +235,14 @@ class PeriodicBoundary(SubDomain):
  # Map right boundary (H) to left boundary (G)
  def map(self, x, y):
   if (near(x[0],xsup,tol)):
-   y[0] = x[0] - 1.0
-   y[1] = x[1]              
+   # pour le coin supérieur droit : cohérence avec x[1] == 1.0
+   if (near(x[1],ysup,tol)):
+    y[0] = x[0] - 1.0
+    y[1] = x[1] - 1.0
+   # pour le reste du bord droit
+   else:
+    y[0] = x[0] - 1.0
+    y[1] = x[1]              
   else :
    y[0]=x[0]
    y[1] = x[1] - 1.0
@@ -257,25 +264,6 @@ mesh_name='mesh_'+'fixe'+'_'+str(res_fixe)
 rep_inc='Mesh2D'
 #sys.exit("fin temporaire")
 
-c_x=0.5
-c_y=0.5
-
-r=0.30
-
-res=25
-
-#mesh_c_r=F2d.creer_maill_circ([c_x,c_y],r,res)
-
-#plot(mesh_c_r)
-#plt.show()
-#plt.close()
-
-##figname='cx'+str(c_x)+'cy'+str(c_y)+'ray'+str(r)+'.png'
-##rep='Figures2D'
-##save_name=rep+'/'+figname
-##savefig(save_name)
-
-
 # Famille de cellules élémentaires : 8 clichés, inclusion circulaire, paramétrée par le rayon du cercle
 
 c_x=0.5
@@ -284,6 +272,8 @@ c_y=0.5
 res=25
 
 D_k=1.0
+
+Npas=5
 
 for i in range(2,3):#[0.111,0.211,0.316,0.423]:#,0.49]:#range(1,2):#9):#attention le rayon d'un cercle doit être non nul
  r=i*0.1
@@ -295,7 +285,6 @@ for i in range(2,3):#[0.111,0.211,0.316,0.423]:#,0.49]:#range(1,2):#9):#attentio
  plt.show()
  plt.close()
  # erreurs de périodicité, point par point
- Npas=10
  pas=1/Npas
  l_x_0=array([u((0,k*pas)) for k in range(0,Npas)])
  l_x_1=array([u((1,k*pas)) for k in range(0,Npas)])
@@ -305,8 +294,8 @@ for i in range(2,3):#[0.111,0.211,0.316,0.423]:#,0.49]:#range(1,2):#9):#attentio
  list_0_x=[sum(u((0,pas*k))**2) for k in range(0,Npas)]
  El2_rel_per_x=sqrt(sum(list_per_x)/Npas)/sqrt(sum(list_0_x)/Npas)
  print('bord vertical :')
- for k in range(0,11):
-  print(u((0,0.1*k)),u((1,0.1*k)))
+ for k in range(0,1+Npas):
+  print(u((0,pas*k)),u((1,pas*k)))
  #print('Différence en x :',l_x_diff)
  #print('Différence et valeur quadratiques en x :',list_per_x,list_0_x)
  #print('Différence en moyenne quadratique pour x :',El2_per_x)
@@ -315,8 +304,8 @@ for i in range(2,3):#[0.111,0.211,0.316,0.423]:#,0.49]:#range(1,2):#9):#attentio
  l_y_1=array([u((0.1*k,1)) for k in range(0,10)])
  l_y_diff=l_y_1-l_y_0
  print('bord horizontal :')
- for k in range(0,11):
-  print(u((0.1*k,0)),u((0.1*k,1)))
+ for k in range(0,1+Npas):
+  print(u((pas*k,0)),u((pas*k,1)))
  #print('Différence en y :',l_y_diff)
  ##
  # Extrapolation au domaine entier : [0,1]^2
@@ -394,20 +383,42 @@ nb_noeuds = V_fixe.dim()
 
 Usnap=np.zeros((nb_noeuds,Nsnap))
 
-for n in range(1,1+Nsnap):
+def inter_snap_ray(n):
  r=n*0.05
  # Cliché sur le domaine avec inclusion
  u=F2d.snapshot_circ_per([c_x,c_y],r,res)
  # Extrapolation du cliché : khi prime
  u.set_allow_extrapolation(True)
  u_fixe=interpolate(u,V_fixe)
+ # Forme vectorielle de la solution EF
+ u_fixe_v=u_fixe.vector().get_local()
+ return([n,u_fixe_v])#[n,u_fixe])
+
+# Génération séquentielle des snapshots
+
+for n in range(1,1+Nsnap):
+ u_fixe_v=inter_snap_ray(n)[1]
  # Remplissage de la matrice des snapshots
- Usnap[:,n-1]=u_fixe.vector().get_local()
+ Usnap[:,n-1]=u_fixe_v#.vector().get_local()
+
+# Génération parallèle des snapshots
+
+pool=multiprocessing.Pool(processes=8)
+
+Uf_par=pool.map(inter_snap_ray,(n for n in range(1,1+Nsnap)))
+
+for n in range(1,1+Nsnap):
+ for i in range(0,Nsnap):
+  if Uf_par[i][0]==n:
+   u_fixe_v=Uf_par[i][1]
+   Usnap[:,n-1]=u_fixe_v#.vector().get_local()
 
 # matrice de corrélation
+
 C=pod.mat_corr_temp(V_fixe,Nsnap,Usnap)
 
 # Calcul des coefficients aléatoires et la base POD
+
 vp_A_phi=pod.mat_a_mat_phi(Nsnap,Usnap,C)
 
 val_propres=vp_A_phi[0]
