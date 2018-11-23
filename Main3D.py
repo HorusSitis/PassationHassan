@@ -159,13 +159,14 @@ def inter_snap_ray(n):
  # Extrapolation du cliché : khi prime
  u.set_allow_extrapolation(True)
  u_fixe=interpolate(u,V_fixe)
- ## Remplissage de la matrice des snapshots
- #Usnap[:,n-1]=u_fixe.vector().get_local()
- return([n,u_fixe])
+ # Forme vectorielle de la solution EF
+ u_fixe_v=u_fixe.vector().get_local()
+ return([n,u_fixe_v])
 
 # Remplissage séquentiel de la matrice des snapshots
 for n in range(1,1+Nsnap):
  u_fixe=inter_snap_ray(n)[1]
+ # Remplissage de la matrice des snapshots
  Usnap[:,n-1]=u_fixe.vector().get_local()
 
 # Remplissage paralèle de la matrice des snapshots
@@ -176,8 +177,8 @@ Uf_par=pool.map(inter_snap_ray,(n for n in range(1,1+Nsnap)))
 for n in range(1,1+Nsnap):
  for i in range(0,Nsnap):
   if Uf_par[i][0]==n:
-   u_fixe=Uf_par[i][1]
-   Usnap[:,n]=u_fixe.vector().get_local()
+   u_fixe_v=Uf_par[i][1]
+   Usnap[:,n-1]=u_fixe_v#.vector().get_local()
 
 # matrice de corrélation
 C=pod.mat_corr_temp(V_fixe,Nsnap,Usnap)
