@@ -242,7 +242,8 @@ class PeriodicBoundary(SubDomain):
    # pour le reste du bord droit
    else:
     y[0] = x[0] - 1.0
-    y[1] = x[1]              
+    y[1] = x[1]   
+  elif            
   else :
    y[0]=x[0]
    y[1] = x[1] - 1.0
@@ -274,15 +275,15 @@ res=25
 
 D_k=1.0
 
-Npas=10
+Npas=4
 
-l_err_abs=[]
-l_err_rel=[]
+#l_err_abs=[]
+#l_err_rel=[]
 
 for i in range(1,6):#[0.111,0.211,0.316,0.423]:#,0.49]:#range(1,2):#9):#attention le rayon d'un cercle doit être non nul
  r=i*0.05
- c_x=0.2#i*0.1
- c_y=0.2#i*0.1
+ c_x=0.5#i*0.1
+ c_y=0.5#i*0.1
  u=F2d.snapshot_circ_per([c_x,c_y],r,res)
  # Représentation graphique
  #plot(u)
@@ -297,9 +298,6 @@ for i in range(1,6):#[0.111,0.211,0.316,0.423]:#,0.49]:#range(1,2):#9):#attentio
  #El2_per_x=sqrt(sum(list_per_x)/Npas)/1.0#den[0]
  #list_0_x=[sum(u((0,pas*k))**2) for k in range(0,Npas)]
  #El2_rel_per_x=sqrt(sum(list_per_x)/Npas)/sqrt(sum(list_0_x)/Npas)
- #print('khi au bord vertical :')
- #for k in range(0,1+Npas):
-  #print(u((0,pas*k)),u((1,pas*k)))
  #print('Différence en x :',l_x_diff)
  #print('Différence et valeur quadratiques en x :',list_per_x,list_0_x)
  #print('Différence en moyenne quadratique pour x :',El2_per_x)
@@ -307,9 +305,6 @@ for i in range(1,6):#[0.111,0.211,0.316,0.423]:#,0.49]:#range(1,2):#9):#attentio
  #l_y_0=array([u((0.1*k,0)) for k in range(0,10)])
  #l_y_1=array([u((0.1*k,1)) for k in range(0,10)])
  #l_y_diff=l_y_1-l_y_0
- #print('khi au bord horizontal :')
- #for k in range(0,1+Npas):
-  #print(u((pas*k,0)),u((pas*k,1)))
  #print('Différence en y :',l_y_diff)
  ##
  ### Extrapolation au domaine entier : [0,1]^2 ###
@@ -321,22 +316,28 @@ for i in range(1,6):#[0.111,0.211,0.316,0.423]:#,0.49]:#range(1,2):#9):#attentio
  #plt.show()
  #plt.close()
  # Périodicité
+ print('khiprime au bord vertical :')
+ for k in range(0,1+Npas):
+  print(u_fixe((0,pas*k)),u_fixe((1,pas*k)))
+ print('khiprime au bord horizontal :')
+ for k in range(0,1+Npas):
+  print(u_fixe((pas*k,0)),u_fixe((pas*k,1)))
  #print('u',err_per_01(u,'l2',100,'rel'))
  #print('ufixe',err_per_01(u_fixe,'l2',100,'rel'))
  # Erreur d'interpolation
  u_mat=np.zeros((1+Npas,1+Npas))
  u_diff=np.zeros((1+Npas,1+Npas))
- for k in range(0,1+Npas):
-  for l in range(0,1+Npas):
-   u_diff[k,l]=sum([x**2 for x in u((pas*k,pas*l))])-sum([x**2 for x in u_fixe((pas*k,pas*l))])
-   u_mat[k,l]=sum([x**2 for x in u((pas*k,pas*l))])
- u_arr=np.reshape(u_mat,(1+Npas)*(1+Npas))
- u_diff_ligne=np.reshape(u_diff,(1+Npas)*(1+Npas))
- u_rel_ligne=u_diff_ligne/u_arr
- diff_unif=max(u_diff_ligne)
- err_u_rel=max(u_rel_ligne)#diff_unif/u_min_unif
- l_err_abs.append(('rayon',r,'abs',diff_unif))
- l_err_rel.append(('rayon',r,'erreur relative maximum',err_u_rel))
+ #for k in range(0,1+Npas):
+ # for l in range(0,1+Npas):
+ #  u_diff[k,l]=sum([x**2 for x in u((pas*k,pas*l))])-sum([x**2 for x in u_fixe((pas*k,pas*l))])
+ #  u_mat[k,l]=sum([x**2 for x in u((pas*k,pas*l))])
+ #u_arr=np.reshape(u_mat,(1+Npas)*(1+Npas))
+ #u_diff_ligne=np.reshape(u_diff,(1+Npas)*(1+Npas))
+ #u_rel_ligne=u_diff_ligne/u_arr
+ #diff_unif=max(u_diff_ligne)
+ #err_u_rel=max(u_rel_ligne)#diff_unif/u_min_unif
+ #l_err_abs.append(('rayon',r,'abs',diff_unif))
+ #l_err_rel.append(('rayon',r,'erreur relative maximum',err_u_rel))
  #print('erreur interpolation',diff_unif)
  #print('erreur relative interpolation',err_u_rel)
  #print('centre de la cellule',u((0.5,0.5)),u_fixe((0.5,0.5)))

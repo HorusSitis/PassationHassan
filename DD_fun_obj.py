@@ -30,25 +30,19 @@ class PeriodicBoundary(SubDomain):
  # Map right boundary (H) to left boundary (G)
  def map(self, x, y):
   if (near(x[0],xsup,tol)):
-   y[0] = x[0] - 1.0
-   y[1] = x[1]              
-  else :
+   # pour le coin supérieur droit : cohérence avec x[1] == 1.0
+   if (near(x[1],ysup,tol)):
+    y[0] = x[0] - 1.0
+    y[1] = x[1] - 1.0
+   # pour le reste du bord droit
+   else:
+    y[0] = x[0] - 1.0
+    y[1] = x[1]              
+  elif (near(x[1],ysup,tol)) :
    y[0]=x[0]
    y[1] = x[1] - 1.0
 
-
-
-
-
-
-
-
-
 ############################# Pour créer des maillages, avec des familles de cellules élémentaires #############################
-
-
-
-
 
 def raffinement_maillage_cellule_centree(r,mesh):# Cellule centrée : un seul paramètre géométrique, le rayon de l'inclusion. 1.2*r<0.5 exigé.
  markers = MeshFunction("bool", mesh, mesh.topology().dim())
