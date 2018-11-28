@@ -228,25 +228,19 @@ ysup=1.0
 
 #determiner le domaine fixe pour interpoler la solution
 
+dimension=2
+
 class PeriodicBoundary(SubDomain):
  # Left boundary is "target domain" G
  def inside(self, x, on_boundary):
-  return on_boundary and (near(x[0],xinf,tol) or near(x[1],yinf,tol))
+  return on_boundary and not(near(x[0],xsup,tol) or near(x[1],ysup,tol))## merci à Arnold Douglas
  # Map right boundary (H) to left boundary (G)
  def map(self, x, y):
-  if (near(x[0],xsup,tol)):
-   # pour le coin supérieur droit : cohérence avec x[1] == 1.0
-   if (near(x[1],ysup,tol)):
-    y[0] = x[0] - 1.0
-    y[1] = x[1] - 1.0
-   # pour le reste du bord droit
+  for i in range(dimension):
+   if near(x[i],1.0,tol):
+    y[i]=0.0
    else:
-    y[0] = x[0] - 1.0
-    y[1] = x[1]   
-  elif            
-  else :
-   y[0]=x[0]
-   y[1] = x[1] - 1.0
+    y[i]=x[i]
 
 res_fixe=30#résolution du maillage sans obstacle
 
@@ -282,8 +276,8 @@ Npas=4
 
 for i in range(1,6):#[0.111,0.211,0.316,0.423]:#,0.49]:#range(1,2):#9):#attention le rayon d'un cercle doit être non nul
  r=i*0.05
- c_x=0.5#i*0.1
- c_y=0.5#i*0.1
+ c_x=0.2#i*0.1
+ c_y=0.2#i*0.1
  u=F2d.snapshot_circ_per([c_x,c_y],r,res)
  # Représentation graphique
  #plot(u)
