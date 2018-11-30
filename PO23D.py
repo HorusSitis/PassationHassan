@@ -57,7 +57,7 @@ def mat_a_mat_phi(num_steps,U,C,V,base_POD_normee):
  phi=Function(V)
  if base_POD_normee=='n_2' :
   for i in range(num_steps):
-   phi_prime_i=Phi_prime_v[:,i]
+   phi_prime_i=Phi_prime[:,i]
    norme_q=0
    l=len(phi_prime_i)
    for k in range(l):
@@ -66,9 +66,10 @@ def mat_a_mat_phi(num_steps,U,C,V,base_POD_normee):
    print(norme_2)
    phi_prime_i=phi_prime_i/norme_2
  elif base_POD_normee=='L2':
-  phi.vector().set_local(Phi_prime_v[:,i])
-  scal=assemble(dot(phi,phi)*dx)
-  norme_L2=sqrt(scal)
- Phi_prime_v[:,i]=Phi_prime_v[:,i]*(1.0/norme_L2)
+  for i in range(num_steps):
+   phi.vector().set_local(Phi_prime[:,i])
+   scal=assemble(dot(phi,phi)*dx)
+   norme_L2=sqrt(scal)
+   Phi_prime[:,i]=Phi_prime[:,i]*(1.0/norme_L2)
  ## Résultats : valeurs propres ... ordre ? ; matrice de coefficients aléatoires A et base POD Phi_prime
  return [valp,A,Phi_prime]
