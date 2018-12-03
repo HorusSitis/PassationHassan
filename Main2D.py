@@ -404,6 +404,7 @@ Phi_prime_v=vp_A_phi[2]
 ui=Function(V_fixe)
 uj=Function(V_fixe)
 
+## Orthogonalité
 for i in range(Nsnap-1):
  ui.vector().set_local(Phi_prime_v[:,i])
  for j in range(i+1,Nsnap):
@@ -411,6 +412,7 @@ for i in range(Nsnap-1):
   scal=assemble(dot(ui,uj)*dx)
   print(scal)
 
+## Norme des vacteurs dela base POD, L2 ou n2
 for i in range(Nsnap):
  ui.vector().set_local(Phi_prime_v[:,i])
  scal=assemble(dot(ui,ui)*dx)
@@ -437,10 +439,50 @@ for i in range(Nsnap):
  plt.show()
  plt.close()
 
+# Energie et énergie cumulée des modes spatiaux, choix du nombre de modes
 
-## Etape IV : Prédictions ##
+## Energie et énergie cumulée, avec les valeurs propres de la matrice de corrélation temporelle
+ener_pour=pod.energie_pourcentage(val_propres)[0]
+ener_pour_cumul=pod.energie_pourcentage(val_propres)[1]
 
-# SE1 : ... #
+absc=np.arange(1,Nsnap+1,1)
+
+plt.plot(absc,ener_pour)
+plt.xlabel('valeurs propres')
+plt.ylabel('pourcentage_energie')
+plt.show()
+
+plt.plot(absc,ener_pour_cumul)
+plt.xlabel('valeurs propres')
+plt.ylabel('pourcentage_energie_cumule')
+plt.show()
+
+## Choix du nombre de modes, avec une valeur seuil d'énergie à atteindre avec les vacteurs de la base POD
+nb_modes=0
+
+seuil_ener=99.999
+
+i=0
+while ener_pour_cumul[i]<seuil_ener:
+ nb_modes=i+1
+ i+=1
+
+### 8 snapshots : 4 modes pour un seuil de 99.9%
+### 8 snapshots : 7 modes pour un seuil de 99,999%
+
+#################################################################################################
+## Etape IV : Prédictions. Choisir les paramètres du problème à résoudre par le modèle réduit. ##
+#################################################################################################
+
+c_x=
+c_y=
+r=
+
+# SE1 : projection de la base POD sur le nouveau domaine #
+
+
+
+
 
 ## etc ##
 

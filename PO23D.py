@@ -73,3 +73,29 @@ def mat_a_mat_phi(num_steps,U,C,V,base_POD_normee):
    Phi_prime[:,i]=Phi_prime[:,i]*(1.0/norme_L2)
  ## Résultats : valeurs propres ... ordre ? ; matrice de coefficients aléatoires A et base POD Phi_prime
  return [valp,A,Phi_prime]
+
+##########################################################################################
+##################### Energie et énergie cumulée des valeurs propres #####################
+##########################################################################################
+
+def energie_pourcentage(vp):
+ R_dim=len(vp)
+ s_t=0
+ ener_pour=np.zeros((R_dim))
+ ener_pour_cumul=np.zeros((R_dim))
+ for k in range(R_dim):
+  s_t=s_t+vp[k]
+ for i in range(R_dim):
+  s=vp[i]
+  s_n=0
+  for j in range(i+1):
+   s_n=s_n+vp[j]
+   ener_pour[i]=(s/s_t)*100
+   ener_pour_cumul[i]=(s_n/s_t)*100
+ return([ener_pour,ener_pour_cumul])
+
+
+
+
+
+
