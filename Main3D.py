@@ -2,9 +2,9 @@
 
 etape='EIII'
 # 'E0' à 'EIV' #
-res_fixe=15
+res_fixe=20
 fixe_aff=True
-res=15
+res=20
 Nsnap=8
 rempUsnap='par8'#'seq'
 #c_x, c_y, c_z = 0.5, 0.5, 0.5
@@ -51,24 +51,19 @@ zsup=1.0
 
 #determiner le domaine fixe pour interpoler la solution
 
+dimension=3
+
 class PeriodicBoundary(SubDomain):
  # Left boundary is "target domain" G
  def inside(self, x, on_boundary):
-  return on_boundary and (near(x[0],xinf,tol) or near(x[1],yinf,tol) or near(x[2],zinf,tol))
+  return on_boundary and not(near(x[0],xsup,tol) or near(x[1],ysup,tol) or near(x[2],zsup,tol))
  # Map right boundary (H) to left boundary (G)
  def map(self, x, y):
-  if (near(x[0],xsup,tol)):
-   y[0] = x[0] - 1.0
-   y[1] = x[1]
-   y[2] = x[2]        
-  elif (near(x[0],xsup,tol)):
-   y[0] = x[0]
-   y[1] = x[1] - 1.0
-   y[2] = x[2]
-  else:
-   y[0] = x[0]
-   y[1] = x[1]
-   y[2] = x[2] - 1.0
+  for i in range(dimension):
+   if near(x[i],1.0,tol):
+    y[i]=0.0
+   else:
+    y[i]=x[i]
 
 ### Maillage sur le domaine Omega_fixe : aucune inclusion, porosité égale à 1 ###
 
@@ -186,7 +181,6 @@ elif etape=='EIII':
    Usnap[:,n-1]=u_fixe.vector().get_local()
  ## Remplissage parallèle de la matrice des snapshots
  elif rempUsnap=='par8':
-  print('par')
   pool=multiprocessing.Pool(processes=8)
   #
   Uf_par=pool.map(inter_snap_ray,(n for n in range(1,1+Nsnap)))
@@ -207,6 +201,7 @@ elif etape=='EIII':
  Aleat=vp_A_phi[1]
  phi=vp_A_phi[2]
  print(val_propres)
+ #res, res_fixe=20 : énergie [71%, 24%, 5%, 0.37%, 0.058%, 0%, 0%, 0%] 
  print('Etape III- faite')
 ### Etape IV- : modèles réduits, comparaison avec la méthode des éléments finis ###
 elif etape=='EIV':

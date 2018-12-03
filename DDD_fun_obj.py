@@ -18,24 +18,19 @@ zsup=1.0
 
 ############################# Une classe de sous domaines pour tous les calculs : structure périodique avec répétition de la cellule élémentaire #############################
 
+dimension=3
+
 class PeriodicBoundary(SubDomain):
  # Left boundary is "target domain" G
  def inside(self, x, on_boundary):
-  return on_boundary and (near(x[0],xinf,tol) or near(x[1],yinf,tol) or near(x[2],zinf,tol))
+  return on_boundary and not(near(x[0],xsup,tol) or near(x[1],ysup,tol) or near(x[2],zsup,tol))
  # Map right boundary (H) to left boundary (G)
  def map(self, x, y):
-  if (near(x[0],xsup,tol)):
-   y[0] = x[0] - 1.0
-   y[1] = x[1]
-   y[2] = x[2]        
-  elif (near(x[0],xsup,tol)):
-   y[0] = x[0]
-   y[1] = x[1] - 1.0
-   y[2] = x[2]
-  else:
-   y[0] = x[0]
-   y[1] = x[1]
-   y[2] = x[2] - 1.0
+  for i in range(dimension):
+   if near(x[i],1.0,tol):
+    y[i]=0.0
+   else:
+    y[i]=x[i]
 
 ############################# Pour créer des maillages, avec des familles de cellules élémentaires #############################
 
@@ -67,7 +62,7 @@ def creer_maill_sph(cen,r,res):#valable quel que soit la position de l'inclusion
   #mesh_aux=raffinement_maillage_cellule_centree(r,mesh)
   mesh_aux=raffinement_maillage_sph_per(cen,r,mesh)
   mesh=mesh_aux
-  print('pfffrrh !')
+  #print('pfffrrh !')
  else:
   # Création de la cellule élémentaire avec inclusion
   box=Box(Point(-1,-1,-1),Point(2,2,2))
@@ -113,9 +108,10 @@ def snapshot_sph_per(cen,r,res):
  Gamma_sf.mark(boundaries, 5)
  ds = Measure("ds")(subdomain_data=boundaries)
  num_front_sphere=5
- ## On résoud le problème en fixant les condisions aux limites
+ ## On fixe une condition de Dirichlet, pour avoir l'unicité du tenseur khi : non nécessaire pour le tenseur de difusion homogénéisé
  khi_bord=Constant((0., 0., 0.))
  bc = DirichletBC(V, khi_bord, "x[0] < DOLFIN_EPS && x[1] < DOLFIN_EPS && x[2] < DOLFIN_EPS", "pointwise")
+ ## On résoud le problème faible, avec une condition de type Neumann au bord de l'obstacle
  normale = FacetNormal(mesh_c_r)
  nb_noeuds=V.dim()
  u = TrialFunction(V)
