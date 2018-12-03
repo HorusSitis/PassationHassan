@@ -89,7 +89,7 @@ def creer_maill_circ(cen,r,res):#valable quel que soit la position de l'inclusio
    for j in range(-1,2):
     l_cer.append(Circle(Point(cen[0]+i,cen[1]+j),r)) 
   print(len(l_cer))
-  for cer_per in l_cer:#[Circle(Point(cen[0],cen[1]),r)]:#l_cer:
+  for cer_per in l_cer:
    domain=domain-cer_per
   domain=domain*Rectangle(Point(0,0),Point(1,1))
   # Création du permier maillage
@@ -99,7 +99,6 @@ def creer_maill_circ(cen,r,res):#valable quel que soit la position de l'inclusio
   mesh=mesh_aux
   #
  return(mesh)
-
 
 ############################# Pour créer des snapshots, inclusion circulaire périodique unique #############################
 
@@ -125,9 +124,10 @@ def snapshot_circ_per(cen,r,res):
  Gamma_sf.mark(boundaries, 5)
  ds = Measure("ds")(subdomain_data=boundaries)
  num_front_cercle=5
- ## On résoud le problème en fixant les condisions aux limites
+ ## On fixe une condition de Dirichlet, pour avoir l'unicité du tenseur khi : non nécessaire pour le tenseur de diffusion homogénéisé
  khi_bord=Constant((0., 0.))
  bc = DirichletBC(V, khi_bord, "x[0] < DOLFIN_EPS && x[1] < DOLFIN_EPS", "pointwise")
+ ## On résoud le problème faible, avec une condition de type Neumann au bord de l'obstacle
  normale = FacetNormal(mesh_c_r)
  nb_noeuds=V.dim()
  u = TrialFunction(V)
@@ -142,7 +142,7 @@ def snapshot_circ_per(cen,r,res):
 
 ############################# Pour tester la périodicité d'un champ en norme l2 ou infinie : erreur relative #############################
 
-def err_per_01(u,norm,Npas,type_err):
+def err_per_sum_01(u,norm,Npas,type_err):
  pas=1/Npas
  # Périodicité
  ## Essais avec assemble() ou .vector().get_local()
@@ -173,6 +173,15 @@ def err_per_01(u,norm,Npas,type_err):
   Einfty_per_y=sqrt(max(list_per_y))/den[1]
   return((Einfty_per_x,Einfty_per_y))
 
-
-
-
+def err_per_ind_01(u,Npas):
+ pas=1/Npas
+ #l_x_0=array([u(0.0,k*pas for k in range(0,Npas)])
+ #l_x_1=array([u(1.0,k*pas for k in range(0,Npas)])
+ #l_x_diff=)l_x_1-l_x_0
+ print('Bord vertical :')
+ for k in range(0,1+Npas):
+  print(u((0.0,pas*k)),u((1.0,pas*k)))
+ print('Bord horizontal :')
+ for k in range(0,1+Npas):
+  print(u((pas*k,0.0)),u((pas*k,1.0)))
+ return()
