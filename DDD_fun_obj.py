@@ -24,7 +24,7 @@ class PeriodicBoundary(SubDomain):
  # Left boundary is "target domain" G
  def inside(self, x, on_boundary):
   return on_boundary and not(near(x[0],xsup,tol) or near(x[1],ysup,tol) or near(x[2],zsup,tol))
- # Map right boundary (H) to left boundary (G)
+ # Map right boundary (R) to left boundary (G), top to bottom, back to front
  def map(self, x, y):
   for i in range(dimension):
    if near(x[i],1.0,tol):
@@ -108,7 +108,7 @@ def snapshot_sph_per(cen,r,res):
  Gamma_sf.mark(boundaries, 5)
  ds = Measure("ds")(subdomain_data=boundaries)
  num_front_sphere=5
- ## On fixe une condition de Dirichlet, pour avoir l'unicité du tenseur khi : non nécessaire pour le tenseur de difusion homogénéisé
+ ## On fixe une condition de Dirichlet, pour avoir l'unicité du tenseur khi : non nécessaire pour le tenseur de diffusion homogénéisé
  khi_bord=Constant((0., 0., 0.))
  bc = DirichletBC(V, khi_bord, "x[0] < DOLFIN_EPS && x[1] < DOLFIN_EPS && x[2] < DOLFIN_EPS", "pointwise")
  ## On résoud le problème faible, avec une condition de type Neumann au bord de l'obstacle
@@ -159,6 +159,19 @@ def err_per_01(u,norm,Npas,type_err):
   Einfty_per_y=sqrt(max(list_per_y))/den[1]
   return((Einfty_per_x,Einfty_per_y))
 
-
-
+def err_per_ind_01(u,Npas):# comparaison entre les valeurs individuelles prises par khi aux frontières de la cellule
+ pas=1/Npas
+ print('Plan frontal Oxz :')
+ for k in range(0,1+Npas):
+  for l in range(0,1+Npas):
+   print('x='+str(pas*k),'z='+str(pas*l),u((pas*k,0.0,pas*l)),u((pas*k,1.0,pas*l)))
+ print('Plan horizontal Oxy :')
+ for k in range(0,1+Npas):
+  for l in range(0,1+Npas):
+   print('x='+str(pas*k),'y='+str(pas*l),u((pas*k,pas*l,0.0)),u((pas*k,pas*l,1.0)))
+ print('Plan latéral Oyz :')
+ for k in range(0,1+Npas):
+  for l in range(0,1+Npas):
+   print('y='+str(pas*k),'z='+str(pas*l),u((0.0,pas*k,pas*l)),u((1.0,pas*k,pas*l)))
+ return()
 

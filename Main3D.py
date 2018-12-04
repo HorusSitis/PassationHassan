@@ -1,13 +1,13 @@
 ### Code à lire : conditions ###
 
-etape='EIII'
+etape='EII'
 # 'E0' à 'EIV' #
-res_fixe=20
+res_fixe=12
 fixe_aff=True
-res=20
+res=12
 Nsnap=8
 rempUsnap='par8'#'seq'
-#c_x, c_y, c_z = 0.5, 0.5, 0.5
+c_x, c_y, c_z = 0.5, 0.5, 0.5
 
 ### Répertoire courant ###
 
@@ -86,9 +86,9 @@ if etape=='E0':
 # Utilise fenics, éventuellement augmenté par dolfin #
 elif etape=='EI':
 #
- c_x=0.5
- c_y=0.5
- c_z=0.5
+ #c_x=0.5
+ #c_y=0.5
+ #c_z=0.5
  #
  r=0.3
  #
@@ -120,20 +120,21 @@ elif etape=='EI':
 ## Attention aux codes de Hassan : erreurs ... visibles sur les figures du rapport, s'il s'agit bien des snapshots extrapolés
 elif etape=='EII':
  #
- c_x=0.5
- c_y=0.5
- c_z=0.5
+ #c_x=0.5
+ #c_y=0.5
+ #c_z=0.5
  #
  #res=15
  #
  for i in range(1,2):
-  r=i*0.2#05
+  r=i*0.35#05
   u=snapshot_sph_per([c_x,c_y,c_z],r,res)
   ## chargement du snapshot pour l'indice courant
   # Extrapolation au domaine Omega_fixe : aucune inclusion, khi défini sur [0,1]times[0,1]
   u.set_allow_extrapolation(True)
   u_fixe=interpolate(u,V_fixe)##rapide
-  u_fixe = project(u, V_fixe)##lent
+  #u_fixe = project(u, V_fixe)##lent
+  err_per_ind_01(u,5)#u_fixe,5)
   plot(u_fixe)
   plt.show()
   plt.close()
