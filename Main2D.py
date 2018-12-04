@@ -208,7 +208,7 @@ from importlib import reload
 
 import DD_fun_obj as F2d
 
-F2d=reload(F2d)
+#F2d=reload(F2d)
 
 ### Codes éxécutés : cas d'une inclusion circulaire, le rayon du disque central est le paramètre pour la POD ###
 
@@ -258,25 +258,59 @@ plt.close()
 
 # Famille de cellules élémentaires : 8 clichés, inclusion circulaire, paramétrée par le rayon du cercle
 
-c_x=0.5
-c_y=0.5
+c_x=0.3
+c_y=0.1
 
 res=25
 
+for i in range(7,10):
+ r=i*0.05
+ #c_x=0.5
+ #c_y=0.5
+ mesh=F2d.creer_maill_circ([c_x,c_y],r,res)
+ dolfin.common.plotting.plot(mesh)#,wireframe=True,interactive=False,scalarbar=True,title="Maillage fin, rayon "+str(r)+" et centre "+str(c_x)+","+str(c_y))
+ colorbar
+ plt.show()
+ plt.close()
+
+
+dolfin.common.plotting.plot(u,
+     wireframe = True,              # use wireframe rendering
+     interactive = False,           # do not hold plot on screen
+     #scalarbar = False,             # hide the color mapping bar
+     hardcopy_prefix = "myplot",    # default plotfile name
+     #scale = 2.0,                   # scale the warping/glyphs
+     title = "Fancy plot"           # Set your own title
+     )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 D_k=1.0
 
-Npas=4
+Npas=8
 
 #l_err_abs=[]
 #l_err_rel=[]
 
-for i in range(1,8):#[0.111,0.211,0.316,0.423]:#,0.49]:#range(1,2):#9):#attention le rayon d'un cercle doit être non nul
+for i in range(1,1+Npas):#[0.111,0.211,0.316,0.423]:#,0.49]:#range(1,2):#9):#attention le rayon d'un cercle doit être non nul
  r=i*0.05
  c_x=0.5#i*0.1
  c_y=0.5#i*0.1
  u=F2d.snapshot_circ_per([c_x,c_y],r,res)
  # Représentation graphique
- plot(u)
+ plot(u,title="Solution du domaine composite, rayon "+str(r)+" et centre "+str(c_x)+","+str(c_y))
+ #interactive()
  plt.show()
  plt.close()
  ##
@@ -302,25 +336,30 @@ for i in range(1,8):#[0.111,0.211,0.316,0.423]:#,0.49]:#range(1,2):#9):#attentio
 
 # Attention aux codes de Hassan : erreurs ... visibles sur les figures du rapport, s'il s'agit bien des snapshots extrapolés
 
-c_x=0.5
-c_y=0.5
+c_x=0.0
+c_y=0.0
 
 res=25
 
-for i in range(1,2):
- r=i*0.2#05
+Npas=8
+
+for i in range(1,1+Npas):
+ r=i*0.05#2#05
  u=F2d.snapshot_circ_per([c_x,c_y],r,res)
  ## chargement du snapshot pour l'indice courant
  # Extrapolation au domaine Omega_fixe : aucune inclusion, khi défini sur [0,1]times[0,1]
  u.set_allow_extrapolation(True)
  u_fixe=interpolate(u,V_fixe)##rapide
  ## Erreur de périodicité du snapshot calculé par éléments finis
- print('Erreur l2 absolue :',F2d.err_per_01(u,'l2',100,''))
- print('Erreur l2 relative :',F2d.err_per_01(u,'l2',100,'rel'))
- print('Erreur infty absolue :',F2d.err_per_01(u,'infty',100,''))
- print('Erreur infty relative :',F2d.err_per_01(u,'infty',100,'rel'))
+ #print('Erreur l2 absolue :',F2d.err_per_sum_01(u,'l2',100,''))
+ #print('Erreur l2 relative :',F2d.err_per_sum_01(u,'l2',100,'rel'))
+ #print('Erreur infty absolue :',F2d.err_per_sum_01(u,'infty',100,''))
+ #print('Erreur infty relative :',F2d.err_per_sum_01(u,'infty',100,'rel'))
+ print("Erreur de la solution interpolée :") 
+ F2d.err_per_ind_01(u_fixe,Npas)
+ ##
  #u_fixe = project(u, V_fixe)##lent
- plot(u_fixe)
+ plot(u_fixe,title="Solution extra, rayon "+str(r)+" et centre "+str(c_x)+","+str(c_y),scalarbar=True)
  plt.show()
  plt.close()
 
@@ -391,7 +430,7 @@ C=pod.mat_corr_temp(V_fixe,Nsnap,Usnap)
 
 # Calcul des coefficients aléatoires et la base POD
 
-vp_A_phi=pod.mat_a_mat_phi(Nsnap,Usnap,C,V_fixe,'n2')
+#vp_A_phi=pod.mat_a_mat_phi(Nsnap,Usnap,C,V_fixe,'n2')
 vp_A_phi=pod.mat_a_mat_phi(Nsnap,Usnap,C,V_fixe,'L2')
 #vp_A_phi=pod.mat_a_mat_phi(Nsnap,Usnap,C,'')
 
@@ -468,26 +507,50 @@ while ener_pour_cumul[i]<seuil_ener:
  i+=1
 
 ### 8 snapshots : 4 modes pour un seuil de 99.9%
-### 8 snapshots : 7 modes pour un seuil de 99,999%
+### 8 snapshots : 7 modes pour un seuil de 99.999%
+
+## Choix de la base POD
+
+POD_reduite=np.zeros((nb_noeuds,nb_modes))
+for i in range(nb_modes):
+ POD_reduite[:,i]=Phi_prime_v[:,i]
 
 #################################################################################################
 ## Etape IV : Prédictions. Choisir les paramètres du problème à résoudre par le modèle réduit. ##
 #################################################################################################
 
-c_x=
-c_y=
-r=
+c_x=0.5
+c_y=0.5
+r=0.27
+
+res=25
 
 # SE1 : projection de la base POD sur le nouveau domaine #
 
+mesh_nouv=F2d.creer_maill_circ([c_x,c_y],r,res)
+V_nouv=VectorFunctionSpace(mesh_nouv,'P',2,constrained_domain=PeriodicBoundary())
+nb_noeuds_ess=V_nouv.dim()
+
+phi_fixe=Function(V_fixe)
+Phi_nouv_v=np.zeros((nb_noeuds_ess,nb_modes))
+
+for n in range(nb_modes):
+ # interpolation d'une fonction définie sur un maillage
+ phi_fixe.vector().set_local(POD_reduite[:,n])
+ phi_fixe.set_allow_extrapolation(True)
+ phi_nouv=interpolate(phi_fixe,V_nouv)
+ # stockage de la base interpolée dans un tableau
+ Phi_nouv_v[:,n]=phi_nouv.vector().get_local()
+
+# SE2 : résolution du nouveau problème avec le modèle réduit. Chronométrage ? #
 
 
 
 
-## etc ##
+# SE3 : Représentations graphiques, tenseur de diffusion homogénéisé. Plusieurs paramètres possibles : centre, rayon. #
 
 
-
+# SE4 : comparaison des résultats du modèle réduit et de la résolution par éléments finis #
 
 
 
