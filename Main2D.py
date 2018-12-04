@@ -245,7 +245,7 @@ class PeriodicBoundary(SubDomain):
    else:
     y[i]=x[i]
 
-res_fixe=30#résolution du maillage sans obstacle
+res_fixe=50#résolution du maillage sans obstacle
 
 domaine_fixe=Rectangle(Point(xinf,yinf),Point(xsup,ysup))
 mesh_fixe=generate_mesh(domaine_fixe,res_fixe)
@@ -258,16 +258,16 @@ plt.close()
 
 # Famille de cellules élémentaires : 8 clichés, inclusion circulaire, paramétrée par le rayon du cercle
 
-c_x=0.3
-c_y=0.1
+c_x=0.5
+c_y=0.5
 
 res=25
 
-for i in range(7,10):
+for i in range(1,8):
  r=i*0.05
  #c_x=0.5
  #c_y=0.5
- mesh=F2d.creer_maill_circ([c_x,c_y],r,res)
+ mesh=F2d.creer_maill_circ([c_x,c_y],r,res,'test')
  dolfin.common.plotting.plot(mesh)#,wireframe=True,interactive=False,scalarbar=True,title="Maillage fin, rayon "+str(r)+" et centre "+str(c_x)+","+str(c_y))
  colorbar
  plt.show()
@@ -293,21 +293,23 @@ dolfin.common.plotting.plot(u,
 
 
 
-
+res=25
 
 
 D_k=1.0
 
-Npas=8
+Npas=1
 
 #l_err_abs=[]
 #l_err_rel=[]
 
 for i in range(1,1+Npas):#[0.111,0.211,0.316,0.423]:#,0.49]:#range(1,2):#9):#attention le rayon d'un cercle doit être non nul
- r=i*0.05
+ r=i*0.425
  c_x=0.5#i*0.1
  c_y=0.5#i*0.1
- u=F2d.snapshot_circ_per([c_x,c_y],r,res)
+ u=F2d.snapshot_circ_per([c_x,c_y],r,res,'')
+ # Erreur de périodicité
+ F2d.err_per_ind_01(u,5)
  # Représentation graphique
  plot(u,title="Solution du domaine composite, rayon "+str(r)+" et centre "+str(c_x)+","+str(c_y))
  #interactive()
@@ -336,16 +338,16 @@ for i in range(1,1+Npas):#[0.111,0.211,0.316,0.423]:#,0.49]:#range(1,2):#9):#att
 
 # Attention aux codes de Hassan : erreurs ... visibles sur les figures du rapport, s'il s'agit bien des snapshots extrapolés
 
-c_x=0.0
-c_y=0.0
+c_x=0.5
+c_y=0.5
 
-res=25
+res=50
 
 Npas=8
 
-for i in range(1,1+Npas):
+for i in range(5,1+Npas):
  r=i*0.05#2#05
- u=F2d.snapshot_circ_per([c_x,c_y],r,res)
+ u=F2d.snapshot_circ_per([c_x,c_y],r,res,'')
  ## chargement du snapshot pour l'indice courant
  # Extrapolation au domaine Omega_fixe : aucune inclusion, khi défini sur [0,1]times[0,1]
  u.set_allow_extrapolation(True)
@@ -355,11 +357,11 @@ for i in range(1,1+Npas):
  #print('Erreur l2 relative :',F2d.err_per_sum_01(u,'l2',100,'rel'))
  #print('Erreur infty absolue :',F2d.err_per_sum_01(u,'infty',100,''))
  #print('Erreur infty relative :',F2d.err_per_sum_01(u,'infty',100,'rel'))
- print("Erreur de la solution interpolée :") 
- F2d.err_per_ind_01(u_fixe,Npas)
+ #print("Erreur de la solution interpolée :") 
+ #F2d.err_per_ind_01(u_fixe,Npas)
  ##
  #u_fixe = project(u, V_fixe)##lent
- plot(u_fixe,title="Solution extra, rayon "+str(r)+" et centre "+str(c_x)+","+str(c_y),scalarbar=True)
+ plot(u_fixe,title="Solution extra, rayon "+str(r)+" et centre "+str(c_x)+","+str(c_y))#,scalarbar=True)
  plt.show()
  plt.close()
 
@@ -378,9 +380,11 @@ pod = reload(pod)
 c_x=0.5
 c_y=0.5
 
-res=25
+res=50
 
 Nsnap=8
+
+test=''
 
 #V_fixe=VectorFunctionSpace(mesh_fixe, "P", 2, constrained_domain=PeriodicBoundary())
 nb_noeuds = V_fixe.dim()
@@ -390,7 +394,7 @@ Usnap=np.zeros((nb_noeuds,Nsnap))
 def inter_snap_ray(n):
  r=n*0.05
  # Cliché sur le domaine avec inclusion
- u=F2d.snapshot_circ_per([c_x,c_y],r,res)
+ u=F2d.snapshot_circ_per([c_x,c_y],r,res,test)
  # Extrapolation du cliché : khi prime
  u.set_allow_extrapolation(True)
  u_fixe=interpolate(u,V_fixe)
@@ -474,7 +478,7 @@ for i in range(Nsnap):
 phi=Function(V_fixe)
 for i in range(Nsnap):
  phi.vector().set_local(Phi_prime_v[:,i])
- plot(phi)
+ plot(phi,title='Mode '+str(i+1))
  plt.show()
  plt.close()
 

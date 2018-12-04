@@ -102,7 +102,7 @@ def creer_maill_circ(cen,r,res,test):#valable quel que soit la position de l'inc
   print(len(l_cer))
   for cer_per in l_cer:
    domain=domain-cer_per
-  domain=domain*Rectangle(Point(0,0),Point(1,1))
+  if test != 'test': domain=domain*Rectangle(Point(0,0),Point(1,1))
   if test=='test':
    domain=domain-Rectangle(Point(xtest_inf,ytest_inf),Point(xtest_sup,ytest_sup))
   # Création du permier maillage
