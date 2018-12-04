@@ -127,7 +127,7 @@ def snapshot_circ_per(cen,r,res,test):
  if test=='test':
   class inclusion_test(SubDomain):
    def inside(self,x,on_boundary):
-    return (on_boundary and between(x[0],(0.2-tol,0.8+tol)) and between(x[1]-0.85,(0.8-tol,0.9+tol)))
+    return (on_boundary and between(x[0],(0.2-tol,0.8+tol)) and between(x[1],(0.8-tol,0.9+tol)))
  ### Utilisation de la classe définie précédemment
  Gamma_sf = inclusion_periodique()
  boundaries = MeshFunction("size_t", mesh_c_r, mesh_c_r.topology().dim()-1)
