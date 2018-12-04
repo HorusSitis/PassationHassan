@@ -52,7 +52,7 @@ def raffinement_maillage_cellule_centree(r,mesh):# Cellule centrée : un seul pa
  mesh=refine(mesh, markers, redistribute=True) 
  return mesh
 
-def raffinement_maillage_circ_per(cen,r,mesh):# Objectif : montrer que l'emplacement de l'inclusion périodique dans la cellule élémentaire ne change pas le coefficient de diffusion homogénéisé, calculé avec le tenseur khi
+def raffinement_maillage_circ_per(cen,r,mesh,test):# Objectif : montrer que l'emplacement de l'inclusion périodique dans la cellule élémentaire ne change pas le coefficient de diffusion homogénéisé, calculé avec le tenseur khi
  markers = MeshFunction("bool", mesh, mesh.topology().dim())
  markers.set_all(False)
  # on crée une liste des centres des inclusions voisines de la cellule élémentaire
@@ -66,18 +66,23 @@ def raffinement_maillage_circ_per(cen,r,mesh):# Objectif : montrer que l'emplace
    for cen_per in l_cen:
     if (sqrt((f.midpoint()[0]-cen_per[0])**2+(f.midpoint()[1]-cen_per[1])**2)<=1.2*r):
      markers[c] = True
+    if test=='test':
+     if between(f.midpoint()[0],(0.2-tol,0.8+tol)) and between(f.midpoint()[1],(0.8-tol,0.9+tol)):
+      markers[c]=True
  mesh=refine(mesh, markers, redistribute=True)
  return mesh
 
-def creer_maill_circ(cen,r,res):#valable quel que soit la position de l'inclusion : centre, choisi aléatoirement. 1.2*r<0.5.
+def creer_maill_circ(cen,r,res,test):#valable quel que soit la position de l'inclusion : centre, choisi aléatoirement. 1.2*r<0.5.
  if cen[0]+r*1.2<1 and cen[1]+r*1.2<1 and cen[0]-r*1.2>0 and cen[1]-r*1.2>0:#si l'inclusion est comprise dans la cellule
   rect=Rectangle(Point(0,0),Point(1,1))
   circle=Circle(Point(cen[0],cen[1]),r)
   domain=rect-circle
+  if test=='test':
+   domain=domain-Rectangle(Point(0.2,0.8),Point(0.8,0.9))
   mesh=generate_mesh(domain,res)
   # On raffine le long du bord de l'inclusion
   #mesh_aux=raffinement_maillage_cellule_centree(r,mesh)
-  mesh_aux=raffinement_maillage_circ_per(cen,r,mesh)
+  mesh_aux=raffinement_maillage_circ_per(cen,r,mesh,test)
   mesh=mesh_aux
   #print('pfffrrh !')
  else:
@@ -92,19 +97,21 @@ def creer_maill_circ(cen,r,res):#valable quel que soit la position de l'inclusio
   for cer_per in l_cer:
    domain=domain-cer_per
   domain=domain*Rectangle(Point(0,0),Point(1,1))
+  if test=='test':
+   domain=domain-Rectangle(Point(0.2,0.8),Point(0.8,0.9))
   # Création du permier maillage
   mesh=generate_mesh(domain,res)
   # On raffine le long du bord de l'inclusion
-  mesh_aux=raffinement_maillage_circ_per(cen,r,mesh)
+  mesh_aux=raffinement_maillage_circ_per(cen,r,mesh,test)
   mesh=mesh_aux
   #
  return(mesh)
 
 ############################# Pour créer des snapshots, inclusion circulaire périodique unique #############################
 
-def snapshot_circ_per(cen,r,res):
+def snapshot_circ_per(cen,r,res,test):
  c_x,c_y=cen[0],cen[1]
- mesh_c_r=creer_maill_circ([c_x,c_y],r,res)
+ mesh_c_r=creer_maill_circ([c_x,c_y],r,res,test)
  # On pose et on résoud le problème aux éléments finis
  V=VectorFunctionSpace(mesh_c_r, 'P', 2, constrained_domain=PeriodicBoundary())
  ## On définit la bordure du domaine, sur laquelle intégrer le second membre "L" de l'équation en dimension finie
@@ -117,11 +124,18 @@ def snapshot_circ_per(cen,r,res):
  class inclusion_periodique(SubDomain):
   def inside(self,x,on_boundary):
    return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]))#[between(sqrt((x[0]-c[0])**2+(x[1]-c[1])**2),(r-tol,r+tol)) for c in l_cen]))
+ if test=='test':
+  class inclusion_test(SubDomain):
+   def inside(self,x,on_boundary):
+    return (on_boundary and between(x[0],(0.2-tol,0.8+tol)) and between(x[1]-0.85,(0.8-tol,0.9+tol)))
  ### Utilisation de la classe définie précédemment
  Gamma_sf = inclusion_periodique()
  boundaries = MeshFunction("size_t", mesh_c_r, mesh_c_r.topology().dim()-1)
  boundaries.set_all(0)
  Gamma_sf.mark(boundaries, 5)
+ if test=='test':
+  Gamma_test=inclusion_test()
+  Gamma_test.mark(boundaries, 5)
  ds = Measure("ds")(subdomain_data=boundaries)
  num_front_cercle=5
  ## On fixe une condition de Dirichlet, pour avoir l'unicité du tenseur khi : non nécessaire pour le tenseur de diffusion homogénéisé
