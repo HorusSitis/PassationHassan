@@ -23,6 +23,12 @@ yinf=0.0
 xsup=1.0
 ysup=1.0
 
+xtest_inf=0.4
+xtest_sup=0.6
+ytest_inf=0.4
+ytest_sup=0.6
+
+
 dimension=2
 
 class PeriodicBoundary(SubDomain):
@@ -67,7 +73,7 @@ def raffinement_maillage_circ_per(cen,r,mesh,test):# Objectif : montrer que l'em
     if (sqrt((f.midpoint()[0]-cen_per[0])**2+(f.midpoint()[1]-cen_per[1])**2)<=1.2*r):
      markers[c] = True
     if test=='test':
-     if between(f.midpoint()[0],(0.2-tol,0.8+tol)) and between(f.midpoint()[1],(0.8-tol,0.9+tol)):
+     if between(f.midpoint()[0],(xtest_inf-0.2*r,xtest_sup+0.2*r)) and between(f.midpoint()[1],(ytest_inf-0.2*r,ytest_sup+0.2*r)):# on raffine le maillage sur la même épaisseur que pour le voisinage de l'inclusion circulaire
       markers[c]=True
  mesh=refine(mesh, markers, redistribute=True)
  return mesh
@@ -78,7 +84,7 @@ def creer_maill_circ(cen,r,res,test):#valable quel que soit la position de l'inc
   circle=Circle(Point(cen[0],cen[1]),r)
   domain=rect-circle
   if test=='test':
-   domain=domain-Rectangle(Point(0.2,0.8),Point(0.8,0.9))
+   domain=domain-Rectangle(Point(xtest_inf,ytest_inf),Point(xtest_sup,ytest_sup))
   mesh=generate_mesh(domain,res)
   # On raffine le long du bord de l'inclusion
   #mesh_aux=raffinement_maillage_cellule_centree(r,mesh)
@@ -98,7 +104,7 @@ def creer_maill_circ(cen,r,res,test):#valable quel que soit la position de l'inc
    domain=domain-cer_per
   domain=domain*Rectangle(Point(0,0),Point(1,1))
   if test=='test':
-   domain=domain-Rectangle(Point(0.2,0.8),Point(0.8,0.9))
+   domain=domain-Rectangle(Point(xtest_inf,ytest_inf),Point(xtest_sup,ytest_sup))
   # Création du permier maillage
   mesh=generate_mesh(domain,res)
   # On raffine le long du bord de l'inclusion
@@ -127,7 +133,7 @@ def snapshot_circ_per(cen,r,res,test):
  if test=='test':
   class inclusion_test(SubDomain):
    def inside(self,x,on_boundary):
-    return (on_boundary and between(x[0],(0.2-tol,0.8+tol)) and between(x[1],(0.8-tol,0.9+tol)))
+    return (on_boundary and between(x[0],(xtest_inf-tol,xtest_sup+tol)) and between(x[1],(ytest_inf-tol,ytest_sup+tol)))
  ### Utilisation de la classe définie précédemment
  Gamma_sf = inclusion_periodique()
  boundaries = MeshFunction("size_t", mesh_c_r, mesh_c_r.topology().dim()-1)
