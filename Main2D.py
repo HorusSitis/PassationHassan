@@ -188,6 +188,14 @@ import pylab as pl
 from pylab import *
 #import os
 import multiprocessing
+from importlib import reload
+
+## Procédures pour la sauvegarde de fichiers ##
+
+repertoire_parent="Res2D/"
+#from LEc import *
+import LEc as LE
+LE=reload(LE)
 
 ## Paquets spécifiques à POD-MOR ##
 
@@ -204,11 +212,8 @@ import sys
 #r=0.0
 ## problème à l'import : r prend la valeur index(6)
 
-from importlib import reload
-
 import DD_fun_obj as F2d
-
-F2d=reload(F2d)
+#F2d=reload(F2d)
 
 ### Codes éxécutés : cas d'une inclusion circulaire, le rayon du disque central est le paramètre pour la POD ###
 
@@ -251,6 +256,25 @@ domaine_fixe=Rectangle(Point(xinf,yinf),Point(xsup,ysup))
 mesh_fixe=generate_mesh(domaine_fixe,res_fixe)
 V_fixe=VectorFunctionSpace(mesh_fixe, "P", 2, constrained_domain=PeriodicBoundary())
 
+c_x,c_y=0.0,0.0
+###-------------------- Commandes pour l'écriture de fichiers, à déplacer dans le script éventuellement --------------------###
+
+if [c_x,c_y]==[0.5,0.5]:
+ suffixe="inc_centre/"
+elif [c_x,c_y]==[0.0,0.0]:
+ suffixe="coins/"
+
+repertoire_final=repertoire_parent+suffixe
+
+File(repertoire_parent+"mesh_circulaire.xml.gz") << mesh_fixe
+
+kh_file,KH_SAVE=LE.creation_fichier_pourecriture_champ_hdf5(repertoire_final,mesh_fixe)
+
+file_rayon_ecriture = open("%s/rayon_ecriture.txt" %(repertoire_final), "w")
+kfic=1
+
+###-------------------- pour des solutions interpolées --------------------###
+
 #représentation graphique du maillage
 plot(mesh_fixe)
 plt.show()
@@ -261,31 +285,34 @@ plt.close()
 c_x=0.5
 c_y=0.5
 
-res=25
+res=40
 
 D_k=1.0
 
-Npas=4
+Npas=8
 
-#l_err_abs=[]
-#l_err_rel=[]
+## Boucle pour la création des snapshots, avec un paramètre pouvant être le rayon d'une inclusion circulaire, ou l'emplacement de son centre ##
+# Calcule aussi le tenseur de diffusion homogénéisé #
 
-for i in range(1,8):#[0.111,0.211,0.316,0.423]:#,0.49]:#range(1,2):#9):#attention le rayon d'un cercle doit être non nul
+kfic=1
+for i in range(1,1+Npas):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon d'un cercle doit être non nul
  r=i*0.05
- c_x=0.5#i*0.1
- c_y=0.5#i*0.1
- u=F2d.snapshot_circ_per([c_x,c_y],r,res)
+ c_x=0.0#i*0.1
+ c_y=0.0#i*0.1
+ khi_i=F2d.snapshot_circ_per([c_x,c_y],r,res)
+ # Stockage des résultats avec un format hdf5
+ LE.ecriture_champ_hdf5(kh_file,KH_SAVE,khi_i,kfic,file_rayon_ecriture,r,[c_x,c_y],res)
  # Représentation graphique
- plot(u)
+ plot(khi_i)
  plt.show()
  plt.close()
  ##
- # Tenseur d'homogéisation
+ # Tenseur de diffusion homogénéisé
  ## Intégrale de khi sur le domaine fluide
- H=assemble(grad(u)[0,0]*dx)
- M=assemble(grad(u)[1,1]*dx)
- A=assemble(grad(u)[0,1]*dx)
- C=assemble(grad(u)[1,0]*dx)
+ H=assemble(grad(khi_i)[0,0]*dx)
+ M=assemble(grad(khi_i)[1,1]*dx)
+ A=assemble(grad(khi_i)[0,1]*dx)
+ C=assemble(grad(khi_i)[1,0]*dx)
  Tkhi=array([[H,A],[C,M]])
  ## Intégrale de l'identité sur le domaine fluide
  D=(1-pi*r**2)*np.eye(2)
@@ -300,29 +327,47 @@ for i in range(1,8):#[0.111,0.211,0.316,0.423]:#,0.49]:#range(1,2):#9):#attentio
 ######################################### Etape II : extrapolation des clichés, domaine_fixe ########################################
 #####################################################################################################################################
 
-# Attention aux codes de Hassan : erreurs ... visibles sur les figures du rapport, s'il s'agit bien des snapshots extrapolés
+#----- Attention aux codes de Hassan : erreurs ... visibles sur les figures du rapport, s'il s'agit bien des snapshots extrapolés -----#
+#----- Le même phénoène est observé avec mes codes, au 8-12-2018 -----#
+#----- Peut-être s'agit-il d'effets dela géométrie de la cellule élémentaire : proxiité entre l'inclusion centrée et les bords de la cellule périodique -----#
+#----- Le problème pourrait aussi venir de la méthode d'extrapolation -----#
 
-c_x=0.5
-c_y=0.5
 
-res=25
+#for i in range(1,1+Npas):
+# r=i*0.2#05
+# u=F2d.snapshot_circ_per([c_x,c_y],r,res)
+# ## chargement du snapshot pour l'indice courant
+# # Extrapolation au domaine Omega_fixe : aucune inclusion, khi défini sur [0,1]times[0,1]
+# u.set_allow_extrapolation(True)
+# u_fixe=interpolate(u,V_fixe)##rapide
+# #u_fixe = project(u, V_fixe)##lent
+# plot(u_fixe)
+# plt.show()
+# plt.close()
 
-for i in range(1,2):
- r=i*0.2#05
- u=F2d.snapshot_circ_per([c_x,c_y],r,res)
- ## chargement du snapshot pour l'indice courant
- # Extrapolation au domaine Omega_fixe : aucune inclusion, khi défini sur [0,1]times[0,1]
- u.set_allow_extrapolation(True)
- u_fixe=interpolate(u,V_fixe)##rapide
- ## Erreur de périodicité du snapshot calculé par éléments finis
- print('Erreur l2 absolue :',F2d.err_per_01(u,'l2',100,''))
- print('Erreur l2 relative :',F2d.err_per_01(u,'l2',100,'rel'))
- print('Erreur infty absolue :',F2d.err_per_01(u,'infty',100,''))
- print('Erreur infty relative :',F2d.err_per_01(u,'infty',100,'rel'))
- #u_fixe = project(u, V_fixe)##lent
- plot(u_fixe)
- plt.show()
- plt.close()
+## On recharge les clichés stockés à l'étape I, aec le format hdf5
+if [c_x,c_y]==[0.5,0.5]:
+ suffixe="inc_centre/"
+elif [c_x,c_y]==[0.0,0.0]:
+ suffixe="coins/"
+
+repertoire_lecture=repertoire_parent+suffixe
+
+Npas=8
+#c_x,c_y=0.5,0.5
+res=40
+rayons=np.arange(0.05,0.45,0.05)
+rayons=np.linspace(0.05,0.40,8)
+
+for i in range(1,1+Npas):
+ r=rayons[i]
+ # Création de l'espace dans lequel vit le cliché à charger
+ mesh_c_r=creer_maill_circ([c_x,c_y],r,res)
+ V=VectorFunctionSpace(mesh_c_r, 'P', 2, constrained_domain=PeriodicBoundary())
+ khi_i=Function(V)
+ # Chargement du cliché, réalisé à l'étape I
+ LE.lecture_fichiers_restart_hdf5(khi_i,repertoire_lecture,r,mesh_c_r)
+
 
 ####################################################################################################################################
 ## Etape III : en utilisant la méthode des snapshots, calcul de la POD et des coefficients aléatoires, toujours dans domaine_fixe ##
