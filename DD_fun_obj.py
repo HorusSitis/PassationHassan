@@ -5,6 +5,7 @@ from mshr import *
 import matplotlib.pyplot as plt
 #import numpy as np
 from math import sqrt
+from math import exp
 import sys
 
 
@@ -39,16 +40,22 @@ class PeriodicBoundary(SubDomain):
 
 ############################# Pour créer des maillages, avec des familles de cellules élémentaires #############################
 
+def crown(r):#épaisseur de la couronne dans laquelle le maillage est raffiné
+ return r+0.01#*(1+0.2*exp(-r**2))#1.2*r
+
 def raffinement_maillage_cellule_centree(r,mesh):# Cellule centrée : un seul paramètre géométrique, le rayon de l'inclusion. 1.2*r<0.5 exigé.
  markers = MeshFunction("bool", mesh, mesh.topology().dim())
  markers.set_all(False)
  c_x=0.5
  c_y=0.5
  for c in cells(mesh):
- # Mark cells with facet midpoints near y == 1.0
   for f in facets(c):
-   if (sqrt((f.midpoint()[0]-c_x)**2+(f.midpoint()[1]-c_y)**2)<=1.2*r):
-    markers[c] = True 
+   # Raffinement autour de l'inclusion périodique
+   if (sqrt((f.midpoint()[0]-c_x)**2+(f.midpoint()[1]-c_y)**2)<=crown(r)):
+    markers[c]=True 
+   # Raffinement aux bords du domaine
+   if any([f.midpoint()[k]==0 or f.midpoint()[k]==1 for k in range(0,2)]):
+    markers[c]=True
  mesh=refine(mesh, markers, redistribute=True) 
  return mesh
 
@@ -61,11 +68,14 @@ def raffinement_maillage_circ_per(cen,r,mesh):# Objectif : montrer que l'emplace
   for j in range(-1,2):
    l_cen.append([cen[0]+i,cen[1]+j])
  for c in cells(mesh):
- # Mark cells with facet midpoints near ...
   for f in facets(c):
+   # Raffinement autour de l'inclusion périodique
    for cen_per in l_cen:
-    if (sqrt((f.midpoint()[0]-cen_per[0])**2+(f.midpoint()[1]-cen_per[1])**2)<=1.2*r):
-     markers[c] = True
+    if (sqrt((f.midpoint()[0]-cen_per[0])**2+(f.midpoint()[1]-cen_per[1])**2)<=crown(r)):
+     markers[c]=True
+   # Raffinement aux bords du domaine
+   if any([f.midpoint()[k]==0 or f.midpoint()[k]==1 for k in range(0,2)]):
+    markers[c]=True
  mesh=refine(mesh, markers, redistribute=True)
  return mesh
 
@@ -116,7 +126,7 @@ def snapshot_circ_per(cen,r,res):
  #print(l_cen)
  class inclusion_periodique(SubDomain):
   def inside(self,x,on_boundary):
-   return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]))#[between(sqrt((x[0]-c[0])**2+(x[1]-c[1])**2),(r-tol,r+tol)) for c in l_cen]))
+   return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]))#points de la frontière du dystème compris dans la boule de centre et rayons cen et r, pour la norme infinie
  ### Utilisation de la classe définie précédemment
  Gamma_sf = inclusion_periodique()
  boundaries = MeshFunction("size_t", mesh_c_r, mesh_c_r.topology().dim()-1)
@@ -125,8 +135,17 @@ def snapshot_circ_per(cen,r,res):
  ds = Measure("ds")(subdomain_data=boundaries)
  num_front_cercle=5
  ## On fixe une condition de Dirichlet, pour avoir l'unicité du tenseur khi : non nécessaire pour le tenseur de diffusion homogénéisé
- khi_bord=Constant((0., 0.))
- bc = DirichletBC(V, khi_bord, "x[0] < DOLFIN_EPS && x[1] < DOLFIN_EPS", "pointwise")
+ khi_zero=Constant((0., 0.))
+ ### Point de l'espace où l'on fixe khi_zero
+ point_zero=[0,0,0]
+ for i in [-0.5,0.5]:
+  for j in [-0.5,0.5]:
+   point_zero_prov=[cen[0]+i,cen[1]+j]
+   if not(any([not(between(coord,(0-tol,1+tol))) for coord in point_zero_prov])):
+    point_zero=point_zero_prov
+ def supp_point_zero(x):
+  return between(x[0],(point_zero[0]-tol,point_zero[0]+tol)) and between(x[1],(point_zero[1]-tol,point_zero[1]+tol))
+ bc = DirichletBC(V, khi_bord, supp_point_zero, "pointwise")
  ## On résoud le problème faible, avec une condition de type Neumann au bord de l'obstacle
  normale = FacetNormal(mesh_c_r)
  nb_noeuds=V.dim()

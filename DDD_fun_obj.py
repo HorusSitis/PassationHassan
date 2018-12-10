@@ -38,7 +38,7 @@ class PeriodicBoundary(SubDomain):
 ############################# Pour créer des maillages, avec des familles de cellules élémentaires #############################
 
 def crown(r):#épaisseur de la couronne dans laquelle le maillage est raffiné
- return r*(1+0.01*exp(r))#1.2*r
+ return r+0.01#*(1+0.2*exp(-r**2))#1.2*r
 
 def raffinement_maillage_sph_per(cen,r,mesh):
  markers = MeshFunction("bool", mesh, mesh.topology().dim())
@@ -81,7 +81,7 @@ def creer_maill_sph(cen,r,res):#valable quel que soit la position de l'inclusion
    for j in range(-1,2):
     for k in range(-1,2):
      l_sph.append(Sphere(Point(cen[0]+i,cen[1]+j,cen[2]+k),r))
-  for sph_per in l_sph:#[Sphere(Point(cen[0],cen[1],cen[2]),r)]:#l_sph:
+  for sph_per in l_sph:
    domain=domain-sph_per
   #domain=domain-Sphere(Point(cen[0],cen[1],cen[2]),r)
   domain=domain*Box(Point(0,0,0),Point(1,1,1))
