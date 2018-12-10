@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+### Une commande possible dans le terminal ###
+
+#--- mpirun -np 8 python3 Main3D.py ---#
+#--- affiche npfois 'pas encore' fait avec l'étape IV ---#
+
+# Attention : on éxécute parallèlement 
+
 ### Code à lire : conditions ###
 
 etape='EII'
@@ -8,6 +16,8 @@ res=12
 Nsnap=8
 rempUsnap='par8'#'seq'
 c_x, c_y, c_z = 0.5, 0.5, 0.5
+#r=0.35#pour une réalisation unique
+npas_err=2
 
 ### Répertoire courant ###
 
@@ -85,12 +95,12 @@ if etape=='E0':
 ### Etape I : réalisation des clichés, avec la méthode des éléments finis. Stockage dans snap2D/ ###
 # Utilise fenics, éventuellement augmenté par dolfin #
 elif etape=='EI':
-#
- #c_x=0.5
- #c_y=0.5
+ #
+ #c_x=0.1
+ #c_y=0.2
  #c_z=0.5
  #
- r=0.3
+ r=0.35
  #
  #res=10
  #
@@ -98,9 +108,9 @@ elif etape=='EI':
  #
  mesh_c_r=creer_maill_sph([c_x,c_y,c_z],r,res)
  #
- #plot(mesh_c_r)
- #plt.show()
- #plt.close()
+ plot(mesh_c_r)
+ plt.show()
+ plt.close()
  #
  # Champ khi unique #
  #
@@ -117,7 +127,6 @@ elif etape=='EI':
  #
  print('Etape I- faite')
 ### Etape II : extrapolation des clichés, domaine_fixe ###
-## Attention aux codes de Hassan : erreurs ... visibles sur les figures du rapport, s'il s'agit bien des snapshots extrapolés
 elif etape=='EII':
  #
  #c_x=0.5
@@ -127,15 +136,22 @@ elif etape=='EII':
  #res=15
  #
  for i in range(1,2):
-  r=i*0.35#05
-  u=snapshot_sph_per([c_x,c_y,c_z],r,res)
+  r=i*0.35
+  khi=snapshot_sph_per([c_x,c_y,c_z],r,res)
   ## chargement du snapshot pour l'indice courant
   # Extrapolation au domaine Omega_fixe : aucune inclusion, khi défini sur [0,1]times[0,1]
-  u.set_allow_extrapolation(True)
-  u_fixe=interpolate(u,V_fixe)##rapide
+  khi.set_allow_extrapolation(True)
+  khi_fixe=interpolate(khi,V_fixe)##rapide
   #u_fixe = project(u, V_fixe)##lent
-  err_per_ind_01(u,5)#u_fixe,5)
-  plot(u_fixe)
+  #print('erreur du gradient de khi :')
+  #err_per_ind_01(grad(khi)[0,0],npas_err)##--> ne marche pas
+  #plot(grad(khi)[1,2])
+  #print('erreur sur la solution :')
+  #err_per_ind_01(khi,npas_err)
+  plot(khi)
+  #print('erreur sur la solution extrapolée :')
+  #err_per_ind_01(khi_fixe,npas_err)
+  #plot(khi_fixe)
   plt.show()
   plt.close()
  #
