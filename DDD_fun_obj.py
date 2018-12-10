@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from fenics import *
 
 from dolfin import *
@@ -5,6 +7,7 @@ from mshr import *
 import matplotlib.pyplot as plt
 #import numpy as np
 from math import sqrt
+from math import exp
 import sys
 
 tol=1e-10
@@ -34,6 +37,9 @@ class PeriodicBoundary(SubDomain):
 
 ############################# Pour créer des maillages, avec des familles de cellules élémentaires #############################
 
+def crown(r):#épaisseur de la couronne dans laquelle le maillage est raffiné
+ return r*(1+0.01*exp(r))#1.2*r
+
 def raffinement_maillage_sph_per(cen,r,mesh):
  markers = MeshFunction("bool", mesh, mesh.topology().dim())
  markers.set_all(False)
@@ -44,16 +50,19 @@ def raffinement_maillage_sph_per(cen,r,mesh):
    for k in range(-1,2):
     l_cen.append([cen[0]+i,cen[1]+j,cen[2]+k])
  for c in cells(mesh):
- # Mark cells with facet midpoints near ...
   for f in facets(c):
+   # Raffinement autour de l'inclusion périodique
    for cen_per in l_cen:
-    if (sqrt((f.midpoint()[0]-cen_per[0])**2+(f.midpoint()[1]-cen_per[1])**2+(f.midpoint()[2]-cen_per[2])**2)<=1.2*r):
+    if (sqrt((f.midpoint()[0]-cen_per[0])**2+(f.midpoint()[1]-cen_per[1])**2+(f.midpoint()[2]-cen_per[2])**2)<=crown(r)):
      markers[c] = True
+   # Raffinement aux bords du domaine
+   if any([f.midpoint()[k]==0 or f.midpoint()[k]==1 for k in range(0,3)]):
+    markers[c]=True
  mesh=refine(mesh, markers, redistribute=True)
  return mesh
 
 def creer_maill_sph(cen,r,res):#valable quel que soit la position de l'inclusion : centre, choisi aléatoirement. 1.2*r<0.5.
- if cen[0]+r*1.2<1 and cen[1]+r*1.2<1 and cen[2]+r*1.2<1 and cen[0]-r*1.2>0 and cen[1]-r*1.2>0 and cen[1]-r*1.2>0:#si l'inclusion est comprise dans la cellule
+ if cen[0]+crown(r)<1 and cen[1]+crown(r)<1 and cen[2]+crown(r)<1 and cen[0]-crown(r)>0 and cen[1]-crown(r)>0 and cen[1]-crown(r)>0:#si l'inclusion est comprise dans la cellule
   box=Box(Point(0,0,0),Point(1,1,1))
   sphere=Sphere(Point(cen[0],cen[1],cen[2]),r)
   domain=box-sphere
@@ -91,26 +100,38 @@ def snapshot_sph_per(cen,r,res):
  mesh_c_r=creer_maill_sph([c_x,c_y,c_z],r,res)
  # On pose et on résoud le problème aux éléments finis
  V=VectorFunctionSpace(mesh_c_r, 'P', 2, constrained_domain=PeriodicBoundary())
- ## On définit la bordure du domaine, sur laquelle intégrer le second membre "L" de l'équation en dimension finie
+ ## On définit l'interface fluide-solide, périodique à géométrie sphérique
  l_cen=[]
- #cen=[c_x,c_y]
  for i in range(-1,2):
   for j in range(-1,2):
    for k in range(-1,2):
     l_cen.append([cen[0]+i,cen[1]+j,cen[2]+k])
  class inclusion_periodique(SubDomain):
   def inside(self,x,on_boundary):
-   return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[2]-c[2]), (-r-tol, r+tol)) for c in l_cen]))#[between(sqrt((x[0]-c[0])**2+(x[1]-c[1])**2),(r-tol,r+tol)) for c in l_cen]))
- ### Utilisation de la classe définie précédemment
+   return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[2]-c[2]), (-r-tol, r+tol)) for c in l_cen]))#points de la frontière du dystème compris dans la boule de centre et rayons cen et r, pour la norme infinie
+ ## Utilisation des classes définies précédemment : mesure de la limite du domaine fluide
  Gamma_sf = inclusion_periodique()
  boundaries = MeshFunction("size_t", mesh_c_r, mesh_c_r.topology().dim()-1)
- boundaries.set_all(0)
- Gamma_sf.mark(boundaries, 5)
+ # On attribue une valeur par défaut aux frontières du domaine fluide, qui concerne plus particulièrement l'interface fluide-fluide
+ boundaries.set_all(1)
+ Gamma_sf.mark(boundaries, 7)
  ds = Measure("ds")(subdomain_data=boundaries)
- num_front_sphere=5
+ num_ff=1
+ num_front_sphere=7
  ## On fixe une condition de Dirichlet, pour avoir l'unicité du tenseur khi : non nécessaire pour le tenseur de diffusion homogénéisé
- khi_bord=Constant((0., 0., 0.))
- bc = DirichletBC(V, khi_bord, "x[0] < DOLFIN_EPS && x[1] < DOLFIN_EPS && x[2] < DOLFIN_EPS", "pointwise")
+ khi_zero=Constant((0., 0., 0.))
+ # Point auquel on fixe khi_zero
+ point_zero=[0,0,0]
+ for i in [-0.5,0.5]:
+  for j in [-0.5,0.5]:
+   for k in [-0.5,0.5]:
+    point_zero_prov=[cen[0]+i,cen[1]+j,cen[2]+k]
+    if not(any([not(between(coord,(0-tol,1+tol))) for coord in point_zero_prov])):
+     point_zero=point_zero_prov
+ def supp_point_zero(x):
+  return between(x[0],(point_zero[0]-tol,point_zero[0]+tol)) and between(x[1],(point_zero[1]-tol,point_zero[1]+tol)) and between(x[2],(point_zero[2]-tol,point_zero[2]+tol))
+ print(point_zero)
+ bc = DirichletBC(V, khi_zero, supp_point_zero, "pointwise")
  ## On résoud le problème faible, avec une condition de type Neumann au bord de l'obstacle
  normale = FacetNormal(mesh_c_r)
  nb_noeuds=V.dim()
