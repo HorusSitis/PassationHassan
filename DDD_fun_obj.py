@@ -38,7 +38,7 @@ class PeriodicBoundary(SubDomain):
 ############################# Pour créer des maillages, avec des familles de cellules élémentaires #############################
 
 def crown(r):#épaisseur de la couronne dans laquelle le maillage est raffiné
- return r+0.01#*(1+0.2*exp(-r**2))#1.2*r
+ return r+tol#*(1+0.2*exp(-r**2))#1.2*r
 
 def raffinement_maillage_sph_per(cen,r,mesh):
  markers = MeshFunction("bool", mesh, mesh.topology().dim())
@@ -118,20 +118,6 @@ def snapshot_sph_per(cen,r,res):
  ds = Measure("ds")(subdomain_data=boundaries)
  num_ff=1
  num_front_sphere=7
- ## On fixe une condition de Dirichlet, pour avoir l'unicité du tenseur khi : non nécessaire pour le tenseur de diffusion homogénéisé
- khi_zero=Constant((0., 0., 0.))
- # Point auquel on fixe khi_zero
- point_zero=[0,0,0]
- for i in [-0.5,0.5]:
-  for j in [-0.5,0.5]:
-   for k in [-0.5,0.5]:
-    point_zero_prov=[cen[0]+i,cen[1]+j,cen[2]+k]
-    if not(any([not(between(coord,(0-tol,1+tol))) for coord in point_zero_prov])):
-     point_zero=point_zero_prov
- def supp_point_zero(x):
-  return between(x[0],(point_zero[0]-tol,point_zero[0]+tol)) and between(x[1],(point_zero[1]-tol,point_zero[1]+tol)) and between(x[2],(point_zero[2]-tol,point_zero[2]+tol))
- print(point_zero)
- bc = DirichletBC(V, khi_zero, supp_point_zero, "pointwise")
  ## On résoud le problème faible, avec une condition de type Neumann au bord de l'obstacle
  normale = FacetNormal(mesh_c_r)
  nb_noeuds=V.dim()
@@ -141,9 +127,16 @@ def snapshot_sph_per(cen,r,res):
  L=-dot(normale,v)*ds(num_front_sphere)
  ### Résolution
  u=Function(V)
- solve(a==L,u,bc)
+ solve(a==L,u)
+ ## Annulation de la valeur moyenne
+ moy_u_x=assemble(u[0]*dx)/(1-4/3*pi*r**3)
+ moy_u_y=assemble(u[1]*dx)/(1-4/3*pi*r**3)
+ moy_u_z=assemble(u[2]*dx)/(1-4/3*pi*r**3)
+ moy=Function(V)
+ moy=Constant((moy_u_x,moy_u_y,moy_u_z))
+ khi=project(u-moy,V)
  # Résultat : snapshot
- return(u)
+ return(khi)
 
 ############################# Pour tester la périodicité d'un champ en norme l2 ou infinie : erreur relative #############################
 

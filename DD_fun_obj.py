@@ -116,7 +116,7 @@ def snapshot_circ_per(cen,r,res):
  c_x,c_y=cen[0],cen[1]
  mesh_c_r=creer_maill_circ([c_x,c_y],r,res)
  # On pose et on résoud le problème aux éléments finis
- V=VectorFunctionSpace(mesh_c_r, 'P', 2, constrained_domain=PeriodicBoundary())
+ V=VectorFunctionSpace(mesh_c_r, 'P', 2, form_degree=0, constrained_domain=PeriodicBoundary())
  ## On définit la bordure du domaine, sur laquelle intégrer le second membre "L" de l'équation en dimension finie
  l_cen=[]
  #cen=[c_x,c_y]
@@ -134,18 +134,9 @@ def snapshot_circ_per(cen,r,res):
  Gamma_sf.mark(boundaries, 5)
  ds = Measure("ds")(subdomain_data=boundaries)
  num_front_cercle=5
- ## On fixe une condition de Dirichlet, pour avoir l'unicité du tenseur khi : non nécessaire pour le tenseur de diffusion homogénéisé
- khi_zero=Constant((0., 0.))
- ### Point de l'espace où l'on fixe khi_zero
- point_zero=[0,0,0]
- for i in [-0.5,0.5]:
-  for j in [-0.5,0.5]:
-   point_zero_prov=[cen[0]+i,cen[1]+j]
-   if not(any([not(between(coord,(0-tol,1+tol))) for coord in point_zero_prov])):
-    point_zero=point_zero_prov
- def supp_point_zero(x):
-  return between(x[0],(point_zero[0]-tol,point_zero[0]+tol)) and between(x[1],(point_zero[1]-tol,point_zero[1]+tol))
- bc = DirichletBC(V, khi_bord, supp_point_zero, "pointwise")
+ ## On fixe une condition de Dirichlet, pour avoir l'unicité du tenseur khi : non nécessaire pour le tenseur de diffusion homogénéisé)
+ ## Inutile si l'on exige une valeru moyenne nulle
+ #bc = DirichletBC(V, khi_zero, supp_point_zero, "geometric")#"pointwise", "topological" et "geometric" tolérés avec form_degree=0 en VectorFunctionSpace ; avertissement "found no facets matching domain for boundary condition"
  ## On résoud le problème faible, avec une condition de type Neumann au bord de l'obstacle
  normale = FacetNormal(mesh_c_r)
  nb_noeuds=V.dim()
@@ -155,9 +146,15 @@ def snapshot_circ_per(cen,r,res):
  L=-dot(normale,v)*ds(num_front_cercle)
  ### Résolution
  u=Function(V)
- solve(a==L,u,bc)
+ solve(a==L,u)
+ ## Annulation de la valeur moyenne
+ moy_u_x=assemble(u[0]*dx)/(1-pi*r**2)
+ moy_u_y=assemble(u[1]*dx)/(1-pi*r**2)
+ moy=Function(V)
+ moy=Constant((moy_u_x,moy_u_y))
+ khi=project(u-moy,V)
  # Résultat : snapshot
- return(u)
+ return(khi)
 
 ############################# Pour tester la périodicité d'un champ en norme l2 ou infinie : erreur relative #############################
 
