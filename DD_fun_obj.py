@@ -3,7 +3,7 @@ from fenics import *
 from dolfin import *
 from mshr import *
 import matplotlib.pyplot as plt
-#import numpy as np
+import numpy as np
 from math import sqrt
 from math import exp
 import sys
@@ -37,6 +37,45 @@ class PeriodicBoundary(SubDomain):
     y[i]=0.0
    else:
     y[i]=x[i]
+
+# we define the unit cell vertices coordinates for later use
+vertices = np.array([[0, 0.],
+                     [1, 0.],
+                     [1, 1],
+                     [0, 1]])
+
+# class used to define the periodic boundary map
+#class PeriodicBoundary(SubDomain):
+#    def __init__(self, vertices):
+#        """ vertices stores the coordinates of the 4 unit cell corners"""
+#        SubDomain.__init__(self)
+#        self.vv = vertices
+#        self.a1 = self.vv[1,:]-self.vv[0,:] # first vector generating periodicity
+#        self.a2 = self.vv[3,:]-self.vv[0,:] # second vector generating periodicity
+#
+#    def inside(self, x, on_boundary):
+#        # return True if on left or bottom boundary AND NOT on one of the
+#        # bottom-right or top-left vertices
+#        return bool((near(x[0], self.vv[0,0] + x[1]*self.a2[0]/self.vv[3,1]) or
+#                     near(x[1], self.vv[0,1] + x[0]*self.a1[1]/self.vv[1,0])) and
+#                     (not ((near(x[0], self.vv[1,0]) and near(x[1], self.vv[1,1])) or
+#                     (near(x[0], self.vv[3,0]) and near(x[1], self.vv[3,1])))) and on_boundary)
+#
+#    def map(self, x, y):
+#        if near(x[0], self.vv[2,0]) and near(x[1], self.vv[2,1]): # if on top-right corner
+#            y[0] = x[0] - (self.a1[0]+self.a2[0])
+#            y[1] = x[1] - (self.a1[1]+self.a2[1])
+#        elif near(x[0], self.vv[1,0] + x[1]*self.a2[0]/self.vv[2,1]): # if on right boundary
+#            y[0] = x[0] - self.a1[0]
+#            y[1] = x[1] - self.a1[1]
+#        else:   # should be on top boundary
+#            y[0] = x[0] - self.a2[0]
+#            y[1] = x[1] - self.a2[1]
+
+
+
+
+
 
 ############################# Pour créer des maillages, avec des familles de cellules élémentaires #############################
 
@@ -116,7 +155,7 @@ def snapshot_circ_per(cen,r,res):
  c_x,c_y=cen[0],cen[1]
  mesh_c_r=creer_maill_circ([c_x,c_y],r,res)
  # On pose et on résoud le problème aux éléments finis
- V=VectorFunctionSpace(mesh_c_r, 'P', 2, form_degree=0, constrained_domain=PeriodicBoundary())
+ V=VectorFunctionSpace(mesh_c_r, 'P', 3, form_degree=0, constrained_domain=PeriodicBoundary())#vertices))
  ## On définit la bordure du domaine, sur laquelle intégrer le second membre "L" de l'équation en dimension finie
  l_cen=[]
  #cen=[c_x,c_y]
@@ -135,7 +174,19 @@ def snapshot_circ_per(cen,r,res):
  ds = Measure("ds")(subdomain_data=boundaries)
  num_front_cercle=5
  ## On fixe une condition de Dirichlet, pour avoir l'unicité du tenseur khi : non nécessaire pour le tenseur de diffusion homogénéisé)
- ## Inutile si l'on exige une valeru moyenne nulle
+ ## On fixe une condition de Dirichlet, pour avoir l'unicité du tenseur khi : non nécessaire pour le tenseur de diffusion homogénéisé
+ khi_zero=Constant((0., 0.))
+ ### Point de l'espace où l'on fixe khi_zero
+ point_zero=[0,0]
+ for i in [-0.5,0.5]:
+  for j in [-0.5,0.5]:
+   point_zero_prov=[cen[0]+i,cen[1]+j]
+   if not(any([not(between(coord,(0-tol,1+tol))) for coord in point_zero_prov])):
+    point_zero=point_zero_prov
+ def supp_point_zero(x):
+  return between(x[0],(point_zero[0]-tol,point_zero[0]+tol)) and between(x[1],(point_zero[1]-tol,point_zero[1]+tol))
+ bc = DirichletBC(V, khi_zero, supp_point_zero, "pointwise")
+ ## Inutile si l'on exige une valeur moyenne nulle
  #bc = DirichletBC(V, khi_zero, supp_point_zero, "geometric")#"pointwise", "topological" et "geometric" tolérés avec form_degree=0 en VectorFunctionSpace ; avertissement "found no facets matching domain for boundary condition"
  ## On résoud le problème faible, avec une condition de type Neumann au bord de l'obstacle
  normale = FacetNormal(mesh_c_r)
@@ -146,7 +197,7 @@ def snapshot_circ_per(cen,r,res):
  L=-dot(normale,v)*ds(num_front_cercle)
  ### Résolution
  u=Function(V)
- solve(a==L,u)
+ solve(a==L,u)#,bc)
  ## Annulation de la valeur moyenne
  moy_u_x=assemble(u[0]*dx)/(1-pi*r**2)
  moy_u_y=assemble(u[1]*dx)/(1-pi*r**2)

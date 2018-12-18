@@ -11,13 +11,13 @@
 etape='EII'
 # 'E0' à 'EIV' #
 res_fixe=12
-fixe_aff=True
+fixe_aff=False
 res=12
 Nsnap=8
 rempUsnap='par8'#'seq'
 c_x, c_y, c_z = 0.5, 0.5, 0.5
 #r=0.35#pour une réalisation unique
-npas_err=2
+npas_err=5
 
 ### Répertoire courant ###
 
@@ -77,7 +77,7 @@ class PeriodicBoundary(SubDomain):
 
 ### Maillage sur le domaine Omega_fixe : aucune inclusion, porosité égale à 1 ###
 
-#res_fixe=15
+res_fixe=6
 
 domaine_fixe=Box(Point(xinf,yinf,zinf),Point(xsup,ysup,zsup))
 mesh_fixe=generate_mesh(domaine_fixe,res_fixe)
@@ -102,7 +102,7 @@ elif etape=='EI':
  #
  r=0.35
  #
- #res=10
+ res=6
  #
  # Maillage raffiné unique #
  #
@@ -112,13 +112,20 @@ elif etape=='EI':
  plt.show()
  plt.close()
  #
+ #sys.exit()
+ #
  # Champ khi unique #
  #
  #res=20
  #
- u=snapshot_sph_per([c_x,c_y,c_z],r,res)
+ khi=snapshot_sph_per([c_x,c_y,c_z],r,res)
  #
- plot(u)
+ print(assemble(khi[1]*dx))
+ print(assemble(khi[0]*dx))
+ print(assemble(khi[2]*dx))
+ print(khi((0.5,0.5,0.5)),khi((0.5,0.5,1.)),khi((0.5,0.5,0.0)))
+ #
+ plot(khi)
  plt.show()
  plt.close()
  #
@@ -135,6 +142,8 @@ elif etape=='EII':
  #
  #res=15
  #
+ D_k=1.0
+ #
  for i in range(1,2):
   r=i*0.35
   khi=snapshot_sph_per([c_x,c_y,c_z],r,res)
@@ -145,9 +154,11 @@ elif etape=='EII':
   #u_fixe = project(u, V_fixe)##lent
   #print('erreur du gradient de khi :')
   #err_per_ind_01(grad(khi)[0,0],npas_err)##--> ne marche pas
-  #plot(grad(khi)[1,2])
-  #print('erreur sur la solution :')
-  #err_per_ind_01(khi,npas_err)
+  plot(grad(khi)[:,0])
+  plt.show()
+  plt.close()
+  print('erreur sur la solution :')
+  err_per_ind_01(khi,npas_err)
   plot(khi)
   #print('erreur sur la solution extrapolée :')
   #err_per_ind_01(khi_fixe,npas_err)
@@ -155,6 +166,24 @@ elif etape=='EII':
   plt.show()
   plt.close()
  #
+ ### Tenseur de diffusion homogénéisé
+ ## Intégrale de khi sur le domaine fluide
+ A=assemble(grad(khi)[0,0]*dx)
+ B=assemble(grad(khi)[0,1]*dx)
+ C=assemble(grad(khi)[0,2]*dx)
+ E=assemble(grad(khi)[1,0]*dx)
+ F=assemble(grad(khi)[1,1]*dx)
+ G=assemble(grad(khi)[1,2]*dx)
+ H=assemble(grad(khi)[2,0]*dx)
+ K=assemble(grad(khi)[2,1]*dx)
+ L=assemble(grad(khi)[2,2]*dx)
+ Tkhi=np.array([[A,B,C],[E,F,G],[H,K,L]])
+ ## Intégrale de l'identité sur le domaine fluide
+ D=(1-4/3*pi*r**3)*np.eye(3)
+ ## Calcul et affichage du tenseur Dhom
+ Dhom=D_k*(D+Tkhi.T)
+ #print(('Tenseur D_hom',Dhom))
+ print(Dhom[0,0])
  print('Etape II- faite')
 ### Etape III : en utilisant la méthode des snapshots, calcul de la POD et des coefficients aléatoires, toujours dans domaine_fixe ###
 elif etape=='EIII':

@@ -195,7 +195,7 @@ from importlib import reload
 repertoire_parent="Res2D/"
 #from LEc import *
 import LEc as LE
-LE=reload(LE)
+#LE=reload(LE)
 
 ## Paquets spécifiques à POD-MOR ##
 
@@ -254,7 +254,112 @@ res_fixe=30#résolution du maillage sans obstacle
 
 domaine_fixe=Rectangle(Point(xinf,yinf),Point(xsup,ysup))
 mesh_fixe=generate_mesh(domaine_fixe,res_fixe)
-V_fixe=VectorFunctionSpace(mesh_fixe, "P", 2, constrained_domain=PeriodicBoundary())
+V_fixe=VectorFunctionSpace(mesh_fixe, "P", 3, form_degree=1, constrained_domain=PeriodicBoundary())#vertices))
+
+
+
+
+
+# we define the unit cell vertices coordinates for later use
+vertices = np.array([[0, 0.],
+                     [1, 0.],
+                     [1, 1],
+                     [0, 1]])
+
+
+
+
+
+# class used to define the periodic boundary map
+class PeriodicBoundary(SubDomain):
+    def __init__(self, vertices):
+        """ vertices stores the coordinates of the 4 unit cell corners"""
+        SubDomain.__init__(self)
+        self.vv = vertices
+        self.a1 = self.vv[1,:]-self.vv[0,:] # first vector generating periodicity
+        self.a2 = self.vv[3,:]-self.vv[0,:] # second vector generating periodicity
+
+    def inside(self, x, on_boundary):
+        # return True if on left or bottom boundary AND NOT on one of the
+        # bottom-right or top-left vertices
+        return bool((near(x[0], self.vv[0,0] + x[1]*self.a2[0]/self.vv[3,1]) or
+                     near(x[1], self.vv[0,1] + x[0]*self.a1[1]/self.vv[1,0])) and
+                     (not ((near(x[0], self.vv[1,0]) and near(x[1], self.vv[1,1])) or
+                     (near(x[0], self.vv[3,0]) and near(x[1], self.vv[3,1])))) and on_boundary)
+
+    def map(self, x, y):
+        if near(x[0], self.vv[2,0]) and near(x[1], self.vv[2,1]): # if on top-right corner
+            y[0] = x[0] - (self.a1[0]+self.a2[0])
+            y[1] = x[1] - (self.a1[1]+self.a2[1])
+        elif near(x[0], self.vv[1,0] + x[1]*self.a2[0]/self.vv[2,1]): # if on right boundary
+            y[0] = x[0] - self.a1[0]
+            y[1] = x[1] - self.a1[1]
+        else:   # should be on top boundary
+            y[0] = x[0] - self.a2[0]
+            y[1] = x[1] - self.a2[1]
+
+plot(mesh_fixe)
+plt.show()
+plt.close()
+
+V_fixe = VectorFunctionSpace(mesh_fixe, "CG", 2, constrained_domain=PeriodicBoundary(vertices))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 c_x,c_y=0.0,0.0
 ###-------------------- Commandes pour l'écriture de fichiers, à déplacer dans le script éventuellement --------------------###
@@ -282,10 +387,18 @@ plt.close()
 
 # Famille de cellules élémentaires : 8 clichés, inclusion circulaire, paramétrée par le rayon du cercle
 
-c_x=0.5
-c_y=0.5
+c_x=0.3
+c_y=0.8
+
+r=0.35
 
 res=40
+
+mesh_c_r=F2d.creer_maill_circ([c_x,c_y],r,res)
+
+plot(mesh_c_r)
+plt.show()
+plt.close()
 
 D_k=1.0
 
@@ -295,18 +408,26 @@ Npas=8
 # Calcule aussi le tenseur de diffusion homogénéisé #
 
 kfic=1
-for i in range(1,1+Npas):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon d'un cercle doit être non nul
+for i in range(7,1+Npas):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon d'un cercle doit être non nul
  r=i*0.05
- c_x=0.0#i*0.1
- c_y=0.0#i*0.1
+ c_x=0.5#3#i*0.1
+ c_y=0.5#i*0.1
  khi_i=F2d.snapshot_circ_per([c_x,c_y],r,res)
  # Stockage des résultats avec un format hdf5
- LE.ecriture_champ_hdf5(kh_file,KH_SAVE,khi_i,kfic,file_rayon_ecriture,r,[c_x,c_y],res)
+ ##LE.ecriture_champ_hdf5(kh_file,KH_SAVE,khi_i,kfic,file_rayon_ecriture,r,[c_x,c_y],res)
+ print('Rayon :',r)
+ #print(khi_i(0.8,0.0),khi_i(0.8,1.0))
+ #print(assemble(khi_i[1]*dx))
+ #print(assemble(khi_i[0]*dx))
  # Représentation graphique
+ plot(grad(khi_i)[:,0])
+ #plt.show()
+ plt.close()
  plot(khi_i)
- plt.show()
+ #plt.show()
  plt.close()
  ##
+ F2d.err_per_ind_01(khi_i,5)
  # Tenseur de diffusion homogénéisé
  ## Intégrale de khi sur le domaine fluide
  H=assemble(grad(khi_i)[0,0]*dx)
