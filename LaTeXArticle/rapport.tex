@@ -1,13 +1,21 @@
 \documentclass[a4paper,10pt]{article}
 \usepackage[utf8]{inputenc}
 
+\def\Lang{En}%{Fr}
+%\usepackage[english,french]{babel}
+%\lversion{\selectlanguage{french}}{\selectlanguage{english}}
+
+
 \input{../../preambules_latex/rapports.tex}
 
 %opening
-\title{Mod\'elisation d'\'ecoulements en milieu poreux : utilisation de la r\'eduction de mod\g{e}le}
-\author{\dots , Antoine Moreau}
+\title{A Reduced Order model for diffusion tensors in periodic porous media}
+%Mod\'elisation d'\'ecoulements en milieu poreux : utilisation de la r\'eduction de mod\g{e}le}
+\author{Olivier Millet, Cyrille Allery, Hassan Ghraieb and Antoine Moreau}
 
 \begin{document}
+
+\lversion{\selectlanguage{french}}{\selectlanguage{english}}
 
 \maketitle
 
@@ -15,6 +23,32 @@
 
 \end{abstract}
 
-\section{}
+\section{State of art}
+\input{state_art/article.tex}
+
+\section{Ionic diffusion in porous media}
+\input{diff_ion/diff_hom.tex}
+%Nernst-Planck
+%DSE
+%\chi
+
+\section{A Reduced Order Model}
+\input{red_mod/rom.tex}
+
+%Weak problem, solutions, periodicity
+%
+
+\section{Results and discussion}
+%\subsection{Numerical simulations}
+\input{res_disc/res_num.tex}
+
+%%CPU time and execution
+%%Efficiency, parameters : porosity, center of a spherical inclusion
+
+%\subsection{Discussion}
+%\input{res_disc/discussion.tex}
+
+
+
 
 \end{document}
