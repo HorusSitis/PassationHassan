@@ -303,26 +303,24 @@ Npas=8
 kfic=1
 for i in range(7,1+Npas):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon d'un cercle doit être non nul
  r=i*0.05
- c_x=0.5#3#i*0.1
- c_y=0.5#i*0.1
+ c_x=0.3#5#3#i*0.1
+ c_y=0.8#5#i*0.1
  khi_i=F2d.snapshot_circ_per([c_x,c_y],r,res)
  # Stockage des résultats avec un format hdf5
  ##LE.ecriture_champ_hdf5(kh_file,KH_SAVE,khi_i,kfic,file_rayon_ecriture,r,[c_x,c_y],res)
  print('Rayon :',r)
  #print(khi_i(0.8,0.0),khi_i(0.8,1.0))
- #print(assemble(khi_i[1]*dx))
- #print(assemble(khi_i[0]*dx))
  # Représentation graphique
  #plot(grad(khi_i)[:,0])
  #plt.show()
  #plt.close()
- #for a in range(0,2):
- # for b in range(0,2):
- #  p_gk=plot(grad(khi_i)[a,b])
- #  plt.colorbar(p_gk)
- #  #plt.show(p_gk)
- #  plt.savefig("Figures2D/incccen_"+str(r)+"_dkhi"+str(a+1)+"_d"+str(b+1)+".png")
- #  plt.close()
+ for a in range(0,2):
+  for b in range(0,2):
+   p_gk=plot(-grad(khi_i)[a,b])
+   plt.colorbar(p_gk)
+   plt.show(p_gk)
+   #plt.savefig("Figures2D/incccen_"+str(r)+"_dkhi"+str(a+1)+"_d"+str(b+1)+".png")
+   plt.close()
  ##
  #plot(khi_i)
  #plt.show()
@@ -331,7 +329,7 @@ for i in range(7,1+Npas):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon 
   p_k=plot(khi_i[c])
   plt.colorbar(p_k)
   #plt.show(p_gk)
-  plt.savefig("Figures2D/incccen_"+str(r)+"_khi"+str(c+1)+".png")
+  plt.savefig("Figures2D/inc_c"+str(c_x)+str(c_y)+str(r)+"_khi"+str(c+1)+".png")
   plt.close()
  ##
  F2d.err_per_ind_01(khi_i,5)
