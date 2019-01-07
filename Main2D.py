@@ -316,16 +316,23 @@ for i in range(7,1+Npas):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon 
  #plot(grad(khi_i)[:,0])
  #plt.show()
  #plt.close()
- for a in range(0,2):
-  for b in range(0,2):
-   p_gk=plot(grad(khi_i)[a,b])
-   plt.colorbar(p_gk)
-   plt.show(p_gk)
-   plt.close()
+ #for a in range(0,2):
+ # for b in range(0,2):
+ #  p_gk=plot(grad(khi_i)[a,b])
+ #  plt.colorbar(p_gk)
+ #  #plt.show(p_gk)
+ #  plt.savefig("Figures2D/incccen_"+str(r)+"_dkhi"+str(a+1)+"_d"+str(b+1)+".png")
+ #  plt.close()
  ##
  #plot(khi_i)
  #plt.show()
  #plt.close()
+ for c in range(0,2):
+  p_k=plot(khi_i[c])
+  plt.colorbar(p_k)
+  #plt.show(p_gk)
+  plt.savefig("Figures2D/incccen_"+str(r)+"_khi"+str(c+1)+".png")
+  plt.close()
  ##
  F2d.err_per_ind_01(khi_i,5)
  # Tenseur de diffusion homogénéisé
