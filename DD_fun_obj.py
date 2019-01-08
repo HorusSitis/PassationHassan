@@ -8,16 +8,6 @@ from math import sqrt
 from math import exp
 import sys
 
-
-
-if __name__=='__main__':
- #
- tol=1e-10
- xinf=0.0
- yinf=0.0
- xsup=1.0
- ysup=1.0
-
 tol=1e-10
 xinf=0.0
 yinf=0.0
@@ -38,65 +28,10 @@ class PeriodicBoundary(SubDomain):
    else:
     y[i]=x[i]
 
-# we define the unit cell vertices coordinates for later use
-vertices = np.array([[0, 0.],
-                     [1, 0.],
-                     [1, 1],
-                     [0, 1]])
-
-# class used to define the periodic boundary map
-#class PeriodicBoundary(SubDomain):
-#    def __init__(self, vertices):
-#        """ vertices stores the coordinates of the 4 unit cell corners"""
-#        SubDomain.__init__(self)
-#        self.vv = vertices
-#        self.a1 = self.vv[1,:]-self.vv[0,:] # first vector generating periodicity
-#        self.a2 = self.vv[3,:]-self.vv[0,:] # second vector generating periodicity
-#
-#    def inside(self, x, on_boundary):
-#        # return True if on left or bottom boundary AND NOT on one of the
-#        # bottom-right or top-left vertices
-#        return bool((near(x[0], self.vv[0,0] + x[1]*self.a2[0]/self.vv[3,1]) or
-#                     near(x[1], self.vv[0,1] + x[0]*self.a1[1]/self.vv[1,0])) and
-#                     (not ((near(x[0], self.vv[1,0]) and near(x[1], self.vv[1,1])) or
-#                     (near(x[0], self.vv[3,0]) and near(x[1], self.vv[3,1])))) and on_boundary)
-#
-#    def map(self, x, y):
-#        if near(x[0], self.vv[2,0]) and near(x[1], self.vv[2,1]): # if on top-right corner
-#            y[0] = x[0] - (self.a1[0]+self.a2[0])
-#            y[1] = x[1] - (self.a1[1]+self.a2[1])
-#        elif near(x[0], self.vv[1,0] + x[1]*self.a2[0]/self.vv[2,1]): # if on right boundary
-#            y[0] = x[0] - self.a1[0]
-#            y[1] = x[1] - self.a1[1]
-#        else:   # should be on top boundary
-#            y[0] = x[0] - self.a2[0]
-#            y[1] = x[1] - self.a2[1]
-
-
-
-
-
-
 ############################# Pour créer des maillages, avec des familles de cellules élémentaires #############################
 
 def crown(r):#épaisseur de la couronne dans laquelle le maillage est raffiné
  return r+0.01#*(1+0.2*exp(-r**2))#1.2*r
-
-def raffinement_maillage_cellule_centree(r,mesh):# Cellule centrée : un seul paramètre géométrique, le rayon de l'inclusion. 1.2*r<0.5 exigé.
- markers = MeshFunction("bool", mesh, mesh.topology().dim())
- markers.set_all(False)
- c_x=0.5
- c_y=0.5
- for c in cells(mesh):
-  for f in facets(c):
-   # Raffinement autour de l'inclusion périodique
-   if (sqrt((f.midpoint()[0]-c_x)**2+(f.midpoint()[1]-c_y)**2)<=crown(r)):
-    markers[c]=True 
-   # Raffinement aux bords du domaine
-   if any([f.midpoint()[k]==0 or f.midpoint()[k]==1 for k in range(0,2)]):
-    markers[c]=True
- mesh=refine(mesh, markers, redistribute=True) 
- return mesh
 
 def raffinement_maillage_circ_per(cen,r,mesh):# Objectif : montrer que l'emplacement de l'inclusion périodique dans la cellule élémentaire ne change pas le coefficient de diffusion homogénéisé, calculé avec le tenseur khi
  markers = MeshFunction("bool", mesh, mesh.topology().dim())
@@ -119,34 +54,22 @@ def raffinement_maillage_circ_per(cen,r,mesh):# Objectif : montrer que l'emplace
  return mesh
 
 def creer_maill_circ(cen,r,res):#valable quel que soit la position de l'inclusion : centre, choisi aléatoirement. 1.2*r<0.5.
- if cen[0]+r*1.2<1 and cen[1]+r*1.2<1 and cen[0]-r*1.2>0 and cen[1]-r*1.2>0:#si l'inclusion est comprise dans la cellule
-  rect=Rectangle(Point(0,0),Point(1,1))
-  circle=Circle(Point(cen[0],cen[1]),r)
-  domain=rect-circle
-  mesh=generate_mesh(domain,res)
-  # On raffine le long du bord de l'inclusion
-  #mesh_aux=raffinement_maillage_cellule_centree(r,mesh)
-  mesh_aux=raffinement_maillage_circ_per(cen,r,mesh)
-  mesh=mesh_aux
-  #print('pfffrrh !')
- else:
-  # Création de la cellule élémentaire avec inclusion
-  rect=Rectangle(Point(-1,-1),Point(2,2))
-  domain=rect
-  l_cer=[]#Circle(Point(cen[0],cen[1]),r)]
-  for i in range(-1,2):
-   for j in range(-1,2):
-    l_cer.append(Circle(Point(cen[0]+i,cen[1]+j),r)) 
-  print(len(l_cer))
-  for cer_per in l_cer:
-   domain=domain-cer_per
-  domain=domain*Rectangle(Point(0,0),Point(1,1))
-  # Création du permier maillage
-  mesh=generate_mesh(domain,res)
-  # On raffine le long du bord de l'inclusion
-  mesh_aux=raffinement_maillage_circ_per(cen,r,mesh)
-  mesh=mesh_aux
-  #
+ # Création de la cellule élémentaire avec inclusion
+ rect=Rectangle(Point(-1,-1),Point(2,2))
+ domain=rect
+ l_cer=[]#Circle(Point(cen[0],cen[1]),r)]
+ for i in range(-1,2):
+  for j in range(-1,2):
+   l_cer.append(Circle(Point(cen[0]+i,cen[1]+j),r)) 
+ print(len(l_cer))
+ for cer_per in l_cer:
+  domain=domain-cer_per
+ domain=domain*Rectangle(Point(0,0),Point(1,1))
+ # Création du permier maillage
+ mesh=generate_mesh(domain,res)
+ # On raffine le long du bord du domaine fluide
+ mesh=raffinement_maillage_circ_per(cen,r,mesh)
+ #
  return(mesh)
 
 ############################# Pour créer des snapshots, inclusion circulaire périodique unique #############################
@@ -174,19 +97,17 @@ def snapshot_circ_per(cen,r,res):
  ds = Measure("ds")(subdomain_data=boundaries)
  num_front_cercle=5
  ## On fixe une condition de Dirichlet, pour avoir l'unicité du tenseur khi : non nécessaire pour le tenseur de diffusion homogénéisé)
- ## On fixe une condition de Dirichlet, pour avoir l'unicité du tenseur khi : non nécessaire pour le tenseur de diffusion homogénéisé
- khi_zero=Constant((0., 0.))
+ ### Inutile si l'on exige une valeur moyenne nulle
+ #khi_zero=Constant((0., 0.))
  ### Point de l'espace où l'on fixe khi_zero
- point_zero=[0,0]
- for i in [-0.5,0.5]:
-  for j in [-0.5,0.5]:
-   point_zero_prov=[cen[0]+i,cen[1]+j]
-   if not(any([not(between(coord,(0-tol,1+tol))) for coord in point_zero_prov])):
-    point_zero=point_zero_prov
- def supp_point_zero(x):
-  return between(x[0],(point_zero[0]-tol,point_zero[0]+tol)) and between(x[1],(point_zero[1]-tol,point_zero[1]+tol))
- bc = DirichletBC(V, khi_zero, supp_point_zero, "pointwise")
- ## Inutile si l'on exige une valeur moyenne nulle
+ #point_zero=[0,0]
+ #for i in [-0.5,0.5]:
+ # for j in [-0.5,0.5]:
+ #  point_zero_prov=[cen[0]+i,cen[1]+j]
+ #  if not(any([not(between(coord,(0-tol,1+tol))) for coord in point_zero_prov])):
+ #   point_zero=point_zero_prov
+ #def supp_point_zero(x):
+ # return between(x[0],(point_zero[0]-tol,point_zero[0]+tol)) and between(x[1],(point_zero[1]-tol,point_zero[1]+tol))
  #bc = DirichletBC(V, khi_zero, supp_point_zero, "geometric")#"pointwise", "topological" et "geometric" tolérés avec form_degree=0 en VectorFunctionSpace ; avertissement "found no facets matching domain for boundary condition"
  ## On résoud le problème faible, avec une condition de type Neumann au bord de l'obstacle
  normale = FacetNormal(mesh_c_r)
