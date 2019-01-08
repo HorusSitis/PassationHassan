@@ -255,6 +255,7 @@ res_fixe=30#résolution du maillage sans obstacle
 domaine_fixe=Rectangle(Point(xinf,yinf),Point(xsup,ysup))
 mesh_fixe=generate_mesh(domaine_fixe,res_fixe)
 V_fixe=VectorFunctionSpace(mesh_fixe, "P", 3, form_degree=1, constrained_domain=PeriodicBoundary())
+
 ###-------------------- Commandes pour l'écriture de fichiers, à déplacer dans le script éventuellement --------------------###
 
 if [c_x,c_y]==[0.5,0.5]:
@@ -280,8 +281,8 @@ plt.close()
 
 # Famille de cellules élémentaires : 8 clichés, inclusion circulaire, paramétrée par le rayon du cercle
 
-c_x=0.3
-c_y=0.8
+c_x=0.5
+c_y=0.5
 
 r=0.35
 
@@ -303,8 +304,8 @@ Npas=8
 kfic=1
 for i in range(7,1+Npas):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon d'un cercle doit être non nul
  r=i*0.05
- c_x=0.3#5#3#i*0.1
- c_y=0.8#5#i*0.1
+ c_x=0.5#5#3#i*0.1
+ c_y=0.5#5#i*0.1
  khi_i=F2d.snapshot_circ_per([c_x,c_y],r,res)
  # Stockage des résultats avec un format hdf5
  ##LE.ecriture_champ_hdf5(kh_file,KH_SAVE,khi_i,kfic,file_rayon_ecriture,r,[c_x,c_y],res)
@@ -318,6 +319,7 @@ for i in range(7,1+Npas):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon 
   for b in range(0,2):
    p_gk=plot(-grad(khi_i)[a,b])
    plt.colorbar(p_gk)
+   plt.title("moins_"+"dkhi_"+str(a+1)+"dy_"+str(b+1))
    plt.show(p_gk)
    #plt.savefig("Figures2D/incccen_"+str(r)+"_dkhi"+str(a+1)+"_d"+str(b+1)+".png")
    plt.close()
@@ -328,8 +330,9 @@ for i in range(7,1+Npas):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon 
  for c in range(0,2):
   p_k=plot(khi_i[c])
   plt.colorbar(p_k)
-  #plt.show(p_gk)
-  plt.savefig("Figures2D/inc_c"+str(c_x)+str(c_y)+str(r)+"_khi"+str(c+1)+".png")
+  plt.title("khi_y"+str(c+1))
+  plt.show(p_k)
+  #plt.savefig("Figures2D/inc_c"+str(c_x)+str(c_y)+str(r)+"_khi"+str(c+1)+".png")
   plt.close()
  ##
  F2d.err_per_ind_01(khi_i,5)
