@@ -61,7 +61,6 @@ def creer_maill_circ(cen,r,res):#valable quel que soit la position de l'inclusio
  for i in range(-1,2):
   for j in range(-1,2):
    l_cer.append(Circle(Point(cen[0]+i,cen[1]+j),r)) 
- print(len(l_cer))
  for cer_per in l_cer:
   domain=domain-cer_per
  domain=domain*Rectangle(Point(0,0),Point(1,1))
@@ -96,19 +95,6 @@ def snapshot_circ_per(cen,r,res):
  Gamma_sf.mark(boundaries, 5)
  ds = Measure("ds")(subdomain_data=boundaries)
  num_front_cercle=5
- ## On fixe une condition de Dirichlet, pour avoir l'unicité du tenseur khi : non nécessaire pour le tenseur de diffusion homogénéisé)
- ### Inutile si l'on exige une valeur moyenne nulle
- #khi_zero=Constant((0., 0.))
- ### Point de l'espace où l'on fixe khi_zero
- #point_zero=[0,0]
- #for i in [-0.5,0.5]:
- # for j in [-0.5,0.5]:
- #  point_zero_prov=[cen[0]+i,cen[1]+j]
- #  if not(any([not(between(coord,(0-tol,1+tol))) for coord in point_zero_prov])):
- #   point_zero=point_zero_prov
- #def supp_point_zero(x):
- # return between(x[0],(point_zero[0]-tol,point_zero[0]+tol)) and between(x[1],(point_zero[1]-tol,point_zero[1]+tol))
- #bc = DirichletBC(V, khi_zero, supp_point_zero, "geometric")#"pointwise", "topological" et "geometric" tolérés avec form_degree=0 en VectorFunctionSpace ; avertissement "found no facets matching domain for boundary condition"
  ## On résoud le problème faible, avec une condition de type Neumann au bord de l'obstacle
  normale = FacetNormal(mesh_c_r)
  nb_noeuds=V.dim()
@@ -128,48 +114,172 @@ def snapshot_circ_per(cen,r,res):
  # Résultat : snapshot
  return(khi)
 
-############################# Pour tester la périodicité d'un champ en norme l2 ou infinie : erreur relative #############################
 
-def err_per_sum_01(u,norm,Npas,type_err):
- pas=1/Npas
- # Périodicité
- ## Essais avec assemble() ou .vector().get_local()
- #mesh_Gamma_ff=UnitIntervalMesh(40)
- #x=SpatialCoordinate(mesh_Gamma_ff)
- #def quad_u_x(y):return(sum((u((1,y))-u((0,y)))**2))
- #err_per_x=assemble(quad_u_x(x[0])*dx(degree=2))
- #uv=u.vector().get_local()
- ## Normes l2 et infinie de khi restreint à \{0\}\times ... , respectivement ... \times [0,1] pour l'erreur sur le bord vertical, respectivement horizontal.
- list_per_x=[sum((u((1,pas*k))-u((0,pas*k)))**2) for k in range(0,Npas)]
- list_0_x=[sum(u((0,pas*k))**2) for k in range(0,Npas)]
- list_per_y=[sum((u((pas*k,1))-u((pas*k,0)))**2) for k in range(0,Npas)]
- list_0_y=[sum(u((pas*k,0))**2) for k in range(0,Npas)]
- ## Erreur relative ou absolue
- den=[1.0,1.0]
- if type_err=='rel':
-  if norm=='l2':
-   den=[sqrt(sum(list_0_x)/Npas),sqrt(sum(list_0_y)/Npas)]
-  elif norm=='infty':
-   den=[sqrt(max(list_0_x)),sqrt(max(list_0_y))]
- ## Résultats
- if norm=='l2':
-  El2_per_x=sqrt(sum(list_per_x)/Npas)/den[0]
-  El2_per_y=sqrt(sum(list_per_y)/Npas)/den[1]
-  return((El2_per_x,El2_per_y))
- elif norm=='infty':
-  Einfty_per_x=sqrt(max(list_per_x))/den[0]
-  Einfty_per_y=sqrt(max(list_per_y))/den[1]
-  return((Einfty_per_x,Einfty_per_y))
+############################# Pour avoir quelques représentations graphiques #############################
+
+def fig_khi(cen,r,u,todo):
+ # figure : les composantes du vecteur, séparément
+ plt.figure(1)
+ ## u_y1
+ plt.subplot(211)
+ spl1=plot(u[0])
+ bar1=plt.colorbar(spl1)
+ plt.title("khi_y"+str(1))
+ ## u_y2
+ plt.subplot(212)
+ spl2=plot(u[1])
+ bar2=plt.colorbar(spl2)
+ plt.title("khi_y"+str(2))
+ ## Show or save
+ if todo=='aff':
+  plt.show()
+ elif todo=='save':
+  plt.savefig("Figures2D/inc_c"+str(cen[0])+str(cen[1])+str(r)+"_khi.png")
+ ## Close
+ plt.close()
+ #
+ return()
+
+def fig_dkhi(cen,r,U,todo):
+ # figure : les composantes du vecteur, séparément
+ plt.figure(1)
+ ## U_1_y1
+ plt.subplot(221)
+ spl1=plot(U[0,0])
+ bar1=plt.colorbar(spl1)
+ plt.title("-dkhi"+str(1)+"_dy"+str(1))
+ ## U_1_y2
+ plt.subplot(222)
+ spl2=plot(U[1,0])
+ bar2=plt.colorbar(spl2)
+ plt.title("-dkhi"+str(2)+"_dy"+str(1))
+ ## U_2_y1
+ plt.subplot(223)
+ spl3=plot(U[0,1])
+ bar3=plt.colorbar(spl3)
+ plt.title("-dkhi"+str(1)+"_dy"+str(2))
+ ## U_2_y2
+ plt.subplot(224)
+ spl4=plot(U[1,1])
+ bar4=plt.colorbar(spl4)
+ plt.title("-dkhi"+str(2)+"_dy"+str(2))
+ ## Show or save
+ if todo=='aff':
+  plt.show()
+ elif todo=='save':
+  plt.savefig("Figures2D/inc_c"+str(cen[0])+str(cen[1])+str(r)+"_Gradkhi.png")
+ ## Close
+ plt.close()
+ #
+ return()
+
+############################# Pour tester la périodicité d'un champ en norme l2 ou infinie : erreur relative #############################
 
 def err_per_ind_01(u,Npas):
  pas=1/Npas
- #l_x_0=array([u(0.0,k*pas for k in range(0,Npas)])
- #l_x_1=array([u(1.0,k*pas for k in range(0,Npas)])
- #l_x_diff=)l_x_1-l_x_0
  print('Bord vertical :')
  for k in range(0,1+Npas):
-  print(u((0.0,pas*k)),u((1.0,pas*k)))
+  is_fluid=True
+  for i in range(-1,2):
+   for j in range(-1,2):
+    if sqrt((0.0-(cen[0]+i))**2+(pas*k-(cen[1]+j))**2)<=r:
+     is_fluid=False
+  if is_fluid:
+   print(u((0.0,pas*k)),u((1.0,pas*k)))
+  else:
+   print([0.0,0.0],[0.0,0.0])
  print('Bord horizontal :')
  for k in range(0,1+Npas):
+  is_fluid=True
+  for i in range(-1,2):
+   for j in range(-1,2):
+    if sqrt((0.0-(cen[0]+i))**2+(pas*k-(cen[1]+j))**2)<=r:
+     is_fluid=False
+  if is_fluid:
+   print(u((pas*k,0.0)),u((pas*k,1.0)))
+  else:
+   print([0.0,0.0],[0.0,0.0])
   print(u((pas*k,0.0)),u((pas*k,1.0)))
  return()
+
+
+def err_per_gr(cen,r,u,Npas,todo):
+ coord_b=np.arange(Npas+1)
+ pas=1/Npas
+ # ---------------------- khi on vertical edges ---------------------- #
+ # Creates the vectors where the khi component values will be registered
+ ulr_y1_0=np.zeros(Npas+1)
+ ulr_y2_0=np.zeros(Npas+1)
+ ulr_y1_1=np.zeros(Npas+1)
+ ulr_y2_1=np.zeros(Npas+1)
+ ## We collect the values of khi on the fluid domain, and suppose khi vanishes on the solid domain
+ for k in range(0,Npas+1):
+  is_fluid=True
+  for i in range(-1,2):
+   for j in range(-1,2):
+    if sqrt((0.0-(cen[0]+i))**2+(pas*k-(cen[1]+j))**2)<=r:
+     is_fluid=False
+  if is_fluid:
+   # u on the left boundary
+   vect_u_0=u((0.0,pas*k))
+   ulr_y1_0[k]=vect_u_0[0]
+   ulr_y2_0[k]=vect_u_0[1]
+   # u on the right boundary
+   vect_u_1=u((1.0,pas*k))
+   ulr_y1_1[k]=vect_u_1[0]
+   ulr_y2_1[k]=vect_u_1[1]
+ # ---------------------- khi on horizontal edges ---------------------- #
+ # Creates the vectors where the khi component values will be registered
+ ubt_y1_0=np.zeros(Npas+1)
+ ubt_y2_0=np.zeros(Npas+1)
+ ubt_y1_1=np.zeros(Npas+1)
+ ubt_y2_1=np.zeros(Npas+1)
+ ## We collect the values of khi on the fluid domain, and suppose khi vanishes on the solid domain
+ for k in range(0,Npas+1):
+  is_fluid=True
+  for i in range(-1,2):
+   for j in range(-1,2):
+    if sqrt((pas*k-(cen[0]+i))**2+(0.0-(cen[1]+j))**2)<=r:
+     is_fluid=False
+  if is_fluid:
+   # u on the bottom boundary
+   vect_u_0=u((pas*k,0.0))
+   ubt_y1_0[k]=vect_u_0[0]
+   ubt_y2_0[k]=vect_u_0[1]
+   # u on the top boundary
+   vect_u_1=u((pas*k,1.0))
+   ubt_y1_1[k]=vect_u_1[0]
+   ubt_y2_1[k]=vect_u_1[1]
+ #
+ # ---------------------- plots ---------------------- #
+ plt.figure(1)
+ # Compares and plots between left and right boundary for khi_y1 and khi_y2
+ ## u_y1
+ plt.subplot(221)
+ plt.plot(ulr_y1_0,coord_b,'bo',ulr_y1_1,coord_b,'k')
+ plt.title("khi_y1 on vertical edges")
+ ## u_y2
+ plt.subplot(222)
+ plt.plot(ulr_y2_0,coord_b,'bo',ulr_y2_1,coord_b,'k')
+ plt.title("khi_y2 on vertical edges")
+ # Compares and plots between left and right boundary for khi_y1 and khi_y2
+ ## u_y1
+ plt.subplot(223)
+ plt.plot(coord_b,ubt_y1_0,'bo',coord_b,ubt_y1_1,'k')
+ plt.title("khi_y1 on horizontal edges")
+ ## u_y2
+ plt.subplot(224)
+ plt.plot(coord_b,ubt_y2_0,'bo',coord_b,ubt_y2_1,'k')
+ plt.title("khi_y2 on horizontal edges")
+ ## Show or save
+ if todo=='aff':
+  plt.show()
+ elif todo=='save':
+  plt.savefig("Figures2D/inc_c"+"CompLRBT"+str(Npas)+"_cen"+str(cen[0])+str(cen[1])+"_ray"+str(r)+".png")
+ ## Close
+ plt.close()
+ #
+ return()
+
+
+
