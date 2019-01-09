@@ -10,14 +10,17 @@
 
 etape='EII'
 # 'E0' à 'EIV' #
-res_fixe=12
+res_fixe=8
 fixe_aff=False
-res=12
+res=7
 Nsnap=8
 rempUsnap='par8'#'seq'
-c_x, c_y, c_z = 0.5, 0.5, 0.5
+c_x=0.5
+c_y=0.5
+c_z=0.5
 #r=0.35#pour une réalisation unique
-npas_err=5
+npas_err=20
+fig_todo='aff'
 
 ### Répertoire courant ###
 
@@ -158,7 +161,8 @@ elif etape=='EII':
   plt.show()
   plt.close()
   print('erreur sur la solution :')
-  err_per_ind_01(khi,npas_err)
+  err_per_gr([c_x,c_y,c_z],r,khi,npas_err,fig_todo)
+  err_per_ind_01(khi,[c_x,c_y,c_z],r,npas_err)
   plot(khi)
   #print('erreur sur la solution extrapolée :')
   #err_per_ind_01(khi_fixe,npas_err)

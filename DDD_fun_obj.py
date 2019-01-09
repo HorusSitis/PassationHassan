@@ -5,7 +5,7 @@ from fenics import *
 from dolfin import *
 from mshr import *
 import matplotlib.pyplot as plt
-#import numpy as np
+import numpy as np
 from math import sqrt
 from math import exp
 import sys
@@ -138,54 +138,219 @@ def snapshot_sph_per(cen,r,res):
  # Résultat : snapshot
  return(khi)
 
-############################# Pour tester la périodicité d'un champ en norme l2 ou infinie : erreur relative #############################
+############################# Pour tester la périodicité d'un champ : impression des valeurs du champ ou de son gradient, ou représentation graphique #############################
 
-def err_per_01(u,norm,Npas,type_err):
- pas=1/Npas
- # Périodicité
- ## Essais avec assemble() ou .vector().get_local()
- #mesh_Gamma_ff=UnitIntervalMesh(40)
- #x=SpatialCoordinate(mesh_Gamma_ff)
- #def quad_u_x(y):return(sum((u((1,y))-u((0,y)))**2))
- #err_per_x=assemble(quad_u_x(x[0])*dx(degree=2))
- #uv=u.vector().get_local()
- ## Normes l2 et infinie de khi restreint à \{0\}\times ... , respectivement ... \times [0,1] pour l'erreur sur le bord vertical, respectivement horizontal.
- list_per_x=[sum((u((1,pas*k))-u((0,pas*k)))**2) for k in range(0,Npas)]
- list_0_x=[sum(u((0,pas*k))**2) for k in range(0,Npas)]
- list_per_y=[sum((u((pas*k,1))-u((pas*k,0)))**2) for k in range(0,Npas)]
- list_0_y=[sum(u((pas*k,0))**2) for k in range(0,Npas)]
- list_per_z=[sum((u((pas*k,1))-u((pas*k,0)))**2) for k in range(0,Npas)]
- list_0_z=[sum(u((pas*k,0))**2) for k in range(0,Npas)]
- ## Erreur relative ou absolue
- den=[1.0,1.0,1.0]
- if type_err=='rel':
-  if norm=='l2':
-   den=[sqrt(sum(list_0_x)/Npas),sqrt(sum(list_0_y)/Npas)]
-  elif norm=='infty':
-   den=[sqrt(max(list_0_x)),sqrt(max(list_0_y))]
- ## Résultats
- if norm=='l2':
-  El2_per_x=sqrt(sum(list_per_x)/Npas)/den[0]
-  El2_per_y=sqrt(sum(list_per_y)/Npas)/den[1]
-  return((El2_per_x,El2_per_y))
- elif norm=='infty':
-  Einfty_per_x=sqrt(max(list_per_x))/den[0]
-  Einfty_per_y=sqrt(max(list_per_y))/den[1]
-  return((Einfty_per_x,Einfty_per_y))
-
-def err_per_ind_01(u,Npas):# comparaison entre les valeurs individuelles prises par khi aux frontières de la cellule
+def err_per_ind_01(u,cen,r,Npas):# comparaison entre les valeurs individuelles prises par khi aux frontières de la cellule
  pas=1/Npas
  print('Plan frontal Oxz :')
  for k in range(0,1+Npas):
   for l in range(0,1+Npas):
-   print('x='+str(pas*k),'z='+str(pas*l),u((pas*k,0.0,pas*l)),u((pas*k,1.0,pas*l)))
+   is_fluid=True
+   for m in range(-1,2):
+    for n in range(-1,2):
+     for o in range(-1,2):
+      if sqrt((pas*k-(cen[0]+m))**2+(0.0-(cen[1]+n))**2+(pas*l-(cen[2]+o))**2)<=r:
+       is_fluid=False
+   if is_fluid:
+    print('x='+str(pas*k),'z='+str(pas*l),u((pas*k,0.0,pas*l)),u((pas*k,1.0,pas*l)))
+   else:
+    print('x='+str(pas*k),'z='+str(pas*l),"solid")
  print('Plan horizontal Oxy :')
  for k in range(0,1+Npas):
   for l in range(0,1+Npas):
-   print('x='+str(pas*k),'y='+str(pas*l),u((pas*k,pas*l,0.0)),u((pas*k,pas*l,1.0)))
+   is_fluid=True
+   for m in range(-1,2):
+    for n in range(-1,2):
+     for o in range(-1,2):
+      if sqrt((pas*k-(cen[0]+m))**2+(pas*l-(cen[1]+n))**2+(0.0-(cen[2]+o))**2)<=r:
+       is_fluid=False
+   if is_fluid:
+    print('x='+str(pas*k),'y='+str(pas*l),u((pas*k,pas*l,0.0)),u((pas*k,pas*l,1.0)))
+   else:
+    print('x='+str(pas*k),'y='+str(pas*l),"solid")
  print('Plan latéral Oyz :')
  for k in range(0,1+Npas):
   for l in range(0,1+Npas):
-   print('y='+str(pas*k),'z='+str(pas*l),u((0.0,pas*k,pas*l)),u((1.0,pas*k,pas*l)))
+   is_fluid=True
+   for m in range(-1,2):
+    for n in range(-1,2):
+     for o in range(-1,2):
+      if sqrt((0.0-(cen[0]+m))**2+(pas*k-(cen[1]+n))**2+(pas*l-(cen[2]+o))**2)<=r:
+       is_fluid=False
+   if is_fluid:
+    print('y='+str(pas*k),'z='+str(pas*l),u((0.0,pas*k,pas*l)),u((1.0,pas*k,pas*l)))
+   else:
+    print('y='+str(pas*k),'z='+str(pas*l),"solid")
  return()
+
+
+def err_per_gr(cen,r,u,Npas,todo):
+ #coord_b=np.arange(Npas+1)
+ X,Y=np.meshgrid(np.arange(1+Npas),np.arange(1+Npas))
+ pas=1/Npas
+ # ---------------------- khi on Oxz, front and back of the cell ---------------------- #
+ # Creates the vectors where the khi component values will be registered
+ ufb_y1_0=np.zeros((Npas+1,Npas+1))
+ ufb_y2_0=np.zeros((Npas+1,Npas+1))
+ ufb_y3_0=np.zeros((Npas+1,Npas+1))
+ ufb_y1_1=np.zeros((Npas+1,Npas+1))
+ ufb_y2_1=np.zeros((Npas+1,Npas+1))
+ ufb_y3_1=np.zeros((Npas+1,Npas+1))
+ ## We collect the values of khi on the fluid domain, and suppose khi vanishes on the solid domain
+ for k in range(0,Npas+1):
+  for l in range(0,1+Npas):
+   is_fluid=True
+   for m in range(-1,2):
+    for n in range(-1,2):
+     for o in range(-1,2):
+      if sqrt((pas*k-(cen[0]+m))**2+(0.0-(cen[1]+n))**2+(pas*l-(cen[2]+o))**2)<=r:
+       is_fluid=False
+  if is_fluid:
+   # u on the front face
+   vect_u_0=u((pas*k,0.0,pas*l))
+   ufb_y1_0[k,l]=vect_u_0[0]
+   ufb_y2_0[k,l]=vect_u_0[1]
+   ufb_y3_0[k,l]=vect_u_0[2]
+   # u on the back face
+   vect_u_1=u((pas*k,1.0,pas*l))
+   ufb_y1_1[k,l]=vect_u_1[0]
+   ufb_y2_1[k,l]=vect_u_1[1]
+   ufb_y3_1[k,l]=vect_u_1[2]
+ # ---------------------- khi on Oxy, top and bottom of the cell ---------------------- #
+ # Creates the vectors where the khi component values will be registered
+ ubt_y1_0=np.zeros((Npas+1,Npas+1))
+ ubt_y2_0=np.zeros((Npas+1,Npas+1))
+ ubt_y3_0=np.zeros((Npas+1,Npas+1))
+ ubt_y1_1=np.zeros((Npas+1,Npas+1))
+ ubt_y2_1=np.zeros((Npas+1,Npas+1))
+ ubt_y3_1=np.zeros((Npas+1,Npas+1))
+ ## We collect the values of khi on the fluid domain, and suppose khi vanishes on the solid domain
+ for k in range(0,Npas+1):
+  for l in range(0,1+Npas):
+   is_fluid=True
+   for m in range(-1,2):
+    for n in range(-1,2):
+     for o in range(-1,2):
+      if sqrt((pas*k-(cen[0]+m))**2+(pas*l-(cen[1]+n))**2+(0.0-(cen[2]+o))**2)<=r:
+       is_fluid=False
+  if is_fluid:
+   # u on the floor (b)
+   vect_u_0=u((pas*k,pas*l,0.0))
+   ubt_y1_0[k,l]=vect_u_0[0]
+   ubt_y2_0[k,l]=vect_u_0[1]
+   ubt_y3_0[k,l]=vect_u_0[2]
+   # u on the roof (t)
+   vect_u_1=u((pas*k,pas*l,1.0))
+   ubt_y1_1[k,l]=vect_u_1[0]
+   ubt_y2_1[k,l]=vect_u_1[1]
+   ubt_y3_1[k,l]=vect_u_1[2]
+ # ---------------------- khi on Oyz, lateral faces of the cell ---------------------- #
+ # Creates the vectors where the khi component values will be registered
+ ulr_y1_0=np.zeros((Npas+1,Npas+1))
+ ulr_y2_0=np.zeros((Npas+1,Npas+1))
+ ulr_y3_0=np.zeros((Npas+1,Npas+1))
+ ulr_y1_1=np.zeros((Npas+1,Npas+1))
+ ulr_y2_1=np.zeros((Npas+1,Npas+1))
+ ulr_y3_1=np.zeros((Npas+1,Npas+1))
+ ## We collect the values of khi on the fluid domain, and suppose khi vanishes on the solid domain
+ for k in range(0,Npas+1):
+  for l in range(0,1+Npas):
+   is_fluid=True
+   for m in range(-1,2):
+    for n in range(-1,2):
+     for o in range(-1,2):
+      if sqrt((0.0-(cen[0]+m))**2+(pas*k-(cen[1]+n))**2+(pas*l-(cen[2]+o))**2)<=r:
+       is_fluid=False
+  if is_fluid:
+   # u on the floor (b)
+   vect_u_0=u((0.0,pas*k,pas*l))
+   ulr_y1_0[k,l]=vect_u_0[0]
+   ulr_y2_0[k,l]=vect_u_0[1]
+   ulr_y3_0[k,l]=vect_u_0[2]
+   # u on the roof (t)
+   vect_u_1=u((1.0,pas*k,pas*l))
+   ulr_y1_1[k,l]=vect_u_1[0]
+   ulr_y2_1[k,l]=vect_u_1[1]
+   ulr_y3_1[k,l]=vect_u_1[2]
+ # else khi_y.. stays at 0.0
+ #
+ # ---------------------- plots ---------------------- #
+ fig=plt.figure(1)
+ # We compare front and back boundaries for khi_y1, khi_y2 and khi_y3
+ ## u_y1
+ ax1=fig.add_subplot(331, projection='3d')
+ #ax1.plot_surface(X,Y,ufb_y1_0,color='green')
+ ax1.scatter(X,Y,ufb_y1_0,color='blue')
+ ax1.plot_wireframe(X,Y,ufb_y1_1,color='red')
+ plt.title("khi_y1 parallel to Oxz")
+ ## u_y2
+ ax2=fig.add_subplot(332, projection='3d')
+ #ax2.plot_surface(X,Y,ufb_y2_0,color='green')
+ ax2.scatter(X,Y,ufb_y2_0,color='blue')
+ ax2.plot_wireframe(X,Y,ufb_y2_1,color='red')
+ plt.title("khi_y2 parallel to Oxz")
+ ## u_y3
+ ax3=fig.add_subplot(333, projection='3d')
+ #ax3.plot_surface(X,Y,ufb_y3_0,color='green')
+ ax3.scatter(X,Y,ufb_y3_0,color='blue')
+ ax3.plot_wireframe(X,Y,ufb_y3_1,color='red')
+ plt.title("khi_y3 parallel to Oxz")
+ # We compare top and bottom boundaries for khi_y1, khi_y2 and khi_y3
+ ## u_y1
+ ax4=fig.add_subplot(334, projection='3d')
+ ax4.scatter(X,Y,ubt_y1_0,color='blue')
+ #ax4.plot_surface(X,Y,ubt_y1_0,color='green')
+ ax4.plot_wireframe(X,Y,ubt_y1_1,color='red')
+ plt.title("khi_y1 parallel to Oxy")
+ ## u_y2
+ ax5=fig.add_subplot(335, projection='3d')
+ ax5.scatter(X,Y,ubt_y2_0,color='blue')
+ #ax5.plot_surface(X,Y,ubt_y2_0,color='green')
+ ax5.plot_wireframe(X,Y,ubt_y2_1,color='red')
+ plt.title("khi_y2 parallel to Oxy")
+ ## u_y3
+ ax6=fig.add_subplot(336, projection='3d')
+ #ax6.plot_surface(X,Y,ubt_y3_0,color='green')
+ ax6.scatter(X,Y,ubt_y3_0,color='blue')
+ ax6.plot_wireframe(X,Y,ubt_y3_1,color='red')
+ plt.title("khi_y3 parallel to Oxy")
+ # We compare left and right boundaries for khi_y1, khi_y2 and khi_y3
+ ## u_y1
+ ax7=fig.add_subplot(337, projection='3d')
+ #ax7.plot_surface(X,Y,ubt_y1_0,color='green')
+ ax7.scatter(X,Y,ubt_y1_0,color='blue')
+ ax7.plot_wireframe(X,Y,ulr_y1_1,color='red')
+ plt.title("khi_y1 parallel to Oyz")
+ ## u_y2
+ ax8=fig.add_subplot(338, projection='3d')
+ #ax8.plot_surface(X,Y,ubt_y2_0,color='green')
+ ax8.scatter(X,Y,ubt_y2_0,color='blue')
+ ax8.plot_wireframe(X,Y,ulr_y2_1,color='red')
+ plt.title("khi_y2 parallel to Oyz")
+ ## u_y3
+ ax9=fig.add_subplot(339, projection='3d')
+ #ax9.plot_surface(X,Y,ubt_y3_0,color='green')
+ ax9.scatter(X,Y,ubt_y3_0,color='blue')
+ ax9.plot_wireframe(X,Y,ulr_y3_1,color='red')
+ plt.title("khi_y3 parallel to Oyz")
+ ## Show or save
+ if todo=='aff':
+  plt.show()
+ elif todo=='save':
+  plt.savefig("Figures3D/inc_c"+"CompBo"+str(Npas)+"_cen"+str(cen[0])+str(cen[1])+str(cen[2])+"_ray"+str(r)+".png")
+ ## Close
+ plt.close()
+ #
+ return()
+
+
+
+
+
+
+
+
+
+
+
 
