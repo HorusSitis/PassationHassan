@@ -304,38 +304,18 @@ Npas=8
 kfic=1
 for i in range(7,1+Npas):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon d'un cercle doit être non nul
  r=i*0.05
- c_x=0.5#5#3#i*0.1
- c_y=0.5#5#i*0.1
+ c_x=0.5
+ c_y=0.5
  khi_i=F2d.snapshot_circ_per([c_x,c_y],r,res)
  # Stockage des résultats avec un format hdf5
  ##LE.ecriture_champ_hdf5(kh_file,KH_SAVE,khi_i,kfic,file_rayon_ecriture,r,[c_x,c_y],res)
  print('Rayon :',r)
- #print(khi_i(0.8,0.0),khi_i(0.8,1.0))
- # Représentation graphique
- #plot(grad(khi_i)[:,0])
- #plt.show()
- #plt.close()
- for a in range(0,2):
-  for b in range(0,2):
-   p_gk=plot(-grad(khi_i)[a,b])
-   plt.colorbar(p_gk)
-   plt.title("moins_"+"dkhi_"+str(a+1)+"dy_"+str(b+1))
-   plt.show(p_gk)
-   #plt.savefig("Figures2D/incccen_"+str(r)+"_dkhi"+str(a+1)+"_d"+str(b+1)+".png")
-   plt.close()
+ print("Centre : "+str(c_x)+"_"+str(c_y))
+ #F2d.fig_khi([c_x,c_y],r,khi_i,'save')
+ F2d.fig_dkhi([c_x,c_y],r,-grad(khi_i),'aff')
+ #F2d.err_per_gr([c_x,c_y],r,khi_i,20,'save')
+ #F2d.err_per_ind_01(khi_i,20)
  ##
- #plot(khi_i)
- #plt.show()
- #plt.close()
- for c in range(0,2):
-  p_k=plot(khi_i[c])
-  plt.colorbar(p_k)
-  plt.title("khi_y"+str(c+1))
-  plt.show(p_k)
-  #plt.savefig("Figures2D/inc_c"+str(c_x)+str(c_y)+str(r)+"_khi"+str(c+1)+".png")
-  plt.close()
- ##
- F2d.err_per_ind_01(khi_i,5)
  # Tenseur de diffusion homogénéisé
  ## Intégrale de khi sur le domaine fluide
  H=assemble(grad(khi_i)[0,0]*dx)
