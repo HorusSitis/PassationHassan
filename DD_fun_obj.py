@@ -3,6 +3,8 @@ from fenics import *
 from dolfin import *
 from mshr import *
 import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+import matplotlib.gridspec as gridspec
 import numpy as np
 from math import sqrt
 from math import exp
@@ -110,64 +112,70 @@ def snapshot_circ_per(cen,r,res):
  moy_u_y=assemble(u[1]*dx)/(1-pi*r**2)
  moy=Function(V)
  moy=Constant((moy_u_x,moy_u_y))
- khi=project(u-moy,V)
+ chi=project(u-moy,V)
  # Résultat : snapshot
- return(khi)
+ return(chi)
 
 
 ############################# Pour avoir quelques représentations graphiques #############################
 
-def fig_khi(cen,r,u,todo):
+def fig_chi(cen,r,u,todo):
  # figure : les composantes du vecteur, séparément
- plt.figure(1)
+ plt.figure(figsize=(1,2))
+ gs1=gridspec.GridSpec(1,2)
+ gs1.update(wspace=0.1,hspace=0.01)
  ## u_y1
- plt.subplot(211)
+ ax1=plt.subplot(gs1[0])
  spl1=plot(u[0])
- bar1=plt.colorbar(spl1)
- plt.title("khi_y"+str(1))
+ divider1=make_axes_locatable(ax1)
+ cax1=divider1.append_axes("right",size="8%",pad=0.08)
+ bar1=plt.colorbar(spl1, cax=cax1)
+ plt.title("chi_y"+str(1))
  ## u_y2
- plt.subplot(212)
+ ax2=plt.subplot(gs1[1])
  spl2=plot(u[1])
- bar2=plt.colorbar(spl2)
- plt.title("khi_y"+str(2))
+ divider2=make_axes_locatable(ax2)
+ cax2=divider2.append_axes("right",size="8%",pad=0.08)
+ bar2=plt.colorbar(spl2, cax=cax2)
+ plt.title("chi_y"+str(2))
  ## Show or save
  if todo=='aff':
   plt.show()
  elif todo=='save':
-  plt.savefig("Figures2D/inc_c"+str(cen[0])+str(cen[1])+str(r)+"_khi.png")
+  plt.savefig("Figures2D/inc_c"+str(cen[0])+str(cen[1])+str(round(r,2))+"_khi.png", bbox_inches="tight")
  ## Close
  plt.close()
  #
  return()
 
-def fig_dkhi(cen,r,U,todo):
+def fig_dchi(cen,r,U,todo):
  # figure : les composantes du vecteur, séparément
  plt.figure(1)
  ## U_1_y1
  plt.subplot(221)
  spl1=plot(U[0,0])
  bar1=plt.colorbar(spl1)
- plt.title("-dkhi"+str(1)+"_dy"+str(1))
+ plt.title("-dchi"+str(1)+"_dy"+str(1))
  ## U_1_y2
  plt.subplot(222)
  spl2=plot(U[1,0])
  bar2=plt.colorbar(spl2)
- plt.title("-dkhi"+str(2)+"_dy"+str(1))
+ plt.title("-dchi"+str(2)+"_dy"+str(1))
  ## U_2_y1
  plt.subplot(223)
  spl3=plot(U[0,1])
  bar3=plt.colorbar(spl3)
- plt.title("-dkhi"+str(1)+"_dy"+str(2))
+ plt.title("-dchi"+str(1)+"_dy"+str(2))
  ## U_2_y2
  plt.subplot(224)
  spl4=plot(U[1,1])
  bar4=plt.colorbar(spl4)
- plt.title("-dkhi"+str(2)+"_dy"+str(2))
+ plt.title("-dchi"+str(2)+"_dy"+str(2))
  ## Show or save
  if todo=='aff':
   plt.show()
  elif todo=='save':
-  plt.savefig("Figures2D/inc_c"+str(cen[0])+str(cen[1])+str(r)+"_Gradkhi.png")
+  plt.savefig("Figures2D/inc_c"+str(cen[0])+str(cen[1])+str(round(r,2))+"_Gradkhi.png")
  ## Close
  plt.close()
  #
@@ -262,7 +270,7 @@ def err_per_gr(cen,r,u,Npas,todo):
  plt.subplot(222)
  plt.plot(ulr_y2_0,coord_b,'bo',ulr_y2_1,coord_b,'k')
  plt.title("khi_y2 on vertical edges")
- # Compares and plots between left and right boundary for khi_y1 and khi_y2
+ # Compares and plots between top and bottom boundary for khi_y1 and khi_y2
  ## u_y1
  plt.subplot(223)
  plt.plot(coord_b,ubt_y1_0,'bo',coord_b,ubt_y1_1,'k')
@@ -275,7 +283,7 @@ def err_per_gr(cen,r,u,Npas,todo):
  if todo=='aff':
   plt.show()
  elif todo=='save':
-  plt.savefig("Figures2D/inc_c"+"CompLRBT"+str(Npas)+"_cen"+str(cen[0])+str(cen[1])+"_ray"+str(r)+".png")
+  plt.savefig("Figures2D/inc_c"+"CompLRBT"+str(Npas)+"_cen"+str(cen[0])+str(cen[1])+"_ray"+str(round(r,2))+".png")
  ## Close
  plt.close()
  #

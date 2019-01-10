@@ -203,6 +203,8 @@ from fenics import *
 from dolfin import *
 from mshr import *
 import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+import matplotlib.gridspec as gridspec
 from math import sqrt
 import sys
 
@@ -306,15 +308,15 @@ for i in range(7,1+Npas):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon 
  r=i*0.05
  c_x=0.5
  c_y=0.5
- khi_i=F2d.snapshot_circ_per([c_x,c_y],r,res)
+ chi_i=F2d.snapshot_circ_per([c_x,c_y],r,res)
  # Stockage des résultats avec un format hdf5
  ##LE.ecriture_champ_hdf5(kh_file,KH_SAVE,khi_i,kfic,file_rayon_ecriture,r,[c_x,c_y],res)
  print('Rayon :',r)
  print("Centre : "+str(c_x)+"_"+str(c_y))
- #F2d.fig_khi([c_x,c_y],r,khi_i,'save')
- F2d.fig_dkhi([c_x,c_y],r,-grad(khi_i),'aff')
- #F2d.err_per_gr([c_x,c_y],r,khi_i,20,'save')
- #F2d.err_per_ind_01(khi_i,20)
+ F2d.fig_chi([c_x,c_y],r,chi_i,'save')
+ F2d.fig_dchi([c_x,c_y],r,-grad(chi_i),'save')
+ #F2d.err_per_gr([c_x,c_y],r,chi_i,20,'save')
+ #F2d.err_per_ind_01(chi_i,20)
  ##
  # Tenseur de diffusion homogénéisé
  ## Intégrale de khi sur le domaine fluide
