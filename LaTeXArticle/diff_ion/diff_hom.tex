@@ -1,6 +1,71 @@
 %\section{Ionic diffusion in porous media}
+In this section, we present the method of periodic homogenization for the diffusion of ionic species in cementitious material.
 
-Our objective is \dots
+\par
+%%% à mettre dans le résumé éventuellement
+Indeed, the life service of steel concrete is affected by the diffusion of ionic species, %
+like chloride for constructions on the coasts or off-shore. %
+Chloride penetrate the cementitious material, which is porous, and then deteriorates the steel structure, making the concrete fragile.
+
+\subsection{Ionic species in saturated porous media : The Nernst-Planck-Poisson equation}
+
+We consider a saturated porous medium $\Omega$, which consists into an solid phase $\Omega_s$ and a fluid phase $\Omega_f$.
+
+\par
+The following equations describe the dynamics, in the fluid phase $\Omega_f$, of the respective concentrations : $c_k$ , of a family of ionic species with index $k$ ; %
+$z_k$ is the valence of ion $k$.
+
+\begin{equation}\label{npp_f}
+\left\{%
+\begin{array}{lcl}
+\dfrac{\partial{c_k}}{\partial{t}}&=&div\left(-D_k\left(grad(c_k)+\dfrac{F}{RT}grad(\Psi)\right)\right)\\
+\epsilon_p \Delta \Psi&=&-\rho
+\end{array}
+\right.
+\end{equation}
+
+For the diffusion equations $D_k$ is the self-diffusion of ion $k$, $F$ and $R$ iare the Faraday and perfect gas constants, $T$ the temperature ; %
+for the Poisson equation $\Psi$ is the electrical potential, $\epsilon_v$ the dielectrical constant of the porous medium and $\rho$ the volumetric electrical charge.
+
+\par
+The above system is completed by the Neumann condition on $\Gamma_{sf}$ :
+
+\begin{equation}\label{npp_sf}
+\left\{%
+\begin{array}{lcr}
+D_k\left(grad(c_k)+\dfrac{F}{RT}grad(\Psi)\right)\cdot \vec{n}_{sf}&=&0\\
+grad \Psi\cdot \vec{n}_{sf}&=&0
+\end{array}
+\right.
+\end{equation}
+
+In this model, we don't care about electrical interactions between the ions and the solid phase.
+
+\subsection{Periodic homogenization}
+
+The point is, these equations describe the dynamics of ionic concentrations in a medium with many heterogeneities. %
+Homogenization methods attempt to replace these equations by another system depending on macroscopic variables, %
+\og{} blurring \fg{} microscopical heterogeneities.
+
+\par
+More precisely \dots
+
+
+
+
+
+
+
+%\[\derp[2]{\chi}{y}\text{ and }\derp{\chi}{y}\]
+
+
+
+
+\subsection{The homogenized diffusion tensor}
+
+%\subsubsection{}
+
+The above method eventually gives the following equation, which depends only of the $x-$ spatial coordinates :
 
 
 
@@ -9,14 +74,18 @@ Our objective is \dots
 
 
 
+where $\chi(y)$ is a vector field, defined on the fluid phase of the elementary cell, satisfying the equations :
 
+%\newcommand{}
+%Grad \chi
+%\dfrac{\partial{\chi}}{\partial{y}}
 \begin{description}
-\item[Equation on the fluid domain] 
+\item[Equation on the pores] 
 \begin{equation}\label{chistr}
 \left\{%
 \begin{array}{lccr}
-Div \ Grad \chi &=& 0&\text{ on }\Omega_f \\
-Grad \chi \cdot n_{sf}&=&-n_{sf}&\text{ on }\Gamma_{sf}
+Div_y \left( \dfrac{\partial{\chi}}{\partial{y}}\right) &=& 0&\text{ on }\Omega_f \\
+\dfrac{\partial{\chi}}{\partial{y}} \cdot n_{sf}&=&-n_{sf}&\text{ on }\Gamma_{sf}
 \end{array}
 \right.
 %\chi\text{ in periodic}
@@ -24,3 +93,84 @@ Grad \chi \cdot n_{sf}&=&-n_{sf}&\text{ on }\Gamma_{sf}
 \item[Periodicity] $\chi$ is periodic on $\Gamma_{ff}$
 \item[Mean value condition] $\langle\chi\rangle_{\Omega_f}=0$
 \end{description}
+
+\ligneinter
+A proof of these statements can be found in \cite{th_khaledB}, chapter 2.
+
+\begin{rema}%%%à écrire dans le résumé, ou un paragraphe de conclusion ?
+In this section, we focused on Nernst-Plank equation, which describes the diffusion of ionic species, like chloride, in the fluid domain of cementitious material.
+
+\par
+However the periodic homogenization method can be applied to other mechanisms of degradation of concrete structures : %
+see section 2 of \cite{WalMill16} for a homogenized equation of moisture transport in cementitious material.
+
+\par
+Everything that we do in sections \ref{rom} and \ref{res} stays true in these contexts.
+\end{rema}
+\begin{comment}
+\subsubsection{Homogenized Richards Equation \cite{WalMill16}}
+
+\begin{equation}\label{ric_wat}
+\dfrac{\partial{\theta_l}}{\partial{t}}-div_x\left(\mathbf{D^{hom}_{\theta}}\dfrac{\partial{\theta_l}}{\partial{x}}\right)=0
+\end{equation}
+
+where $\theta_l$ is the water content : $\theta_l=\dfrac{\Omega_l}{\Omega}$ ; and
+
+\[\mathbf{D^{hom}_{\theta}}=-\Lambda_{ll}\dfrac{\partial{P_c}}{\partial{\theta_l}}+\dfrac{1}{\rho_l}\mathbf{D^{hom}_{v}}\dfrac{\partial{\rho_v}}{\partial{\theta_l}}\]
+
+denotes the homogenized diffusion tensor of moisture, $\rho_l$ and $\rho_v$ are liquid and vapour densities, respectively. $\Lambda_{ll}$ is the Darcy tensor of permeability, %
+$P_c$ the macroscopic capillary pressure and $\mathbf{D^{hom}_{v}}$ the homogenized tensor of water vapour given by
+
+\[\mathbf{D^{hom}_{v}}=\dfrac{1}{|\Omega|}\int\limits_{\Omega_{g}}D_v \left(I+\frac{\partial{\chi}}{\partial{y}}^{T}\right)\text{d}\Omega\]
+
+where $D_v$ is the self-diffusion coefficient of water-vapour.
+
+\par
+The vector $\chi (y)$ is solution of the same system as for Nernst-Planck-Poisson equation, if we write $\Omega_g$ and $\Gamma_{gs}$ in place of $\Omega_f$ and $\Gamma_{sf}$.
+\end{comment}
+
+\subsection{Weak formulation of the problem \ref{chistr}}
+
+
+
+
+
+\subsection{Solutions with FEniCS : examples of microstructures}
+
+
+
+
+
+
+%%%Maillages, raffinement : exemples, figures
+
+
+
+
+
+
+\subsection{Evaluation of performance for the computation of $\chi$}
+
+$\chi$, and thus the homogenized diffusion tensor $D_k^{hom}$, depends highly of the geometry of the microstructure of the the porous medium. %
+Moreover, the CPU time for the resolution of the weak problem with Finite Element Method can be considerable, especially in the three-dimensional case, %
+as the following table shows us.
+
+%%%Table : temps CPU pour le calcul de \chi en 2-3D, préciser la résolution du maillage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
