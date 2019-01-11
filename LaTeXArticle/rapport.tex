@@ -1,6 +1,8 @@
 \documentclass[a4paper,10pt]{article}
 \usepackage[utf8]{inputenc}
 
+%\includeonly{diff_ion/diff_hom}
+
 \def\Lang{En}%{Fr}
 %\usepackage[english,french]{babel}
 %\lversion{\selectlanguage{french}}{\selectlanguage{english}}
@@ -23,22 +25,23 @@
 
 \end{abstract}
 
-\section{State of art}
+%\include{state_art/article.tex}
+\section{State of the art}\label{st_a}
 \input{state_art/article.tex}
 
-\section{Ionic diffusion in porous media}
+\section{Ionic diffusion in porous media}\label{hom_d}
 \input{diff_ion/diff_hom.tex}
 %Nernst-Planck
 %DSE
 %\chi
 
-\section{A Reduced Order Model}
+\section{A Reduced Order Model}\label{rom}
 \input{red_mod/rom.tex}
 
 %Weak problem, solutions, periodicity
 %
 
-\section{Results and discussion}
+\section{Results and discussion}\label{res}
 %\subsection{Numerical simulations}
 \input{res_disc/res_num.tex}
 
@@ -48,7 +51,8 @@
 %\subsection{Discussion}
 %\input{res_disc/discussion.tex}
 
-
+\bibliography{../../BibTexBlio/Biblio}
+\bibliographystyle{alpha}
 
 
 \end{document}

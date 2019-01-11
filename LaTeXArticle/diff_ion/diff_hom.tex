@@ -137,7 +137,7 @@ The vector $\chi (y)$ is solution of the same system as for Nernst-Planck-Poisso
 
 \subsection{Solutions with FEniCS : examples of microstructures}
 
-
+\subsubsection{The two-dimensional case}
 
 
 
@@ -165,9 +165,25 @@ The vector $\chi (y)$ is solution of the same system as for Nernst-Planck-Poisso
 
 
 
+\subsubsection{The three-dimensional case}
+
+Algorithms are the same as in the two-dimensional case, but we will see that CPU times is much biggers, %
+even if the mesh resolution is reasonable.
 
 
-\subsection{Evaluation of performance for the computation of $\chi$}
+
+
+
+%%%Inclusion au centre
+%%%r de 0.05 à 0.40
+%%%Dhom_k : 0.93455015305 ; 0.93455015305 ; 0.93455015305 ; 0.937713361944 ; 0.942352510417 ; 0.94383619236 ; 0.941721377617
+
+
+
+
+
+
+\subsection{Performances with Finite Element Method}
 
 $\chi$, and thus the homogenized diffusion tensor $D_k^{hom}$, depends highly of the geometry of the microstructure of the the porous medium. %
 Moreover, the CPU time for the resolution of the weak problem with Finite Element Method can be considerable, especially in the three-dimensional case, %

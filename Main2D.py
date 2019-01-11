@@ -58,11 +58,7 @@ EIV=False
 res_fixe=40
 res=40
 
-#c_x=0.5
-#c_y=0.5
-#r=0.35
-
-fixe_aff=True
+fixe_aff=True#False
 fig_todo='aff'
 
 ### ------------ Etape 0 : Génération de microstructures périodiques aléatoires ------------ ###
@@ -83,7 +79,7 @@ from LEc import *
 
 D_k=1.0
 Nsnap=8
-rempUsnap='par8'#'seq'
+#snapshots='par8'#'seq'
 npas_err=20
 
 if EI :
@@ -97,6 +93,7 @@ if EII :
 ## ---------- Etape III ---------- ##
 
 from PO23D import *
+rempUsnap='par8'#'seq'
 
 if EIII :
  exec(open("DD_EIII.py").read())

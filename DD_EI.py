@@ -83,7 +83,7 @@ for cen in [[0.5,0.5],[0.0,0.0],[0.5,0.0],[0.0,0.5]]:
 # Calcule aussi le tenseur de diffusion homogénéisé #
 
 kfic=1
-for i in range(7,7):#1+Nsnap):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon d'un cercle doit être non nul
+for i in range(7,1+Nsnap):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon d'un cercle doit être non nul
  r=i*0.05
  c_x=0.5
  c_y=0.5
@@ -92,23 +92,22 @@ for i in range(7,7):#1+Nsnap):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le r
  ##LE.ecriture_champ_hdf5(kh_file,KH_SAVE,khi_i,kfic,file_rayon_ecriture,r,[c_x,c_y],res)
  print('Rayon :',r)
  print("Centre : "+str(c_x)+"_"+str(c_y))
- fig_chi([c_x,c_y],r,chi_i,'save')
- fig_dchi([c_x,c_y],r,-grad(chi_i),'save')
- #err_per_gr([c_x,c_y],r,chi_i,20,'save')
+ #fig_chi([c_x,c_y],r,chi_i,'aff')
+ #fig_dchi([c_x,c_y],r,-grad(chi_i),fig_todo)
+ err_per_gr([c_x,c_y],r,chi_i,50,fig_todo)
  #err_per_ind_01(chi_i,20)
  ##
  # Tenseur de diffusion homogénéisé
  ## Intégrale de khi sur le domaine fluide
- H=assemble(grad(chi_i)[0,0]*dx)
- M=assemble(grad(chi_i)[1,1]*dx)
- A=assemble(grad(chi_i)[0,1]*dx)
- C=assemble(grad(chi_i)[1,0]*dx)
- Tkhi=array([[H,A],[C,M]])
+ T_chi=array([[0.,0.],[0.,0.]])
+ for k in range(0,2):
+  for l in range(0,2):
+   T_chi[k,l]=assemble(grad(chi_i)[k,l]*dx)
  ## Intégrale de l'identité sur le domaine fluide
  D=(1-pi*r**2)*np.eye(2)
  ## Calcul et affichage du tenseur Dhom
- Dhom=D_k*(D+Tkhi.T)
+ Dhom_k=D_k*(D+T_chi.T)
  #print(('Tenseur D_hom',Dhom))
- print(Dhom[0,0])
+ print(Dhom_k[0,0])
  # Stockage
  ## ...
