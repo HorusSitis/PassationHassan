@@ -135,7 +135,8 @@ for n in range(1,1+Nsnap):
  ## On crée un maillage pour réécrire les snapŝhots sous la forme de fonctions
  if geo_p=='rayon':
   cen=cen_snap_ray
-  mesh=creer_maill_sph(cen,n*0.05,res)
+  r=n*0.05
+  mesh=creer_maill_sph(cen,r,res)
  elif geo_p=='centre':
   r=ray_snap_cen
   mesh=creer_maill_sph(csr_list[n-1],r,res)
