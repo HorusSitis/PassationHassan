@@ -24,7 +24,7 @@ $z_k$ is the valence of ion $k$.
 \right.
 \end{equation}
 
-For the diffusion equations $D_k$ is the self-diffusion of ion $k$, $F$ and $R$ iare the Faraday and perfect gas constants, $T$ the temperature ; %
+For the diffusion equations $D_k$ is the self-diffusion of ion $k$, $F$ and $R$ are the Faraday and perfect gas constants, $T$ the temperature ; %
 for the Poisson equation $\Psi$ is the electrical potential, $\epsilon_v$ the dielectrical constant of the porous medium and $\rho$ the volumetric electrical charge.
 
 \par
@@ -143,6 +143,24 @@ The vector $\chi (y)$ is solution of the same system as for Nernst-Planck-Poisso
 
 
 %%%Maillages, raffinement : exemples, figures
+\begin{figure}[H]
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\subfloat[A single fluid domain]{\includegraphics[width=0.23\linewidth,height=2.8cm]{../Figures2D/mesh_fixe.png}}
+&%\hfill
+\subfloat[A solid centered inclusion]{\includegraphics[width=0.23\linewidth,height=2.8cm]{../Figures2D/mesh_r_per505025.png}}
+&%\hfill
+\subfloat[Four inclusions the vertices]{\includegraphics[width=0.23\linewidth,height=2.8cm]{../Figures2D/mesh_r_per0025.png}}
+&%\hfill
+\subfloat[One inclusion on both sides]{\includegraphics[width=0.23\linewidth,height=2.8cm]{../Figures2D/mesh_r_per05025.png}}
+\\
+\hline
+\end{tabular}
+\end{center}
+\caption{Examples of meshes performed with FEniCS}
+\label{2d_mesh}
+\end{figure}
 
 
 

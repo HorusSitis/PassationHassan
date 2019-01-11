@@ -38,6 +38,11 @@ if fixe_aff:
  plot(mesh_fixe)
  plt.show()
  plt.close()
+else:
+ #sauvegarde de la figure
+ plot(mesh_fixe)
+ plt.savefig("Figures2D/mesh_fixe.png")
+ plt.close()
 
 ###-------------------- Commandes pour l'écriture de fichiers, à déplacer dans le script éventuellement --------------------###
 
@@ -57,25 +62,28 @@ if fixe_aff:
 
 # Famille de cellules élémentaires : 8 clichés, inclusion circulaire, paramétrée par le rayon du cercle
 
-c_x=0.5
-c_y=0.5
+# Exemples de maillages raffiniés autour d'une inclusion périodique
 
-r=0.35
+r=0.25
 
-res=40
-
-mesh_c_r=creer_maill_circ([c_x,c_y],r,res)
-
-if fig_todo=='aff':
- plot(mesh_c_r)
- plt.show()
- plt.close()
+for cen in [[0.5,0.5],[0.0,0.0],[0.5,0.0],[0.0,0.5]]:
+ mesh_c_r=creer_maill_circ(cen,r,res)
+ #
+ if fig_todo=='aff':
+  plot(mesh_c_r)
+  plt.show()
+  plt.close()
+ #
+ elif fig_todo=='save':
+  plot(mesh_c_r)
+  plt.savefig("Figures2D/mesh_r_per"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r,2)))+".png")
+  plt.close()
 
 ## Boucle pour la création des snapshots, avec un paramètre pouvant être le rayon d'une inclusion circulaire, ou l'emplacement de son centre ##
 # Calcule aussi le tenseur de diffusion homogénéisé #
 
 kfic=1
-for i in range(7,1+Nsnap):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon d'un cercle doit être non nul
+for i in range(7,7):#1+Nsnap):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon d'un cercle doit être non nul
  r=i*0.05
  c_x=0.5
  c_y=0.5

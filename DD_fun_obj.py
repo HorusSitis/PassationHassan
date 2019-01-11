@@ -142,7 +142,7 @@ def fig_chi(cen,r,u,todo):
  if todo=='aff':
   plt.show()
  elif todo=='save':
-  plt.savefig("Figures2D/inc_c"+str(cen[0])+str(cen[1])+str(round(r,2))+"_khi.png", bbox_inches="tight")
+  plt.savefig("Figures2D/inc_c"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r,2)))+"_khi.png", bbox_inches="tight")
  ## Close
  plt.close()
  #
@@ -175,7 +175,7 @@ def fig_dchi(cen,r,U,todo):
  if todo=='aff':
   plt.show()
  elif todo=='save':
-  plt.savefig("Figures2D/inc_c"+str(cen[0])+str(cen[1])+str(round(r,2))+"_Gradkhi.png")
+  plt.savefig("Figures2D/inc_c"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r,2)))+"_Gradkhi.png")
  ## Close
  plt.close()
  #
@@ -283,7 +283,7 @@ def err_per_gr(cen,r,u,Npas,todo):
  if todo=='aff':
   plt.show()
  elif todo=='save':
-  plt.savefig("Figures2D/inc_c"+"CompLRBT"+str(Npas)+"_cen"+str(cen[0])+str(cen[1])+"_ray"+str(round(r,2))+".png")
+  plt.savefig("Figures2D/inc_c"+"CompLRBT"+str(Npas)+"_cen"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+"_ray"+str(int(round(100*r,2)))+".png")
  ## Close
  plt.close()
  #
