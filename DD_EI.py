@@ -98,6 +98,7 @@ for cen in []:#[[0.5,0.5],[0.0,0.0],[0.5,0.0],[0.0,0.5]]:
 #c_par : paramètre scalaire pour la position du centre
 
 for n in range(1,1+Nsnap):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon d'un cercle doit être non nul
+ # Génération du snapshot
  if config=='cercle unique':
   if geo_p=='rayon':
    chi_n=snapshot_circ_per(cen_snap_ray,0.05*n,res) 
@@ -110,7 +111,14 @@ for n in range(1,1+Nsnap):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon
    chi_n=snapshot_circ_per(cen_snap_ray,ray_snap_cen,res)
  #elif config=='cercles en alignés en diagonale':
  #elif config=='cercles alignés horizontalement':
- # figures et erreurs
+ # Figures et erreurs
+ plot(chi_n)
+ #plot(grad(chi_n)[:,0]
+ #plot(grad(chi_n)[:,1]
+ if fig_todo=='aff':
+  plt.show()
+ #elif fig_todo=='save':
+ plt.close()
  fig_chi([c_x,c_y],0.05*n,chi_n,fig_todo)
  #fig_dchi([c_x,c_y],r,-grad(chi_n),fig_todo)
  #err_per_gr([c_x,c_y],r,chi_n,50,fig_todo)
