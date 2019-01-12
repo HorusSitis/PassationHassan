@@ -131,9 +131,46 @@ The vector $\chi (y)$ is solution of the same system as for Nernst-Planck-Poisso
 
 \subsection{Weak formulation of the problem \ref{chistr}}
 
+The weak formulation of the equation on $\Omega_{sf}$ is written :
 
+\[\forall v \in V , \int\limits_{\Omega_{sf}}Div\left(\left(grad_y \chi\right)^{T}\right)\cdot v\text{d}\Omega=0\]
 
+where $V$ is the space of test functions.
 
+\par
+Using the formula :
+
+\[Div(A\cdot w)=Div(A^T)\cdot w+Tr(A\cdot w)\]
+
+which is true for all $2-$tensor field $A$ et all vector field $w$, we obtain :
+
+\[\forall v \in V , \int\limits_{\Omega_{sf}}Div\left(\left(grad_y \chi\right)^{T}\cdot v\right)\text{d}\Omega-%
+\int\limits_{\Omega_f}Tr\left(\left(grad_y\chi\right)^T\cdot grad_y v\right)\text{d}\Omega=0\]
+
+which gives, acccording to the divergence theorem :
+
+\[\forall v \in V , \int\limits_{\Gamma_{sf}\cup\Gamma{ff}}\left(\left(grad_y \chi\right)^{T}\cdot v\right)\cdot n\text{d}s-%
+\int\limits_{\Omega_f}Tr\left(\left(grad_y\chi\right)^T\cdot grad_y v\right)\text{d}\Omega=0\]
+
+The Neumann condition in \ref{chistr} then implies :
+
+\begin{equation}\label{chiw}
+\forall v \in V , %
+\int\limits_{\Omega_f}Tr\left(\left(grad_y\chi\right)^T\cdot grad_y v\right)\text{d}\Omega=%
+-\int\limits_{\Gamma{sf}}n_{sf}\cdot v\text{d}s%
++\int\limits_{\Gamma{ff}}\left(\left(grad_y \chi\right)^{T}\cdot v\right)\cdot n_{ff}\text{d}s
+\end{equation}
+
+$\left(grad_y \chi\right)^{T}$ and $v$ are periodic, $n_{ff}$ is anti-periodic : %
+in the equation \ref{chiw} vanishes thus :
+
+\begin{equation}\label{chiwper}
+\forall v \in V , %
+\int\limits_{\Omega_f}Tr\left(\left(grad_y\chi\right)^T\cdot grad_y v\right)\text{d}\Omega=%
+-\int\limits_{\Gamma{sf}}n_{sf}\cdot v\text{d}s
+\end{equation}
+
+which is, when combinated with the mean-value condition $\langle\chi\rangle_{\Omega_f}=0$, the weak formulation of \ref{chistr}.
 
 \subsection{Solutions with FEniCS : examples of microstructures}
 
@@ -147,13 +184,13 @@ The vector $\chi (y)$ is solution of the same system as for Nernst-Planck-Poisso
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
-\subfloat[A single fluid domain]{\includegraphics[width=0.23\linewidth,height=2.8cm]{../Figures2D/mesh_fixe.png}}
+\subfloat[A single fluid domain]{\includegraphics[width=0.24\linewidth,height=3.2cm]{../Figures2D/mesh_fixe.png}}
 &%\hfill
-\subfloat[A solid centered inclusion]{\includegraphics[width=0.23\linewidth,height=2.8cm]{../Figures2D/mesh_r_per505025.png}}
+\subfloat[A solid centered inclusion]{\includegraphics[width=0.24\linewidth,height=3.2cm]{../Figures2D/mesh_r_per505025.png}}
 &%\hfill
-\subfloat[Four inclusions the vertices]{\includegraphics[width=0.23\linewidth,height=2.8cm]{../Figures2D/mesh_r_per0025.png}}
+\subfloat[Four inclusions the vertices]{\includegraphics[width=0.24\linewidth,height=3.2cm]{../Figures2D/mesh_r_per0025.png}}
 &%\hfill
-\subfloat[One inclusion on both sides]{\includegraphics[width=0.23\linewidth,height=2.8cm]{../Figures2D/mesh_r_per05025.png}}
+\subfloat[One inclusion on both sides]{\includegraphics[width=0.24\linewidth,height=3.2cm]{../Figures2D/mesh_r_per05025.png}}
 \\
 \hline
 \end{tabular}
