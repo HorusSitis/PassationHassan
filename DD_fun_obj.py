@@ -121,7 +121,7 @@ def snapshot_circ_per(cen,r,res):
 
 def fig_chi(cen,r,u,todo):
  # figure : les composantes du vecteur, séparément
- plt.figure(figsize=(1,2))
+ plt.figure(figsize=(10,20))
  gs1=gridspec.GridSpec(1,2)
  gs1.update(wspace=0.1,hspace=0.01)
  ## u_y1
@@ -142,6 +142,7 @@ def fig_chi(cen,r,u,todo):
  if todo=='aff':
   plt.show()
  elif todo=='save':
+  #plt.tight_layout(pad=2)
   plt.savefig("Figures2D/inc_c"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r,2)))+"_khi.png", bbox_inches="tight")
  ## Close
  plt.close()
