@@ -53,6 +53,9 @@ else:
 #elif [c_x,c_y]==[0.0,0.0]:
 # suffixe="coins/"
 
+#repertoire_parent="Res2D/"
+#from LEc import *
+
 #repertoire_final=repertoire_parent+suffixe
 #File(repertoire_parent+"mesh_ulaire.xml.gz") << mesh_fixe
 #ch_file,KH_SAVE=creation_fichier_pourecriture_champ_hdf5(repertoire_final,mesh_fixe)
@@ -60,8 +63,7 @@ else:
 # Famille de cellules élémentaires : 8 clichés, inclusion circulaire, paramétrée par le rayon du cercle
 # Exemples de maillages raffiniés autour d'une inclusion périodique
 
-#r=0.25
-for cen in [[0.5,0.5,0.5]]:#,[0.0,0.0,0.0],[0.5,0.0,0.5],[0.0,0.5,0.0]]:
+for cen in []:#[[0.5,0.5,0.5]]:#,[0.0,0.0,0.0],[0.5,0.0,0.5],[0.0,0.5,0.0]]:
  mesh_s_r=creer_maill_sph(cen,0.25,res)
  #
  if fig_todo=='aff':
@@ -74,11 +76,38 @@ for cen in [[0.5,0.5,0.5]]:#,[0.0,0.0,0.0],[0.5,0.0,0.5],[0.0,0.5,0.0]]:
   plt.savefig("Figures3D/mesh_r_per"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*cen[2],2)))+str(int(round(100*r,2)))+".png")
   plt.close()
 
+for top in [[0.5,0.5]]:#,[0.0,0.0],[0.5,0.0],[0.0,0.5]]:
+ mesh_c_r=creer_maill_cyl(top,0.05,slices_cyl,res)
+ #
+ if fig_todo=='aff':
+  plot(mesh_c_r,wireframe=True)
+  plt.show()
+  plt.close()
+ #
+ elif fig_todo=='save':
+  plot(mesh_c_r)
+  plt.savefig("Figures3D/mesh_r_per"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*cen[2],2)))+str(int(round(100*r,2)))+".png")
+  plt.close()
+
+sys.exit()#--------------------------------
+
+chi_s=snapshot_sph_per([0.5,0.5,0.5],0.25,res)
+chi_c=snapshot_cyl_per([0.5,0.5],0.1,slices_cyl,res)
+plot(chi_s)
+plt.show()
+plt.close()
+plot(chi_c)
+plt.show()
+plt.close()
+
+
+
+
 ## Boucle pour la création des snapshots, avec un paramètre pouvant être le rayon d'une inclusion circulaire, ou l'emplacement de son centre 
 
 # Pour avoir des fonctions "top-level" à paralléliser
 
-##res=12
+## Sphère unique
 
 #if geo_p=='rayon':
 cen_snap_ray=[0.5,0.5,0.5]
@@ -125,6 +154,11 @@ else:
 
 #sys.exit()
 
+# Matrice des snapshots
+
+
+
+
 # Exploitation des solution du problème aux éléments finis
 
 for n in range(1,1+Nsnap):
@@ -132,18 +166,32 @@ for n in range(1,1+Nsnap):
  for i in range(0,Nsnap):
   if list_chi_v[i][0]==n:
    chi_n_v=list_chi_v[i][1]
- ## On crée un maillage pour réécrire les snapŝhots sous la forme de fonctions
- if geo_p=='rayon':
-  cen=cen_snap_ray
-  r=n*0.05
-  mesh=creer_maill_sph(cen,r,res)
- elif geo_p=='centre':
-  r=ray_snap_cen
-  mesh=creer_maill_sph(csr_list[n-1],r,res)
+ # On crée un maillage pour réécrire les snapshots sous la forme de fonctions
+ if config=='sphère unique':
+  if geo_p=='rayon':
+   cen=cen_snap_ray
+   r=n*0.05
+   mesh=creer_maill_sph(cen,r,res)
+  elif geo_p=='centre':
+   r=ray_snap_cen
+   mesh=creer_maill_sph(csr_list[n-1],r,res)
+ elif config=='cylindre unique':
+  if geo_p=='rayon':
+   top=top_snap_ray
+   r=n*0.05
+   mesh=creer_maill_cyl(top,r,res)
+  elif geo_p=='axe':
+   r=ray_snap_ax
+   mesh=creer_maill_cyl(acr_list[n-1],r,res)
+ else:
+  if geo_p=='rayon de la sphère variable':
+   r=0
+  elif geo_p=='rayon du cylindre variable':
+   r=0
  V_n=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
  chi_n=Function(V_n)
  chi_n.vector().set_local(chi_n_v)
- # Affichage des valeurs et erreurs de la solution périodique
+ # Affichage des valeurs et erreurs de la solution périodique, quelle que soit la configuration
  ### procédures à écrire dans DDD_fun_obj.py
  ##
  # Tenseur de diffusion homogénéisé
@@ -153,8 +201,13 @@ for n in range(1,1+Nsnap):
   for l in range(0,3):
    T_chi[k,l]=assemble(grad(chi_n)[k,l]*dx)
  ## Intégrale de l'identité sur le domaine fluide
- D=(1-4/3*pi*r**3)*np.eye(3)
+ if config=='sphère unique':
+  D=(1-4/3*pi*r**3)*np.eye(3)
+ elif config=='cylindre unique':
+  D=(1-pi*r**2)*np.eye(3)
+ else :
+  D=(1-4/3*pi*r_s**3-pi*r_c**2)*np.eye(3)
  ## Calcul et affichage du tenseur Dhom
  Dhom_k=D_k*(D+T_chi.T)
  #print(('Tenseur Dhom_k',Dhom_k))
- print('Coefficient Dhom_k11, snapshot '+str(n)+", "+geo_p+" variable :",Dhom_k[0,0])
+ print('Coefficient Dhom_k11, snapshot '+str(n)+", "+config+', '+geo_p+" variable :",Dhom_k[0,0])
