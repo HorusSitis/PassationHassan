@@ -50,8 +50,10 @@ from DD_fun_obj import *
 ##########################################################
 
 E_=False
+
 EI=True
 EII=False
+
 EIII=False
 EIV=False
 
@@ -79,8 +81,23 @@ from LEc import *
 
 D_k=1.0
 Nsnap=8
-#snapshots='par8'#'seq'
 npas_err=20
+
+# Choix du paramètre géométrique
+
+## Cas d'un disque unique
+config='inclusion simple'
+
+geo_p='rayon'
+#geo_p='centre'
+#csr_list=[[0.5,0.3+0.05*k] for k in range(1,1+Nsnap)]
+### l'inclusion solide ne rencontre pas les bords du domaine, sous peine d'une incompatibilité entre les mailles de faces opposées (?)
+
+## Cas de deux inclusions périodiques : une inclusion centrale et deux ou quatre latérales par cellule
+#config='compl'
+#geo_p=='rayon du disque central variable'
+#geo_p=='rayon du disque  variable'
+#
 
 if EI :
  exec(open("DD_EI.py").read())
