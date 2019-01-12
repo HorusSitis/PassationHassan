@@ -41,6 +41,7 @@ if fixe_aff:
 else:
  #sauvegarde de la figure
  plot(mesh_fixe)
+ plt.tight_layout()
  plt.savefig("Figures2D/mesh_fixe.png")
  plt.close()
 
@@ -66,7 +67,7 @@ else:
 
 r=0.25
 
-for cen in [[0.5,0.5],[0.0,0.0],[0.5,0.0],[0.0,0.5]]:
+for cen in []:#[[0.5,0.5],[0.0,0.0],[0.5,0.0],[0.0,0.5]]:
  mesh_c_r=creer_maill_circ(cen,r,res)
  #
  if fig_todo=='aff':
@@ -76,38 +77,57 @@ for cen in [[0.5,0.5],[0.0,0.0],[0.5,0.0],[0.0,0.5]]:
  #
  elif fig_todo=='save':
   plot(mesh_c_r)
+  plt.tight_layout()
   plt.savefig("Figures2D/mesh_r_per"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r,2)))+".png")
   plt.close()
+
+#sys.exit()#---------------------------------------------------
 
 ## Boucle pour la création des snapshots, avec un paramètre pouvant être le rayon d'une inclusion circulaire, ou l'emplacement de son centre ##
 # Calcule aussi le tenseur de diffusion homogénéisé #
 
-kfic=1
-for i in range(7,1+Nsnap):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon d'un cercle doit être non nul
- r=i*0.05
- c_x=0.5
- c_y=0.5
- chi_i=snapshot_circ_per([c_x,c_y],r,res)
- # Stockage des résultats avec un format hdf5
- ##LE.ecriture_champ_hdf5(kh_file,KH_SAVE,khi_i,kfic,file_rayon_ecriture,r,[c_x,c_y],res)
- print('Rayon :',r)
- print("Centre : "+str(c_x)+"_"+str(c_y))
- #fig_chi([c_x,c_y],r,chi_i,'aff')
- #fig_dchi([c_x,c_y],r,-grad(chi_i),fig_todo)
- err_per_gr([c_x,c_y],r,chi_i,50,fig_todo)
- #err_per_ind_01(chi_i,20)
+
+## Cercle unique
+
+#if geo_p=='rayon':
+#cen_snap_ray=[0.5,0.5]
+
+#if geo_p=='centre':
+#ray_snap_cen=0.25
+#csr_list=[[0.05*k,0.5]] for k in range(1,1+Nsnap)]
+#c_par : paramètre scalaire pour la position du centre
+
+for n in range(1,1+Nsnap):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon d'un cercle doit être non nul
+ if config=='cercle unique':
+  if geo_p=='rayon':
+   chi_n=snapshot_circ_per(cen_snap_ray,0.05*n,res) 
+   c_x=cen_snap_ray[0]
+   c_y=cen_snap_ray[1]
+  elif geo_p=='centre':
+   cen_snap_ray=csr_list[n-1]
+   c_x=cen_snap_ray[0]
+   c_y=cen_snap_ray[1]
+   chi_n=snapshot_circ_per(cen_snap_ray,ray_snap_cen,res)
+ #elif config=='cercles en alignés en diagonale':
+ #elif config=='cercles alignés horizontalement':
+ # figures et erreurs
+ fig_chi([c_x,c_y],0.05*n,chi_n,fig_todo)
+ #fig_dchi([c_x,c_y],r,-grad(chi_n),fig_todo)
+ #err_per_gr([c_x,c_y],r,chi_n,50,fig_todo)
+ #err_per_ind_01(chi_n,20)
+ #sys.exit()#---------------------------------------------------
  ##
  # Tenseur de diffusion homogénéisé
- ## Intégrale de khi sur le domaine fluide
+ ## Intégrale de chi sur le domaine fluide
  T_chi=array([[0.,0.],[0.,0.]])
  for k in range(0,2):
   for l in range(0,2):
-   T_chi[k,l]=assemble(grad(chi_i)[k,l]*dx)
+   T_chi[k,l]=assemble(grad(chi_n)[k,l]*dx)
  ## Intégrale de l'identité sur le domaine fluide
  D=(1-pi*r**2)*np.eye(2)
  ## Calcul et affichage du tenseur Dhom
  Dhom_k=D_k*(D+T_chi.T)
- #print(('Tenseur D_hom',Dhom))
- print(Dhom_k[0,0])
+ #print(('Tenseur Dhom_k',Dhom_k))
+ print('Coefficient Dhom_k11, snapshot '+str(n)+", "+config+', '+geo_p+" variable :",Dhom_k[0,0])
  # Stockage
  ## ...

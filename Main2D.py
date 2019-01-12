@@ -20,7 +20,7 @@ import multiprocessing
 #multiprocessing
 
 import multiprocessing
-from joblib import Parallel, delayed
+#from joblib import Parallel, delayed
 
 #stockage d'objets python
 
@@ -57,11 +57,11 @@ EII=False
 EIII=False
 EIV=False
 
-res_fixe=40
-res=40
+res_fixe=20
+res=20
 
-fixe_aff=True#False
-fig_todo='aff'
+fixe_aff=False
+fig_todo='save'
 
 ### ------------ Etape 0 : Génération de microstructures périodiques aléatoires ------------ ###
 
@@ -86,12 +86,15 @@ npas_err=20
 # Choix du paramètre géométrique
 
 ## Cas d'un disque unique
-config='inclusion simple'
+config='cercle unique'
 
 geo_p='rayon'
+cen_snap_ray=[0.5,0.5]
+
 #geo_p='centre'
-#csr_list=[[0.5,0.3+0.05*k] for k in range(1,1+Nsnap)]
-### l'inclusion solide ne rencontre pas les bords du domaine, sous peine d'une incompatibilité entre les mailles de faces opposées (?)
+#ray_snap_cen=0.25
+csr_list=[[0.05*k,0.5] for k in range(1,1+Nsnap)]
+
 
 ## Cas de deux inclusions périodiques : une inclusion centrale et deux ou quatre latérales par cellule
 #config='compl'
