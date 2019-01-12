@@ -81,14 +81,15 @@ where $\chi(y)$ is a vector field, defined on the fluid phase of the elementary 
 %\dfrac{\partial{\chi}}{\partial{y}}
 \begin{description}
 \item[Equation on the pores] 
-\begin{equation}\label{chistr}
+\begin{equation}
 \left\{%
 \begin{array}{lccr}
-Div_y \left( \dfrac{\partial{\chi}}{\partial{y}}\right) &=& 0&\text{ on }\Omega_f \\
+Div_y \left( \dfrac{\partial{\chi}}{\partial{y}}^T\right) &=& 0&\text{ on }\Omega_f \\
 \dfrac{\partial{\chi}}{\partial{y}} \cdot n_{sf}&=&-n_{sf}&\text{ on }\Gamma_{sf}
 \end{array}
 \right.
 %\chi\text{ in periodic}
+\label{chistr}
 \end{equation}
 \item[Periodicity] $\chi$ is periodic on $\Gamma_{ff}$
 \item[Mean value condition] $\langle\chi\rangle_{\Omega_f}=0$
@@ -129,7 +130,7 @@ where $D_v$ is the self-diffusion coefficient of water-vapour.
 The vector $\chi (y)$ is solution of the same system as for Nernst-Planck-Poisson equation, if we write $\Omega_g$ and $\Gamma_{gs}$ in place of $\Omega_f$ and $\Gamma_{sf}$.
 \end{comment}
 
-\subsection{Weak formulation of the problem \ref{chistr}}
+\subsection{Weak formulation of problem \ref{chistr}}
 
 The weak formulation of the equation on $\Omega_{sf}$ is written :
 
@@ -140,7 +141,7 @@ where $V$ is the space of test functions.
 \par
 Using the formula :
 
-\[Div(A\cdot w)=Div(A^T)\cdot w+Tr(A\cdot w)\]
+\[Div(A\cdot w)=Div(A)\cdot w+Tr(A\cdot w)\]
 
 which is true for all $2-$tensor field $A$ et all vector field $w$, we obtain :
 
@@ -162,7 +163,7 @@ The Neumann condition in \ref{chistr} then implies :
 \end{equation}
 
 $\left(grad_y \chi\right)^{T}$ and $v$ are periodic, $n_{ff}$ is anti-periodic : %
-in the equation \ref{chiw} vanishes thus :
+in equation \ref{chiw} $\displaystyle\int\limits_{\Gamma{ff}}\left(\left(grad_y \chi\right)^{T}\cdot v\right)\cdot n_{ff}\text{d}s$ vanishes so we conclude :
 
 \begin{equation}\label{chiwper}
 \forall v \in V , %
