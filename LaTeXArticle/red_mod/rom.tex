@@ -1,5 +1,5 @@
 %\section{A Reduced Order Model}
-As we have seen in the previous section, computing solutions of equation \ref{chistr} for a given geometry, %
+As we have seen in the previous section, computing solutions of equation \ref{chiw} for a given geometry, %
 even, in the three-dimensional case, for an elementary cell with an euclidean bowl in its center.
 
 \par
@@ -12,7 +12,7 @@ Those gemetrical parameters are also linked, in an obvious way, to the cells por
 having an influence on diffusion in a porous medium.
 
 \par
-In this section we present a method for computing, with reasonable performances, good approximations of solutions of problem \ref{chistr}, %
+In this section we present a method for computing, with reasonable performances, good approximations of solutions of problem \ref{chiw}, %
 and then homogenized diffusion tensors for a given set of cells depending on one real parameter, using a Reduced Order Model (ROM).
 
 \etoile
@@ -60,7 +60,7 @@ the average projection of the $w(\cdot , \tau_j)$ is maximal ; %
 the space $[\phi_i]_{i=1}{l}$ gives the best approximation of $w(,)$ among the subspaces of $H$ with rank $l$.
 
 \etoile
-Finally, we will use the \ref{POD} and the equation \ref{chistr} to compute a vector $\chi(,\rho^{new})$ for an arbitrary parameter $\rho^{new}$, %
+Finally, we will use the \ref{POD} and the general equation \ref{chiw} to compute a vector $\chi(,\rho^{new})$ for an arbitrary parameter $\rho^{new}$, %
 without the Finite Element Method.
 
 \subsection{Proper Orthogonal Decomposition, snapshot method}
@@ -170,7 +170,7 @@ and then of the parametrized set of functions $w(\cdot ,\tau)_{\tau}$ of our phy
 The following algorithm is the method of snapshots, combined with the choice of a first few vectors of the optimal orthogonal basis. %
 The latter provides us the Reduced-Order Model, which matters in the next paragraph.
 
-\begin{algo}
+\begin{algo}\label{a_snap}
 \begin{enumerate}
 \item Select a sample $w(\mathbf{x},\tau_j)$ of $\mathbf{x}$-dependent functions, %
 they can be experimental measurements or numerical simulation ;
@@ -179,7 +179,7 @@ they can be experimental measurements or numerical simulation ;
 \item\label{so1} Sort the proper-values $\lambda_i$ in a decreasing order ;
 \item Compute the $\phi_i$ using the proper vectors found for $[C]$ ;
 \item\label{so2} Evaluate the energy contained in each mode : $Ener^i:=\dfrac{\sum\limits_{k=1}^i}{\sum\limits_{k=1}^{N_{POD}}}$ ;
-\item Chhose the first $N$ for which $Ener^i >\nu$, where $\nu$ is the energy threshold we want - typically, $99\%$ ;
+\item Choose the first $N$ for which $Ener^i >\nu$, where $\nu$ is the energy threshold we want - typically, $99\%$ ;
 \item\label{so3} Compute the approximation error with the subset $(\phi_i)_{i=1}^{N}$.
 \end{enumerate}
 \end{algo}
@@ -189,10 +189,10 @@ In practical purposes, $N$ will be small as a consequence of the optimality of $
 Thus, we obtain a decomposition that is not exact, but anyway very good, of our original sample with a \emph{reduced-order} orthogonal base.
 
 \ligneinter
-Let conclude that, when the function $w(\mathcal{x},\tau)$ satisfies a linear condition in $\mathbf{x}$, %
+Let conclude that, when the function $w(\mathbf{x},\tau)$ satisfies a linear condition in $\mathbf{x}$, %
 like a linear partial differential equation or a homogen boundary condition, %
-we can push these functions in an Hilbert space which elements all satisfy the same relations, %
-the preceeding reasonments then lead us to build a basis $\Phi$ whose vectors are solutions of the same problem.
+we can put these functions in an Hilbert space which elements all satisfy the same relations, %
+then the above reasonments lead us to build a basis $\Phi$ whose vectors are solutions of the same problem.
 
 \subsection{A Reduced Order Model (ROM)}
 
@@ -202,15 +202,33 @@ We have written a sample of functions of space $w$, parametrized with a finite s
 w(\mathbf{x},\tau)=\sum\limits_{i=1}^N a_i(\tau)\phi_i(\mathbf{x})
 \end{equation}
 
-The Reduced Order Model is the projection of the original problem on $w(\mathbf{x},\tau)$ along this decomposition.
+A Reduced Order Model is the projection of the original problem on $w(\mathbf{x},\tau)$ along this decomposition.
 
 \par
-In this section, we define a ROM of the system \ref{chistr} using the so-called Galerkin projection on the basis $(\phi_i)$.
+In this section, we define a ROM of the system \ref{chiw} using the so-called Galerkin projection on the basis $(\phi_i)_{i=1}^N$.
+
+\ligneinter
+Another step is however required for our purpose.
+
+\par
+Indeed, the snapshot $\chi_j$ that we use in our model construction is solution of \ref{chiw} on the fluid domain in %
+the elementary cell defined with the geometrical parameter $\rho_j$, %
+which we have seen can be the radius of an two-dimensional disc, an three-dimensional sphere etc. %
+This disc, cylinder, \dots itself is a subset of the solid domain $\Omega_s$ of the inclusion.
+
+\par
+Thus, the function $\chi(\mathbf{x},\rho_j)$ is defined for $\mathbf{x}$ in a $\Omega_f$ space which depends on the parameter $\rho$.
 
 \etoile
+We begin the construction of our Reduced Order Model by extrapolating the snapshots $\chi(\mathbf{x},\rho_j)_j$, defined on a collection of domains $\Omega_f^j$, %
+on a same functional space $H$, namely the space of functions defined on the fluid domain $\Omega_f^0$ which satisfies $\rho=0$, %
+with the norm used for the spaces of the snapshots ; %
+the Hilbert space $H$ which appears in the prewious paragraph is typically $\mathcal{L}^2\left(\Omega_f^{\rho=0}\right)$.
 
+\par
+Then we compute a POD basis $\phi_i(\mathbf{x})$, for $\mathbf{x}$ in $\Omega_f^0$, with algorithm \ref{a_snap}. %
+The $\phi_j$ modes will satisfy the partial differential equation \ref{chiw} ; %with the periodicity and average value condition.
+they will also satisfy periodicity and mean-value conditions of strong problem \ref{chistr} if they are regular enough.
 
-
-
-
-
+\etoile
+Once we have computed the POD basis, and chosen the smallest number $N$ of modes for which \dots
