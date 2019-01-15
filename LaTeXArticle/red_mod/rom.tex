@@ -86,7 +86,7 @@ where :
 $R(x,x')_{x,x'}$, or $\mathcal{R}$, is the \emph{tensor of spatial correlations}. %
 \ref{fred}, which is called Fredholm equation, can also be written :
 
-\[\mathcal{R}\star_x\phi_i=\lambda_i\phi_i\text{ where $\star_x$ is the contracted product of $\mathcal{R}$ and $\phi_j$}\]
+\[\mathcal{R}\star_{\mathbf{x}}\phi_i=\lambda_i\phi_i\text{ where $\star_{\mathbf{x}}$ is the contracted product of $\mathcal{R}$ and $\phi_j$}\]
 
 \etoile
 When we do numerical calculus, the problem is formulated with a finite space $\Omega$, %
@@ -150,7 +150,7 @@ Since now we write : $\alpha^{\ast}==a$, we obtain the time-dependent coefficien
 with $a_i(\tau_j)$ given by : $a_i(\tau_j)=\alpha_i (\tau_j)$.
 
 \ligneinter
-Some characteristics of the method of snapshot given in this paragraph then are :
+Some characteristics of the method of snapshots given in this paragraph then are :
 
 \begin{itemize}
 \item The basis $\Phi$ we obtain has a small number of components, equal to $N_{\tau}$ ;
@@ -175,7 +175,7 @@ The latter provides us the Reduced-Order Model, which matters in the next paragr
 \begin{enumerate}
 \item Select a sample $w(\mathbf{x},\tau_j)$ of $\mathbf{x}$-dependent functions, %
 they can be experimental measurements or numerical simulation ;
-\item Compute the \og{}time-\fg{} correlation matrix $c(\tau_j ,\tau_{j'})$ ;
+\item Compute the \og{}time-\fg{} correlation matrix $C(\tau_j ,\tau_{j'})$ ;
 \item Find the proper values and vectors of $[C]$, which is supposed to be small ;
 \item\label{so1} Sort the proper-values $\lambda_i$ in a decreasing order ;
 \item Compute the $\phi_i$ using the proper vectors found for $[C]$ ;
@@ -217,7 +217,7 @@ We write the general solution $w(\mathbf{x},\tau)$ of this problem in the same w
 
 \[w(\mathbf{x},\tau)=\sum\limits_{i=1}^N a_i(\tau)\phi_i(\mathbf{x})+\mathcal{R}_N(\mathbf{x},\tau)\]
 
-and we make the hypothesis that $\mathbf{R}(\mathcal{x},\tau$ is orthogonal to the modes $\phi_i$ for all $\tau$.
+and we make the hypothesis that $\mathcal{R}(\mathbf{x},\tau$ is orthogonal to the modes $\phi_i$ for all $\tau$.
 
 \par
 The Galerkin projection along the $i-$th spatial mode of the problem \ref{genp} for $w$ is written :
@@ -269,10 +269,10 @@ Let us write :
 \[\chi^0\left(\mathbf{y},\rho\right)\text{ for all $\mathbf{y}$ in the fluid domain $\Omega_f^0$ and all meaningful $\rho$}\]
 
 \par
-Galerkin projection of \ref{chiw}, with respect to the components of the test vector field $v(\mathbf{y})$, is writtent :
+Galerkin projection of \ref{chiw}, with respect to the components of the test vector field $v(\mathbf{y})$, is written :
 
 \begin{equation}\label{morchiz}
-\sum\limits_{k=1}^N a_k(\rho)\int\limits_{\Omega}Tr\left(\langle grad_y\chi_k^0 \left(\mathbf{y},\rho\right)|grad_y\left(\phi_i^0(\mathbf{y}\right)\rangle\right)\text{d}\Omega+%
+\sum\limits_{k=1}^N a_k(\rho)\int\limits_{\Omega}Tr\left(\langle grad_y\phi_k^0 \left(\mathbf{y},\rho\right)|grad_y\left(\phi_i^0(\mathbf{y}\right)\rangle\right)\text{d}\Omega+%
 \int\limits_{\Gamma_{sf}}\langle n_{sf}|\phi_i^0(\mathbf{y})\rangle \text{d}s %
 =0
 \end{equation}
@@ -280,8 +280,8 @@ Galerkin projection of \ref{chiw}, with respect to the components of the test ve
 where $\langle |\rangle$ is the scalar product in the two- or three-dimensional space which contains the elementary cell.
 
 \par
-This problem is simple as it involves a small number of $a_k$ functions, and can be resolved with any programming language with a reasonable linear algebra library. %
-In this work we will use the numpy module of Python3, so we can directly use the snapshots computed with FEniCS.
+This problem is simple because it is linear and involves a small number of $a_k$ functions.%, and can be resolved with any programming language with a reasonable linear algebra library. %
+%In this work we will use the numpy module of Python3, so we can directly use the snapshots computed with FEniCS.
 
 %\par
 %Solutions $a_k(\rho)$, for $k$ from $1$ to $N$, are used to construct a $\chi^0\left(\mathbf{y},\rho\right)$ function of the spatial variable $\mathbf{y}$, %
@@ -297,37 +297,42 @@ Let now $\rho^{new}$ be an a parameter, which is not one of the $\rho_j$ paramet
 we want to compute $\chi(\mathbf{y},\rho^{new}$ in the fluid domain $\Omega_f^{new}$ of the cell with solid inclusion of size $\rho^{new}$.
 
 \par
-We begin to extrapolate the modes $\phi_i^0(\mathbf{y})$, defined for $\mathbf{y}$ in the fluid domain $\Omega_f^0$. %
+We begin with extrapolating the modes $\phi_i^0(\mathbf{y})$, defined for $\mathbf{y}$ in the fluid domain $\Omega_f^0$. %
 In this purpose, we simply inverse the transformation, from the functional space $H^{new}$ to $H^0$, %
 analogous to the interpolation that has been unsed to map the $\chi(\cdot,\rho_j)$ to the POD-relevant snapshots $\chi (\cdot ,\rho_j)$.
 
 \par
-We resolve the look-alike system of \ref{morchiz} with the basis $(\phi_i^{new})_i$ obtained with this transformation :
+We resolve the \ref{morchiz} look-alike system with the basis $(\phi_i^{new})_i$ obtained with this transformation :
 
 \begin{equation}\label{morchi}
-\sum\limits_{k=1}^N a_k(\rho)\int\limits_{\Omega}Tr\left(\langle grad_y\chi_k^{new} \left(\mathbf{y},\rho\right)|grad_y\left(\phi_i^{new}(\mathbf{y}\right)\rangle\right)\text{d}\Omega+%
+\sum\limits_{k=1}^N a_k(\rho^{new})\int\limits_{\Omega}Tr\left(\langle grad_y\phi_k^{new} \left(\mathbf{y},\rho\right)|grad_y\left(\phi_i^{new}(\mathbf{y}\right)\rangle\right)\text{d}\Omega+%
 \int\limits_{\Gamma_{sf}}\langle n_{sf}|\phi_i^{new}(\mathbf{y})\rangle \text{d}s %
 =0
 \end{equation}
 
-and obtain the physically-relevant $a_k -$s.
+and obtain the physically-relevant $a_k -$s, which are not the same than in \ref{morchiz}.
 
 \par
 The $\chi(\mathbf{y},\rho^{new})$ we were looking for is simply the linear combination of the $\phi_i^{new}$ given by the truncated POD :
 
 \begin{equation}\label{newrom}
-\chi\left(\mathbf{y},\rho^{new}\right)\simeq =\sum\limits_{i=1}^N a_i \left(\rho^{new}\right)\phi_i^{new}(\mathbf{y})\text{ for all $\mathbf{y}$ in $\Omega_f^{new}$}
+\chi\left(\mathbf{y},\rho^{new}\right)\simeq \sum\limits_{i=1}^N a_i \left(\rho^{new}\right)\phi_i^{new}(\mathbf{y})\text{ for all $\mathbf{y}$ in $\Omega_f^{new}$}
 \end{equation}
 
-\etoile
-In the next section, we use this method to compute numerically the vector $\chi$ in the configurations seen in section \ref{hom_d}, %
+\par
+If we write the problem \ref{morchi} with the vector functions we compute with FEniCS, %
+we get a discrete and linear problem in the $a_i-$s for any $\rho^{new}$ ; %
+in this work we use the numpy module of Python3 for this purpose, thus we can immediately use the results from FEniCS.
+
+\par
+We use the reduced order model the next section to compute numerically the vector $\chi$ in the configurations seen in section \ref{hom_d}, %
 varying the parameter $\rho$ ; we also give the values of the homogenized tensor obtained with the reduced model.
 
 \par
-We also compare performances and accuracy of the method, with the computation of the same $\chi$ and diffusion tensor using the Finite Element Method.
+Afterwards we compare performances and accuracy of the method, with the computation of the same $\chi$ and diffusion tensor using the Finite Element Method.
 
 \par
-Finally, we give the steps we follow in this work, and that we implement with Python3 and FEniCS.
+Let us summarize the steps we follow in this work, and that we implement with Python3 and FEniCS.
 
 \begin{algo}\label{a_rom}
 \begin{enumerate}[label=\textbf{(S \hspace{-7pt} \Roman*)}]
@@ -339,9 +344,9 @@ defined for $\mathbf{y}$ in $\Omega_f^0$ ;
 \item Reduced Order Model : we choose a new parameter $\rho^{new}$.
 \begin{enumerate}[label=(\textbf{se}\ \roman*)]
 \item Map the $\phi_i^0$ to the space $H^{new}$ of functions defined on the domain $\Omega_f^{new}$, with the norm $L^2$, $H^1$ etc we have chosen for our work ;
-\item Resolve the Reduced Order Model to obtain the coefficientn $a_i(\rho)$, for every real parameter $\rho$ : %
-compute $\chi(\mathbf{y},\rho^{new})$ using equation \ref{newrom} ;
-\item Integrate the vector field to obtain $D_k^{hom-new}$ ;
+\item Resolve the Reduced Order Model with the modes $\phi_i^{new}$ and obtain the expression of $a_i(\rho)$, for every real parameter $\rho$ ;
+\item Compute $\chi(\mathbf{y},\rho^{new})$ using formula \ref{newrom} ;
+\item Integrate the vector field on domain $\Omega_f^{new}$ to obtain $D_k^{hom-new}$ ;
 \item[Optional] Compare performances with the computation of $\chi(\mathbf{y},\rho^{new})$ using Finite Element Method : %
 time of execution, accuracy.
 \end{enumerate}
