@@ -41,60 +41,112 @@ grad \Psi\cdot \vec{n}_{sf}&=&0
 
 In this model, we don't care about electrical interactions between the ions and the solid phase.
 
-\subsection{Periodic homogenization}
-
-The point is, these equations describe the dynamics of ionic concentrations in a medium with many heterogeneities. %
-Homogenization methods attempt to replace these equations by another system depending on macroscopic variables, %
-\og{} blurring \fg{} microscopical heterogeneities.
+\ligneinter
+The above system describe the dynamics of ionic concentrations in a medium with heterogeneities at a microscopic scale, %
+and is far too big to be fully resolved numerically.
 
 \par
-More precisely \dots
+Homogenization methods attempt to reformulate this problem by another one involving only macroscopic variables, %
+\og{} blurring \fg{} microscopical heterogeneities.
+
+\subsection{Periodic homogenization}
+
+This method relies on the hypothesis that we can modelize a sample of porous medium, %
+which in this section will be a square or a cube with side $L$, %
+as the periodic repetition of a single elementary cell of size $l$. %
+This elementary cell must summarize the geometrical properties of the structure so that this periodic model behaves like the physical medium we are working with.
+
+\par
+Examples of periodical microstructures can be found in \cite{WalMill16}, here we are working with the following periodical two- or three-dimensional microstructures.
+
+\subsubsection{Two-dimensional structures}
+
+
+
+
+
+\subsubsection{Three-dimensional structures}
 
 
 
 
 
 
+\subsubsection{Homogenized equations}
 
-%\[\derp[2]{\chi}{y}\text{ and }\derp{\chi}{y}\]
+The purpose of periodic homogenization is to derive an equation which describes our system evolution, here the concentration of a collection of chemical substances. %
+The resulting problem must have a reasonable size so that we can do predictions using contemporary technology.
 
+\par
+A homogenized diffusion equation depends on time, and of a macroscopic variable $\mathbf{x}$ or $(x_1,\dots ,x_{dim})$ which lies in the two- or three-dimensional structure of size $L$, %
+with space resolution $l$.
 
+\par
+Periodicity of the structure gives us two independent space variables : %
+$\mathbf{x}$ which we have seen above, %
+and $\mathbf{y}$, the generic position of a point in the elementary cell, which dosen't depend on $\mathbf{x}$ because the elemntary cell is the same for each localization in the macro-structure.
 
+\par
+In addition, we will will make two hypotheses for periodic homogenization :
 
-\subsection{The homogenized diffusion tensor}
+\begin{itemize}
+\item $\delta\ll l$ ;
+\item $l\ll L$ ;
+\end{itemize}
 
-%\subsubsection{}
+$\delta$ is the typical size of the medium constituents : grains of sand etc ; %
+the last hypothesis is relevant for the asymptotical analysis that follows, %
+from which we derive homogenized physical parameters.
 
-The above method eventually gives the following equation, which depends only of the $x-$ spatial coordinates :
+\ligneinter
+We find in \cite{th_khaledB} complete proofs about homogenization of Nernst-Planck-Poisson equations ; %
+a few steps of the process is given below.
 
+\par
+Let us write :
 
+\[\epsilon =\frac{l}{L}\]
 
+For $\theta$ a given scalar physical quantity like a concentration or an electrical potential, we write the power series in the $\epsilon$ :
 
-
-
-
-
-where $\chi(y)$ is a vector field, defined on the fluid phase of the elementary cell, satisfying the equations :
-
-%\newcommand{}
-%Grad \chi
-%\dfrac{\partial{\chi}}{\partial{y}}
-\begin{description}
-\item[Equation on the pores] 
-\begin{equation}
-\left\{%
-\begin{array}{lccr}
-Div_y \left( \dfrac{\partial{\chi}}{\partial{y}}^T\right) &=& 0&\text{ on }\Omega_f \\
-\dfrac{\partial{\chi}}{\partial{y}} \cdot n_{sf}&=&-n_{sf}&\text{ on }\Gamma_{sf}
-\end{array}
-\right.
-%\chi\text{ in periodic}
-\label{chistr}
+\begin{equation}\label{asyt}
+\theta\left((\mathbf{x},\mathbf{y}),t\right)=\theta^0\left((\mathbf{x},\mathbf{y}),t\right)+\epsilon \theta^1\left((\mathbf{x},\mathbf{y}),t\right) +\epsilon^2 \theta^2\left((\mathbf{x},\mathbf{y}),t\right) \dots
 \end{equation}
-\item[Periodicity] $\chi$ is periodic on $\Gamma_{ff}$
-\item[Mean value condition] $\langle\chi\rangle_{\Omega_f}=0$
+
+Moreover, if we set $\epsilon$ to zero, so that $\mathbf{y}$ is identically $\mathbf{0}$, %
+$\theta$ equals its $\theta^0$ component of rank $0$ ; %
+thus we can write $\theta(\mathbf{x},t$ as a function of the $\mathbf{x}$ and $t$.
+
+\par
+Therefore $\theta^0$ is a first example of homogenized quantity, as is depends only of a macrostopic variable.
+
+\par
+A dimensional analysis on the physical equations leads to replace spatial differential operators, like gradient and laplacian with %
+$\epsilon\derp{}{\mathbf{x}}+\derp{}{\mathbf{y}}$ and $\epsilon^2\Delta_{\mathbf{x}}+2\epsilon \dfrac{\partial^2}{\partial{\mathbf{x}}\partial{\mathbf{y}}} +\Delta{\mathbf{y}}$ respectively.
+
+\par
+Then identification of small-order components of $\epsilon$ power series which we substitute in $\mathbf{x},\mathbf{y},t-$dependent equations gives us the homogenized system. %
+For diffusion-migration of ions in porous media, we derive from Nernst-Planck-Poisson equations :
+
+\begin{description}
+\item[Homogenized equation :] %
+\[\derp{c_k}{t}-div_{\mathbf{x}}\left(D_k^{hom}\derp{c_k}{\mathbf{x}}+D_k^{hom}\frac{F}{RT}z_k \derp{c_k}{\mathbf{x}}\derp{\Psi}{\mathbf{x}}\right)=0\]
+\item[Homogenized tensor $D_k^{hom}$ :] 
+\[D_k^{hom}:=\int\limits_{\Omega_f}\left(I+\derp{\chi}{\mathbf{y}}^T\right)\text{d}\Omega\]
 \end{description}
 
+depending on $\mathbf{x}$ and $t$, %
+where $\chi$ is a function of $\mathbf{y}$, %
+solution to the following problem.
+
+\begin{comment}
+\begin{rema}
+In this paragraph we have skipped adimensionalization of the physical equations, which is prior to asymptotical analysis. %
+Anyway, if doesn't change the general idea of the proof.
+\end{rema}
+\end{comment}
+
+\begin{comment}
 \ligneinter
 A proof of these statements can be found in \cite{th_khaledB}, chapter 2.
 
@@ -108,6 +160,7 @@ see section 2 of \cite{WalMill16} for a homogenized equation of moisture transpo
 \par
 Everything that we do in sections \ref{rom} and \ref{res} stays true in these contexts.
 \end{rema}
+\end{comment}
 \begin{comment}
 \subsubsection{Homogenized Richards Equation \cite{WalMill16}}
 
@@ -129,6 +182,35 @@ where $D_v$ is the self-diffusion coefficient of water-vapour.
 \par
 The vector $\chi (y)$ is solution of the same system as for Nernst-Planck-Poisson equation, if we write $\Omega_g$ and $\Gamma_{gs}$ in place of $\Omega_f$ and $\Gamma_{sf}$.
 \end{comment}
+
+\subsection{An auxiliary problem : vector field $\chi$}
+
+%\subsubsection{}
+This work is about numerical resolution of the following system, which defines the vector field $\chi$ :
+
+%\newcommand{}
+%Grad \chi
+%\dfrac{\partial{\chi}}{\partial{y}}
+\begin{description}
+\item[Equation in the pores] 
+\begin{equation}\label{chistr}
+\left\{%
+\begin{array}{lccr}
+Div_y \left( \dfrac{\partial{\chi}}{\partial{y}}^T\right) &=& 0&\text{ on }\Omega_f \\
+\dfrac{\partial{\chi}}{\partial{y}} \cdot n_{sf}&=&-n_{sf}&\text{ on }\Gamma_{sf}
+\end{array}
+\right.
+%\chi\text{ in periodic}
+\end{equation}
+\item[Periodicity] $\chi$ is periodic on $\Gamma_{ff}$
+\item[Mean value condition] $\langle\chi\rangle_{\Omega_f}=0$
+\end{description}
+
+As soon as $\chi$ will be computated, it is easy to derive $D_k^{hom}$.
+
+\ligneinter
+The same system is used in \cite{WalMill16} to compute a homogenized diffusion tensor, %
+which appears in Richardson's equation modelizing moisture diffusion in cementarious media.
 
 \subsection{Weak formulation of problem \ref{chistr}}
 
