@@ -51,13 +51,13 @@ satisfying the conditions :
 \begin{itemize}
 \item $w(\mathbf{x},\tau_j)=\sum\limits_i a_i(\tau_j)\phi_n(\mathbf{x})$ for all $j$ and $\mathbf{x}$ ;
 \item The $\Phi_j$ are orthogonal ;
-\item $\phi_l= \arg\max\limits_{\phi_j\in H}\left\langle\left(\phi_j|\sum\limits_{k=1}^{l-1}\left(w|\phi_k\right)_H\phi_k\right)_H\right\rangle$ ; %
+\item $\phi_l= \arg\max\limits_{\phi_j\in H}\left\langle\left(\phi_j\left|\sum\limits_{k=1}^{l-1}\left(w|\phi_k\right)_H\phi_k\right.\right)_H\right\rangle$ ; %
 $\langle \ \rangle$ beeing the average operator over the $\tau_j-$s.
 \end{itemize}
 
 The last condition ensures that the POD base is optimal in the sense that for all $j$ smaller than the rank $N_{POD}$ of the basis $\Phi$, i. e. $(\phi_i)$, %
 the average projection of the $w(\cdot , \tau_j)$ is maximal ; %
-the space $[\phi_i]_{i=1}{l}$ gives the best approximation of $w(,)$ among the subspaces of $H$ with rank $l$.
+space $[\phi_i]_{i=1}^{l}$ gives the best approximation of $w(,)$ among the subspaces of $H$ with rank $l$.
 
 \etoile
 Finally, we will use the \ref{POD} and the general equation \ref{chiw} to compute a vector $\chi(,\rho^{new})$ for an arbitrary parameter $\rho^{new}$, %
@@ -80,7 +80,7 @@ can be formulated with lagrangian formalism, and is equivalent to the proper-val
 where :
 \begin{itemize}
 \item $\Omega$ is the space on which the functions $w(\cdot ,\tau_j)$, $\phi_i$ are defined ;
-\item $\forall (x,x')\in\Omega^2 , R(x,x')=\left\langle(w(x,\tau)w(x',\tau)\right\rangle$ \emph{id est} $R(x,x')=\frac{1}{N_{\tau}}\sum\limits{j=1}^{N_t} w(x,\tau_j)w(x',\tau_j)$.
+\item $\forall (x,x')\in\Omega^2 , R(x,x')=\left\langle w(x,\tau)w(x',\tau)\right\rangle$ or in the same way $R(x,x')=\frac{1}{N_{\tau}}\sum\limits_{j=1}^{N_t} w(x,\tau_j)w(x',\tau_j)$.
 \end{itemize}
 
 $R(x,x')_{x,x'}$, or $\mathcal{R}$, is the \emph{tensor of spatial correlations}. %
@@ -179,7 +179,7 @@ they can be experimental measurements or numerical simulation ;
 \item Find the proper values and vectors of $[C]$, which is supposed to be small ;
 \item\label{so1} Sort the proper-values $\lambda_i$ in a decreasing order ;
 \item Compute the $\phi_i$ using the proper vectors found for $[C]$ ;
-\item\label{so2} Evaluate the energy contained in each mode : $Ener^i:=\dfrac{\sum\limits_{k=1}^i}{\sum\limits_{k=1}^{N_{POD}}}$ ;
+\item\label{so2} Evaluate the energy contained in each mode : $Ener^i:=\dfrac{\sum\limits_{k=1}^i\lambda_i}{\sum\limits_{k=1}^{N_{POD}}\lambda_i}$ ;
 \item\label{so3} Choose the first $N$ for which $Ener^i >\nu$, where $\nu$ is the energy threshold we want - typically, $99\%$ ;
 \item\label{so4} Compute the approximation error with the subset $(\phi_i)_{i=1}^{N}$.
 \end{enumerate}
@@ -217,13 +217,13 @@ We write the general solution $w(\mathbf{x},\tau)$ of this problem in the same w
 
 \[w(\mathbf{x},\tau)=\sum\limits_{i=1}^N a_i(\tau)\phi_i(\mathbf{x})+\mathcal{R}_N(\mathbf{x},\tau)\]
 
-and we make the hypothesis that $\mathcal{R}(\mathbf{x},\tau$ is orthogonal to the modes $\phi_i$ for all $\tau$.
+and we make the hypothesis that $\mathcal{R}(\mathbf{x},\tau)$ is orthogonal to the modes $\phi_i$ for all $\tau$.
 
 \par
-The Galerkin projection along the $i-$th spatial mode of the problem \ref{genp} for $w$ is written :
+Galerkin projection along the $i-$th spatial mode of the problem \ref{genp} for $w$ is written :
 
 \[%
-\left(\mathcal{A}\left(\sum\limits_{k=1}^N a_k(\tau)\phi_k(\mathbf{x})\right) |\phi_i\left(\mathbf{x}\right)\right)_H %
+\left(\left.\mathcal{A}\left(\sum\limits_{k=1}^N a_k(\tau)\phi_k(\mathbf{x})\right) \right|\phi_i\left(\mathbf{x}\right)\right)_H %
 = \left(f\left(\mathbf{x},\tau\right)|\phi_i(\mathbf{x})\right)_H%
 \]
 
@@ -304,10 +304,11 @@ analogous to the interpolation that has been unsed to map the $\chi(\cdot,\rho_j
 \par
 We resolve the \ref{morchiz} look-alike system with the basis $(\phi_i^{new})_i$ obtained with this transformation :
 
-\begin{equation}\label{morchi}
+\begin{equation}
 \sum\limits_{k=1}^N a_k(\rho^{new})\int\limits_{\Omega}Tr\left(\langle grad_y\phi_k^{new} \left(\mathbf{y},\rho\right)|grad_y\left(\phi_i^{new}(\mathbf{y}\right)\rangle\right)\text{d}\Omega+%
 \int\limits_{\Gamma_{sf}}\langle n_{sf}|\phi_i^{new}(\mathbf{y})\rangle \text{d}s %
 =0
+\label{morchi}
 \end{equation}
 
 and obtain the physically-relevant $a_k -$s, which are not the same than in \ref{morchiz}.
@@ -320,7 +321,7 @@ The $\chi(\mathbf{y},\rho^{new})$ we were looking for is simply the linear combi
 \end{equation}
 
 \par
-If we write the problem \ref{morchi} with the vector functions we compute with FEniCS, %
+If we write problem \ref{morchi} with the vector functions we compute with FEniCS, %
 we get a discrete and linear problem in the $a_i-$s for any $\rho^{new}$ ; %
 in this work we use the numpy module of Python3 for this purpose, thus we can immediately use the results from FEniCS.
 
@@ -335,7 +336,7 @@ Afterwards we compare performances and accuracy of the method, with the computat
 Let us summarize the steps we follow in this work, and that we implement with Python3 and FEniCS.
 
 \begin{algo}\label{a_rom}
-\begin{enumerate}[label=\textbf{(S \hspace{-7pt} \Roman*)}]
+\begin{enumerate}[label=\textbf{S \hspace{-7pt} \Roman*}]
 \item Compute the $\chi\left(\mathbf{y},\rho_j\right)$ vector fields in $\mathbf{y}$, for a finite and small number of parameters $\rho_j$, %
 using Finite Element Method ;
 \item Map the $\chi (\cdot,\rho_j)$ from their respective fluid domain to the single $\Omega_f^0$, we obtain a collection of snapshots $(\chi^0(\mathbf{y},\rho_j)$ %
@@ -352,3 +353,8 @@ time of execution, accuracy.
 \end{enumerate}
 \end{enumerate}
 \end{algo}
+
+For practical purpose, the first three steps will be executed offline, with a sample of microstructures not relevant for the situation. %
+The last step consists in the computation online, which is supposed to be fast thanks to the Reduced Order Model, %
+of an homogenized property, here the difffusion tensor, wanted for a given cemtarious material.
+The calculus using the time-expensive, Finite Element Mehod, is performed once and for all.
