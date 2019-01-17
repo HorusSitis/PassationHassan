@@ -23,10 +23,25 @@ import matplotlib.gridspec as gridspec
 #from math import exp
 import sys
 
+## Paquets spécifiques à la 3d ##
+
+from mpl_toolkits.mplot3d.axes3d import get_test_data
+# This import registers the 3D projection, but is otherwise unused.
+from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
+import mpl_toolkits.mplot3d.art3d as art3d
+from matplotlib.patches import Circle, PathPatch
+
 ##############################################################################################################################################################
 ## Etape 1demi ou lL : réalisation des fugures de microstructures périodiques correspondant aux différentes géométries existantes. Stockage dans Figures3D/ ##
 ##############################################################################################################################################################
-
+#import numpy as np
+#import matplotlib.pyplot as plt
+#from matplotlib.patches import Circle, PathPatch
+from matplotlib.text import TextPath
+from matplotlib.transforms import Affine2D
+# This import registers the 3D projection, but is otherwise unused.
+#from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
+#import mpl_toolkits.mplot3d.art3d as art3d
 # ------------ les configurations géométriques sont :
 
 ## inclusion unique : deux possibilités
@@ -60,13 +75,9 @@ r_sph_prime=0.2
 
 
 if config=='sphère unique':
- #l_bowls=[]
- #for i in range(0,nb_lcells):
-  #for j in range(0,nb_lcells):
-   #for k in range(0,nb_lcells):
-    #l_bowls.append(plt.Sphere((0.5+i,0.5+j,0.5+k),r,color=cem_color))#
  # initialisation du graphique
- fig,ax=plt.subplots()
+ fig = plt.figure()
+ ax = fig.add_subplot(111, projection='3d')
  # taille du graphique
  ax.set_xlim((0,nb_lcells))
  ax.set_ylim((0,nb_lcells))
@@ -79,8 +90,13 @@ if config=='sphère unique':
  u = np.linspace(0, 2 * np.pi, 100)
  v = np.linspace(0, np.pi, 100)
  # inclusions, placées périodiquement
- #for i in range(0,nb_lcells**3):
- # ax.add_artist(l_bowls[i])
+ for i in range(0,nb_lcells):
+  for j in range(0,nb_lcells):
+   for k in range(0,nb_lcells):
+    x = 0.5+i+r_sph*np.outer(np.cos(u), np.sin(v))## outer : produit terme à terme
+    y = 0.5+j+r_sph*np.outer(np.sin(u), np.sin(v))
+    z = 0.5+k+r_sph*np.outer(np.ones(np.size(u)), np.cos(v))
+    ax.plot_surface(x, y, z, linewidth=0, antialiased=False, color=cem_color)#rstride=1, cstride=1, 
  # grille
  ax.xaxis.set_major_locator(plt.MultipleLocator(1.0))
  ax.yaxis.set_major_locator(plt.MultipleLocator(1.0))
@@ -95,39 +111,60 @@ if config=='sphère unique':
  if fig_todo=='aff':
   plt.show()
  elif fig_todo=='save':
-  plt.savefig("Figures3D/macro_micro"+"_Lsurl"+str(nb_lcells)+"unique_par"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r,2)))+".png")
+  plt.savefig("Figures3D/macro_micro"+"_Lsurl"+str(nb_lcells)+"unique_par"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r_sph,2)))+".png")
  plt.close()
 elif config=='cylindre unique':
- l_discs=[]
- for i in range(0,1+nb_lcells):
-   for j in range(0,1+nb_lcells):
-    l_discs.append(plt.Circle((0.0+i,0.0+j),r,color=cem_color))
  # initialisation du graphique
- fig,ax=plt.subplots()
+ fig = plt.figure()
+ ax = fig.add_subplot(111, projection='3d')
  # taille du graphique
  ax.set_xlim((0,nb_lcells))
  ax.set_ylim((0,nb_lcells))
+ ax.set_zlim((0,nb_lcells))
  # couleur de fond
- ##fig.patch.set_facecolor(fluid_color)
- ##fig.patch.set_alpha(0.7)
  ax.set_axis_bgcolor(fluid_color)
+ # pour un paramétrage des surfaces
+ theta = np.linspace(0, 2 * np.pi, 100)
+ h = np.linspace(0, nb_lcells, 100)
+ rc = np.linspace(0,r_cyl,100)
  # inclusions, placées périodiquement
- for i in range(0,(1+nb_lcells)**2):
-  ax.add_artist(l_discs[i])
+ ## cylindres
+ for i in range(0,nb_lcells):
+  for j in range(0,nb_lcells):
+   x = 0.5+i+r_cyl*np.outer(np.cos(theta),np.ones(np.size(h)))
+   y = np.outer(np.ones(np.size(theta)),h)
+   z = 0.5+j+r_cyl*np.outer(np.sin(theta),np.ones(np.size(h)))
+   ax.plot_surface(x, y, z, linewidth=0, antialiased=False, color=cem_color)
+ ## disques
+ for i in range(0,nb_lcells):
+  for j in range(0,nb_lcells):
+   #p = Circle((5, 5), 3)
+   #ax.add_patch(p)
+   #art3d.pathpatch_2d_to_3d(p, z=0, zdir="x")
+   p_ij1 = Circle((0.5+i, 0.5+j), r_cyl, color=cem_color)
+   p_ij2 = Circle((0.5+i, 0.5+j), r_cyl, color=cem_color)
+   ax.add_patch(p_ij1)
+   art3d.pathpatch_2d_to_3d(p_ij1, z=0, zdir="y")
+   ax.add_patch(p_ij2)
+   #sys.exit()#------------------------------------------
+   art3d.pathpatch_2d_to_3d(p_ij2, z=nb_lcells, zdir="y")#z=nb_lcells
  # grille
  ax.xaxis.set_major_locator(plt.MultipleLocator(1.0))
  ax.yaxis.set_major_locator(plt.MultipleLocator(1.0))
+ ax.zaxis.set_major_locator(plt.MultipleLocator(1.0))
  ax.grid(which='major', axis='x', linewidth=0.85, linestyle='-', color='0.45')
  ax.grid(which='major', axis='y', linewidth=0.85, linestyle='-', color='0.45')
+ ax.grid(which='major', axis='z', linewidth=0.85, linestyle='-', color='0.45')
  ax.set_xticklabels([])
  ax.set_yticklabels([])
+ ax.set_zticklabels([])
  # instruction pour la sortie
  if fig_todo=='aff':
   plt.show()
  elif fig_todo=='save':
-  plt.savefig("Figures2D/macro_micro"+"_Lsurl"+str(nb_lcells)+"unique_par"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r,2)))+".png")
+  plt.savefig("Figures3D/macro_micro"+"_Lsurl"+str(nb_lcells)+"unique_cyl"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r_cyl,2)))+".png")
  plt.close()
-elif config=='compl' and geo_p=='deuxième disque aux sommets':
+elif config=='compl' and geo_p=='deux sphères':
  l_cim=[]
  l_sand=[]
  for i in range(0,nb_lcells):
@@ -160,7 +197,7 @@ elif config=='compl' and geo_p=='deuxième disque aux sommets':
  elif fig_todo=='save':
   plt.savefig("Figures2D/macro_micro"+"_Lsurl"+str(nb_lcells)+"sommets_par"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r_c,2)))+str(int(round(100*r_v,2)))+".png")
  plt.close()
-#elif config=='compl' :#and geo_p=='deuxième disque latéral':
+#elif config=='compl' and geo_p=='une sphère et un cylindre':
 
 
 
