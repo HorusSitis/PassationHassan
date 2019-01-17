@@ -20,6 +20,14 @@ import multiprocessing
 
 from DDD_fun_obj import *
 
+## Paquets spécifiques à la 3d ##
+
+from mpl_toolkits.mplot3d.axes3d import get_test_data
+# This import registers the 3D projection, but is otherwise unused.
+from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
+import mpl_toolkits.mplot3d.art3d as art3d
+from matplotlib.patches import Circle, PathPatch
+
 ##########################################################
 ### ------------ Code à lire : conditions ------------ ###
 ##########################################################
@@ -45,7 +53,7 @@ c_y=0.5
 c_z=0.5
 #r=0.35#pour une réalisation unique
 npas_err=20
-fig_todo='aff'
+fig_todo='save'
 
 
 
@@ -65,7 +73,7 @@ parallelize=True
 ## Cas d'une sphère unique
 config='sphère unique'
 
-geo_p='rayon'
+#geo_p='rayon'
 cen_snap_ray=[0.5,0.5,0.5]
 #geo_p='centre'
 ray_snap_cen=0.35
@@ -82,12 +90,12 @@ ray_snap_cen=0.35
 
 ## Cas d'un cylindre périodique aux arètes et une sphère unique au centre
 #config='compl'
-#geo_p=='rayon de la sphère variable'
-#geo_p=='rayon du cylindre variable'
+geo_p='deux sphères'
+#geo_p='sphère et cylindre'
 
 ## ------------ Etape lL 1demi : Affichage de midrostructures périodiques ------------ ##
 
-nb_lcells=1
+nb_lcells=5
 cem_color='grey'#'r'
 sand_color='orange'
 fluid_color='cyan'
