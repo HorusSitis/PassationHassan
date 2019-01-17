@@ -144,7 +144,39 @@ elif config=='compl' and geo_p=='deuxième disque aux sommets':
  elif fig_todo=='save':
   plt.savefig("Figures2D/macro_micro"+"_Lsurl"+str(nb_lcells)+"sommets_par"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r_c,2)))+str(int(round(100*r_v,2)))+".png")
  plt.close()
-
+elif config=='compl' and geo_p=='deuxième disque latéral':
+ l_cim=[]
+ l_sand=[]
+ for i in range(0,nb_lcells):
+   for j in range(0,nb_lcells):
+    l_sand.append(plt.Circle((0.5+i,0.5+j),r_c,color=sand_color))
+ for i in range(0,1+nb_lcells):
+   for j in range(0,nb_lcells):
+    l_cim.append(plt.Circle((0.0+i,0.5+j),r_v,color=cem_color))
+ # initialisation du graphique
+ fig,ax=plt.subplots()
+ # taille du graphique
+ ax.set_xlim((0,nb_lcells))
+ ax.set_ylim((0,nb_lcells))
+ # couleur de fond
+ ax.set_axis_bgcolor(fluid_color)
+ # inclusions, placées périodiquement
+ for i in range(0,nb_lcells*nb_lcells):
+  ax.add_artist(l_sand[i])
+ for i in range(0,(1+nb_lcells)*nb_lcells):
+  ax.add_artist(l_cim[i])
+ # grille
+ ax.xaxis.set_major_locator(plt.MultipleLocator(1.0))
+ ax.yaxis.set_major_locator(plt.MultipleLocator(1.0))
+ ax.grid(which='major', axis='x', linewidth=0.85, linestyle='-', color='0.45')
+ ax.grid(which='major', axis='y', linewidth=0.85, linestyle='-', color='0.45')
+ ax.set_xticklabels([])
+ ax.set_yticklabels([])
+ if fig_todo=='aff':
+  plt.show()
+ elif fig_todo=='save':
+  plt.savefig("Figures2D/macro_micro"+"_Lsurl"+str(nb_lcells)+"lat_par"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r_c,2)))+str(int(round(100*r_v,2)))+".png")
+ plt.close()
 
 
 
