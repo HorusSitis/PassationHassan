@@ -62,7 +62,7 @@ res_fixe=20
 res=20
 
 fixe_aff=False
-fig_todo='aff'
+fig_todo='save'
 
 ### ------------ Etape 0 : Génération de microstructures périodiques aléatoires ------------ ###
 
@@ -98,13 +98,13 @@ ray_snap_cen=0.25
 ## Cas de deux inclusions périodiques : une inclusion centrale et deux ou quatre latérales par cellule
 config='compl'
 ## le rayon du disque central est variable
-geo_p='deuxième disque aux sommets'
-#geo_p='deuxième disque latéral'
+#geo_p='deuxième disque aux sommets'
+geo_p='deuxième disque latéral'
 #
 
 ## ------------ Etape lL 1demi : Affichage de midrostructures périodiques ------------ ##
 
-nb_lcells=8
+nb_lcells=1
 cem_color='grey'#'r'
 sand_color='orange'
 fluid_color='cyan'

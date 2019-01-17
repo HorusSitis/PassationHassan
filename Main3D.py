@@ -25,8 +25,9 @@ from DDD_fun_obj import *
 ##########################################################
 
 E_=False
+E_lL=True
 
-EI=True
+EI=False
 EII=False
 
 EIII=False
@@ -65,7 +66,9 @@ parallelize=True
 config='sphère unique'
 
 geo_p='rayon'
+cen_snap_ray=[0.5,0.5,0.5]
 #geo_p='centre'
+ray_snap_cen=0.35
 #csr_list=[[0.5,0.5,0.3+0.05*k] for k in range(1,1+Nsnap)]
 ### l'inclusion solide ne rencontre pas les bords du domaine, sous peine d'une incompatibilité entre les mailles de faces opposées (?)
 
@@ -82,6 +85,15 @@ geo_p='rayon'
 #geo_p=='rayon de la sphère variable'
 #geo_p=='rayon du cylindre variable'
 
+## ------------ Etape lL 1demi : Affichage de midrostructures périodiques ------------ ##
+
+nb_lcells=1
+cem_color='grey'#'r'
+sand_color='orange'
+fluid_color='cyan'
+
+if E_lL :
+ exec(open("DDD_ElL.py").read())
 
 # Exécution
 
