@@ -50,8 +50,9 @@ from DD_fun_obj import *
 ##########################################################
 
 E_=False
+E_lL=True
 
-EI=True
+EI=False
 EII=False
 
 EIII=False
@@ -61,7 +62,7 @@ res_fixe=20
 res=20
 
 fixe_aff=False
-fig_todo='save'
+fig_todo='aff'
 
 ### ------------ Etape 0 : Génération de microstructures périodiques aléatoires ------------ ###
 
@@ -74,8 +75,6 @@ if E_ :
 
 ### ------------ Exécution des étapes demandées en préambule, imports spécifiques ------------ ###
 
-## ---------- Etape I ---------- ##
-
 repertoire_parent="Res2D/"
 from LEc import *
 
@@ -86,21 +85,34 @@ npas_err=20
 # Choix du paramètre géométrique
 
 ## Cas d'un disque unique
-config='cercle unique'
+#config='cercle unique'
 
-geo_p='rayon'
-cen_snap_ray=[0.5,0.5]
+#geo_p='rayon'
+cen_snap_ray=[0.5,0.5]#[0.,0.]#
 
 #geo_p='centre'
-#ray_snap_cen=0.25
-csr_list=[[0.05*k,0.5] for k in range(1,1+Nsnap)]
+ray_snap_cen=0.25
+#csr_list=[[0.05*k,0.5] for k in range(1,1+Nsnap)]
 
 
 ## Cas de deux inclusions périodiques : une inclusion centrale et deux ou quatre latérales par cellule
-#config='compl'
-#geo_p=='rayon du disque central variable'
-#geo_p=='rayon du disque  variable'
+config='compl'
+## le rayon du disque central est variable
+geo_p='deuxième disque aux sommets'
+#geo_p='deuxième disque latéral'
 #
+
+## ------------ Etape lL 1demi : Affichage de midrostructures périodiques ------------ ##
+
+nb_lcells=8
+cem_color='grey'#'r'
+sand_color='orange'
+fluid_color='cyan'
+
+if E_lL :
+ exec(open("DD_ElL.py").read())
+
+## ---------- Etape I, mêmes paramètres que pour 1demi ---------- ##
 
 if EI :
  exec(open("DD_EI.py").read())
