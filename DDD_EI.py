@@ -32,10 +32,15 @@ class PeriodicBoundary(SubDomain):
 ### Maillage sur le domaine Omega_fixe : aucune inclusion, porosité égale à 1 ###
 
 domaine_fixe=Box(Point(xinf,yinf,zinf),Point(xsup,ysup,zsup))
-mesh_fixe=generate_mesh(domaine_fixe,res_fixe)
+
+if typ_msh=='gms':
+ mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_0001fixe.xml")
+else:
+ mesh_fixe=generate_mesh(domaine_fixe,res_fixe)
+
 V_fixe=VectorFunctionSpace(mesh_fixe, "P", 2, constrained_domain=PeriodicBoundary())
 
-if fixe_aff:
+if fig_todo=='aff':
  #représentation graphique du maillage
  plot(mesh_fixe)
  plt.show()
@@ -46,59 +51,21 @@ else:
  plt.savefig("Figures3D/mesh_fixe.png")
  plt.close()
 
-###-------------------- Commandes pour l'écriture de fichiers, à déplacer dans le script éventuellement --------------------###
 
-#if [c_x,c_y]==[0.5,0.5]:
-# suffixe="inc_centre/"
-#elif [c_x,c_y]==[0.0,0.0]:
-# suffixe="coins/"
 
-#repertoire_parent="Res2D/"
-#from LEc import *
-
-#repertoire_final=repertoire_parent+suffixe
-#File(repertoire_parent+"mesh_ulaire.xml.gz") << mesh_fixe
-#ch_file,KH_SAVE=creation_fichier_pourecriture_champ_hdf5(repertoire_final,mesh_fixe)
-#file_rayon_ecriture = open("%s/rayon_ecriture.txt" %(repertoire_final), "w")#kfic=1
-# Famille de cellules élémentaires : 8 clichés, inclusion circulaire, paramétrée par le rayon du cercle
-# Exemples de maillages raffiniés autour d'une inclusion périodique
-
-for cen in []:#[[0.5,0.5,0.5]]:#,[0.0,0.0,0.0],[0.5,0.0,0.5],[0.0,0.5,0.0]]:
- mesh_s_r=creer_maill_sph(cen,0.25,res)
- #
- if fig_todo=='aff':
-  plot(mesh_s_r)
-  plt.show()
-  plt.close()
- #
- elif fig_todo=='save':
-  plot(mesh_s_r)
-  plt.savefig("Figures3D/mesh_r_per"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*cen[2],2)))+str(int(round(100*r,2)))+".png")
-  plt.close()
-
-for top in [[0.5,0.5]]:#,[0.0,0.0],[0.5,0.0],[0.0,0.5]]:
- mesh_c_r=creer_maill_cyl(top,0.05,slices_cyl,res)
- #
- if fig_todo=='aff':
-  plot(mesh_c_r,wireframe=True)
-  plt.show()
-  plt.close()
- #
- elif fig_todo=='save':
-  plot(mesh_c_r)
-  plt.savefig("Figures3D/mesh_r_per"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*cen[2],2)))+str(int(round(100*r,2)))+".png")
-  plt.close()
-
-sys.exit()#--------------------------------
 
 chi_s=snapshot_sph_per([0.5,0.5,0.5],0.25,res)
-chi_c=snapshot_cyl_per([0.5,0.5],0.1,slices_cyl,res)
+#chi_c=snapshot_cyl_per([0.5,0.5],0.1,slices_cyl,res)
 plot(chi_s)
-plt.show()
+if fig_todo=='aff':
+ plt.show()
 plt.close()
-plot(chi_c)
-plt.show()
-plt.close()
+#plot(chi_c)
+#plt.show()
+#plt.close()
+
+##Snapshot unique, avec les maillages de Cyrille
+
 
 
 
@@ -117,7 +84,7 @@ def snap_ray(r_par):
  return([r_par,chi_r_v])
 
 #if geo_p=='centre':
-ray_snap_cen=0.25
+#ray_snap_cen=0.25
 #csr_list=[[0.5,0.5,0.05*k] for k in range(1,1+Nsnap)]
 #c_par : paramètre scalaire pour la position du centre
 def snap_cen(c_par):
@@ -148,9 +115,6 @@ else:
 
 # Liste des snapshots ...
 
-# Stockage
-## LE.ecriture_champ_hdf5(kh_file,KH_SAVE,khi_i,kfic,file_rayon_ecriture,r,[c_x,c_y],res)
-## ...
 
 #sys.exit()
 
@@ -171,7 +135,11 @@ for n in range(1,1+Nsnap):
   if geo_p=='rayon':
    cen=cen_snap_ray
    r=n*0.05
-   mesh=creer_maill_sph(cen,r,res)
+   if typ_msh=='gms':
+    print("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+".xml")
+    mesh=Mesh("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+".xml")
+   else:
+    mesh=creer_maill_sph(cen,r,res)
   elif geo_p=='centre':
    r=ray_snap_cen
    mesh=creer_maill_sph(csr_list[n-1],r,res)
@@ -211,3 +179,4 @@ for n in range(1,1+Nsnap):
  Dhom_k=D_k*(D+T_chi.T)
  #print(('Tenseur Dhom_k',Dhom_k))
  print('Coefficient Dhom_k11, snapshot '+str(n)+", "+config+', '+geo_p+" variable :",Dhom_k[0,0])
+#

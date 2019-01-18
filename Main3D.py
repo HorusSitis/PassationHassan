@@ -33,9 +33,9 @@ from matplotlib.patches import Circle, PathPatch
 ##########################################################
 
 E_=False
-E_lL=True
+E_lL=False
 
-EI=False
+EI=True
 EII=False
 
 EIII=False
@@ -53,9 +53,9 @@ c_y=0.5
 c_z=0.5
 #r=0.35#pour une réalisation unique
 npas_err=20
-fig_todo='save'
+fig_todo='aff'
 
-
+typ_msh='gms'#''
 
 
 ## -------------------- Etape I -------------------- ##
@@ -73,10 +73,10 @@ parallelize=True
 ## Cas d'une sphère unique
 config='sphère unique'
 
-#geo_p='rayon'
+geo_p='rayon'
 cen_snap_ray=[0.5,0.5,0.5]
 #geo_p='centre'
-ray_snap_cen=0.35
+#ray_snap_cen=0.35
 #csr_list=[[0.5,0.5,0.3+0.05*k] for k in range(1,1+Nsnap)]
 ### l'inclusion solide ne rencontre pas les bords du domaine, sous peine d'une incompatibilité entre les mailles de faces opposées (?)
 
@@ -90,7 +90,7 @@ ray_snap_cen=0.35
 
 ## Cas d'un cylindre périodique aux arètes et une sphère unique au centre
 #config='compl'
-geo_p='deux sphères'
+#geo_p='deux sphères'
 #geo_p='sphère et cylindre'
 
 ## ------------ Etape lL 1demi : Affichage de midrostructures périodiques ------------ ##
