@@ -61,16 +61,83 @@ Examples of periodical microstructures can be found in \cite{WalMill16}, here we
 
 \subsubsection{Two-dimensional structures}
 
+The four geometric configurations that follow are parapetrized by one or two of the following radiuses, %
+which we find in the next paragraphs about computation  of the homogenized tensor :
 
+\begin{description}
+\item [$r_{\mathcal{C}}$ :] radius of the inclusion at the center of the cell, chosen at $0.25$ ;
+\item [$r_{\mathcal{S}}$ :] radius of the inclusion at the sides of the cell, chosen at $0.15$ ;
+\item [$r_{\mathcal{V}}$ :] radius of the inclusion at the vertices of the cell, chosen at $0.15$.
+\end{description}
 
+\begin{figure}[H]
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\subfloat[Centered inclusion]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/macro_micro_Lsurl1unique_par505025.png}}
+&
+\subfloat[Disc at vertices]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/macro_micro_Lsurl1unique_par0025.png}}
+&
+\subfloat[Diagonal alignement]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/macro_micro_Lsurl1sommets_par50502515.png}}
+&
+\subfloat[Horizontal alignement]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/macro_micro_Lsurl1lat_par50502515.png}}
+\\
+\hline
+\subfloat[Porosity : $0,803650459$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/macro_micro_Lsurl8unique_par505025.png}}
+&
+\subfloat[Porosity : $0,803650459$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/macro_micro_Lsurl8unique_par0025.png}}
+&
+\subfloat[Porosity : $0,732964624$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/macro_micro_Lsurl8sommets_par50502515.png}}
+&
+\subfloat[Porosity : $0,732964624$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/macro_micro_Lsurl8lat_par50502515.png}}
+\\
+\hline
+\end{tabular}
+\end{center}
+\caption{Two-dimensional case : $8\times 8-$cells microstructure}
+\label{macro_micro_2d}
+\end{figure}
 
+We notice that at the macroscopic scale, the two first cases are equivalent : %
+we shall find a small differences between diffusion tensors for the two geometries.
 
 \subsubsection{Three-dimensional structures}
 
+Like in prewious paragraph, we define, for each elementary cell, one or two parameters among the following :
 
+\begin{description}
+\item [$r_{\mathcal{C}}$ :] radius of the cylinder, chosen at $0.25$ ;
+\item [$r_{\mathcal{S}}$ :] radius of the sphere at the center of the cell, chosen at $0.35$ ;
+\item [$r_{\mathcal{V}}$ :] radius of the sphere at the vertices of the cell, fixed at $0.2$.
+\end{description}
 
-
-
+\begin{figure}[H]
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\subfloat[Single sphere]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures3D/macro_micro_Lsurl1unique_par505035.png}}
+&
+\subfloat[Single cylinder]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures3D/macro_micro_Lsurl1unique_cyl25.png}}
+&
+\subfloat[Two speres]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures3D/macro_micro_Lsurl1diag_par505035.png}}
+&
+\subfloat[One sphere and one cylinder]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures3D/macro_micro_Lsurl1sph_cyl_par505035.png}}
+\\
+\hline
+\subfloat[Porosity : $0,82040562$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures3D/macro_micro_Lsurl5unique_par505035.png}}
+&
+\subfloat[Porosity : $0,803650459$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures3D/macro_micro_Lsurl5unique_cyl25.png}}
+&
+\subfloat[Porosity : $0,786895298$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures3D/macro_micro_Lsurl5diag_par505035.png}}
+&
+\subfloat[Porosity : $0,624056079$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures3D/macro_micro_Lsurl5sph_cyl_par505035.png}}
+\\
+\hline
+\end{tabular}
+\end{center}
+\caption{Three-dimensional case : $5\times 5-$cells microstructure}
+\label{macro_micro_3d}
+\end{figure}
 
 \subsubsection{Homogenized equations}
 
