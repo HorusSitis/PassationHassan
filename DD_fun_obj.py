@@ -77,7 +77,10 @@ def creer_maill_circ(cen,r,res):#valable quel que soit la position de l'inclusio
 
 def snapshot_circ_per(cen,r,res):
  c_x,c_y=cen[0],cen[1]
- mesh_c_r=creer_maill_circ([c_x,c_y],r,res)
+ if typ_msh=='gms':
+  mesh_c_r=Mesh("maillages_per/2D/maillage_trou2d_"+str(int(round(100*r,2)))+"_.xml")#
+ else:
+  mesh_c_r=creer_maill_circ([c_x,c_y],r,res)
  # On pose et on résoud le problème aux éléments finis
  V=VectorFunctionSpace(mesh_c_r, 'P', 3, form_degree=0, constrained_domain=PeriodicBoundary())#vertices))
  ## On définit la bordure du domaine, sur laquelle intégrer le second membre "L" de l'équation en dimension finie
@@ -143,7 +146,7 @@ def fig_chi(cen,r,u,todo):
   plt.show()
  elif todo=='save':
   #plt.tight_layout(pad=2)
-  plt.savefig("Figures2D/inc_c"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r,2)))+"_khi.png", bbox_inches="tight")
+  plt.savefig("Figures2D/inc_c"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r,2)))+"_khi.png", bbox_inches="tight")#Cyrille
  ## Close
  plt.close()
  #

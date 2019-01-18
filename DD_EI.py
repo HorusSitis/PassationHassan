@@ -97,10 +97,15 @@ for cen in []:#[[0.5,0.5],[0.0,0.0],[0.5,0.0],[0.0,0.5]]:
 #csr_list=[[0.05*k,0.5]] for k in range(1,1+Nsnap)]
 #c_par : paramètre scalaire pour la position du centre
 
-for n in range(1,1+Nsnap):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon d'un cercle doit être non nul
+for n in range(1+Nsnap):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon d'un cercle doit être non nul
  # Génération du snapshot
  if config=='cercle unique':
   if geo_p=='rayon':
+   mesh_c_r=Mesh("maillages_per/2D/maillage_trou2D.xml")
+   #plot(mesh_c_r)
+   #plt.show()
+   #plt.close()
+   #sys.exit()
    chi_n=snapshot_circ_per(cen_snap_ray,0.05*n,res) 
    c_x=cen_snap_ray[0]
    c_y=cen_snap_ray[1]
@@ -135,7 +140,7 @@ for n in range(1,1+Nsnap):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon
  D=(1-pi*r**2)*np.eye(2)
  ## Calcul et affichage du tenseur Dhom
  Dhom_k=D_k*(D+T_chi.T)
- #print(('Tenseur Dhom_k',Dhom_k))
+ print(('Tenseur Dhom_k',Dhom_k))
  print('Coefficient Dhom_k11, snapshot '+str(n)+", "+config+', '+geo_p+" variable :",Dhom_k[0,0])
  # Stockage
  ## ...

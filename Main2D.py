@@ -50,19 +50,19 @@ from DD_fun_obj import *
 ##########################################################
 
 E_=False
-E_lL=True
+E_lL=False
 
 EI=False
 EII=False
 
-EIII=False
+EIII=True
 EIV=False
 
 res_fixe=20
 res=20
 
 fixe_aff=False
-fig_todo='save'
+fig_todo='aff'
 
 ### ------------ Etape 0 : Génération de microstructures périodiques aléatoires ------------ ###
 
@@ -73,6 +73,10 @@ if E_ :
 ### ----------------- Etapes I à IV ----------------- ###
 #########################################################
 
+# choix du type de maillage
+
+typ_msh='gms'#''
+
 ### ------------ Exécution des étapes demandées en préambule, imports spécifiques ------------ ###
 
 repertoire_parent="Res2D/"
@@ -82,24 +86,26 @@ D_k=1.0
 Nsnap=8
 npas_err=20
 
+gen_snap='seq'#'par8'#'seq'
+
 # Choix du paramètre géométrique
 
 ## Cas d'un disque unique
-#config='cercle unique'
+config='cercle unique'
 
-#geo_p='rayon'
+geo_p='rayon'
 cen_snap_ray=[0.5,0.5]#[0.,0.]#
 
 #geo_p='centre'
-ray_snap_cen=0.25
+#ray_snap_cen=0.25
 #csr_list=[[0.05*k,0.5] for k in range(1,1+Nsnap)]
 
 
 ## Cas de deux inclusions périodiques : une inclusion centrale et deux ou quatre latérales par cellule
-config='compl'
+#config='compl'
 ## le rayon du disque central est variable
 #geo_p='deuxième disque aux sommets'
-geo_p='deuxième disque latéral'
+#geo_p='deuxième disque latéral'
 #
 
 ## ------------ Etape lL 1demi : Affichage de midrostructures périodiques ------------ ##
