@@ -25,14 +25,16 @@ with sh.open(repertoire_parent+l_name) as l_loa:
 
 # Extrapolation au domaine Omega_fixe : inclusion sphérique de rayon 0.0001, chi_prime défini sur ce domaine
 
-mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_0001fixe.xml")
+mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_0001fixe.xml")
+
 V_fixe=V=VectorFunctionSpace(mesh_fixe, 'P', 2, constrained_domain=PeriodicBoundary())
 
 list_snap=[]
 
-for n in rangee(1,1+Nsnap):
+for n in range(1,1+Nsnap):
  # chargement du snapshot courant
  chi_n_v=list_chi_v[n-1]
+ r=0.05*n
  if typ_msh=='gms':
   mesh=Mesh("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+".xml")
  #else:mesh=creer_maill_sph(cen,r,res)
@@ -44,23 +46,23 @@ for n in rangee(1,1+Nsnap):
  chi_n_prime=interpolate(chi_n,V_fixe)
  # on range le snapshot dans une liste
  list_snap.append(chi_n_prime)
-
 # Stockage des snapshots virtuels obtenus
 
-l_name='Lchi_extra_'+str(Nsnap)+'_'+ordo+'_'+computer
+#l_name='Lchi_extra_'+str(Nsnap)+'_'+ordo+'_'+computer
 
-with sh.open(repertoire_parent+l_name) as l_sto:
-    l_sto["maliste"] = list_snap
+#with sh.open(repertoire_parent+l_name) as l_sto:
+#    l_sto["maliste"] = list_snap
 
 # Constitution de la matrice des snapshots
+
 
 nb_noeuds=V_fixe.dim()
 
 Usnap=np.zeros((nb_noeuds,Nsnap))
 
 for n in range(0,Nsnap):
- chin_prime=list_snap[n]
- Usnap[:,n]=chin_prime.vector()get_local()
+ chi_n_prime=list_snap[n]
+ Usnap[:,n]=chi_n_prime.vector().get_local()
 
 # Stochage de la matrice des snapshots
 
@@ -71,7 +73,8 @@ with sh.open(repertoire_parent+u_name) as l_sto:
 
 # Représentations graphiques
 
-for n in range(,1+Nsnap):
+cen=cen_snap_ray
+for n in range(1,1+Nsnap):
  chi_prime_n=list_snap[n-1]
  # Affichage des valeurs de la solution interpolée
  plot(chi_prime_n)
