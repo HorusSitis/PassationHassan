@@ -18,6 +18,13 @@ import sys
 
 import multiprocessing
 
+# Stockage d'objets python
+
+import marshal as ma
+import shelve as sh
+
+# Fonctions maison
+
 from DDD_fun_obj import *
 
 ## Paquets spécifiques à la 3d ##
@@ -48,14 +55,21 @@ res=6
 slices_cyl=5
 Nsnap=8
 rempUsnap='par8'#'seq'
-c_x=0.5
-c_y=0.5
-c_z=0.5
+#c_x=0.5
+#c_y=0.5
+#c_z=0.5
 #r=0.35#pour une réalisation unique
 npas_err=20
 fig_todo='aff'
 
 typ_msh='gms'#''
+
+# nom de l'appareil utilisé pour générer les données enregistrées
+computer='T1700_35'#'MECALAC_29'
+
+
+
+repertoire_parent="Res3D/"
 
 
 ## -------------------- Etape I -------------------- ##
@@ -63,6 +77,7 @@ typ_msh='gms'#''
 D_k=1.0
 Nsnap=8
 npas_err=20
+ordo='Ordr'#'Nordr'
 
 # Parallélisation du calcul des snapshots
 
@@ -108,6 +123,9 @@ if E_lL :
 if EI :
  exec(open("DDD_EI.py").read())
 
+##computer=
+### Pour les étapes qui suivent, on peut choisir l'ordinateur qui a effectué le calcul des snapshots physiques
+
 ## -------------------- Etape II -------------------- ##
 
 if EII :
@@ -124,6 +142,9 @@ if EIII :
 
 ## -------------------- Etape IV -------------------- ##
 
+N_mor=8#2
+
+r_nouv=0.22#0.33#0.44
 
 
 
