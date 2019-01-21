@@ -1,0 +1,160 @@
+%\section{Reduced Order Models}
+
+\begin{frame}{Proper Orthogonal Decomposition}
+%
+\begin{block}{POD}<+->
+%
+\begin{itemize}
+\item<+-> We want to compute a function of $\mathbf{x}$ : $w(\mathbf{x},\tau)$, which lies in an Hilbert space $H$ ;
+\item<+-> $\tau$ is a real parameter : time, porosity etc.
+%\item<+-> $w(\cdot ,\tau)$ lies in an Hilbert space $H$ for each $\tau$
+\end{itemize}
+%
+\end{block}
+%
+\begin{block}{Spatial modes : the POD basis}<+->
+\begin{itemize}
+\item<+-> $\Phi$ or $(\phi_i)_{i=1}^{N_{POD}}$ is an orthogonal family in $H$ ;
+\item<+-> $w(\mathbf{x},\tau)=\sum\limits_{i=1}^{N_{POD}} a_i(\tau)\phi_i(\mathbf{x})$ for every $\tau$.
+%\item<+-> The functions $a_i$ need to be computated.
+\end{itemize}
+\end{block}
+%
+\begin{block}{Computation of $\Phi$}<+->
+\begin{description}
+\item<+-> [Data :] We know the $w(\mathbf{x},\tau_j)$ for a finite set of $\tau_j-$s ;
+\item<+-> [Optimality of $\Phi$] $\phi_l= \arg\max\limits_{\phi_j\in H}\left\langle\left(\phi_j\left|\sum\limits_{k=1}^{l-1}\left(w|\phi_k\right)_H\phi_k\right.\right)_H\right\rangle$ ;
+\item<+-> [Fredholm equation] $\int\limits_{\Omega}R(\mathbf{x},\mathbf{x'})\phi_j (\mathbf{x})\text{d}\mathbf{x'}=\lambda_j \phi_j (x)$.
+\end{description}
+\end{block}
+%
+\end{frame}
+
+\begin{frame}{Method of snapshots}
+%
+\begin{block}{Motivation}<+->
+\begin{itemize}
+\item<+-> For practical purpose, the Fredholm equation can be hard to resolve : $1\ll N_x$, $R$ is bad-profiled ;
+%\item<+-> We make the hypothesis : $N_{\tau}\ll N_x$ ;
+\item<+-> We have a finite, linearly independent set $w(\mathbf{x},\tau_j)$ of solutions in space, called \emph{snapshots} ;
+\item<+-> These come from experiments or numerical simulation.
+\end{itemize}
+\end{block}
+%
+\begin{block}{The new problem for POD}<+->
+\begin{itemize}
+%\item<+-> We set : $\phi_i(\mathbf{x})=\sum\limits_{j=1}^{N_{\tau}}\alpha_i(\tau_j) w(\mathbf{x},\tau_j)$ ;
+\item<+-> Fredholm equation can be rewritten : $\alpha_i\star_{\tau}\mathcal{C}\star_{\tau}w(\mathbf{x},\cdot)=\lambda_i\alpha_i\star_{\tau}(\mathbf{x},\cdot)$ ;
+\item<+-> $\mathcal{C}$ is the temporal-correlation tensor : $\mathcal{C}\star_{\tau}\alpha_i\mathbf=\lambda_i\alpha_i$.
+\end{itemize}
+\end{block}
+%
+\end{frame}
+
+\begin{frame}{Reduced Order Model : general case}
+%
+\begin{block}{Reduced basis}<+->
+\begin{itemize}
+\item<+-> We are given a POD basis $(\phi_i)_{i=1}^{N_{POD}}$ with a set $\lambda_i$ of associated proper-values ;
+\item<+-> $N_{POD}$ is the number of snapshots when we use the so-called mehtod ;
+\item<+-> We choose the first $N_{rom}$ vectors of $\Phi$ so that : $\dfrac{\sum\limits_{k=1}^{N_{rom}}\lambda_k}{\sum\limits_{k=1}^{N_{POD}}\lambda_k} >99,9\dots \%$
+\end{itemize}
+\end{block}
+%
+\end{frame}
+
+\begin{frame}{Reduced Order Model : \dots}
+\begin{block}{Galerkin projection}<+->
+%
+\begin{description}
+\item<+-> [For a given problem] $\mathcal{A}^{\mathbf{x},\tau}\left(w(\mathbf{x},\tau)\right)=f(\mathbf{x},\tau)$
+\item<+-> [Decomposition] $w(\mathbf{x},\tau)=\sum\limits_{i=1}^N a_i(\tau)\phi_i(\mathbf{x})+\mathcal{R}_{N_{rom}}(\mathbf{x},\tau)$ , with $\mathcal{R}_{N_{rom}}$ orthogonal to $(\phi_i)_{i=1}^{N_{rom}}$ ;
+\item<+-> [The problem in $a_k$] %
+\[%
+\left(\left.\mathcal{A}\left(\sum\limits_{k=1}^N a_k(\tau)\phi_k(\mathbf{x})\right) \right|\phi_i\left(\mathbf{x}\right)\right)_H %
+= \left(f\left(\mathbf{x},\tau\right)|\phi_i(\mathbf{x})\right)_H%
+\]
+\item<+-> [\dots] which is easier to resolve than the original problem.
+\end{description}
+%
+\end{block}
+%
+\end{frame}
+
+\begin{frame}{Diffusion in porous media}
+%
+\begin{block}{Vector $\chi$ : strong problem}<+->
+\begin{itemize}
+\item<+-> We are back to problem :
+\[%
+\left\{%
+\begin{array}{lccr}
+Div_y \left( \dfrac{\partial{\chi}}{\partial{y}}^T\right) &=& 0&\text{ on }\Omega_f \\
+\dfrac{\partial{\chi}}{\partial{y}} \cdot n_{sf}&=&-n_{sf}&\text{ on }\Gamma_{sf}
+\end{array}
+\right.
+\]
+\item<+-> General solution $\chi(\mathbf{y},\rho)$, $\rho$ can be the porosity ;
+\item<+-> $\Omega_f$ and $\Gamma{sf}$ depend on $\rho$.
+\end{itemize}
+\end{block}
+%
+\end{frame}
+
+\begin{frame}{Weak formulation of the problem}
+%
+\[%
+\forall v \in V , %
+\int\limits_{\Omega_f}Tr\left(\left(grad_y\chi\right)^T\cdot grad_y v\right)\text{d}\Omega=%
+-\int\limits_{\Gamma{sf}}n_{sf}\cdot v\text{d}s%
+\]
+
+\pause
+\begin{itemize}
+\item<+-> This can be done with finite element method ;
+\item<+-> However POD-ROM gives better results.
+\end{itemize}
+%
+\end{frame}
+
+\begin{frame}{The algorithm we use : offline}
+%
+\begin{block}{Step 1 : generation of snapshots}<+->
+\begin{itemize}
+\item<+-> Using Finite Element Method, compute $\chi(\mathbf{y},\rho_j)$ for a finite number of $\rho_j-$s ;
+\item<+-> Interpolate the solutions onto a single space $\Omega_{fluid}^0$, %
+so that we have a family of snapshots belonging to the \emph{same} functional space $H$.
+\end{itemize}
+\end{block}
+%
+\begin{block}{Step 2 : POD}<+->
+\begin{itemize}
+\item<+-> Compute $\mathcal{C}$ and find the $a_i(\rho_j)$ using linear algebra ;
+\item<+-> Compute $(\phi_i)_{i=1}^{N_{POD}}$ using the $a_i-$s ;
+\item<+-> Choose the number of modes $N_{rom}$ we keep for a reduced order model.
+\end{itemize}
+\end{block}
+%
+\end{frame}
+
+\begin{frame}{The algorithm we use : inline}
+%
+\begin{block}{Step 3 : ROM with given parameter $\rho^{new}$}<+->
+\begin{itemize}
+\item<+-> Extrapolate the $\phi_i$ POD vectors to a family $(\phi_i^{new})$ of functions defined for $\mathbf{y}$ in $\Omega_{fluid}^{new}$ ;
+\item<+-> Resolve the linear problem in $a_k(\rho^{new})$ :
+\end{itemize}
+\visible<3->{
+\[%
+\begin{split}
+\sum\limits_{k=1}^N a_k(\rho^{new})&\int\limits_{\Omega}Tr\left(\langle grad_y\phi_k^{new} \left(\mathbf{y},\rho\right)|grad_y\left(\phi_i^{new}(\mathbf{y}\right)\rangle\right)\text{d}\Omega\\%
+=-&\int\limits_{\Gamma_{sf}}\langle n_{sf}|\phi_i^{new}(\mathbf{y})\rangle \text{d}s
+\end{split}
+\]
+}
+\begin{itemize}
+\item<+-> Compute $\chi(\mathbf{y},\rho^{new})$ : $\chi\left(\mathbf{y},\rho^{new}\right)\simeq \sum\limits_{i=1}^N a_i \left(\rho^{new}\right)\phi_i^{new}(\mathbf{y})$
+\end{itemize}
+\end{block}
+%
+\end{frame}
