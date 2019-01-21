@@ -15,8 +15,36 @@ res=25
 
 Nsnap=8
 
-#V_fixe=VectorFunctionSpace(mesh_fixe, "P", 2, constrained_domain=PeriodicBoundary())
+tol=1e-10
+
+xinf=0.0
+yinf=0.0
+xsup=1.0
+ysup=1.0
+
+#determiner le domaine fixe pour interpoler la solution
+
+dimension=2
+
+class PeriodicBoundary(SubDomain):
+ # Left boundary is "target domain" G
+ def inside(self, x, on_boundary):
+  return on_boundary and not(near(x[0],xsup,tol) or near(x[1],ysup,tol))## merci à Arnold Douglas
+ # Map right boundary (H) to left boundary (G)
+ def map(self, x, y):
+  for i in range(dimension):
+   if near(x[i],1.0,tol):
+    y[i]=0.0
+   else:
+    y[i]=x[i]
+
+mesh_fixe=Mesh("maillages_per/2D/maillage_0001_fixe2d"+".xml")
+V_fixe=VectorFunctionSpace(mesh_fixe, "P", 2, constrained_domain=PeriodicBoundary())
 nb_noeuds = V_fixe.dim()
+
+
+
+
 
 Usnap=np.zeros((nb_noeuds,Nsnap))
 
@@ -33,26 +61,32 @@ def inter_snap_ray(n):
 
 # Génération séquentielle des snapshots
 
-for n in range(1,1+Nsnap):
- u_fixe_v=inter_snap_ray(n)[1]
- # Remplissage de la matrice des snapshots
- Usnap[:,n-1]=u_fixe_v#.vector().get_local()
+if gen_snap=='seq':
+ for n in range(1,1+Nsnap):
+  u_fixe_v=inter_snap_ray(n)[1]
+  # Remplissage de la matrice des snapshots
+  Usnap[:,n-1]=u_fixe_v#.vector().get_local()
 
 ## UsnapSeq=Usnap
-
+sys.exit()#----------------------------------------------------------------------
 # Génération parallèle des snapshots
 
-pool=multiprocessing.Pool(processes=8)
-
-Uf_par=pool.map(inter_snap_ray,(n for n in range(1,1+Nsnap)))
-
-for n in range(1,1+Nsnap):
- for i in range(0,Nsnap):
-  if Uf_par[i][0]==n:
-   u_fixe_v=Uf_par[i][1]
-   Usnap[:,n-1]=u_fixe_v#.vector().get_local()
+if gen_snap=='par8':
+ pool=multiprocessing.Pool(processes=8)
+ #
+ Uf_par=pool.map(inter_snap_ray,(n for n in range(1,1+Nsnap)))
+ #
+ for n in range(1,1+Nsnap):
+  for i in range(0,Nsnap):
+   if Uf_par[i][0]==n:
+    u_fixe_v=Uf_par[i][1]
+    Usnap[:,n-1]=u_fixe_v#.vector().get_local()
 
 ## UsnapPar=Usnap
+
+# Représentation graphique des snapshots
+
+
 
 # matrice de corrélation
 
