@@ -102,7 +102,7 @@ In this paragraph, we make some hypotheses :
 
 \begin{enumerate}[label=(Snap \arabic*)]
 \item\label{hs1} $N_{\tau}\ll N_x$ ;
-\item The $w(\cdot , \tau_j)$ are linearly independent in $H$ ;
+\item\label{hs2} The $w(\cdot , \tau_j)$ are linearly independent in $H$ ;
 \item\label{hs3} For all $j$, $\phi_i(\mathbf{x})=\sum\limits_{j=1}^{N_{\tau}}\alpha_i(\tau_j) w(\mathbf{x},\tau_j)$.
 \end{enumerate}
 
@@ -120,7 +120,7 @@ Here, $\Phi$ is also supposed to be finite, and its cardinal is bounded by the s
 Using Fubini theorem, Fredholm equation can be rewritten :
 
 \begin{equation}\label{tenct}
-\alpha_i\star_{\tau}\mathcal{C}\star_{\tau}w(\mathbf{x},\cdot)=\lambda_i\alpha_i\star_{\tau}(\mathbf{x},\cdot)
+\alpha_i\star_{\tau}\mathcal{C}\star_{\tau}w(\mathbf{x},\cdot)=\lambda_i\alpha_i\star_{\tau}w(\mathbf{x},\cdot)
 \end{equation}
 
 where :
@@ -129,13 +129,13 @@ where :
 \item $\star_{\tau}$ is the contracted product, with respect to the parameter $\tau$ : here, an integral on $\tau$ is a finite sum $\sum\limits{j=1}^{N_{\tau}}$.
 \end{itemize}
 
-Since \ref{hs1}, equation \ref{tenct} gives the following problem in $(\lambda_j , \alpha_j)$ :
+Since \ref{hs2}, equation \ref{tenct} gives the following problem in $(\lambda_j , \alpha_j)$ :
 
 \begin{equation}\label{tenct}
-\mathcal{C}\star_{\tau}\alpha_i\mathbf=\lambda_i\alpha_i\star_{\tau} w(\mathbf{x},\cdot)
+\mathcal{C}\star_{\tau}\alpha_i\mathbf=\lambda_i\alpha_i
 \end{equation}
 
-which is analogous to the problem we found in the last paragraph.
+which is analogous to the linear-algebra problem we found in the last paragraph.
 
 \par
 The matrix $C(\tau_j,\tau_j^{'})$ is symmetric positive. Solutions $\alpha_i$ of the problem are, by consequence, %
@@ -179,7 +179,7 @@ they can be experimental measurements or numerical simulation ;
 \item Find the proper values and vectors of $[C]$, which is supposed to be small ;
 \item\label{so1} Sort the proper-values $\lambda_i$ in a decreasing order ;
 \item Compute the $\phi_i$ using the proper vectors found for $[C]$ ;
-\item\label{so2} Evaluate the energy contained in each mode : $Ener^i:=\dfrac{\sum\limits_{k=1}^i\lambda_i}{\sum\limits_{k=1}^{N_{POD}}\lambda_i}$ ;
+\item\label{so2} Evaluate the energy contained in each mode : $Ener^i:=\dfrac{\sum\limits_{k=1}^i\lambda_k}{\sum\limits_{k=1}^{N_{POD}}\lambda_k}$ ;
 \item\label{so3} Choose the first $N$ for which $Ener^i >\nu$, where $\nu$ is the energy threshold we want - typically, $99\%$ ;
 \item\label{so4} Compute the approximation error with the subset $(\phi_i)_{i=1}^{N}$.
 \end{enumerate}
@@ -200,7 +200,7 @@ then the above reasonment leads us to build a basis $\Phi$ whose vectors are sol
 We have written a sample of functions of space $w$, parametrized with a finite set of the real number $\tau$ :
 
 \begin{equation}
-w(\mathbf{x},\tau)\simeq\sum\limits_{i=1}^N a_i(\tau_j)\phi_i(\mathbf{x})
+w(\mathbf{x},\tau)\simeq\sum\limits_{i=1}^N a_i(\tau)\phi_i(\mathbf{x})
 \end{equation}
 
 Now, suppose that $w(\mathbf{x},\tau)$ is solution to the problem :
