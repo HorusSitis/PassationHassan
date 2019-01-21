@@ -18,6 +18,13 @@ import sys
 
 import multiprocessing
 
+# Stockage d'objets python
+
+import marshal as ma
+import shelve as sh
+
+# Fonctions maison
+
 from DDD_fun_obj import *
 
 ## Paquets spécifiques à la 3d ##
@@ -35,11 +42,11 @@ from matplotlib.patches import Circle, PathPatch
 E_=False
 E_lL=False
 
-EI=True
+EI=False
 EII=False
 
 EIII=False
-EIV=False
+EIV=True
 
 
 res_fixe=6
@@ -48,14 +55,21 @@ res=6
 slices_cyl=5
 Nsnap=8
 rempUsnap='par8'#'seq'
-c_x=0.5
-c_y=0.5
-c_z=0.5
+#c_x=0.5
+#c_y=0.5
+#c_z=0.5
 #r=0.35#pour une réalisation unique
 npas_err=20
-fig_todo='aff'
+fig_todo='aff'#'aff'
 
 typ_msh='gms'#''
+
+# nom de l'appareil utilisé pour générer les données enregistrées
+computer='T1700_358'#'MECALAC_298'
+
+
+
+repertoire_parent="Res3D/"
 
 
 ## -------------------- Etape I -------------------- ##
@@ -63,6 +77,7 @@ typ_msh='gms'#''
 D_k=1.0
 Nsnap=8
 npas_err=20
+ordo='Ordr'#'Nordr'
 
 # Parallélisation du calcul des snapshots
 
@@ -108,6 +123,9 @@ if E_lL :
 if EI :
  exec(open("DDD_EI.py").read())
 
+##computer=
+### Pour les étapes qui suivent, on peut choisir l'ordinateur qui a effectué le calcul des snapshots physiques
+
 ## -------------------- Etape II -------------------- ##
 
 if EII :
@@ -121,11 +139,22 @@ from PO23D import *
 if EIII :
  exec(open("DDD_EIII.py").read())
 
+N_mor=2#99,9%
+N_mor=4#99,99%
+N_mor=6#99,999%
+N_mor=8#100%
 
 ## -------------------- Etape IV -------------------- ##
 
+N_mor=4
 
+r_nouv=0.44#0.33#0.44
 
+#0.22 : 0.011% d'erreur, tps d'éxécution ~ 1''/70''
+#0.33 : 0.012% d'erreur, tps d'éxécution ~ 1''/60''
+
+if EIV :
+ exec(open("DDD_EIV.py").read())
 
 
 

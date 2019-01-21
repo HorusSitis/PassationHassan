@@ -40,26 +40,26 @@ else:
 
 V_fixe=VectorFunctionSpace(mesh_fixe, "P", 2, constrained_domain=PeriodicBoundary())
 
-if fig_todo=='aff':
- #représentation graphique du maillage
- plot(mesh_fixe)
- plt.show()
- plt.close()
-else:
- #sauvegarde de la figure
- plot(mesh_fixe)
- plt.savefig("Figures3D/mesh_fixe.png")
- plt.close()
+#if fig_todo=='aff':
+# #représentation graphique du maillage
+# plot(mesh_fixe)
+# plt.show()
+# plt.close()
+#else:
+# #sauvegarde de la figure
+# plot(mesh_fixe)
+# plt.savefig("Figures3D/mesh_fixe.png")
+# plt.close()
 
 
 
 
-chi_s=snapshot_sph_per([0.5,0.5,0.5],0.25,res)
+#chi_s=snapshot_sph_per([0.5,0.5,0.5],0.25,res)
 #chi_c=snapshot_cyl_per([0.5,0.5],0.1,slices_cyl,res)
-plot(chi_s)
-if fig_todo=='aff':
- plt.show()
-plt.close()
+#plot(chi_s)
+#if fig_todo=='aff':
+# plt.show()
+#plt.close()
 #plot(chi_c)
 #plt.show()
 #plt.close()
@@ -95,41 +95,54 @@ def snap_cen(c_par):
 
 # Calcul des snapshots, sous forme vectorielle
 
+
 if parallelize:
  # Génération parallèle des snapshots
  pool=multiprocessing.Pool(processes=8)
  if geo_p=='rayon':
-  list_chi_v=pool.map(snap_ray,(n for n in range(1,1+Nsnap)))
+  list_chi_n_v=pool.map(snap_ray,(n for n in range(1,1+Nsnap)))
  elif geo_p=='centre':
-  list_chi_v=pool.map(snap_cen,(n for n in range(1,1+Nsnap)))
+  list_chi_n_v=pool.map(snap_cen,(n for n in range(1,1+Nsnap)))
  ## enregistrement des données dans une liste
 else:
  # Génération séquentielle des snapshots : à compléter
- list_chi_v=[]
+ list_chi_n_v=[]
  for n in range(1,1+Nsnap):
   if geo_p=='rayon':
    chi_n_v=snap_ray(n*0.05)
   elif geo_p=='centre':
    chi_n_v=snap_cen(n*0.05)
+  list_chi_n_v.append(chi_n_v)
+
+# Construction de la liste des snapshots vectorisés : cas d'un paramètre géométrique définissant un ordre - lien avec la porosité ; ou non.
+
+list_chi_v=[]
+if geo_p=='rayon' or config=='compl':
+ for n in range(1,1+Nsnap):
+  for i in range(0,Nsnap):
+   if list_chi_n_v[i][0]==n:
+    chi_n_v=list_chi_n_v[i][1]
+    list_chi_v.append(chi_n_v)
+else:
+ for i in range(0,Nsnap):
+  chi_n_v=list_chi_n_v[i][1]
   list_chi_v.append(chi_n_v)
 
-# Liste des snapshots ...
+# Liste des snapshots : sauvegarde, on précise l'identité de la machine qui a effectué le calcul
 
+l_name='Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
 
-#sys.exit()
+# sauvegarde de la liste des solutions indexées calculées avec la méthode des éléments finis
+with sh.open(repertoire_parent+l_name) as l_sto:
+    l_sto["maliste"] = list_chi_v
 
-# Matrice des snapshots
-
-
-
+# Matrice des snapshots : plus tard, voir l'étape II
 
 # Exploitation des solution du problème aux éléments finis
 
 for n in range(1,1+Nsnap):
  # Extraction du snapshot de rang n
- for i in range(0,Nsnap):
-  if list_chi_v[i][0]==n:
-   chi_n_v=list_chi_v[i][1]
+ chi_n_v=list_chi_v[n-1]
  # On crée un maillage pour réécrire les snapshots sous la forme de fonctions
  if config=='sphère unique':
   if geo_p=='rayon':
@@ -157,11 +170,12 @@ for n in range(1,1+Nsnap):
   elif geo_p=='rayon du cylindre variable':
    r=0
  V_n=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
+ # On restitue la forme fonctionnelle du snapshot courant
  chi_n=Function(V_n)
  chi_n.vector().set_local(chi_n_v)
  # Affichage des valeurs et erreurs de la solution périodique, quelle que soit la configuration
- ### procédures à écrire dans DDD_fun_obj.py
- ##
+ #err_per_ind_01(chi_n,cen,r,npas_err)
+ err_per_gr(cen,r,chi_n,npas_err,fig_todo)
  # Tenseur de diffusion homogénéisé
  ## Intégrale de khi sur le domaine fluide
  T_chi=np.zeros((3,3))
