@@ -41,7 +41,7 @@ for n in range(1,1+Nsnap):
  V_n=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
  chi_n=Function(V_n)
  chi_n.vector().set_local(chi_n_v)
- # extrpolation du snapshot au domaine fixe
+ # extrapolation du snapshot au domaine fixe
  chi_n.set_allow_extrapolation(True)
  chi_n_prime=interpolate(chi_n,V_fixe)
  # on range le snapshot dans une liste
@@ -68,8 +68,8 @@ for n in range(0,Nsnap):
 
 u_name='Usnap_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
 
-with sh.open(repertoire_parent+u_name) as l_sto:
-    l_sto["maliste"] = Usnap
+with sh.open(repertoire_parent+u_name) as u_sto:
+    u_sto["maliste"] = Usnap
 
 # Représentations graphiques
 

@@ -20,11 +20,16 @@ class PeriodicBoundary(SubDomain):
 #pod = reload(pod)
 from PO23D import *
 #
+
+mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_0001fixe.xml")
+
+V_fixe=V=VectorFunctionSpace(mesh_fixe, 'P', 2, constrained_domain=PeriodicBoundary())
+
 ## Chargement de la marice des snapshots
 
 u_name='Usnap_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
 
-with sh.open(repertoire_parent+l_name) as u_loa:
+with sh.open(repertoire_parent+u_name) as u_loa:
     Usnap = u_loa["maliste"]
 
 #
@@ -32,7 +37,7 @@ with sh.open(repertoire_parent+l_name) as u_loa:
 C=mat_corr_temp(V_fixe,Nsnap,Usnap)
 #
 ## Calcul des coefficients aléatoires et la base POD
-vp_A_phi=mat_a_mat_phi(Nsnap,Usnap,C)
+vp_A_phi=mat_a_mat_phi(Nsnap,Usnap,C,V_fixe,'L2')
 #
 val_propres=vp_A_phi[0]
 Aleat=vp_A_phi[1]
@@ -49,9 +54,17 @@ print(val_propres)
 #plt.savefig()
 #plt.close()
 
+## Enregistrement de la matrice de la base POD, sous la forme vectorielle
+
+phi_name='Phi_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+
+with sh.open(repertoire_parent+phi_name) as p_sto:
+    p_sto["maliste"] = Phi_prime_v
+
+#sys.exit()#-----------------------------------------------------------------
 ## Pour réintroduire la base de POD dans l'espace des fonctions définies dans le domaine fixe
 
-mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_0001fixe.xml")
+mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_0001fixe.xml")
 V_fixe=V=VectorFunctionSpace(mesh_fixe, 'P', 2, constrained_domain=PeriodicBoundary())
 
 ## Tests : orthogonalité ou orthonrmalité de Phi_prime
@@ -66,7 +79,7 @@ for i in range(Nsnap-1):
   scal=assemble(dot(ui,uj)*dx)
   print(scal)
 
-## Norme des vacteurs dela base POD, L2 ou n2
+## Norme des vecteurs de la base POD, L2 ou n2
 for i in range(Nsnap):
  ui.vector().set_local(Phi_prime_v[:,i])
  scal=assemble(dot(ui,ui)*dx)
@@ -114,15 +127,17 @@ plt.show()
 ## Choix du nombre de modes, avec une valeur seuil d'énergie à atteindre avec les vacteurs de la base POD
 nb_modes=0
 
-seuil_ener=99.999
+seuil_ener=99.99#9
 
 i=0
 while ener_pour_cumul[i]<seuil_ener:
  nb_modes=i+1
  i+=1
 
+Nseuil=i
 ### 8 snapshots : 4 modes pour un seuil de 99.9%
 ### 8 snapshots : 7 modes pour un seuil de 99,999%
- 
 
+print(str(seuil_ener)+':')
+print(Nseuil)
  
