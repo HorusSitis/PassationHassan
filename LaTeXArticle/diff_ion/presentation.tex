@@ -31,7 +31,7 @@
 \begin{block}{Hypotheses}<+->
 \begin{itemize}%[<+->]
 \item<+-> The porous medium can be modelized as periodical structure, with an elementaty cell small enough ;
-\item<+-> The elemntary cells summarize the mediums macroscopical properties.
+\item<+-> The elementary cells summarize the mediums macroscopical properties.
 \end{itemize}
 %
 %\pause
@@ -89,11 +89,29 @@
 \[\derp{c_k}{t}-div_{\mathbf{x}}\left(D_k^{hom}\derp{c_k}{\mathbf{x}}+D_k^{hom}\frac{F}{RT}z_k \derp{\Psi}{\mathbf{x}}\right)=0\]
 \end{block}
 %
-\begin{block}{$D_k^{hom}$ and the microstructure : the $\chi$ vector field}<+->
+\end{frame}
+
+\begin{frame}{The homogenized diffusion tensor}
+%
+\begin{block}{$D_k^{hom}$ and the microstructure}<+->% : the $\chi$ vector field}<+->
 \begin{itemize}
 \item<+-> \[D_k^{hom}:=\int\limits_{\Omega_f}\left(I+\derp{\chi}{\mathbf{y}}^T\right)\text{d}\Omega\]
 \item<+-> We will focus on this problem by now.
 \end{itemize}
+\end{block}
+%
+\begin{block}{The vector field $\chi$}<+->
+\[%
+\left\{%
+\begin{array}{lccr}
+Div_y \left( \dfrac{\partial{\chi}}{\partial{y}}^T\right) &=& 0&\text{ on }\Omega_f \\
+\dfrac{\partial{\chi}}{\partial{y}} \cdot n_{sf}&=&-n_{sf}&\text{ on }\Gamma_{sf}
+\end{array}
+\right.
+\]
+
+\pause
+We will focus on this problem now.
 \end{block}
 %
 \end{frame}
