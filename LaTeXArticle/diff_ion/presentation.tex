@@ -1,0 +1,99 @@
+%\section{Ionic diffusion in cementarious media}
+
+\begin{frame}
+%
+\begin{block}{A physical situation}
+\begin{itemize}%[<+->]
+\item<+-> Reinforced concrete structures are exposed to chloride $Cl^-$ ;
+\item<+-> $Cl^-$ penetrates the concrete, via its pores ;
+\item<+-> It corrodes steel and makes the structure fragile.
+\end{itemize}
+\end{block}
+%
+\begin{block}{A model for electrodiffusion}<+->
+\begin{description}
+\item<+-> [The Nernst-Planck equation] $\dfrac{\partial{c_k}}{\partial{t}}=div\left(-D_k\left(grad(c_k)+\dfrac{F}{RT}grad(\Psi)\right)\right)$
+\item<+-> [Poisson equation] $\epsilon_p \Delta \Psi=-\rho$
+\end{description}
+\end{block}
+%
+\begin{block}{A computational issue}<+->
+\begin{itemize}
+\item<+-> A cimenteous material is made of numerous, and very variable sub-structures ;
+\item<+-> Above equations should be resolved on a huge spatial domain.
+\end{itemize}
+\end{block}
+%
+\end{frame}
+
+\begin{frame}{Periodic homogenization}
+%
+\begin{block}{Hypotheses}<+->
+\begin{itemize}%[<+->]
+\item<+-> The porous medium can be modelized as periodical structure, with an elementaty cell small enough ;
+\item<+-> The elemntary cells summarize the mediums macroscopical properties.
+\end{itemize}
+%
+%\pause
+\visible<2->{%
+%\begin{figure}[H]
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+%\subfloat[Single sphere]{
+\includegraphics[width=0.2\linewidth,height=2cm]{../Figures3D/macro_micro_Lsurl1unique_par505035.png}%}
+&
+%\subfloat[Single cylinder]{
+\includegraphics[width=0.2\linewidth,height=2cm]{../Figures3D/macro_micro_Lsurl1unique_cyl25.png}%}
+&
+%\subfloat[Two speres]{
+\includegraphics[width=0.2\linewidth,height=2cm]{../Figures3D/macro_micro_Lsurl1diag_par505035.png}%}
+&
+%\subfloat[One sphere and one cylinder]{
+\includegraphics[width=0.2\linewidth,height=2cm]{../Figures3D/macro_micro_Lsurl1sph_cyl_par505035.png}%}
+\\
+\hline
+%\subfloat[Porosity : $0,82040562$]{
+\includegraphics[width=0.2\linewidth,height=2cm]{../Figures3D/macro_micro_Lsurl5unique_par505035.png}%}
+&
+%\subfloat[Porosity : $0,803650459$]{
+\includegraphics[width=0.2\linewidth,height=2cm]{../Figures3D/macro_micro_Lsurl5unique_cyl25.png}%}
+&
+%\subfloat[Porosity : $0,786895298$]{
+\includegraphics[width=0.2\linewidth,height=2cm]{../Figures3D/macro_micro_Lsurl5diag_par505035.png}%}
+&
+%\subfloat[Porosity : $0,624056079$]{
+\includegraphics[width=0.2\linewidth,height=2cm]{../Figures3D/macro_micro_Lsurl5sph_cyl_par505035.png}%}
+\\
+\hline
+\end{tabular}
+\end{center}
+%\caption{Three-dimensional case : $5\times 5-$cells microstructure}
+%\end{figure}
+}
+%
+\end{block}
+\end{frame}
+
+\begin{frame}{Homogenized equation}
+%
+\begin{block}{A two-scaled spatial model}<+->
+\begin{itemize}
+\item<+-> $\mathbf{x}$ is a macroscopical variable, namely the cell's position in the periodical structure ;
+\item<+-> $\mathbf{y}$ or $(y_1,y_2,y_3)$ is a microscopical variable, of spatial coordinates in a single cell ;
+\item<+-> $\mathbf{x}$ and $\mathbf{y}$ can be assumed to be independent.
+\end{itemize}
+\end{block}
+%
+\begin{block}{Homogenized diffusion-migration equation}<+->
+\[\derp{c_k}{t}-div_{\mathbf{x}}\left(D_k^{hom}\derp{c_k}{\mathbf{x}}+D_k^{hom}\frac{F}{RT}z_k \derp{\Psi}{\mathbf{x}}\right)=0\]
+\end{block}
+%
+\begin{block}{$D_k^{hom}$ and the microstructure : the $\chi$ vector field}<+->
+\begin{itemize}
+\item<+-> \[D_k^{hom}:=\int\limits_{\Omega_f}\left(I+\derp{\chi}{\mathbf{y}}^T\right)\text{d}\Omega\]
+\item<+-> We will focus on this problem by now.
+\end{itemize}
+\end{block}
+%
+\end{frame}
