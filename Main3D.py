@@ -45,8 +45,8 @@ E_lL=False
 EI=False
 EII=False
 
-EIII=True
-EIV=False
+EIII=False
+EIV=True
 
 
 res_fixe=6
@@ -148,9 +148,13 @@ N_mor=8#100%
 
 N_mor=4
 
-r_nouv=0.22#0.33#0.44
+r_nouv=0.44#0.33#0.44
 
+#0.22 : 0.011% d'erreur, tps d'éxécution ~ 1''/70''
+#0.33 : 0.012% d'erreur, tps d'éxécution ~ 1''/60''
 
+if EIV :
+ exec(open("DDD_EIV.py").read())
 
 
 

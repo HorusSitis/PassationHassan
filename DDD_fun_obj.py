@@ -141,7 +141,7 @@ def snapshot_sph_per(cen,r,res):
     l_cen.append([cen[0]+i,cen[1]+j,cen[2]+k])
  class inclusion_periodique(SubDomain):
   def inside(self,x,on_boundary):
-   return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[2]-c[2]), (-r-tol, r+tol)) for c in l_cen]))#points de la frontière du dystème compris dans la boule de centre et rayons cen et r, pour la norme infinie
+   return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[2]-c[2]), (-r-tol, r+tol)) for c in l_cen]))#points de la frontière du système compris dans la boule de centre et rayons cen et r, pour la norme infinie
  ## Utilisation des classes définies précédemment : mesure de la limite du domaine fluide
  Gamma_sf = inclusion_periodique()
  boundaries = MeshFunction("size_t", mesh_s_r, mesh_s_r.topology().dim()-1)
