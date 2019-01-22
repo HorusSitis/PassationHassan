@@ -1,0 +1,65 @@
+%\section{Multiscale structure}
+
+\begin{frame}{Observing cementarious material}
+%
+\begin{block}{}<+->%{Microtomography, ESEM}<+->
+\begin{multicols}{2}
+\includegraphics[width=\linewidth,height=3.8cm]{exp_var/tom_esem.png}
+
+\columnbreak
+Cementarious media seen with microtomography
+
+\par
+We can see a heterogeneous structure
+\end{multicols}
+\end{block}
+%
+\begin{block}{}<+->%{Scanning Electron Microscope}<+->
+\begin{multicols}{2}
+\includegraphics[width=\linewidth,height=2cm]{exp_var/meb_cem.png}
+
+\columnbreak
+Samples of cementarious medium, seen with Scanning Electron Microscope
+
+\par
+We still see heterogeneities
+\end{multicols}
+\end{block}
+%
+\begin{block}{Observations}<+->
+%\begin{itemize}
+%\item<+-> 
+Heterogeneities appear at diffrerent scales : mm to nm ;
+%\item<+-> 
+%\end{itemize}
+\end{block}
+%
+\end{frame}
+
+\begin{frame}{Issues for practical purpose}
+%
+\begin{block}{Experiment}<+->
+\begin{itemize}
+\item<+-> Measurement : tomography, BEM \dots are expensive ;
+\item<+-> Small samples of matter ;
+\item<+-> We would need a huge number of observations.
+\end{itemize}
+\end{block}
+%
+\begin{block}{Computation}<+->
+\begin{itemize}
+\item<+-> Solving PDE with high spatial resolution ;
+\item<+-> 1000$\times$1000$\times$1000 voxels ;
+\item<+-> A particular numerical solution cannot be used for a given sample of concrete.
+\end{itemize}
+\end{block}
+%
+\begin{block}{Objectives}<+->
+\begin{itemize}
+\item<+-> Find representative samples of concrete structure, and measure some physical parameters ;
+\item<+-> Resolve numerically a PDE on it ;
+\item<+-> Varying the parameter, solve quickly the PDE on another sample using a Reduced Order Model.
+\end{itemize}
+\end{block}
+%
+\end{frame}
