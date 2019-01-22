@@ -116,7 +116,7 @@ else :
 ## Calcul et affichage du tenseur Dhom
 Dhom_k=D_k*(D+T_chi.T)
 #print(('Tenseur Dhom_k',Dhom_k))
-print('Coefficient Dhom_k11 '+config+', '+geo_p+' variable valeur'+str(rho)+' :',Dhom_k[0,0])
+print('Coefficient Dhom_k11 '+config+', '+geo_p+' variable valeur'+str(rho)+' MOR :',Dhom_k[0,0])
 
 print('se3 faite')
 #sys.exit()#-------------------------------------
@@ -153,7 +153,7 @@ else :
 ## Calcul et affichage du tenseur Dhom
 Dhom_k=D_k*(D+T_chi.T)
 #print(('Tenseur Dhom_k',Dhom_k))
-print('Coefficient Dhom_k11 '+config+', '+geo_p+' variable valeur'+str(rho)+ ' :',Dhom_k[0,0])
+print('Coefficient Dhom_k11 '+config+', '+geo_p+' variable valeur'+str(rho)+ ' MEF :',Dhom_k[0,0])
 
 
 

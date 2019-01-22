@@ -52,7 +52,7 @@ EIV=True
 res_fixe=6
 fixe_aff=False
 res=6
-slices_cyl=5
+#slices_cyl=5
 Nsnap=8
 rempUsnap='par8'#'seq'
 #c_x=0.5
@@ -60,12 +60,12 @@ rempUsnap='par8'#'seq'
 #c_z=0.5
 #r=0.35#pour une réalisation unique
 npas_err=20
-fig_todo='aff'#'aff'
+fig_todo='save'#'aff'
 
 typ_msh='gms'#''
 
 # nom de l'appareil utilisé pour générer les données enregistrées
-computer='T1700_358'#'MECALAC_298'
+computer='MECALAC_29x8'#'T1700_358'#
 
 
 
@@ -148,7 +148,7 @@ N_mor=8#100%
 
 N_mor=4
 
-r_nouv=0.44#0.33#0.44
+r_nouv=0.22#0.33#0.44
 
 #0.22 : 0.011% d'erreur, tps d'éxécution ~ 1''/70''
 #0.33 : 0.012% d'erreur, tps d'éxécution ~ 1''/60''

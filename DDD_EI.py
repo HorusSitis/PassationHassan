@@ -173,6 +173,13 @@ for n in range(1,1+Nsnap):
  # On restitue la forme fonctionnelle du snapshot courant
  chi_n=Function(V_n)
  chi_n.vector().set_local(chi_n_v)
+ # Représentation graphique
+ plot(chi_n)
+ if fig_todo=='aff':
+  plt.show()
+ else:
+  plt.savefig("Figures3D/sol_"+str(n)+"_sur"+str(Nsnap)+config+geo_p+".png")
+ plt.close()
  # Affichage des valeurs et erreurs de la solution périodique, quelle que soit la configuration
  #err_per_ind_01(chi_n,cen,r,npas_err)
  err_per_gr(cen,r,chi_n,npas_err,fig_todo)
