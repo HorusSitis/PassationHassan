@@ -23,7 +23,7 @@
 \begin{block}{Computation of $\Phi$}<+->
 \begin{description}
 \item<+-> [Data :] We know the $w(\mathbf{x},\tau_j)$ for a finite set of $\tau_j-$s ;
-\item<+-> [Optimality of $\Phi$] $\phi_l= \arg\max\limits_{\phi_j\in H}\left\langle\left(\phi_j\left|\sum\limits_{k=1}^{l-1}\left(w|\phi_k\right)_H\phi_k\right.\right)_H\right\rangle$ ;
+\item<+-> [Optimality of $\Phi$] $\phi_l= \arg\max\limits_{\phi_j\in H}\left\langle\left(\phi_j\left|\sum\limits_{k=1}^{l-1}\left(w|\phi_k\right)_H\phi_k\right.\right)_H\right\rangle$% ;
 \item<+-> [Fredholm equation] $\int\limits_{\Omega}R(\mathbf{x},\mathbf{x'})\phi_j (\mathbf{x})\text{d}\mathbf{x'}=\lambda_j \phi_j (x)$.
 \end{description}
 \end{block}
@@ -32,21 +32,37 @@
 
 \begin{frame}{Method of snapshots}
 %
-\begin{block}{Motivation}<+->
-\begin{itemize}
-\item<+-> For practical purpose, the Fredholm equation can be hard to resolve : $1\ll N_x$, $R$ is bad-profiled ;
+%\begin{block}{Motivation}<+->
+%\begin{itemize}
+%\item<+-> For practical purpose, the Fredholm equation can be hard to resolve : $1\ll N_x$, $R$ is bad-profiled ;
 %\item<+-> We make the hypothesis : $N_{\tau}\ll N_x$ ;
-\item<+-> We have a finite, linearly independent set $w(\mathbf{x},\tau_j)$ of solutions in space, called \emph{snapshots} ;
-\item<+-> These come from experiments or numerical simulation.
+%\item<+-> We have a finite, linearly independent set $w(\mathbf{x},\tau_j)$ of solutions in space, called \emph{snapshots} ;
+%\item<+-> These come from experiments or numerical simulation.
+%\end{itemize}
+%\end{block}
+\begin{block}{The method}<+->
+\begin{itemize}
+\item<+-> We have a finite, linearly independent set $w(\mathbf{x},\tau_j)$ of solutions in space, called \emph{snapshots} \dots
+\item<+-> \dots coming from experiments or numerical simulations.
+\item<+-> We set : $\phi_i(\mathbf{x})=\sum\limits_{j=1}^{N_{\tau}}\alpha_i(\tau_j) w(\mathbf{x},\tau_j)$.
 \end{itemize}
 \end{block}
 %
-\begin{block}{The new problem for POD}<+->
-\begin{itemize}
-%\item<+-> We set : $\phi_i(\mathbf{x})=\sum\limits_{j=1}^{N_{\tau}}\alpha_i(\tau_j) w(\mathbf{x},\tau_j)$ ;
-\item<+-> Fredholm equation can be rewritten : $\alpha_i\star_{\tau}\mathcal{C}\star_{\tau}w(\mathbf{x},\cdot)=\lambda_i\alpha_i\star_{\tau}(\mathbf{x},\cdot)$ ;
-\item<+-> $\mathcal{C}$ is the temporal-correlation tensor : $\mathcal{C}\star_{\tau}\alpha_i\mathbf=\lambda_i\alpha_i$.
-\end{itemize}
+\begin{block}{}<+->%The new POD problem}<+->%Fredholm equation}<+->
+\begin{description}
+\item<+-> [Fredholm equation]
+\[%
+%\begin{split}&
+\int\int\alpha_i(\tau)C(\tau,\tau')w(\mathbf{x},\tau ')\text{d}\tau'\text{d}\tau%\\%
+%=&
+=\lambda_i\int\alpha_i(\tau')w(\mathbf{x},\tau')\text{d}\tau'%
+%\end{split}%
+\]
+\item<+-> [Time-correlation tensor] $C(\tau,\tau ')=\dfrac{1}{N_{\tau}}\int\limits_{\Omega} w(\mathbf{x},\tau)w(\mathbf{x},\tau')\text{d}\mathbf{x}$
+%$\alpha_i\star_{\tau}\mathcal{C}\star_{\tau}w(\mathbf{x},\cdot)=\lambda_i\alpha_i\star_{\tau}w(\mathbf{x},\cdot)$ ;
+\item<+-> [Eigenvalue problem] $\mathcal{C}_{\tau,\tau'}\alpha_i(\tau)=\lambda_i\alpha_i(\tau)$
+\item<+-> [POD] $\alpha_i-$s are the $a_i-$s in POD.
+\end{description}
 \end{block}
 %
 \end{frame}
@@ -57,22 +73,26 @@
 \begin{itemize}
 \item<+-> We are given a POD basis $(\phi_i)_{i=1}^{N_{POD}}$ with a set $\lambda_i$ of associated proper-values ;
 \item<+-> $N_{POD}$ is the number of snapshots when we use the so-called mehtod ;
-\item<+-> We choose the first $N_{rom}$ vectors of $\Phi$ so that : $\dfrac{\sum\limits_{k=1}^{N_{rom}}\lambda_k}{\sum\limits_{k=1}^{N_{POD}}\lambda_k} >99,9\dots \%$
+\item<+-> We choose the first $N_{rom}$ vectors of $\Phi$ so that : $\dfrac{\sum\limits_{k=1}^{N_{rom}}\lambda_k}{\sum\limits_{k=1}^{N_{POD}}\lambda_k} >99,9\dots \%$ ;
+\item<+-> $N_{rom}$ must be small.
 \end{itemize}
 \end{block}
 %
 \end{frame}
 
-\begin{frame}{Reduced Order Model : \dots}
+\begin{frame}{Reduced Order Model : problem solving}
 \begin{block}{Galerkin projection}<+->
 %
 \begin{description}
 \item<+-> [For a given problem] $\mathcal{A}^{\mathbf{x},\tau}\left(w(\mathbf{x},\tau)\right)=f(\mathbf{x},\tau)$
-\item<+-> [Decomposition] $w(\mathbf{x},\tau)=\sum\limits_{i=1}^N a_i(\tau)\phi_i(\mathbf{x})+\mathcal{R}_{N_{rom}}(\mathbf{x},\tau)$ , with $\mathcal{R}_{N_{rom}}$ orthogonal to $(\phi_i)_{i=1}^{N_{rom}}$ ;
+\item<+-> [Decomposition] $w(\mathbf{x},\tau)=\sum\limits_{i=1}^N a_i(\tau)\phi_i(\mathbf{x})$ ;% +\mathcal{R}_{N_{rom}}(\mathbf{x},\tau)$ , with $\mathcal{R}_{N_{rom}}$ orthogonal to $(\phi_i)_{i=1}^{N_{rom}}$ ;
 \item<+-> [The problem in $a_k$] %
 \[%
-\left(\left.\mathcal{A}\left(\sum\limits_{k=1}^N a_k(\tau)\phi_k(\mathbf{x})\right) \right|\phi_i\left(\mathbf{x}\right)\right)_H %
-= \left(f\left(\mathbf{x},\tau\right)|\phi_i(\mathbf{x})\right)_H%
+\begin{split}
+\left(\left.\mathcal{A}\left(\sum\limits_{k=1}^{N_{rom}} a_k(\tau)\phi_k(\mathbf{x})\right) \right|\phi_i\left(\mathbf{x}\right)\right)_H %
+&= \left(f\left(\mathbf{x},\tau\right)|\phi_i(\mathbf{x})\right)_H\\%
+&+\mathcal{R}_{N_{rom}}(\mathbf{x},\tau)
+\end{split}
 \]
 \item<+-> [\dots] which is easier to resolve than the original problem.
 \end{description}
@@ -103,11 +123,13 @@ Div_y \left( \dfrac{\partial{\chi}}{\partial{y}}^T\right) &=& 0&\text{ on }\Omeg
 
 \begin{frame}{Weak formulation of the problem}
 %
+\begin{block}{}
 \[%
 \forall v \in V , %
 \int\limits_{\Omega_f}Tr\left(\left(grad_y\chi\right)^T\cdot grad_y v\right)\text{d}\Omega=%
 -\int\limits_{\Gamma{sf}}n_{sf}\cdot v\text{d}s%
 \]
+\end{block}
 
 \pause
 \begin{itemize}
@@ -121,7 +143,7 @@ Div_y \left( \dfrac{\partial{\chi}}{\partial{y}}^T\right) &=& 0&\text{ on }\Omeg
 %
 \begin{block}{Step 1 : generation of snapshots}<+->
 \begin{itemize}
-\item<+-> Using Finite Element Method, compute $\chi(\mathbf{y},\rho_j)$ for a finite number of $\rho_j-$s ;
+\item<+-> Using Finite Element Method, compute $\chi(\mathbf{y},\rho_j)$ for a finite number of $\rho_j$ ;
 \item<+-> Interpolate the solutions onto a single space $\Omega_{fluid}^0$, %
 so that we have a family of snapshots belonging to the \emph{same} functional space $H$.
 \end{itemize}
@@ -142,7 +164,7 @@ so that we have a family of snapshots belonging to the \emph{same} functional sp
 \begin{block}{Step 3 : ROM with given parameter $\rho^{new}$}<+->
 \begin{itemize}
 \item<+-> Extrapolate the $\phi_i$ POD vectors to a family $(\phi_i^{new})$ of functions defined for $\mathbf{y}$ in $\Omega_{fluid}^{new}$ ;
-\item<+-> Resolve the linear problem in $a_k(\rho^{new})$ :
+\item<+-> Resolve the $_{rom}\times N_{rom}-$linear problem in $a_k(\rho^{new})$ :
 \end{itemize}
 \visible<3->{
 \[%
