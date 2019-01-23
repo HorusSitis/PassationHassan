@@ -76,20 +76,39 @@ V_fixe=VectorFunctionSpace(mesh_fixe, "P", 2, constrained_domain=PeriodicBoundar
 
 ## Sphère unique
 
-#if geo_p=='rayon':
+#if geo_p=='ray':
 cen_snap_ray=[0.5,0.5,0.5]
-def snap_ray(r_par):
+def snap_sph_ray(r_par):
  chi_r=snapshot_sph_per(cen_snap_ray,0.05*r_par,res)
  chi_r_v=chi_r.vector().get_local()
  return([r_par,chi_r_v])
 
-#if geo_p=='centre':
+#if geo_p=='cen':
 #ray_snap_cen=0.25
 #csr_list=[[0.5,0.5,0.05*k] for k in range(1,1+Nsnap)]
 #c_par : paramètre scalaire pour la position du centre
-def snap_cen(c_par):
+def snap_sph_cen(c_par):
  cen_snap_ray=csr_list[c_par-1]
  chi_c=snapshot_sph_per(cen_snap_ray,ray_snap_cen,res)
+ chi_c_v=chi_c.vector().get_local()
+ return([c_par,chi_c_v])
+
+## Cylindre unique
+
+#if geo_p=='ray':
+axe_snap_ray=[0.5,0.5]#,0.5]
+def snap_cyl_ray(r_par):
+ chi_r=snapshot_sph_per(axe_snap_ray,0.05*r_par)
+ chi_r_v=chi_r.vector().get_local()
+ return([r_par,chi_r_v])
+
+#if geo_p=='axe':
+#ray_snap_axe=0.25
+asr_list=[[0.5,0.3+0.05*k] for k in range(1,1+Nsnap)]
+#c_par : paramètre scalaire pour la position du centre
+def snap_cyl_axe(c_par):
+ cen_snap_ray=csr_list[c_par-1]
+ chi_c=snapshot_sph_per(axe_snap_ray,ray_snap_axe,res)
  chi_c_v=chi_c.vector().get_local()
  return([c_par,chi_c_v])
 
@@ -97,23 +116,20 @@ def snap_cen(c_par):
 
 if not snap_done:
  # Calcul des snapshots, sous forme vectorielle
- if parallelize:
-  # Génération parallèle des snapshots
-  pool=multiprocessing.Pool(processes=8)
+ ##if parallelize: Calcul parallèle oblligatoire
+ # Génération parallèle des snapshots
+ pool=multiprocessing.Pool(processes=8)
+ if config=='sph_un':
   if geo_p=='ray':
-   list_chi_n_v=pool.map(snap_ray,(n for n in range(1,1+Nsnap)))
+   list_chi_n_v=pool.map(snap_sph_ray,(n for n in range(1,1+Nsnap)))
   elif geo_p=='cen':
-   list_chi_n_v=pool.map(snap_cen,(n for n in range(1,1+Nsnap)))
-  ## enregistrement des données dans une liste
- else:
-  # Génération séquentielle des snapshots : à compléter
-  list_chi_n_v=[]
-  for n in range(1,1+Nsnap):
-   if geo_p=='ray':
-    chi_n_v=snap_ray(n*0.05)
-   elif geo_p=='cen':
-    chi_n_v=snap_cen(n*0.05)
-   list_chi_n_v.append(chi_n_v)
+   list_chi_n_v=pool.map(snap_sph_cen,(n for n in range(1,1+Nsnap)))
+ elif config=='cyl_un':
+  if geo_p=='ray':
+   list_chi_n_v=pool.map(snap_cyl_ray,(n for n in range(1,1+Nsnap)))
+  elif geo_p=='axe':
+   list_chi_n_v=pool.map(snap_cyl_axe,(n for n in range(1,1+Nsnap)))
+ ## enregistrement des données dans une liste
  # Construction de la liste des snapshots vectorisés : cas d'un paramètre géométrique définissant un ordre - lien avec la porosité ; ou non.
  list_chi_v=[]
  if geo_p=='ray' or config=='compl':

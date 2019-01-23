@@ -86,11 +86,13 @@ parallelize=True
 # Choix du paramètre géométrique : variable et message de sortie _mess
 
 ## Cas d'une sphère unique
-config='sph_un'#
-conf_mess='sphère unique'
+#config='sph_un'
+if config=='sph_un':
+ conf_mess='sphère unique'
 
 geo_p='ray'#
-geo_mess='rayon variable'
+if geo_p=='ray':
+ geo_mess='rayon variable'
 cen_snap_ray=[0.5,0.5,0.5]
 #geo_p='centre'
 #ray_snap_cen=5
@@ -98,11 +100,13 @@ cen_snap_ray=[0.5,0.5,0.5]
 ### l'inclusion solide ne rencontre pas les bords du domaine, sous peine d'une incompatibilité entre les mailles de faces opposées (?)
 
 ## Cas d'un cylindre unique : axe parallèle à Oy
-#config='cyl_un'
+config='cyl_un'
 
+if config=='cyl_un':
+ conf_mess='cylindre unique'
 #geo_p='ray'
 #geo_p='axe'
-#csr_list=[[0.5,0.3+0.05*k] for k in range(1,1+Nsnap)]
+asr_list=[[0.5,0.3+0.05*k] for k in range(1,1+Nsnap)]
 ### point auquel l'axe rencontre le plan Oxz. L'inclusion solide ne rencontre pas les bords du domaine.
 
 ## Cas d'un cylindre périodique aux arètes et une sphère unique au centre

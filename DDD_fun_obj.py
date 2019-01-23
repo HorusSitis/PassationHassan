@@ -171,9 +171,14 @@ def snapshot_sph_per(cen,r,res):
  # Résultat : snapshot
  return(chi)
 
-def snapshot_cyl_per(top,r,slices_cyl,res):
+def snapshot_cyl_per(top,r):#,slices_cyl,res):
  #c_x,c_y,c_z=cen[0],cen[1],cen[2]
- mesh_c_r=creer_maill_cyl(top,r,slices_cyl,res)
+ if typ_msh=='gms':
+  print("maillages_per/3D/cubecyl_periodique_triangle_"+str(int(round(100*r,2)))+".xml")
+  mesh_s_r=Mesh("maillages_per/3D/cubecyl_periodique_triangle_"+str(int(round(100*r,2)))+".xml")
+ else:## ne fonctionne pas
+  print('pfrrh')
+  mesh_c_r=creer_maill_cyl(top,r,slices_cyl,res)
  # On pose et on résoud le problème aux éléments finis
  V=VectorFunctionSpace(mesh_c_r, 'P', 2, constrained_domain=PeriodicBoundary())
  ## On définit l'interface fluide-solide, périodique à géométrie sphérique
