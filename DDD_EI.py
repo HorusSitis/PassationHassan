@@ -93,53 +93,53 @@ def snap_cen(c_par):
  chi_c_v=chi_c.vector().get_local()
  return([c_par,chi_c_v])
 
-# Calcul des snapshots, sous forme vectorielle
+# ------------------------- Snapshots, conditionnellement ------------------------- #
 
-
-if parallelize:
- # Génération parallèle des snapshots
- pool=multiprocessing.Pool(processes=8)
- if geo_p=='rayon':
-  list_chi_n_v=pool.map(snap_ray,(n for n in range(1,1+Nsnap)))
- elif geo_p=='centre':
-  list_chi_n_v=pool.map(snap_cen,(n for n in range(1,1+Nsnap)))
- ## enregistrement des données dans une liste
-else:
- # Génération séquentielle des snapshots : à compléter
- list_chi_n_v=[]
- for n in range(1,1+Nsnap):
-  if geo_p=='rayon':
-   chi_n_v=snap_ray(n*0.05)
-  elif geo_p=='centre':
-   chi_n_v=snap_cen(n*0.05)
-  list_chi_n_v.append(chi_n_v)
-
-# Construction de la liste des snapshots vectorisés : cas d'un paramètre géométrique définissant un ordre - lien avec la porosité ; ou non.
-
-list_chi_v=[]
-if geo_p=='rayon' or config=='compl':
- for n in range(1,1+Nsnap):
+if not snap_done:
+ # Calcul des snapshots, sous forme vectorielle
+ if parallelize:
+  # Génération parallèle des snapshots
+  pool=multiprocessing.Pool(processes=8)
+  if geo_p=='ray':
+   list_chi_n_v=pool.map(snap_ray,(n for n in range(1,1+Nsnap)))
+  elif geo_p=='cen':
+   list_chi_n_v=pool.map(snap_cen,(n for n in range(1,1+Nsnap)))
+  ## enregistrement des données dans une liste
+ else:
+  # Génération séquentielle des snapshots : à compléter
+  list_chi_n_v=[]
+  for n in range(1,1+Nsnap):
+   if geo_p=='ray':
+    chi_n_v=snap_ray(n*0.05)
+   elif geo_p=='cen':
+    chi_n_v=snap_cen(n*0.05)
+   list_chi_n_v.append(chi_n_v)
+ # Construction de la liste des snapshots vectorisés : cas d'un paramètre géométrique définissant un ordre - lien avec la porosité ; ou non.
+ list_chi_v=[]
+ if geo_p=='ray' or config=='compl':
+  for n in range(1,1+Nsnap):
+   for i in range(0,Nsnap):
+    if list_chi_n_v[i][0]==n:
+     chi_n_v=list_chi_n_v[i][1]
+     list_chi_v.append(chi_n_v)
+ else:
   for i in range(0,Nsnap):
-   if list_chi_n_v[i][0]==n:
-    chi_n_v=list_chi_n_v[i][1]
-    list_chi_v.append(chi_n_v)
-else:
- for i in range(0,Nsnap):
-  chi_n_v=list_chi_n_v[i][1]
-  list_chi_v.append(chi_n_v)
+   chi_n_v=list_chi_n_v[i][1]
+   list_chi_v.append(chi_n_v)
+ # Liste des snapshots : sauvegarde, on précise l'identité de la machine qui a effectué le calcul
+ l_name='Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+ # sauvegarde de la liste des solutions indexées calculées avec la méthode des éléments finis
+ with sh.open(repertoire_parent+l_name) as l_sto:
+  l_sto["maliste"] = list_chi_v
+ # Matrice des snapshots : plus tard, voir l'étape II
+else :
+ l_name='Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+ with sh.open(repertoire_parent+l_name) as l_loa:
+  list_chi_v = l_loa["maliste"]
 
-# Liste des snapshots : sauvegarde, on précise l'identité de la machine qui a effectué le calcul
-
-l_name='Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
-
-# sauvegarde de la liste des solutions indexées calculées avec la méthode des éléments finis
-with sh.open(repertoire_parent+l_name) as l_sto:
-    l_sto["maliste"] = list_chi_v
-
-# Matrice des snapshots : plus tard, voir l'étape II
+# --------------------------------------------------------------------------------- #
 
 # Exploitation des solution du problème aux éléments finis
-
 for n in range(1,1+Nsnap):
  # Extraction du snapshot de rang n
  chi_n_v=list_chi_v[n-1]
@@ -156,8 +156,8 @@ for n in range(1,1+Nsnap):
   elif geo_p=='cen':
    r=ray_snap_cen
    mesh=creer_maill_sph(csr_list[n-1],r,res)
- elif config=='cylindre unique':
-  if geo_p=='rayon':
+ elif config=='cyl_un':
+  if geo_p=='ray':
    top=top_snap_ray
    r=n*0.05
    mesh=creer_maill_cyl(top,r,res)
@@ -165,16 +165,16 @@ for n in range(1,1+Nsnap):
    r=ray_snap_ax
    mesh=creer_maill_cyl(acr_list[n-1],r,res)
  else:
-  if geo_p=='rayon de la sphère variable':
+  if geo_p=='ray_sph':
    r=0
-  elif geo_p=='rayon du cylindre variable':
+  elif geo_p=='ray_cyl':
    r=0
  V_n=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
  # On restitue la forme fonctionnelle du snapshot courant
  chi_n=Function(V_n)
  chi_n.vector().set_local(chi_n_v)
  # Représentation graphique
- plot(chi_n, linewidth=0.55)
+ plot(chi_n, linewidth=0.235)
  if fig_todo=='aff':
   plt.show()
  else:
@@ -190,14 +190,14 @@ for n in range(1,1+Nsnap):
   for l in range(0,3):
    T_chi[k,l]=assemble(grad(chi_n)[k,l]*dx)
  ## Intégrale de l'identité sur le domaine fluide
- if config=='sphère unique':
+ if config=='sph_un':
   D=(1-4/3*pi*r**3)*np.eye(3)
- elif config=='cylindre unique':
+ elif config=='cyl_un':
   D=(1-pi*r**2)*np.eye(3)
  else :
   D=(1-4/3*pi*r_s**3-pi*r_c**2)*np.eye(3)
  ## Calcul et affichage du tenseur Dhom
  Dhom_k=D_k*(D+T_chi.T)
  #print(('Tenseur Dhom_k',Dhom_k))
- print('Coefficient Dhom_k11, snapshot '+str(n)+", "+config+', '+geo_p+" variable :",Dhom_k[0,0])
+ print('Coefficient Dhom_k11EF, snapshot '+str(n)+", "+config+', '+geo_p+" variable :",Dhom_k[0,0])
 #

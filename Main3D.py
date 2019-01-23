@@ -83,30 +83,32 @@ ordo='Ordr'#'Nordr'
 
 parallelize=True
 
-# Choix du paramètre géométrique
+# Choix du paramètre géométrique : variable et message de sortie _mess
 
 ## Cas d'une sphère unique
-config='sphère unique'
+config='sph_un'#
+conf_mess='sphère unique'
 
-geo_p='rayon'
+geo_p='ray'#
+geo_mess='rayon variable'
 cen_snap_ray=[0.5,0.5,0.5]
 #geo_p='centre'
-#ray_snap_cen=0.35
+#ray_snap_cen=5
 #csr_list=[[0.5,0.5,0.3+0.05*k] for k in range(1,1+Nsnap)]
 ### l'inclusion solide ne rencontre pas les bords du domaine, sous peine d'une incompatibilité entre les mailles de faces opposées (?)
 
 ## Cas d'un cylindre unique : axe parallèle à Oy
-#config='cylindre unique'
+#config='cyl_un'
 
-#geo_p='rayon'
+#geo_p='ray'
 #geo_p='axe'
 #csr_list=[[0.5,0.3+0.05*k] for k in range(1,1+Nsnap)]
 ### point auquel l'axe rencontre le plan Oxz. L'inclusion solide ne rencontre pas les bords du domaine.
 
 ## Cas d'un cylindre périodique aux arètes et une sphère unique au centre
 #config='compl'
-#geo_p='deux sphères'
-#geo_p='sphère et cylindre'
+#geo_p='sphh'
+#geo_p='sph_cyl'
 
 ## ------------ Etape lL 1demi : Affichage de midrostructures périodiques ------------ ##
 
@@ -119,6 +121,8 @@ if E_lL :
  exec(open("DDD_ElL.py").read())
 
 # Exécution
+
+snap_done=True#False #-------------------> pour calculer les snapshots seulement si nécessaire
 
 if EI :
  exec(open("DDD_EI.py").read())
