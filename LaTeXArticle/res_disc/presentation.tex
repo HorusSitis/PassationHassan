@@ -2,46 +2,38 @@
 
 \subsection{Spherical inclusion}
 
-\begin{frame}{Snapshots for POD}
+\begin{frame}{Snapshots with FEM}
 %
-\begin{block}{A sample of $8$ solutions $\chi(\mathbf{x},\rho_j)$}<+->
+\begin{block}{$8$ solutions $\chi(\mathbf{x},\rho_j)$}<+->
 %
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
-\includegraphics[width=0.2\linewidth, height=1.5cm]{../Figures3D/sol_1_sur8sph_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures3D/sol_1_sur8sph_un_ray.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=1.5cm]{../Figures3D/sol_2_sur8sph_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures3D/sol_2_sur8sph_un_ray.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=1.5cm]{../Figures3D/sol_3_sur8sph_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures3D/sol_3_sur8sph_un_ray.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=1.5cm]{../Figures3D/sol_4_sur8sph_un_ray.png}%
-\\ \hline%
-\includegraphics[width=0.2\linewidth, height=1.5cm]{../Figures3D/sol_5_sur8sph_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures3D/sol_4_sur8sph_un_ray.png}%
+\\
+\hline
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures3D/sol_5_sur8sph_un_ray.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=1.5cm]{../Figures3D/sol_6_sur8sph_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures3D/sol_6_sur8sph_un_ray.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=1.5cm]{../Figures3D/sol_7_sur8sph_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures3D/sol_7_sur8sph_un_ray.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=1.5cm]{../Figures3D/sol_8_sur8sph_un_ray.png}%
-\\ \hline
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures3D/sol_8_sur8sph_un_ray.png}%
+\\
+\hline
 \end{tabular}
 \end{center}
 %
 \begin{itemize}
-\item<+-> We compute a finite set of solutions offline with FEM
-\item<+-> $\rho_j\in\{0.05 ; 0.10 \dots 0.45\}$.
+\item<+-> $\rho_j = 0,05 ; 0,10 ; 0,15 ; 0,20 ; 0,25 ; 0,30 ; 0,35$ and $0,40$.
+\item<+-> We interpolate the $\chi(\mathbf{y},\rho_j)$ on the unit square $\Omega_{fluid}^0$.
 \end{itemize}
-%
-\end{block}
-%
-\begin{block}{Interpolated solutions}<+->
-%
-\begin{itemize}
-\item<+-> ll
-\item<+-> nn
-\end{itemize}
-
 %
 \end{block}
 %
@@ -49,7 +41,35 @@
 
 \begin{frame}{The Reduced Order Model}
 %
-\begin{block}{Energy of POD modes}
+\begin{block}{The POD basis on $\Omega_{fluid}^0$}<+->
+%
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures3D/phi_1_sph_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures3D/phi_2_sph_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures3D/phi_3_sph_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures3D/phi_4_sph_un_ray.png}%
+\\
+\hline
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures3D/phi_5_sph_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures3D/phi_6_sph_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures3D/phi_7_sph_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures3D/phi_8_sph_un_ray.png}%
+\\
+\hline
+\end{tabular}
+\end{center}
+%
+\end{block}
+%
+\begin{block}{Energy of POD modes}<+->
 %
 \begin{center}
 \begin{tabular}{|c|c|}
@@ -67,8 +87,92 @@ We choose $N_{rom}=4$, for a threshold of $99,99\%$.
 %
 \end{frame}
 
-
-
-
+\begin{frame}{Performances}
+%
+\begin{block}{Results}
+%
+\begin{center}
+\begin{tabular}{|c|c||c|c||}%c|c||c|}
+\hline
+$\rho$&Porosity&${D_k^{hom,ROM}}_{1,1}$&${D_k^{hom,FEM}}_{1,1}$\\%&$Err$&$\phi_i^{new}$&ROM&FEM\\
+\hline
+0,22&0,9555&0,9357&0,9356\\%&&&&\\
+\hline
+0,33&0,8494&0,7911&0,7910\\%&&&&\\
+\hline
+0,44&0,6431&0,5406&0,5405\\%&&&&\\
+\hline
+\end{tabular}
+\end{center}
+%
+\end{block}
+%
+\begin{block}{Accuracy and time}<+->
+%
+\begin{center}
+\begin{tabular}{|c|c||c|c||c|}%c|c||c|}
+\hline
+$\rho$&$Err$&$\phi_i^{new}$&ROM&FEM\\
+\hline
+0,22&0,011\%&10s&$<$1s&75s\\
+\hline
+0,33&0,013\%&9s&$<$1s&60s\\
+\hline
+0,44&0,018\%&6s&$<$1s&30s\\
+\hline
+\end{tabular}
+\end{center}
+%
+\end{block}
+%
+\end{frame}
 
 \subsection{Cylinder inclusion}
+
+\begin{frame}%{ROM vs FEM}
+%
+\begin{block}{Offline}<+->
+\begin{itemize}
+\item<+-> We compute $\chi(\mathbf{y},\rho_j)$ for $\rho_j$ in $0,05 \dots 0,40$ with FEM ;
+\item<+-> We set $N_{rom}=\dots$ for a threshold of $99,99\%$.
+%\item<+->
+\end{itemize}
+\end{block}
+%
+\begin{block}{Results}<+->
+%
+\begin{center}
+\begin{tabular}{|c|c||c|c||}%c|c||c|}
+\hline
+$\rho$&Porosity&${D_k^{hom,ROM}}_{1,1}$&${D_k^{hom,FEM}}_{1,1}$\\%&$Err$&$\phi_i^{new}$&ROM&FEM\\
+\hline
+0,22&&&\\%&&&&\\
+\hline
+0,33&&&\\%&&&&\\
+\hline
+0,44&&&\\%&&&&\\
+\hline
+\end{tabular}
+\end{center}
+%
+\end{block}
+%
+\begin{block}{ROM vs FEM}<+->
+%
+\begin{center}
+\begin{tabular}{|c|c||c|c||c|}%c|c||c|}
+\hline
+$\rho$&$Err$&$\phi_i^{new}$&ROM&FEM\\
+\hline
+0,22&&&&\\
+\hline
+0,33&&&&\\
+\hline
+0,44&&&&\\
+\hline
+\end{tabular}
+\end{center}
+%
+\end{block}
+%
+\end{frame}
