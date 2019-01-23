@@ -81,7 +81,7 @@ for n in range(1,1+Nsnap):
  if fig_todo=='aff':
   plt.show()
  else:
-  plt.savefig("Figures3D/snap_interp0001_"+str(n)+"_sur"+str(Nsnap)+config+geo_p+".png")
+  plt.savefig("Figures3D/snap_interp0001_"+str(n)+"_sur"+str(Nsnap)+config+'_'+geo_p+".png")
  plt.close()
  # Affichage des valeurs et erreurs de la solution périodique, quelle que soit la configuration
  #err_per_ind_01(chi_prime_n,cen,r,npas_err)

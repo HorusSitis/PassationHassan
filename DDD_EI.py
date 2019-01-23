@@ -144,8 +144,8 @@ for n in range(1,1+Nsnap):
  # Extraction du snapshot de rang n
  chi_n_v=list_chi_v[n-1]
  # On crée un maillage pour réécrire les snapshots sous la forme de fonctions
- if config=='sphère unique':
-  if geo_p=='rayon':
+ if config=='sph_un':
+  if geo_p=='ray':
    cen=cen_snap_ray
    r=n*0.05
    if typ_msh=='gms':
@@ -153,7 +153,7 @@ for n in range(1,1+Nsnap):
     mesh=Mesh("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+".xml")
    else:
     mesh=creer_maill_sph(cen,r,res)
-  elif geo_p=='centre':
+  elif geo_p=='cen':
    r=ray_snap_cen
    mesh=creer_maill_sph(csr_list[n-1],r,res)
  elif config=='cylindre unique':
@@ -174,11 +174,11 @@ for n in range(1,1+Nsnap):
  chi_n=Function(V_n)
  chi_n.vector().set_local(chi_n_v)
  # Représentation graphique
- plot(chi_n)
+ plot(chi_n, linewidth=0.55)
  if fig_todo=='aff':
   plt.show()
  else:
-  plt.savefig("Figures3D/sol_"+str(n)+"_sur"+str(Nsnap)+config+geo_p+".png")
+  plt.savefig("Figures3D/sol_"+str(n)+"_sur"+str(Nsnap)+config+'_'+geo_p+".png")
  plt.close()
  # Affichage des valeurs et erreurs de la solution périodique, quelle que soit la configuration
  #err_per_ind_01(chi_n,cen,r,npas_err)

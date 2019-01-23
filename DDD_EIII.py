@@ -102,11 +102,11 @@ for i in range(Nsnap):
 phi=Function(V_fixe)
 for i in range(Nsnap):
  phi.vector().set_local(Phi_prime_v[:,i])
- plot(phi)
+ plot(phi, linewidth=0.5)
  if fig_todo=='aff':
   plt.show()
  else:
-  plt.savefig("phi_"+str(i+1)+"_"+config+geo_p+".png")
+  plt.savefig("Figures3D/phi_"+str(i+1)+"_"+config+'_'+geo_p+".png")
  plt.close()
 
 # Energie et énergie cumulée des modes spatiaux, choix du nombre de modes
@@ -123,7 +123,7 @@ plt.ylabel('pourcentage_energie')
 if fig_todo=='aff':
  plt.show()
 else:
- plt.savefig("Figures3D/ener_vp_"+config+geo_p+".png")
+ plt.savefig("Figures3D/ener_vp_"+config+'_'+geo_p+".png")
 plt.close()
 
 plt.plot(absc,ener_pour_cumul)
@@ -132,7 +132,7 @@ plt.ylabel('pourcentage_energie_cumule')
 if fig_todo=='aff':
  plt.show()
 else:
- plt.savefig("Figures3D/ener_cumul_vp_"+config+geo_p+".png")
+ plt.savefig("Figures3D/ener_cumul_vp_"+config+'_'+geo_p+".png")
 plt.close()
 
 ## Choix du nombre de modes, avec une valeur seuil d'énergie à atteindre avec les vacteurs de la base POD
