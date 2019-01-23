@@ -107,25 +107,25 @@ for k in range(0,3):
  for l in range(0,3):
   T_chi[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
 ## Intégrale de l'identité sur le domaine fluide
-if config=='sphère unique':
+if config=='sph_un':
  D=(1-4/3*pi*r**3)*np.eye(3)
-elif config=='cylindre unique':
+elif config=='cyl_un':
  D=(1-pi*r**2)*np.eye(3)
 else :
  D=(1-4/3*pi*r_s**3-pi*r_c**2)*np.eye(3)
 ## Calcul et affichage du tenseur Dhom
 Dhom_kMOR=D_k*(D+T_chi.T)
 #print(('Tenseur Dhom_k',Dhom_k))
-print('Coefficient Dhom_k11 '+config+', '+geo_p+' variable valeur '+str(rho)+' MOR :',Dhom_kMOR[0,0])
+print('Coefficient Dhom_k11 '+conf_mess+', '+geo_mess+' variable valeur '+str(rho)+' MOR :',Dhom_kMOR[0,0])
 
 print('se3 faite')
-sys.exit()#-------------------------------------
+#sys.exit()#-------------------------------------
 # --------------------- SE4 : comparaison avec la méthode des éléments finis --------------------- #
 
 res=20
-if config=='sphère unique':
+if config=='sph_un':
  chi_nouv=snapshot_sph_per(cen_snap_ray,r_nouv,res)
-elif config=='cylindre unique':
+elif config=='cyl_un':
  chi_nouv=snapshot_cyl_per(cen_snap_ray,r_nouv,res)
 
 
@@ -144,16 +144,20 @@ for k in range(0,3):
  for l in range(0,3):
   T_chi[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
 ## Intégrale de l'identité sur le domaine fluide
-if config=='sphère unique':
- D=(1-4/3*pi*r**3)*np.eye(3)
-elif config=='cylindre unique':
- D=(1-pi*r**2)*np.eye(3)
+if config=='sph_un':#'sphère unique':
+ por=(1-4/3*pi*r**3)
+ D=por*np.eye(3)
+elif config=='cyl_un':#'cylindre unique':
+ por=(1-pi*r**2)
+ D=por*np.eye(3)
 else :
- D=(1-4/3*pi*r_s**3-pi*r_c**2)*np.eye(3)
+ por=(1-4/3*pi*r_s**3-pi*r_c**2)
+ D=por*np.eye(3)
+print('Porosité :',por)
 ## Calcul et affichage du tenseur Dhom
 Dhom_kMEF=D_k*(D+T_chi.T)
 #print(('Tenseur Dhom_k',Dhom_k))
-print('Coefficient Dhom_k11 '+config+', '+geo_p+' variable valeur '+str(rho)+ ' MEF :',Dhom_kMEF[0,0])
+print('Coefficient Dhom_k11 '+conf_mess+', '+geo_mess+' variable valeur '+str(rho)+ ' MEF :',Dhom_kMEF[0,0])
 
 ## Comparaison
 

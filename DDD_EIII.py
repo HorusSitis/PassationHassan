@@ -23,14 +23,14 @@ from PO23D import *
 
 mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_0001fixe.xml")
 
-V_fixe=V=VectorFunctionSpace(mesh_fixe, 'P', 2, constrained_domain=PeriodicBoundary())
+V_fixe=VectorFunctionSpace(mesh_fixe, 'P', 2, constrained_domain=PeriodicBoundary())
 
 ## Chargement de la marice des snapshots
 
 u_name='Usnap_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
 
 with sh.open(repertoire_parent+u_name) as u_loa:
-    Usnap = u_loa["maliste"]
+ Usnap = u_loa["maliste"]
 
 #
 ## matrice de corrélation
@@ -102,7 +102,7 @@ for i in range(Nsnap):
 phi=Function(V_fixe)
 for i in range(Nsnap):
  phi.vector().set_local(Phi_prime_v[:,i])
- plot(phi, linewidth=0.5)
+ plot(phi, linewidth=0.08)
  if fig_todo=='aff':
   plt.show()
  else:
