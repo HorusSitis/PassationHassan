@@ -36,29 +36,32 @@ Heterogeneities appear at diffrerent scales : mm to nm ;
 %
 \end{frame}
 
-\begin{frame}{Issues for practical purpose}
+\begin{frame}{Consequences for practical purpose}
 %
 \begin{block}{Experiment}<+->
 \begin{itemize}
-\item<+-> Measurement : tomography, BEM \dots are expensive ;
-\item<+-> Small samples of matter ;
-\item<+-> We would need a huge number of observations.
+\item<+-> The material's microstructure is variable ;
+\item<+-> We would need a huge number of observations ;
+\item<+-> Tomography, FIB, MEB measures are expensive.
 \end{itemize}
 \end{block}
 %
 \begin{block}{Computation}<+->
-\begin{itemize}
-\item<+-> Solving PDE with high spatial resolution ;
-\item<+-> 1000$\times$1000$\times$1000 voxels ;
-\item<+-> A particular numerical solution cannot be used for a given sample of concrete.
-\end{itemize}
+\begin{description}
+\item<+-> [Objectives] Resolve Navier-Stokes, diffusion equations.
+\item<+-> [High spatial resolution] 1000$\times$1000$\times$1000 voxels ;
+\item<+-> [Small sample] A solution can't be extrapolated to the whole structure.
+\end{description}
 \end{block}
 %
-\begin{block}{Objectives}<+->
+\begin{block}{Method for problem solving}<+->
 \begin{itemize}
-\item<+-> Find representative samples of concrete structure, and measure some physical parameters ;
-\item<+-> Resolve numerically a PDE on it ;
-\item<+-> Varying the parameter, solve quickly the PDE on another sample using a Reduced Order Model.
+%\item<+-> Find representative samples of concrete structure, and measure some physical parameters ;
+%\item<+-> Resolve numerically the problem on it ;
+%\item<+-> Varying the parameter, solve quickly the PDE on another sample using a Reduced Order Model.
+\item<+-> Characterize the microstructure with some parameters : porosity etc ;
+\item<+-> Solve the problem for a few parameter values ;
+\item<+-> Interpolate the solutions, varying the parameters.
 \end{itemize}
 \end{block}
 %
