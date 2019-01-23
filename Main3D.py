@@ -42,11 +42,11 @@ from matplotlib.patches import Circle, PathPatch
 E_=False
 E_lL=False
 
-EI=False
+EI=True
 EII=False
 
 EIII=False
-EIV=True
+EIV=False
 
 
 res_fixe=6
@@ -60,12 +60,12 @@ rempUsnap='par8'#'seq'
 #c_z=0.5
 #r=0.35#pour une réalisation unique
 npas_err=20
-fig_todo='save'#'aff'
+fig_todo='aff'#'aff'
 
 typ_msh='gms'#''
 
 # nom de l'appareil utilisé pour générer les données enregistrées
-computer='MECALAC_29x8'#'T1700_358'#
+computer='T1700_35x8'#'MECALAC_29x8'##
 
 
 
@@ -86,7 +86,7 @@ parallelize=True
 # Choix du paramètre géométrique : variable et message de sortie _mess
 
 ## Cas d'une sphère unique
-#config='sph_un'
+config='sph_un'
 if config=='sph_un':
  conf_mess='sphère unique'
 
@@ -100,7 +100,7 @@ cen_snap_ray=[0.5,0.5,0.5]
 ### l'inclusion solide ne rencontre pas les bords du domaine, sous peine d'une incompatibilité entre les mailles de faces opposées (?)
 
 ## Cas d'un cylindre unique : axe parallèle à Oy
-config='cyl_un'
+#config='cyl_un'
 
 if config=='cyl_un':
  conf_mess='cylindre unique'
