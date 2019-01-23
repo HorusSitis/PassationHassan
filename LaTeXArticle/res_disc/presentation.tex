@@ -4,7 +4,7 @@
 
 \begin{frame}{Snapshots with FEM}
 %
-\begin{block}{$8$ solutions $\chi(\mathbf{x},\rho_j)$}<+->
+\begin{block}{$8$ solutions $\chi(\mathbf{x},\rho_j)$, $j=1\dots 8$}<+->
 %
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
@@ -31,7 +31,7 @@
 \end{center}
 %
 \begin{itemize}
-\item<+-> $\rho_j = 0,05 ; 0,10 ; 0,15 ; 0,20 ; 0,25 ; 0,30 ; 0,35$ and $0,40$.
+\item<+-> $\rho = 0,05 ; 0,10 \dots 0,40$.
 \item<+-> We interpolate the $\chi(\mathbf{y},\rho_j)$ on the unit square $\Omega_{fluid}^0$.
 \end{itemize}
 %
@@ -94,7 +94,7 @@ We choose $N_{rom}=4$, for a threshold of $99,99\%$.
 \begin{center}
 \begin{tabular}{|c|c||c|c||}%c|c||c|}
 \hline
-$\rho$&Porosity&${D_k^{hom,ROM}}_{1,1}$&${D_k^{hom,FEM}}_{1,1}$\\%&$Err$&$\phi_i^{new}$&ROM&FEM\\
+$\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$\\%&$Err$&$\phi_i^{new}$&ROM&FEM\\
 \hline
 0,22&0,9555&0,9357&0,9356\\%&&&&\\
 \hline
@@ -112,7 +112,7 @@ $\rho$&Porosity&${D_k^{hom,ROM}}_{1,1}$&${D_k^{hom,FEM}}_{1,1}$\\%&$Err$&$\phi_i
 \begin{center}
 \begin{tabular}{|c|c||c|c||c|}%c|c||c|}
 \hline
-$\rho$&$Err$&$\phi_i^{new}$&ROM&FEM\\
+$\rho^{new}$&$Err$&$\phi_i^{new}$&ROM&FEM\\
 \hline
 0,22&0,011\%&10s&$<$1s&75s\\
 \hline
@@ -144,7 +144,7 @@ $\rho$&$Err$&$\phi_i^{new}$&ROM&FEM\\
 \begin{center}
 \begin{tabular}{|c|c||c|c||}%c|c||c|}
 \hline
-$\rho$&Porosity&${D_k^{hom,ROM}}_{1,1}$&${D_k^{hom,FEM}}_{1,1}$\\%&$Err$&$\phi_i^{new}$&ROM&FEM\\
+$\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$\\%&$Err$&$\phi_i^{new}$&ROM&FEM\\
 \hline
 0,22&&&\\%&&&&\\
 \hline
@@ -162,7 +162,7 @@ $\rho$&Porosity&${D_k^{hom,ROM}}_{1,1}$&${D_k^{hom,FEM}}_{1,1}$\\%&$Err$&$\phi_i
 \begin{center}
 \begin{tabular}{|c|c||c|c||c|}%c|c||c|}
 \hline
-$\rho$&$Err$&$\phi_i^{new}$&ROM&FEM\\
+$\rho^{new}$&$Err$&$\phi_i^{new}$&ROM&FEM\\
 \hline
 0,22&&&&\\
 \hline

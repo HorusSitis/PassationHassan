@@ -1,4 +1,4 @@
-\documentclass%[handout]
+\documentclass%[handout]%
 {beamer}
 
 \usepackage[utf8]{inputenc}
@@ -13,8 +13,8 @@ presentations.tex}
 
 
 \usebackgroundtemplate{%
-\tikz\node[opacity=0.65,inner sep=0pt]%
-{\includegraphics[height=\paperheight]{../../Images/bg_pont_re.JPG}};}
+\tikz\node[opacity=0.65,inner sep=0pt]{\includegraphics[height=\paperheight]{../../Images/bg_pont_re.JPG}}%
+;}
 
 
 
@@ -25,12 +25,13 @@ presentations.tex}
 
 \begin{document}
 
-\lversion{\selectlanguage{french}}{\selectlanguage{english}}
+%\lversion{\selectlanguage{french}}{\selectlanguage{english}}
+\selectlanguage{english}
 
 \maketitle
 
 
-\section{A Multiscale structure}%heterogeneity}
+\section{A Multiscale structure}
 \input{exp_var/presentation.tex}
 
 \section{Ionic diffusion in cementarious media}
@@ -53,7 +54,7 @@ Thank you for your attention.
 \end{center}
 \end{frame}
 
-\bibliography{../../BibTexBlio/Biblio}
-\bibliographystyle{alpha}
+%\bibliography{../../BibTexBlio/Biblio}
+%\bibliographystyle{alpha}
 
 \end{document}

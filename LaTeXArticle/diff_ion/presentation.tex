@@ -38,15 +38,15 @@
 %
 \begin{block}{Two variables for space}<+->
 %
-\includegraphics[width=0.8\linewidth, height=3cm]{diff_ion/macro_micro_xvsy.png}
+\includegraphics[width=0.8\linewidth, height=3cm]{../Figures2D/macro_micro_xvsy.png}
 
 \par
-\cite{th_KhaledB}, chapter 2.
+Bourbatache, PhD thesis, chapter 2.
 %
 %\pause
 \begin{itemize}
-\item<+-> $\mathbf{x}$ is the position in the left cylinder ;
-\item<+-> $\mathbf{y}$ is the position in the right, square projection.
+\item<+-> $\mathbf{x}$ is the variable in macroscale ;
+\item<+-> $\mathbf{y}$ is the variable in microscale.
 \end{itemize}
 %
 \end{block}
@@ -58,7 +58,7 @@
 \begin{block}{Hypotheses}<+->
 \begin{itemize}%[<+->]
 \item<+-> The porous medium can be modelized as periodical structure, with a small enough elementaty cell ;
-\item<+-> The elementary cell summarize the medium macroscopical properties ;
+\item<+-> The elementary cell summarizes the medium macroscopical properties ;
 \item<+-> $\mathbf{x}$ is the localization of a cell, $\mathbf{y}$ the position in a cell.
 \end{itemize}
 %
@@ -112,47 +112,72 @@
 \begin{block}{$D_k^{hom}$ and the microstructure}<+->% : the $\chi$ vector field}<+->
 \begin{itemize}
 \item<+-> \[D_k^{hom}:=\int\limits_{\Omega_f}\left(I+\derp{\chi}{\mathbf{y}}^T\right)\text{d}\Omega\]
-\item<+-> We will focus on this problem by now.
+\item<+-> We focus on this problem in this work.
 \end{itemize}
 \end{block}
 %
-\end{frame}
-
-\begin{frame}{A parametrized vector field}
-%
-\begin{block}{Vector $\chi$ : strong problem}<+->
-\begin{itemize}
-\item<+-> For avery $\rho$, $\chi(\mathbf{y},\rho)$ satisfies :
+\begin{block}{Vector $\chi$ : local problem}<+->
+%\begin{itemize}
+%\item<+-> For avery $\rho$, $\chi(\mathbf{y},\rho)$ satisfies :
 \[%
 \left\{%
-\begin{array}{lccr}
-Div_y \left( \dfrac{\partial{\chi}}{\partial{y}}^T\right) &=& 0&\text{ on }\Omega_f \\
-\dfrac{\partial{\chi}}{\partial{y}} \cdot n_{sf}&=&-n_{sf}&\text{ on }\Gamma_{sf}
+\begin{array}{llccr}
+\text{Fluid domain :}&Div_y \left( \dfrac{\partial{\chi}}{\partial{y}}^T\right) &=& 0&\text{ on }\Omega_f \\
+\text{Solid-fluid interface :}&\dfrac{\partial{\chi}}{\partial{y}} \cdot n_{sf}&=&-n_{sf}&\text{ on }\Gamma_{sf}
 \end{array}
 \right.
 \]
-\item<+-> %General solution $\chi(\mathbf{y},\rho)$, 
-$\rho$ can be the porosity ;
-\item<+-> $\Omega_f$ and $\Gamma{sf}$ depend on $\rho$.
-\end{itemize}
+%\item<+-> %General solution $\chi(\mathbf{y},\rho)$, 
+%$\rho$ can be the porosity ;
+%\item<+-> $\Omega_f$ and $\Gamma{sf}$ depend on $\rho$.
+%\end{itemize}
 \end{block}
 %
 \end{frame}
 
-\begin{frame}{Weak formulation}% of the problem}
+\begin{frame}%{Microstructure variability}%transition : rom
 %
-\begin{block}{}
-\[%
-\forall v \in V , %
-\int\limits_{\Omega_f}Tr\left(\left(grad_y\chi\right)^T\cdot grad_y v\right)\text{d}\Omega=%
--\int\limits_{\Gamma{sf}}n_{sf}\cdot v\text{d}s%
-\]
-\end{block}
-
-\pause
+\begin{block}{Microstructure parameters}<+->
+%
 \begin{itemize}
-\item<+-> This can be done with Finite Element Method ;
-\item<+-> We see that POD-ROM gives better results.
+\item<+-> $\rho^1, \rho^2 \dots$ can be porosity, average size of inclusions etc.
+\item<+-> %A structure depending on 4 parameters : %
+\vspace{-0.5cm}
+\begin{multicols}{2}
+A structure with 4 parameters : mean and variance for two sorts of inclusions.
+
+\columnbreak
+\includegraphics[width=\linewidth, height=2.5cm]{../Figures2D/500f500Tps30000.png}
+\end{multicols}
+%
 \end{itemize}
+%
+\end{block}
+%
+\begin{block}{Computing $D^{hom}(\rho^1,\dots ,\rho^N)$}<+->
+%
+\begin{tabular}{|c|c|c|}
+\hline
+\includegraphics[width=0.27\linewidth, height=1.9cm]{../Figures2D/meb_cem_1.png}&%
+\includegraphics[width=0.27\linewidth, height=1.9cm]{../Figures2D/meb_cem_2.png}&%
+\includegraphics[width=0.27\linewidth, height=1.9cm]{../Figures2D/meb_cem_3.png}%
+\\
+\hline
+$(\hat{\rho^1},\dots ,\hat{\rho^N})$&%
+$(\tilde{\rho^1},\dots ,\tilde{\rho^N})$&%
+$(\overline{\rho^1},\dots ,\overline{\rho^N})$%
+\\
+\hline
+\end{tabular}
+
+\begin{description}
+\item<+-> [Issue] Computation of each $D^{hom}$ is expensive.
+\item<+-> [Solution] Derive $D^{hom}(\overline{\rho^1},\dots ,\overline{\rho^N})$ from %
+$D^{hom}(\hat{\rho^1},\dots ,\hat{\rho^N})$ and $D^{hom}(\tilde{\rho^1},\dots ,\tilde{\rho^N})$.
+\end{description}
+%
+\par
+Images : Chalen\c con et al., 2009
+\end{block}
 %
 \end{frame}
