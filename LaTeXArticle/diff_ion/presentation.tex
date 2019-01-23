@@ -17,11 +17,38 @@
 \end{description}
 \end{block}
 %
-\begin{block}{A computational issue}<+->
+%\begin{block}{A computational issue}<+->
+%\begin{itemize}
+%\item<+-> A cimenteous material is made of numerous, and very variable sub-structures ;
+%\item<+-> Above equations should be resolved on a huge spatial domain.
+%\end{itemize}
+%\end{block}
+%
+\end{frame}
+
+\begin{frame}{Two scales of microstructure}
+%
+%\begin{block}{A two-scaled spatial model}<+->
+%\begin{itemize}
+%\item<+-> $\mathbf{x}$ is a macroscopical variable, namely the cell's position in the periodical structure ;
+%\item<+-> $\mathbf{y}$ or $(y_1,y_2,y_3)$ is a microscopical variable, of spatial coordinates in a single cell ;
+%\item<+-> $\mathbf{x}$ and $\mathbf{y}$ can be assumed to be independent.
+%\end{itemize}
+%\end{block}
+%
+\begin{block}{Two variables for space}<+->
+%
+\includegraphics[width=0.8\linewidth, height=3cm]{diff_ion/macro_micro_xvsy.png}
+
+\par
+\cite{th_KhaledB}, chapter 2.
+%
+%\pause
 \begin{itemize}
-\item<+-> A cimenteous material is made of numerous, and very variable sub-structures ;
-\item<+-> Above equations should be resolved on a huge spatial domain.
+\item<+-> $\mathbf{x}$ is the position in the left cylinder ;
+\item<+-> $\mathbf{y}$ is the position in the right, square projection.
 \end{itemize}
+%
 \end{block}
 %
 \end{frame}
@@ -30,8 +57,9 @@
 %
 \begin{block}{Hypotheses}<+->
 \begin{itemize}%[<+->]
-\item<+-> The porous medium can be modelized as periodical structure, with an elementaty cell small enough ;
-\item<+-> The elementary cells summarize the mediums macroscopical properties.
+\item<+-> The porous medium can be modelized as periodical structure, with a small enough elementaty cell ;
+\item<+-> The elementary cell summarize the medium macroscopical properties ;
+\item<+-> $\mathbf{x}$ is the localization of a cell, $\mathbf{y}$ the position in a cell.
 \end{itemize}
 %
 %\pause
@@ -75,23 +103,11 @@
 \end{block}
 \end{frame}
 
-\begin{frame}{Homogenized equation}
-%
-\begin{block}{A two-scaled spatial model}<+->
-\begin{itemize}
-\item<+-> $\mathbf{x}$ is a macroscopical variable, namely the cell's position in the periodical structure ;
-\item<+-> $\mathbf{y}$ or $(y_1,y_2,y_3)$ is a microscopical variable, of spatial coordinates in a single cell ;
-\item<+-> $\mathbf{x}$ and $\mathbf{y}$ can be assumed to be independent.
-\end{itemize}
-\end{block}
+\begin{frame}{The homogenized diffusion tensor}
 %
 \begin{block}{Homogenized diffusion-migration equation}<+->
 \[\derp{c_k}{t}-div_{\mathbf{x}}\left(D_k^{hom}\derp{c_k}{\mathbf{x}}+D_k^{hom}\frac{F}{RT}z_k \derp{\Psi}{\mathbf{x}}\right)=0\]
 \end{block}
-%
-\end{frame}
-
-\begin{frame}{The homogenized diffusion tensor}
 %
 \begin{block}{$D_k^{hom}$ and the microstructure}<+->% : the $\chi$ vector field}<+->
 \begin{itemize}
@@ -100,7 +116,13 @@
 \end{itemize}
 \end{block}
 %
-\begin{block}{The vector field $\chi$}<+->
+\end{frame}
+
+\begin{frame}{A parametrized vector field}
+%
+\begin{block}{Vector $\chi$ : strong problem}<+->
+\begin{itemize}
+\item<+-> For avery $\rho$, $\chi(\mathbf{y},\rho)$ satisfies :
 \[%
 \left\{%
 \begin{array}{lccr}
@@ -109,9 +131,28 @@ Div_y \left( \dfrac{\partial{\chi}}{\partial{y}}^T\right) &=& 0&\text{ on }\Omeg
 \end{array}
 \right.
 \]
+\item<+-> %General solution $\chi(\mathbf{y},\rho)$, 
+$\rho$ can be the porosity ;
+\item<+-> $\Omega_f$ and $\Gamma{sf}$ depend on $\rho$.
+\end{itemize}
+\end{block}
+%
+\end{frame}
+
+\begin{frame}{Weak formulation}% of the problem}
+%
+\begin{block}{}
+\[%
+\forall v \in V , %
+\int\limits_{\Omega_f}Tr\left(\left(grad_y\chi\right)^T\cdot grad_y v\right)\text{d}\Omega=%
+-\int\limits_{\Gamma{sf}}n_{sf}\cdot v\text{d}s%
+\]
+\end{block}
 
 \pause
-We will focus on this problem now.
-\end{block}
+\begin{itemize}
+\item<+-> This can be done with Finite Element Method ;
+\item<+-> We see that POD-ROM gives better results.
+\end{itemize}
 %
 \end{frame}
