@@ -86,7 +86,7 @@ chi_nouv_v=np.dot(Phi_nouv_v,a_nouv)
 chi_nouv=Function(V_nouv)
 chi_nouv.vector().set_local(chi_nouv_v)
 
-plot(chi_nouv)
+plot(chi_nouv, linewidth=0.55)
 if fig_todo=='aff':
  plt.show()
 #else:
@@ -114,12 +114,12 @@ elif config=='cylindre unique':
 else :
  D=(1-4/3*pi*r_s**3-pi*r_c**2)*np.eye(3)
 ## Calcul et affichage du tenseur Dhom
-Dhom_k=D_k*(D+T_chi.T)
+Dhom_kMOR=D_k*(D+T_chi.T)
 #print(('Tenseur Dhom_k',Dhom_k))
-print('Coefficient Dhom_k11 '+config+', '+geo_p+' variable valeur'+str(rho)+' MOR :',Dhom_k[0,0])
+print('Coefficient Dhom_k11 '+config+', '+geo_p+' variable valeur '+str(rho)+' MOR :',Dhom_kMOR[0,0])
 
 print('se3 faite')
-#sys.exit()#-------------------------------------
+sys.exit()#-------------------------------------
 # --------------------- SE4 : comparaison avec la méthode des éléments finis --------------------- #
 
 res=20
@@ -138,7 +138,7 @@ r=r_nouv
 err_per_gr(cen_snap_ray,r_nouv,chi_nouv,npas_err,fig_todo)
 
 # Tenseur de diffusion homogénéisé
-## Intégrale de khi sur le domaine fluide
+## Intégrale de chi sur le domaine fluide
 T_chi=np.zeros((3,3))
 for k in range(0,3):
  for l in range(0,3):
@@ -151,11 +151,14 @@ elif config=='cylindre unique':
 else :
  D=(1-4/3*pi*r_s**3-pi*r_c**2)*np.eye(3)
 ## Calcul et affichage du tenseur Dhom
-Dhom_k=D_k*(D+T_chi.T)
+Dhom_kMEF=D_k*(D+T_chi.T)
 #print(('Tenseur Dhom_k',Dhom_k))
-print('Coefficient Dhom_k11 '+config+', '+geo_p+' variable valeur'+str(rho)+ ' MEF :',Dhom_k[0,0])
+print('Coefficient Dhom_k11 '+config+', '+geo_p+' variable valeur '+str(rho)+ ' MEF :',Dhom_kMEF[0,0])
 
+## Comparaison
 
+err_rel=100*(Dhom_kMOR[0,0]-Dhom_kMEF[0,0])/Dhom_kMEF[0,0]
+print('Erreur relative MEF-MOR :', err_rel , ' pourcent')
 
 
 
