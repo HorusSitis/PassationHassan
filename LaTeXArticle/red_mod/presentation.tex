@@ -105,21 +105,47 @@ $\dfrac{Ener_{N_{rom}}}{Ener_{N_{snap}}}\text{ \textit{id.est} }\dfrac{\sum\limi
 
 \begin{frame}{ROM for periodic homogenization}
 %
-\begin{block}{Step 1 : generation of a sample $\chi(\mathbf{y},\rho_j)$ of solutions}<+->
-\begin{itemize}
-\item<+-> Solve with FEM the system with variable $\mathbf{y}$ :
+\begin{block}{Step 1 : generation of a sample $\chi(\mathbf{y},\mathbf{\rho}_j)$ of solutions}<+->
+%\begin{itemize}
+%\item<+-> 
+Solve with FEM the system with variable $\mathbf{y}$ :
 \[%
 \begin{split}
 &\int\limits_{\Omega_f(\rho)}Tr\left(\left(grad_y\chi(\mathbf{y},\rho))\right)^T\cdot grad_y v(\mathbf{y})\right)\text{d}\Omega\\
 =&-\int\limits_{\Gamma{sf}(\rho)}n_{sf}\cdot v(\mathbf{y})\text{d}s%
 \end{split}
 \]
+%\[\int\limits_{\Omega_f(\rho)}Tr\left(\left(grad_y\chi(\mathbf{y},\rho))\right)^T\cdot grad_y v(\mathbf{y})\right)\text{d}\Omega=-\int\limits_{\Gamma{sf}(\rho)}n_{sf}\cdot v(\mathbf{y})\text{d}s\]
 %for $v$ in the space of test functions.
-\vspace{-0.7cm}
-\item<+-> \dots once for each value of the parameter $\rho$.
-\end{itemize}
+\vspace{0.3cm}
+
+\pause
+%\item<+-> 
+\begin{tabular}{|c|c|c|}
+\hline
+\includegraphics[width=0.27\linewidth, height=1.9cm]{../Figures2D/meb_cem_1.png}&%
+\includegraphics[width=0.27\linewidth, height=1.9cm]{../Figures2D/meb_cem_2.png}&%
+\includegraphics[width=0.27\linewidth, height=1.9cm]{../Figures2D/meb_cem_3.png}%
+\\
+\hline
+$(\hat{\rho^1},\dots ,\hat{\rho^N})$&%
+$(\tilde{\rho^1},\dots ,\tilde{\rho^N})$&%
+$(\overline{\rho^1},\dots ,\overline{\rho^N})$%
+\\
+\hline
+\end{tabular}
+
+\medskip
+for each set of parameters $(\rho_j^1,\dots ,\rho_j^N)_{j\in\{1,N_{snap}\}}$.%value of the parameter $\rho$.
+%\visible<2->{%
+%\includegraphics[width=0.8\linewidth, height=2.5cm]{../Figures2D/meb_cem.png}}
+%\end{itemize}
 %
 \end{block}
+%
+\end{frame}
+
+\begin{frame}{POD}
 %
 \begin{block}{Step 2 : a common function space for snapshots}
 Interpolate the solutions $\chi(\mathbf{y},\rho_j)$ onto a single space $\Omega_{fluid}^0$.%, %
@@ -138,7 +164,7 @@ Interpolate the solutions $\chi(\mathbf{y},\rho_j)$ onto a single space $\Omega_
 
 \begin{frame}{The algorithm we use : inline}
 %
-\begin{block}{Step 4 : ROM for given parameter $\rho^{new}$}<+->
+\begin{block}{Step 4 : set a parameter $\rho^{new}$}<+->
 \begin{itemize}
 \item<+-> Project the $\phi_i$ POD vectors on the new fluid domain $\Omega_f$ ;
 \item<+-> We obtain $N_{rom}$ spatial modes $\phi_i^{new}$.
