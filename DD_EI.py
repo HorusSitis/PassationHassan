@@ -140,16 +140,6 @@ else :
 
 # --------------------------------------------------------------------------------- #
 
-for n in range(1,1+Nsnap):
- r=0.05*n
- mesh=Mesh("maillages_per/2D/maillage_trou2d_"+str(int(round(100*r,2)))+".xml")
- V_n=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
- print(str(n),V_n.dim())
-
-
-
-
-
 for n in range(1,1+Nsnap):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon d'un cercle doit être non nul
  # Extraction du snapshot de rang n
  chi_n_v=list_chi_v[n-1]
@@ -159,17 +149,16 @@ for n in range(1,1+Nsnap):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon
    cen=cen_snap_ray
    r=n*0.05
    if typ_msh=='gms':
-    #print("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+".xml")
+    print("maillages_per/2D/maillage_trou2d_"+str(int(round(100*r,2)))+".xml")
     mesh=Mesh("maillages_per/2D/maillage_trou2d_"+str(int(round(100*r,2)))+".xml")
    else:
     mesh=creer_maill_circ(cen,r,res)
   #elif geo_p=='cen':
- V_n=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
+ V_n=VectorFunctionSpace(mesh, 'P', 3, constrained_domain=PeriodicBoundary())
  # On restitue la forme fonctionnelle du snapshot courant
  chi_n=Function(V_n)
  print(V_n.dim())
  print(len(chi_n_v))
- sys.exit()#-----------------------------------------------------------
  chi_n.vector().set_local(chi_n_v)
  # Figures et erreurs
  plot(chi_n)
@@ -177,10 +166,11 @@ for n in range(1,1+Nsnap):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon
  #plot(grad(chi_n)[:,1]
  if fig_todo=='aff':
   plt.show()
- #elif fig_todo=='save':
+ elif fig_todo=='save':
+  plt.savefig("Figures2D/sol_"+str(n)+"_sur"+str(Nsnap)+config+'_'+geo_p+".png")
  plt.close()
  #fig_chi([c_x,c_y],0.05*n,chi_n,fig_todo)
- err_per_gr([c_x,c_y],r,chi_n,npas_err,fig_todo)
+ err_per_gr(cen,r,chi_n,npas_err,fig_todo)
  #err_per_ind_01(chi_n,20)
  #sys.exit()#---------------------------------------------------
  ##
@@ -191,8 +181,10 @@ for n in range(1,1+Nsnap):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon
   for l in range(0,2):
    T_chi[k,l]=assemble(grad(chi_n)[k,l]*dx)
  ## Intégrale de l'identité sur le domaine fluide
- D=(1-pi*r**2)*np.eye(2)
+ por=(1-pi*r**2)
+ D=por*np.eye(2)
  ## Calcul et affichage du tenseur Dhom
  Dhom_k=D_k*(D+T_chi.T)
- print(('Tenseur Dhom_k',Dhom_k))
- print('Coefficient Dhom_k11, snapshot '+str(n)+", "+config_mess+', '+geo_mess+" variable :",Dhom_k[0,0])
+ #print(('Tenseur Dhom_k',Dhom_k))
+ print("Porosité :", por)
+ print('Coefficient Dhom_k11, snapshot '+str(n)+", "+conf_mess+', '+geo_mess+" variable :",Dhom_k[0,0])
