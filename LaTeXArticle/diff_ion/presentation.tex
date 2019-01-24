@@ -139,22 +139,35 @@ Bourbatache, PhD thesis, chapter 2.
 %
 \begin{block}{Microstructure parameters}<+->
 %
-\begin{itemize}
-\item<+-> $\rho^1, \rho^2 \dots$ can be porosity, average size of inclusions etc.
-\item<+-> %A structure depending on 4 parameters : %
-\vspace{-0.5cm}
-\begin{multicols}{2}
-A structure with 4 parameters : mean and variance for two sorts of inclusions.
+%\begin{itemize}
+\begin{multicols}{3}
+%\item<+-> 
+$\rho^1, \rho^2 \dots$ can be porosity, average size of inclusions etc.
+%\item<+-> %
 
 \columnbreak
-\includegraphics[width=\linewidth, height=2.5cm]{../Figures2D/500f500Tps30000.png}
+
+%\pause
+\visible<+->{%
+A structure with 4 parameters : %
+%\vspace{-0.5cm}
+
+\par
+mean and variance for two sorts of inclusions.}
+
+\columnbreak
+
+%\pause
+\visible<+->{%
+\includegraphics[width=\linewidth, height=2.5cm]{../Figures2D/par4crop500ffT30000.png}%
+}
 \end{multicols}
 %
-\end{itemize}
+%\end{itemize}
 %
 \end{block}
 %
-\begin{block}{Computing $D^{hom}(\rho^1,\dots ,\rho^N)$}<+->
+\begin{block}{The expensive computing $D^{hom}(\rho^1,\dots ,\rho^N)$}<+->
 %
 \begin{tabular}{|c|c|c|}
 \hline
@@ -171,9 +184,8 @@ $(\overline{\rho^1},\dots ,\overline{\rho^N})$%
 \end{tabular}
 
 \begin{description}
-\item<+-> [Issue] Computation of each $D^{hom}$ is expensive.
-\item<+-> [Solution] Derive $D^{hom}(\overline{\rho^1},\dots ,\overline{\rho^N})$ from %
-$D^{hom}(\hat{\rho^1},\dots ,\hat{\rho^N})$ and $D^{hom}(\tilde{\rho^1},\dots ,\tilde{\rho^N})$.
+\item<+-> [Training] Learn $D^{hom}$ on $(\hat{\rho^1},\dots ,\hat{\rho^N})$ and $(\tilde{\rho^1},\dots ,\tilde{\rho^N})$
+\item<+-> [ROM] Derive $D^{hom}(\overline{\rho^1},\dots ,\overline{\rho^N})$.
 \end{description}
 %
 \par
