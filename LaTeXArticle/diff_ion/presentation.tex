@@ -1,11 +1,11 @@
-%\section{Ionic diffusion in cementarious media}
+\section{Ionic diffusion in cementarious media}
 
 \begin{frame}
 %
 \begin{block}{A physical situation}
 \begin{itemize}%[<+->]
-\item<+-> Reinforced concrete structures are exposed to chloride $Cl^-$ ;
-\item<+-> $Cl^-$ penetrates the concrete, via its pores ;
+\item<+-> Reinforced concrete structures are exposed to chloride $Cl^-$
+\item<+-> $Cl^-$ penetrates the concrete, via its pores
 \item<+-> It corrodes steel and makes the structure fragile.
 \end{itemize}
 \end{block}
@@ -14,6 +14,7 @@
 \begin{description}
 \item<+-> [The Nernst-Planck equation] $\dfrac{\partial{c_k}}{\partial{t}}=div\left(-D_k\left(grad(c_k)+\dfrac{F}{RT}grad(\Psi)c_k\right)\right)$
 \item<+-> [Poisson equation] $\epsilon_v \Delta \Psi=-\rho$
+\item<+-> [] $\displaystyle \rho=\sum\limits_k z_k c_k$, $z_k$ is the valence of ion $k$.
 \end{description}
 \end{block}
 %
@@ -30,60 +31,77 @@ Bourbatache, PhD thesis, chapter 2.
 %
 %\pause
 \begin{itemize}
-\item<+-> $\mathbf{x}$ is the variable at macroscale ;
-\item<+-> $\mathbf{y}$ is the variable at microscale.
+\item<+-> $\mathbf{x}$ is the variable at macroscale
+\item<+-> $\mathbf{y}$ is the variable at microscale
 \end{itemize}
 %
 \end{block}
 %
 \end{frame}
 
-\begin{frame}{Periodic homogenization}
+\begin{frame}%{Periodic homogenization}
 %
-\begin{block}{Hypotheses}<+->
-\begin{itemize}%[<+->]
-\item<+-> The porous medium can be modelized as periodical structure, with a small enough elementaty cell ;
-\item<+-> The elementary cell summarizes the medium macroscopical properties ;
-\item<+-> $\mathbf{x}$ is the localization of a cell, $\mathbf{y}$ the position in a cell.
-\end{itemize}
-%
-%\pause
-\visible<2->{%
-%\begin{figure}[H]
+\begin{block}{Periodic homogenization : macroscopic scale}<+->
+We modelize the porous medium as a periodical structure
+
+\vspace{-0.2cm}
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
-%\subfloat[Single sphere]{
-\includegraphics[width=0.2\linewidth,height=2cm]{../Figures3D/macro_micro_Lsurl1unique_par505035.png}%}
-&
-%\subfloat[Single cylinder]{
-\includegraphics[width=0.2\linewidth,height=2cm]{../Figures3D/macro_micro_Lsurl1unique_cyl25.png}%}
-&
-%\subfloat[Two speres]{
-\includegraphics[width=0.2\linewidth,height=2cm]{../Figures3D/macro_micro_Lsurl1diag_par505035.png}%}
-&
-%\subfloat[One sphere and one cylinder]{
-\includegraphics[width=0.2\linewidth,height=2cm]{../Figures3D/macro_micro_Lsurl1sph_cyl_par505035.png}%}
-\\
-\hline
 %\subfloat[Porosity : $0,82040562$]{
-\includegraphics[width=0.2\linewidth,height=2cm]{../Figures3D/macro_micro_Lsurl5unique_par505035.png}%}
+%\visible<2->{
+\includegraphics[width=0.2\linewidth,height=2cm]{../Figures3D/macro_micro_Lsurl5unique_par505035.png}%}%}
 &
 %\subfloat[Porosity : $0,803650459$]{
-\includegraphics[width=0.2\linewidth,height=2cm]{../Figures3D/macro_micro_Lsurl5unique_cyl25.png}%}
+%\visible<2->{
+\includegraphics[width=0.2\linewidth,height=2cm]{../Figures3D/macro_micro_Lsurl5unique_cyl25.png}%}%}
 &
 %\subfloat[Porosity : $0,786895298$]{
-\includegraphics[width=0.2\linewidth,height=2cm]{../Figures3D/macro_micro_Lsurl5diag_par505035.png}%}
+%\visible<2->{
+\includegraphics[width=0.2\linewidth,height=2cm]{../Figures3D/macro_micro_Lsurl5diag_par505035.png}%}%}
 &
 %\subfloat[Porosity : $0,624056079$]{
-\includegraphics[width=0.2\linewidth,height=2cm]{../Figures3D/macro_micro_Lsurl5sph_cyl_par505035.png}%}
+%\visible<2->{
+\includegraphics[width=0.2\linewidth,height=2cm]{../Figures3D/macro_micro_Lsurl5sph_cyl_par505035.png}%}%}
 \\
 \hline
 \end{tabular}
 \end{center}
-%\caption{Three-dimensional case : $5\times 5-$cells microstructure}
-%\end{figure}
-}
+\vspace{-0.2cm}
+
+Variable $\mathbf{x}$ : position of each voxel
+%
+\end{block}
+%
+\begin{block}{Periodic homogenization : microscopic scale}<+->
+One voxel = an elementary cell, summarizing the structure's properties
+
+\vspace{-0.2cm}
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+%\subfloat[Single sphere]{
+%\visible<3->{
+\includegraphics[width=0.2\linewidth,height=2cm]{../Figures3D/macro_micro_Lsurl1unique_par505035.png}%}%}
+&
+%\subfloat[Single cylinder]{
+%\visible<3->{
+\includegraphics[width=0.2\linewidth,height=2cm]{../Figures3D/macro_micro_Lsurl1unique_cyl25.png}%}%}
+&
+%\subfloat[Two speres]{
+%\visible<3->{
+\includegraphics[width=0.2\linewidth,height=2cm]{../Figures3D/macro_micro_Lsurl1diag_par505035.png}%}%}
+&
+%\subfloat[One sphere and one cylinder]{
+%\visible<3->{
+\includegraphics[width=0.2\linewidth,height=2cm]{../Figures3D/macro_micro_Lsurl1sph_cyl_par505035.png}%}%}
+\\
+\hline
+\end{tabular}
+\end{center}
+\vspace{-0.2cm}
+
+Variable $\mathbf{y}$ : position in the elementary cell.
 %
 \end{block}
 \end{frame}
@@ -124,57 +142,58 @@ We focus on this problem in this work.
 %
 \begin{block}{Microstructure parameters}<+->
 %
-%\begin{itemize}
-\begin{multicols}{3}
-%\item<+-> 
-$\rho^1, \rho^2 \dots$ can be porosity, average size of inclusions etc.
-%\item<+-> %
+\begin{multicols}{4}
+A set of real numbers $\rho_1, \rho_2 \dots \rho_{N_{par}}$
+
+\columnbreak
+\visible<2->{For example : porosity, average size of inclusions.}
 
 \columnbreak
 
 %\pause
-\visible<+->{%
-A structure with 4 parameters : %
+\visible<3->{%
+\includegraphics[width=\linewidth, height=2.5cm]{../Figures2D/Npar4Cr.png}%par4crop500ffT30000.png}%
+
+%\footnotesize{A. Moreau 2018}
+}
+
+\columnbreak
+
+%\pause
+\visible<3->{%
+$N_{par}=4$ : %
 %\vspace{-0.5cm}
 
 \par
-mean and variance for two sorts of inclusions.}
-
-\columnbreak
-
-%\pause
-\visible<+->{%
-\includegraphics[width=\linewidth, height=2.5cm]{../Figures2D/par4crop500ffT30000.png}%
+mean and variance for yellow or grey inclusions.
 }
 \end{multicols}
 %
-%\end{itemize}
-%
 \end{block}
 %
-\begin{block}{The expensive computing of $D^{hom}(\rho^1,\dots ,\rho^N)$}<+->
+\begin{block}{Our aim : computing $D^{hom}(\rho_1,\rho_2,\dots ,\rho_{N_{par}})$}<4->
 %
 \begin{tabular}{|c|c|c|}
 \hline
-\includegraphics[width=0.27\linewidth, height=1.9cm]{../Figures2D/meb_cem_1.png}&%
-\includegraphics[width=0.27\linewidth, height=1.9cm]{../Figures2D/meb_cem_2.png}&%
-\includegraphics[width=0.27\linewidth, height=1.9cm]{../Figures2D/meb_cem_3.png}%
+\visible<4->{\includegraphics[width=0.27\linewidth, height=1.9cm]{../Figures2D/meb_cem_1.png}}&%
+\visible<5->{\includegraphics[width=0.27\linewidth, height=1.9cm]{../Figures2D/meb_cem_2.png}}&%
+\visible<7->{\includegraphics[width=0.27\linewidth, height=1.9cm]{../Figures2D/meb_cem_3.png}}%
 \\
 \hline
-$(\hat{\rho^1},\dots ,\hat{\rho^N})$&%
-$(\tilde{\rho^1},\dots ,\tilde{\rho^N})$&%
-$(\overline{\rho^1},\dots ,\overline{\rho^N})$%
+\visible<4->{$(\rho_1^1 ,\rho_2^1, \dots ,\rho_{N_{par}}^1)$}&%
+\visible<5->{$(\rho_1^2 ,\rho_2^2, \dots ,\rho_{N_{par}}^2)$}&%
+\visible<7->{$(\rho_1^{new} ,\rho_2^{new}, \dots ,\rho_{N_{par}}^{new})$}%
 \\
 \hline
 \end{tabular}
 
 \begin{description}
-\item<+-> [Training] Learn $D^{hom}$ on $(\hat{\rho^1},\dots ,\hat{\rho^N})$ and $(\tilde{\rho^1},\dots ,\tilde{\rho^N})$
-\item<+-> [ROM] Quickly derive $D^{hom}(\overline{\rho^1},\dots ,\overline{\rho^N})$.
+\item<6-> [Training] Learn $D^{hom}$ on $(\rho_1^1 ,\rho_2^1, \dots ,\rho_{N_{par}}^1)$ and $(\rho_1^2 ,\rho_2^2, \dots ,\rho_{N_{par}}^2)$% (expensive)
+\item<7-> [Reduced Order Model] Derive quickly $D^{hom}(\rho_1^{new} ,\rho_2^{new}, \dots ,\rho_{N_{par}}^{new})$.
 \end{description}
 %
-\par
-Images : Chalen\c con et al., 2009
+%\par
+\footnotesize{Images : Chalen\c con et al., 2009}
 \end{block}
 %
 \end{frame}
