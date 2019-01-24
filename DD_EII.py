@@ -48,8 +48,9 @@ def extra_snap(n):
  # chargement du snapshot courant
  chi_n_v=list_chi_v[n-1]
  # mise sous forme d'une fonction EF
- print("maillages_per/2D/maillage_trou2d_"+str(int(round(100*r,2)))+".xml")
- mesh=Mesh("maillages_per/2D/maillage_trou2d_"+str(int(round(100*r,2)))+".xml")
+ if typ_msh=='gms':
+  print("maillages_per/2D/maillage_trou2d_"+str(int(round(100*r,2)))+".xml")
+  mesh=Mesh("maillages_per/2D/maillage_trou2d_"+str(int(round(100*r,2)))+".xml")
  V_n=VectorFunctionSpace(mesh, 'P', 3, constrained_domain=PeriodicBoundary())
  chi_n=Function(V_n)
  chi_n.vector().set_local(chi_n_v)
@@ -59,7 +60,15 @@ def extra_snap(n):
  ## on range le snapshot dans une liste
  #list_snap.append(chi_n_prime)
  chi_n_prime_v=chi_n_prime.vector().get_local()
- return([n,chi_n_v])
+ return([n,chi_n_prime_v])
+
+
+#cc=extra_snap(1)
+#nb_noeuds=V_fixe.dim()
+#snap=np.zeros((nb_noeuds,1))#Nsnap))
+#print(len(cc[1]),nb_noeuds)
+
+#sys.exit()
 
 # Constitution de la matrice des snapshots
 
@@ -87,22 +96,31 @@ else:
 
 
 
-sys.exit()#--------------------------------
+
 
 # Représentations graphiques
 
+list_snap=[]
+for n in range(1,1+Nsnap):
+ chi_prime=Function(V_fixe)
+ chi_prime.vector().set_local(Usnap[:,n-1])
+ # remplissage de la liste de fonctions
+ list_snap.append(chi_prime)
+
+
 cen=cen_snap_ray
 for n in range(1,1+Nsnap):
+ r=0.05*n
  chi_prime_n=list_snap[n-1]
  # Affichage des valeurs de la solution interpolée
  plot(chi_prime_n)
  if fig_todo=='aff':
   plt.show()
  else:
-  plt.savefig("Figures2D/snap_interpSq_"+str(n)+"_sur"+str(Nsnap)+config+'_'+geo_p+".png")
+  plt.savefig("Figures2D/snap_"+str(n)+"_sur"+str(Nsnap)+config+'_'+geo_p+".png")
  plt.close()
  # Affichage des valeurs et erreurs de la solution périodique, quelle que soit la configuration
  #err_per_ind_01(chi_prime_n,cen,r,npas_err)
- err_per_gr(cen,r,chi_prime_n,npas_err,fig_todo)
+ #err_per_gr(cen,r,chi_prime_n,npas_err,fig_todo)
 
 
