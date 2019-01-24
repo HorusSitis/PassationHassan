@@ -16,6 +16,8 @@ yinf=0.0
 xsup=1.0
 ysup=1.0
 
+typ_msh='gms'
+
 dimension=2
 
 class PeriodicBoundary(SubDomain):
@@ -33,7 +35,7 @@ class PeriodicBoundary(SubDomain):
 ############################# Pour créer des maillages, avec des familles de cellules élémentaires #############################
 
 def crown(r):#épaisseur de la couronne dans laquelle le maillage est raffiné
- return r+0.01#*(1+0.2*exp(-r**2))#1.2*r
+ return r+tol#*(1+0.2*exp(-r**2))#1.2*r
 
 def raffinement_maillage_circ_per(cen,r,mesh):# Objectif : montrer que l'emplacement de l'inclusion périodique dans la cellule élémentaire ne change pas le coefficient de diffusion homogénéisé, calculé avec le tenseur khi
  markers = MeshFunction("bool", mesh, mesh.topology().dim())
@@ -78,11 +80,12 @@ def creer_maill_circ(cen,r,res):#valable quel que soit la position de l'inclusio
 def snapshot_circ_per(cen,r,res):
  c_x,c_y=cen[0],cen[1]
  if typ_msh=='gms':
-  mesh_c_r=Mesh("maillages_per/2D/maillage_trou2d_"+str(int(round(100*r,2)))+"_.xml")#
+  mesh_c_r=Mesh("maillages_per/2D/maillage_trou2d_"+str(int(round(100*r,2)))+".xml")#
  else:
   mesh_c_r=creer_maill_circ([c_x,c_y],r,res)
  # On pose et on résoud le problème aux éléments finis
  V=VectorFunctionSpace(mesh_c_r, 'P', 3, form_degree=0, constrained_domain=PeriodicBoundary())#vertices))
+ print(V.dim(),str(int(round(20*r,2))))
  ## On définit la bordure du domaine, sur laquelle intégrer le second membre "L" de l'équation en dimension finie
  l_cen=[]
  #cen=[c_x,c_y]
