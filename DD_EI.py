@@ -47,22 +47,13 @@ else:
 
 ###-------------------- Commandes pour l'écriture de fichiers, à déplacer dans le script éventuellement --------------------###
 
-#if [c_x,c_y]==[0.5,0.5]:
-# suffixe="inc_centre/"
-#elif [c_x,c_y]==[0.0,0.0]:
-# suffixe="coins/"
+
 
 #repertoire_final=repertoire_parent+suffixe
-
 #File(repertoire_parent+"mesh_circulaire.xml.gz") << mesh_fixe
-
 #ch_file,KH_SAVE=creation_fichier_pourecriture_champ_hdf5(repertoire_final,mesh_fixe)
-
-#file_rayon_ecriture = open("%s/rayon_ecriture.txt" %(repertoire_final), "w")
-#kfic=1
-
+#file_rayon_ecriture = open("%s/rayon_ecriture.txt" %(repertoire_final), "w")#kfic=1
 # Famille de cellules élémentaires : 8 clichés, inclusion circulaire, paramétrée par le rayon du cercle
-
 # Exemples de maillages raffiniés autour d'une inclusion périodique
 
 r=0.25
@@ -89,33 +80,97 @@ for cen in []:#[[0.5,0.5],[0.0,0.0],[0.5,0.0],[0.0,0.5]]:
 
 ## Cercle unique
 
-#if geo_p=='rayon':
-#cen_snap_ray=[0.5,0.5]
+#if geo_p=='ray':
+cen_snap_ray=[0.5,0.5]#,0.5]
+def snap_circ_ray(r_par):
+ chi_r=snapshot_circ_per(cen_snap_ray,0.05*r_par,res)
+ chi_r_v=chi_r.vector().get_local()
+ return([r_par,chi_r_v])
 
-#if geo_p=='centre':
+#if geo_p=='cen':
 #ray_snap_cen=0.25
-#csr_list=[[0.05*k,0.5]] for k in range(1,1+Nsnap)]
+#csr_list=[[0.5,0.3+0.05*k] for k in range(1,1+Nsnap)]
 #c_par : paramètre scalaire pour la position du centre
+def snap_circ_cen(c_par):
+ cen_snap_ray=csr_list[c_par-1]
+ chi_c=snapshot_circ_per(cen_snap_ray,ray_snap_cen,res)
+ chi_c_v=chi_c.vector().get_local()
+ return([c_par,chi_c_v])
 
-for n in range(1+Nsnap):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon d'un cercle doit être non nul
- # Génération du snapshot
- if config=='cercle unique':
-  if geo_p=='rayon':
-   mesh_c_r=Mesh("maillages_per/2D/maillage_trou2D.xml")
-   #plot(mesh_c_r)
-   #plt.show()
-   #plt.close()
-   #sys.exit()
-   chi_n=snapshot_circ_per(cen_snap_ray,0.05*n,res) 
-   c_x=cen_snap_ray[0]
-   c_y=cen_snap_ray[1]
-  elif geo_p=='centre':
-   cen_snap_ray=csr_list[n-1]
-   c_x=cen_snap_ray[0]
-   c_y=cen_snap_ray[1]
-   chi_n=snapshot_circ_per(cen_snap_ray,ray_snap_cen,res)
- #elif config=='cercles en alignés en diagonale':
- #elif config=='cercles alignés horizontalement':
+# ------------------------- Snapshots, conditionnellement ------------------------- #
+
+if not snap_done:
+ # Calcul des snapshots, sous forme vectorielle
+ ##if parallelize: Calcul parallèle oblligatoire
+ # Génération parallèle des snapshots
+ pool=multiprocessing.Pool(processes=8)
+ if config=='cer_un':
+  if geo_p=='ray':
+   list_chi_n_v=pool.map(snap_circ_ray,(n for n in range(1,1+Nsnap)))
+  elif geo_p=='cen':
+   list_chi_n_v=pool.map(snap_circ_cen,(n for n in range(1,1+Nsnap)))
+ #elif config=='cyl_un':
+ # if geo_p=='ray':
+ #  list_chi_n_v=pool.map(snap_cyl_ray,(n for n in range(1,1+Nsnap)))
+ # elif geo_p=='axe':
+ #  list_chi_n_v=pool.map(snap_cyl_axe,(n for n in range(1,1+Nsnap)))
+ ## enregistrement des données dans une liste
+ # Construction de la liste des snapshots vectorisés : cas d'un paramètre géométrique définissant un ordre - lien avec la porosité ; ou non.
+ list_chi_v=[]
+ if geo_p=='ray' or config=='compl':
+  for n in range(1,1+Nsnap):
+   for i in range(0,Nsnap):
+    if list_chi_n_v[i][0]==n:
+     chi_n_v=list_chi_n_v[i][1]
+     list_chi_v.append(chi_n_v)
+ else:
+  for i in range(0,Nsnap):
+   chi_n_v=list_chi_n_v[i][1]
+   list_chi_v.append(chi_n_v)
+ # Liste des snapshots : sauvegarde, on précise l'identité de la machine qui a effectué le calcul
+ l_name='Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+ # sauvegarde de la liste des solutions indexées calculées avec la méthode des éléments finis
+ with sh.open(repertoire_parent+l_name) as l_sto:
+  l_sto["maliste"] = list_chi_v
+ # Matrice des snapshots : plus tard, voir l'étape II
+else :
+ l_name='Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+ with sh.open(repertoire_parent+l_name) as l_loa:
+  list_chi_v = l_loa["maliste"]
+
+# --------------------------------------------------------------------------------- #
+
+for n in range(1,1+Nsnap):
+ r=0.05*n
+ mesh=Mesh("maillages_per/2D/maillage_trou2d_"+str(int(round(100*r,2)))+".xml")
+ V_n=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
+ print(str(n),V_n.dim())
+
+
+
+
+
+for n in range(1,1+Nsnap):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon d'un cercle doit être non nul
+ # Extraction du snapshot de rang n
+ chi_n_v=list_chi_v[n-1]
+ # On crée un maillage pour réécrire les snapshots sous la forme de fonctions
+ if config=='cer_un':
+  if geo_p=='ray':
+   cen=cen_snap_ray
+   r=n*0.05
+   if typ_msh=='gms':
+    #print("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+".xml")
+    mesh=Mesh("maillages_per/2D/maillage_trou2d_"+str(int(round(100*r,2)))+".xml")
+   else:
+    mesh=creer_maill_circ(cen,r,res)
+  #elif geo_p=='cen':
+ V_n=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
+ # On restitue la forme fonctionnelle du snapshot courant
+ chi_n=Function(V_n)
+ print(V_n.dim())
+ print(len(chi_n_v))
+ sys.exit()#-----------------------------------------------------------
+ chi_n.vector().set_local(chi_n_v)
  # Figures et erreurs
  plot(chi_n)
  #plot(grad(chi_n)[:,0]
@@ -124,9 +179,8 @@ for n in range(1+Nsnap):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon d
   plt.show()
  #elif fig_todo=='save':
  plt.close()
- fig_chi([c_x,c_y],0.05*n,chi_n,fig_todo)
- #fig_dchi([c_x,c_y],r,-grad(chi_n),fig_todo)
- #err_per_gr([c_x,c_y],r,chi_n,50,fig_todo)
+ #fig_chi([c_x,c_y],0.05*n,chi_n,fig_todo)
+ err_per_gr([c_x,c_y],r,chi_n,npas_err,fig_todo)
  #err_per_ind_01(chi_n,20)
  #sys.exit()#---------------------------------------------------
  ##
@@ -141,6 +195,4 @@ for n in range(1+Nsnap):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon d
  ## Calcul et affichage du tenseur Dhom
  Dhom_k=D_k*(D+T_chi.T)
  print(('Tenseur Dhom_k',Dhom_k))
- print('Coefficient Dhom_k11, snapshot '+str(n)+", "+config+', '+geo_p+" variable :",Dhom_k[0,0])
- # Stockage
- ## ...
+ print('Coefficient Dhom_k11, snapshot '+str(n)+", "+config_mess+', '+geo_mess+" variable :",Dhom_k[0,0])
