@@ -150,11 +150,88 @@ for each set of parameters $(\rho_j^1,\dots ,\rho_j^N)_{j\in\{1,N_{snap}\}}$.%va
 \begin{block}{Step 2 : a common function space for snapshots}
 Interpolate the solutions $\chi(\mathbf{y},\rho_j)$ onto a single space $\Omega_{fluid}^0$.%, %
 %so that we have a family of snapshots belonging to the \emph{same} functional space $H:\mathcal{L}^2(\Omega_{fluid}^0)$.
+\only<1>{%
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/sol_1_sur8cer_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/sol_2_sur8cer_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/sol_3_sur8cer_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/sol_4_sur8cer_un_ray.png}%
+\\
+\hline
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/sol_5_sur8cer_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/sol_6_sur8cer_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/sol_7_sur8cer_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/sol_8_sur8cer_un_ray.png}%
+\\
+\hline
+\end{tabular}
+\end{center}
+}
+%
+\only<2->{%
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/snap_1_sur8cer_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/snap_2_sur8cer_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/snap_3_sur8cer_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/snap_4_sur8cer_un_ray.png}%
+\\
+\hline
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/snap_5_sur8cer_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/snap_6_sur8cer_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/snap_7_sur8cer_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/snap_8_sur8cer_un_ray.png}%
+\\
+\hline
+\end{tabular}
+\end{center}
+}
+%
 \end{block}
 %
 \begin{block}{Step 3 : POD on $\mathcal{L}^2(\Omega_f^0)$}<+->
 \begin{itemize}
 \item<+-> Compute the $(\lambda_i,\phi_i)_{i=1}^{N_{snap}}$ using matrix $\mathcal{C}$ ;%and linear algebra ;
+%
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/phi_1_cer_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/phi_2_cer_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/phi_3_cer_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures3D/phi_4_cer_un_ray.png}%
+\\
+\hline
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/phi_5_cer_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/phi_6_cer_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/phi_7_cer_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/phi_8_cer_un_ray.png}%
+\\
+\hline
+\end{tabular}
+\end{center}
+%
 %\item<+-> Compute $(\phi_i)_{i=1}^{N_{snap}}$ using the $a_i$ ;
 \item<+-> Choose the number of modes $N_{rom}$ to be kept.%to keep for a reduced order model.
 \end{itemize}

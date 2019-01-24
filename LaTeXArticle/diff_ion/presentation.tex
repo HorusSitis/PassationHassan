@@ -110,15 +110,14 @@ Bourbatache, PhD thesis, chapter 2.
 \end{block}
 %
 \begin{block}{$D_k^{hom}$ and the microstructure}<+->% : the $\chi$ vector field}<+->
-\begin{itemize}
-\item<+-> \[D_k^{hom}:=\int\limits_{\Omega_f}\left(I+\derp{\chi}{\mathbf{y}}^T\right)\text{d}\Omega\]
-\item<+-> We focus on this problem in this work.
-\end{itemize}
+%\item<+-> 
+\[D_k^{hom}:=\int\limits_{\Omega_f}\left(I+\derp{\chi}{\mathbf{y}}^T\right)\text{d}\Omega\]
 \end{block}
 %
 \begin{block}{Vector $\chi$ : local problem}<+->
+\vspace{-0.3cm}
 %\begin{itemize}
-%\item<+-> For avery $\rho$, $\chi(\mathbf{y},\rho)$ satisfies :
+%\item<+-> %
 \[%
 \left\{%
 \begin{array}{llccr}
@@ -127,9 +126,10 @@ Bourbatache, PhD thesis, chapter 2.
 \end{array}
 \right.
 \]
-%\item<+-> %General solution $\chi(\mathbf{y},\rho)$, 
-%$\rho$ can be the porosity ;
-%\item<+-> $\Omega_f$ and $\Gamma{sf}$ depend on $\rho$.
+
+%\item<+-> 
+%\pause
+We focus on this problem in this work.
 %\end{itemize}
 \end{block}
 %
@@ -167,7 +167,7 @@ mean and variance for two sorts of inclusions.}
 %
 \end{block}
 %
-\begin{block}{The expensive computing $D^{hom}(\rho^1,\dots ,\rho^N)$}<+->
+\begin{block}{The expensive computing of $D^{hom}(\rho^1,\dots ,\rho^N)$}<+->
 %
 \begin{tabular}{|c|c|c|}
 \hline
@@ -185,7 +185,7 @@ $(\overline{\rho^1},\dots ,\overline{\rho^N})$%
 
 \begin{description}
 \item<+-> [Training] Learn $D^{hom}$ on $(\hat{\rho^1},\dots ,\hat{\rho^N})$ and $(\tilde{\rho^1},\dots ,\tilde{\rho^N})$
-\item<+-> [ROM] Derive $D^{hom}(\overline{\rho^1},\dots ,\overline{\rho^N})$.
+\item<+-> [ROM] Quickly derive $D^{hom}(\overline{\rho^1},\dots ,\overline{\rho^N})$.
 \end{description}
 %
 \par
