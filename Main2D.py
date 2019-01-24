@@ -62,7 +62,7 @@ res_fixe=20
 res=20
 
 fixe_aff=False
-fig_todo='aff'
+fig_todo='save'
 
 ### ------------ Etape 0 : Génération de microstructures périodiques aléatoires ------------ ###
 
@@ -75,25 +75,38 @@ if E_ :
 
 # choix du type de maillage
 
-typ_msh='gms'#''
+typ_msh='gms'#'gms'#''
+print(typ_msh)
+
+# nom de l'appareil utilisé pour générer les données enregistrées
+computer='MECALAC_29x8'#'T1700_35x8'###
+
+
+
+repertoire_parent="Res2D/"
 
 ### ------------ Exécution des étapes demandées en préambule, imports spécifiques ------------ ###
 
-repertoire_parent="Res2D/"
+
 from LEc import *
 
 D_k=1.0
 Nsnap=8
 npas_err=20
+ordo='Ordr'#'Nordr'
 
-gen_snap='seq'#'par8'#'seq'
+gen_snap='par8'#'seq'
 
 # Choix du paramètre géométrique
 
 ## Cas d'un disque unique
-config='cercle unique'
+config='cer_un'
+if config=='cer_un':
+ conf_mess='disque unique'
 
-geo_p='rayon'
+geo_p='ray'
+if geo_p=='ray':
+ geo_mess='rayon variable'
 cen_snap_ray=[0.5,0.5]#[0.,0.]#
 
 #geo_p='centre'
@@ -120,10 +133,16 @@ if E_lL :
 
 ## ---------- Etape I, mêmes paramètres que pour 1demi ---------- ##
 
+# Exécution
+
+snap_done=True#-------------------> pour calculer les snapshots seulement si nécessaire
+
 if EI :
  exec(open("DD_EI.py").read())
 
 ## ---------- Etape II ---------- ##
+
+exsnap_done=True
 
 if EII :
  exec(open("DD_EII.py").read())
