@@ -2,28 +2,6 @@
 ## Etape III : en utilisant la méthode des snapshots, calcul de la POD et des coefficients aléatoires, toujours dans domaine_fixe ##
 ####################################################################################################################################
 
-#mesh_fixe = Mesh("Solutions_homog_interp_circulaire/mesh_circulaire.xml.gz")
-
-
-
-# Domaine d'interpolation et matrice des snapshots
-
-c_x=0.5
-c_y=0.5
-
-res=25
-
-Nsnap=8
-
-tol=1e-10
-
-xinf=0.0
-yinf=0.0
-xsup=1.0
-ysup=1.0
-
-#determiner le domaine fixe pour interpoler la solution
-
 dimension=2
 
 class PeriodicBoundary(SubDomain):
@@ -38,62 +16,22 @@ class PeriodicBoundary(SubDomain):
    else:
     y[i]=x[i]
 
-mesh_fixe=Mesh("maillages_per/2D/maillage_0001_fixe2d"+".xml")
-V_fixe=VectorFunctionSpace(mesh_fixe, "P", 2, constrained_domain=PeriodicBoundary())
+#mesh_fixe=Mesh("maillages_per/2D/maillage_0001_fixe2d"+".xml")
+mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2d.xml")
+V_fixe=VectorFunctionSpace(mesh_fixe, "P", 3, constrained_domain=PeriodicBoundary())
 nb_noeuds = V_fixe.dim()
 
 
+## Chargement de la marice des snapshots
 
+u_name='Usnap_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
 
-
-Usnap=np.zeros((nb_noeuds,Nsnap))
-
-def inter_snap_ray(n):
- r=n*0.05
- # Cliché sur le domaine avec inclusion
- u=snapshot_circ_per([c_x,c_y],r,res)
- # Extrapolation du cliché : khi prime
- u.set_allow_extrapolation(True)
- u_fixe=interpolate(u,V_fixe)
- # Forme vectorielle de la solution EF
- u_fixe_v=u_fixe.vector().get_local()
- return([n,u_fixe_v])#[n,u_fixe])
-
-# Génération séquentielle des snapshots
-
-if gen_snap=='seq':
- for n in range(1,1+Nsnap):
-  u_fixe_v=inter_snap_ray(n)[1]
-  # Remplissage de la matrice des snapshots
-  Usnap[:,n-1]=u_fixe_v#.vector().get_local()
-
-## UsnapSeq=Usnap
-sys.exit()#----------------------------------------------------------------------
-# Génération parallèle des snapshots
-
-if gen_snap=='par8':
- pool=multiprocessing.Pool(processes=8)
- #
- Uf_par=pool.map(inter_snap_ray,(n for n in range(1,1+Nsnap)))
- #
- for n in range(1,1+Nsnap):
-  for i in range(0,Nsnap):
-   if Uf_par[i][0]==n:
-    u_fixe_v=Uf_par[i][1]
-    Usnap[:,n-1]=u_fixe_v#.vector().get_local()
-
-## UsnapPar=Usnap
-
-# Représentation graphique des snapshots
-
-
+with sh.open(repertoire_parent+u_name) as u_loa:
+ Usnap = u_loa["maliste"]
 
 # matrice de corrélation
 
-## Usnap=UsnapSeq
-## Usnap=UsnapPar
-
-C=pod.mat_corr_temp(V_fixe,Nsnap,Usnap)
+C=mat_corr_temp(V_fixe,Nsnap,Usnap)
 
 # Calcul des coefficients aléatoires et la base POD
 
@@ -141,9 +79,14 @@ for i in range(Nsnap):
 phi=Function(V_fixe)
 for i in range(Nsnap):
  phi.vector().set_local(Phi_prime_v[:,i])
- plot(phi)
- plt.show()
+ plot(phi, linewidth=0.08)
+ if fig_todo=='aff':
+  plt.show()
+ else:
+  plt.savefig("Figures2D/phi_"+str(i+1)+"_"+config+'_'+geo_p+".png")
  plt.close()
+
+
 
 # Energie et énergie cumulée des modes spatiaux, choix du nombre de modes
 

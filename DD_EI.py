@@ -139,6 +139,8 @@ else :
   list_chi_v = l_loa["maliste"]
 
 # --------------------------------------------------------------------------------- #
+mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2d.xml")
+V_fixe=VectorFunctionSpace(mesh_fixe, 'P', 3, constrained_domain=PeriodicBoundary())
 
 for n in range(1,1+Nsnap):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon d'un cercle doit être non nul
  # Extraction du snapshot de rang n
@@ -157,8 +159,8 @@ for n in range(1,1+Nsnap):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon
  V_n=VectorFunctionSpace(mesh, 'P', 3, constrained_domain=PeriodicBoundary())
  # On restitue la forme fonctionnelle du snapshot courant
  chi_n=Function(V_n)
- print(V_n.dim())
- print(len(chi_n_v))
+ #print(V_n.dim())
+ #print(len(chi_n_v))
  chi_n.vector().set_local(chi_n_v)
  # Figures et erreurs
  plot(chi_n)

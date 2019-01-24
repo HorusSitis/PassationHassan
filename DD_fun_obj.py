@@ -86,6 +86,7 @@ def snapshot_circ_per(cen,r,res):
  # On pose et on résoud le problème aux éléments finis
  V=VectorFunctionSpace(mesh_c_r, 'P', 3, form_degree=0, constrained_domain=PeriodicBoundary())#vertices))
  print(V.dim(),str(int(round(20*r,2))))
+ print("maillages_per/2D/maillage_trou2d_"+str(int(round(100*r,2)))+".xml")
  ## On définit la bordure du domaine, sur laquelle intégrer le second membre "L" de l'équation en dimension finie
  l_cen=[]
  #cen=[c_x,c_y]
