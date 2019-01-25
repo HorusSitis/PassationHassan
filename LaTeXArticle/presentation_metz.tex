@@ -1,15 +1,13 @@
-\documentclass%[handout]%
+\documentclass[handout]%
 {beamer}
 
 \usepackage[utf8]{inputenc}
 \usepackage{default}
 
-\def\Lang{En}%{Fr}
-%\usepackage[english,french]{babel}
-%\selectlanguage{english}
-
 \input{../../preambules_latex/%
 presentations.tex}
+
+%\includeonly{diff_ion/presentation}
 
 
 \usebackgroundtemplate{%
@@ -19,30 +17,32 @@ presentations.tex}
 
 
 \title{A Reduced Order Model for Diffusion in Porous Media}
-\author{Olivier Millet, Cyrille Allery and Antoine Moreau}
+\author{Antoine Moreau, Olivier Millet and Cyrille Allery}
 \institute{LaSIE, Universit\'e de La Rochelle}
 \date{GDRI-GeoMech 2019}
 
 \begin{document}
 
-%\lversion{\selectlanguage{french}}{\selectlanguage{english}}
-\selectlanguage{english}
+%\selectlanguage{english}
 
 \maketitle
 
 
-\section{A Multiscale structure}
-\input{exp_var/presentation.tex}
+%\section{A Multiscale structure}
+%\input{exp_var/presentation.tex}
+\include{exp_var/presentation}
 
-\section{Ionic diffusion in cementarious media}
-\input{diff_ion/presentation.tex}
+%\section{Ionic diffusion in cementarious media}
+%\input{diff_ion/presentation.tex}
+\include{diff_ion/presentation}
 
-\section{Reduced Order Models}
-\input{red_mod/presentation.tex}
+%\section{Reduced Order Models}
+%\input{red_mod/presentation.tex}
+\include{red_mod/presentation}
 
-\section{Results and discussion}
-\input{res_disc/presentation.tex}
-
+%\section{Results and discussion}
+%\input{res_disc/presentation.tex}
+\include{res_disc/presentation}
 
 
 
