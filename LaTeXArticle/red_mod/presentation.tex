@@ -1,35 +1,31 @@
-%\section{Reduced Order Models}
+\section{Reduced Order Models}
+
+\subsection{Definition}
 
 \begin{frame}{Proper Orthogonal Decomposition}
 %
 \begin{block}{Motivation}<+->
 %
 \begin{itemize}
-\item<+-> We want to compute a function of $\mathbf{x}$ : $w(\mathbf{x},\tau)$, which lie in an Hilbert space $H$ \dots
-\item<+-> \dots depending on a real parameter $\tau$ : time, porosity etc.
+\item<+-> Compute a family of functions $w(\mathbf{x},\tau)$, depending of a parameter $\tau$
+\item<+-> Each function $\mathbf{x}\mapsto w(\mathbf{x},\tau )$ lies in the same Hilbert space $H$.
 %\item<+-> $w(\cdot ,\tau)$ lies in an Hilbert space $H$ for each $\tau$
 \end{itemize}
 %
 \end{block}
 %
-\begin{block}{POD : definition}<+->
+\begin{block}{What we want}<+->
 \begin{itemize}
-\item %<+-> 
-$w(\mathbf{x},\tau)=\sum\limits_{i=1}^{N_{POD}} a_i(\tau)\phi_i(\mathbf{x})$ for every $\tau$ ;
-\item %<+-> 
-$(\phi_i)_{i=1}^{N_{POD}}$ \emph{alias} $\Phi$ is an orthogonal family in $H$.
-%\item<+-> The functions $a_i$ need to be computated.
+\item<+-> $\displaystyle w(\mathbf{x},\tau)\simeq \sum\limits_{i=1}^{N_{rom}}a_i(\tau)\phi_i(\mathbf{x})$
+\item<+-> $N_{rom}$ must be small.
 \end{itemize}
 \end{block}
 %
-\begin{block}{Computation of $\Phi$}<+->
+\begin{block}{Properties of the spatial modes}<+->
 \begin{description}
-\item %<+-> 
-[Data :] We know the $w(\mathbf{x},\tau_j)$ for $\tau$ in a finite set $\{\tau_j\}$ ;
-\item %<+-> 
-[Optimality of $\Phi$] $\phi_l= \arg\max\limits_{\phi_j\in H}\left\langle\left(\phi_j\left|\sum\limits_{k=1}^{l-1}\left(w|\phi_k\right)_H\phi_k\right.\right)_H\right\rangle$% ;
-\item %<+-> 
-[Fredholm equation] $\int\limits_{\Omega}R(\mathbf{x},\mathbf{x'})\phi_j (\mathbf{x})\text{d}\mathbf{x'}=\lambda_j \phi_j (x)$.
+\item<+-> [Orthogonality] $(\phi_i)$ is an orthogonal family in $H$
+\item<+-> [Optimality of $(\phi_i)$] %
+$\phi_l= \arg\max\limits_{\phi\in H}\left\langle\left(\phi\left|\sum\limits_{k=1}^{l-1}\left(w|\phi_k\right)_H\phi_k\right.\right)_H\right\rangle$%
 \end{description}
 \end{block}
 %
@@ -39,137 +35,148 @@ $(\phi_i)_{i=1}^{N_{POD}}$ \emph{alias} $\Phi$ is an orthogonal family in $H$.
 %
 \begin{block}{}<+->
 \begin{itemize}
-\item<+-> We have a sample $w(\mathbf{x},\tau_j)_{j=1}^{N_{snap}}$ of spatial functions, called \emph{snapshots} \dots
-\item<+-> \dots coming from experiments or numerical simulations.
-\item<+-> We write : %$\phi_i(\mathbf{x})=\sum\limits_{j=1}^{N_{\tau}}\alpha_i(\tau_j) w(\mathbf{x},\tau_j)$.
-$\phi_i(\mathbf{x})=\sum\limits_{j=1}^{N_{snap}}a_i(\tau_j) w(\mathbf{x},\tau_j)$
+\item<+-> We have a sample $w(\mathbf{x},\tau^j)_{j=1}^{N_{snap}}$ of spatial functions, called \emph{snapshots}
+\item<+-> They come from experimentation or numerical simulation
+\item<+-> We write : $\phi_i(\mathbf{x})=\sum\limits_{j=1}^{N_{snap}}A_i(\tau^j) w(\mathbf{x},\tau^j)$
 \end{itemize}
 \end{block}
 %
-\begin{block}{}<+->%The new POD problem}<+->%Fredholm equation}<+->
+\begin{block}{Computing $(A_i)$}<+->%The new POD problem}<+->%Fredholm equation}<+->
+%
 \begin{description}
-\item %<+-> 
-[Fredholm equation]
-\[%
-%\begin{split}&
-\iint\alpha_i(\tau)C(\tau,\tau')w(\mathbf{x},\tau ')\text{d}\tau'\text{d}\tau%\\%
-%=&
-=\lambda_i\int\alpha_i(\tau')w(\mathbf{x},\tau')\text{d}\tau'%
-%\end{split}%
-\]
-\item %<+-> 
-[Time-correlation tensor] $C(\tau,\tau ')=\dfrac{1}{N_{\tau}}\int\limits_{\Omega} w(\mathbf{x},\tau)w(\mathbf{x},\tau')\text{d}\mathbf{x}$
-\item %<+-> 
-[Eigenvalue problem] %$\mathcal{C}_{\tau,\tau'}\alpha_i(\tau)=\lambda_i\alpha_i(\tau)$
-$\mathcal{C}_{\tau,\tau'}a_i(\tau)=\lambda_i a_i(\tau)$
-%\item<+-> [POD] $\alpha_i$ are the $a_i$ in POD.
+\item<+-> [Eigenvalue problem] $C_{\tau,\tau'}A_i(\tau)=\lambda_i A_i(\tau)$
+\item<+-> [Time-correlation tensor] $C(\tau,\tau ')=\dfrac{1}{N_{\tau}}\int\limits_{\Omega} w(\mathbf{x},\tau)w(\mathbf{x},\tau')\text{d}\mathbf{x}$
+\item<+-> $C$ is a $N_{snap}\times N_{snap}-$ symmetric positive matrix.
 \end{description}
+%
 \end{block}
 %
 \end{frame}
 
-\begin{frame}{Reduced Order Model : the general case}
+\begin{frame}{Reduced basis}
 %
-\begin{block}{Reduced basis}<+->
+\begin{block}{}<+->
 \begin{itemize}
 \item<+-> We are given a POD basis $(\phi_i)_{i=1}^{N_{snap}}$ with a set $\lambda_i$ of associated eigenvalues ;
-%\item<+-> $N_{POD}$ is the number of snapshots when we use the so-called mehtod ;
 \item<+-> We choose the first $N_{rom}$ vectors of $\Phi$ so that : %
 $\dfrac{Ener_{N_{rom}}}{Ener_{N_{snap}}}\text{ \textit{id.est} }\dfrac{\sum\limits_{k=1}^{N_{rom}}\lambda_k}{\sum\limits_{k=1}^{N_{snap}}\lambda_k} >99,9\dots \%$ ;
-\item<+-> $N_{rom}$ must be small.
+\item<+-> In practical cases, $N_{rom}$ is small.
 \end{itemize}
 \end{block}
 %
 \end{frame}
 
-\begin{frame}{Reduced Order Model : problem solving}
+\begin{frame}{Reduced Order Model : for a parameter $\tau^{new}$}
 \begin{block}{Galerkin projection}<+->
 %
 \begin{description}
 \item<+-> [For a given problem] $\mathcal{A}^{\mathbf{x},\tau}\left(w(\mathbf{x},\tau)\right)=f(\mathbf{x},\tau)$
-\item<+-> [Decomposition] $w(\mathbf{x},\tau)=\sum\limits_{i=1}^N a_i(\tau)\phi_i(\mathbf{x})$ ;% +\mathcal{R}_{N_{rom}}(\mathbf{x},\tau)$ , with $\mathcal{R}_{N_{rom}}$ orthogonal to $(\phi_i)_{i=1}^{N_{rom}}$ ;
-\item<+-> [The problem in $a_k$] %
+\item<+-> [ROM] $w(\mathbf{x},\tau^{new})\simeq\sum\limits_{i=1}^{N_{rom}} a_i(\tau^{new})\phi_i(\mathbf{x})$
+\item<+-> [The problem in $a_k(\tau^{new})$ : projection on $\phi_i$] %
 \[%
 \begin{split}
-\left(\left.\mathcal{A}\left(\sum\limits_{k=1}^{N_{rom}} a_k(\tau)\phi_k(\mathbf{x})\right) \right|\phi_i\left(\mathbf{x}\right)\right)_H %
-&= \left(f\left(\mathbf{x},\tau\right)|\phi_i(\mathbf{x})\right)_H\\%
-&+\mathcal{R}_{N_{rom}}(\mathbf{x},\tau)
+\left\langle\left.\mathcal{A}\left(\sum\limits_{k=1}^{N_{rom}} a_k(\tau^{new})\phi_k(\mathbf{x})\right) \right|\phi_i\left(\mathbf{x}\right)\right\rangle_H =& %
+\left\langle\left(\mathbf{x},\tau^{new}\right)|\phi_i(\mathbf{x})\right\rangle_H\\%
+%
+&+\left\langle\left.\mathcal{R}_{N_{rom}}(\mathbf{x},\tau^{new})\right|\phi_i\right\rangle_H
 \end{split}
 \]
-\item<+-> [\dots] which is easier to resolve than the original problem.
+\item<+-> [Remainder term] $\mathcal{R}_{N_{rom}}(\mathbf{x},\tau^{new})$ is orthogonal to $\phi_i$
 \end{description}
+%\visible<4->{
+%\[%
+%\left(\left.\mathcal{A}\left(\sum\limits_{k=1}^{N_{rom}} a_k(\tau^{new})\phi_k(\mathbf{x})\right) \right|\phi_i\left(\mathbf{x}\right)\right)_H = %
+%\left(f\left(\mathbf{x},\tau^{new}\right)|\phi_i(\mathbf{x})\right)_H+\mathcal{R}_{N_{rom}}(\mathbf{x},\tau^{new})
+%\]
+%}
 %
 \end{block}
 %
 \end{frame}
 
-\begin{frame}{ROM for periodic homogenization}
-%
-\begin{block}{Step 1 : generation of a sample $\chi(\mathbf{y},\mathbf{\rho}_j)$ of solutions}<+->
-%\begin{itemize}
-%\item<+-> 
-Solve with FEM the system with variable $\mathbf{y}$ :
-\[%
-\begin{split}
-&\int\limits_{\Omega_f(\rho)}Tr\left(\left(grad_y\chi(\mathbf{y},\rho))\right)^T\cdot grad_y v(\mathbf{y})\right)\text{d}\Omega\\
-=&-\int\limits_{\Gamma{sf}(\rho)}n_{sf}\cdot v(\mathbf{y})\text{d}s%
-\end{split}
-\]
-%\[\int\limits_{\Omega_f(\rho)}Tr\left(\left(grad_y\chi(\mathbf{y},\rho))\right)^T\cdot grad_y v(\mathbf{y})\right)\text{d}\Omega=-\int\limits_{\Gamma{sf}(\rho)}n_{sf}\cdot v(\mathbf{y})\text{d}s\]
-%for $v$ in the space of test functions.
-\vspace{0.3cm}
+\subsection{ROM for periodic homogenization}
 
-\pause
-%\item<+-> 
-\begin{tabular}{|c|c|c|}
+\begin{frame}%{ROM for periodic homogenization}
+%
+\begin{block}{Step 1 : compute a sample $\chi(\mathbf{y},\mathbf{\rho}^j)$ of vector fields}%<+->
+%
+\only<1>{%
+\[%
+\left\{%
+\begin{array}{llccr}
+\text{Fluid domain :}&Div_y \left( \dfrac{\partial{\chi}}{\partial{y}}^T\right) &=& 0&\text{ on }\Omega_f(\rho^j) \\
+\text{Solid-fluid interface :}&\dfrac{\partial{\chi}}{\partial{y}} \cdot n_{sf}&=&-n_{sf}&\text{ on }\Gamma_{sf}(\rho^j)
+\end{array}
+\right.
+\]
+}
+\only<2->{%
+Weak formulation :
+\[%
+\int\limits_{\Omega_f(\rho^j)}Tr\left(\left(grad_y\chi(\mathbf{y},\rho^j))\right)^T\cdot grad_y v(\mathbf{y})\right)\text{d}\Omega%
+-\int\limits_{\Gamma{sf}(\rho^j)}n_{sf}\cdot v(\mathbf{y})\text{d}s=0%
+\]
+We use Finite Element Method
+
+%\par
+}
+%
+\begin{center}
+\begin{tabular}{|c|c|}%c|}
 \hline
-\includegraphics[width=0.27\linewidth, height=1.9cm]{../Figures2D/meb_cem_1.png}&%
-\includegraphics[width=0.27\linewidth, height=1.9cm]{../Figures2D/meb_cem_2.png}&%
-\includegraphics[width=0.27\linewidth, height=1.9cm]{../Figures2D/meb_cem_3.png}%
+\visible<1-2>{\includegraphics[width=0.4\linewidth, height=2.9cm]{../Figures2D/meb_cem_1.png}}%
+&%
+\visible<1-2>{\includegraphics[width=0.4\linewidth, height=2.9cm]{../Figures2D/meb_cem_2.png}}%
+%&%
+%\visible<1->{\includegraphics[width=0.27\linewidth, height=1.9cm]{../Figures2D/meb_cem_3.png}}%
 \\
 \hline
-$(\hat{\rho^1},\dots ,\hat{\rho^N})$&%
-$(\tilde{\rho^1},\dots ,\tilde{\rho^N})$&%
-$(\overline{\rho^1},\dots ,\overline{\rho^N})$%
+\visible<1-2>{$(\rho_1^1 ,\rho_2^1, \dots ,\rho_{N_{par}}^1)$}%
+&%
+\visible<1-2>{$(\rho_1^2 ,\rho_2^2, \dots ,\rho_{N_{par}}^2)$}%
+%&%
+%\visible<1->{$(\rho_1^{new} ,\rho_2^{new}, \dots ,\rho_{N_{par}}^{new})$}%
 \\
 \hline
 \end{tabular}
+\end{center}
 
-\medskip
-for each set of parameters $(\rho_j^1,\dots ,\rho_j^N)_{j\in\{1,N_{snap}\}}$.%value of the parameter $\rho$.
-%\visible<2->{%
-%\includegraphics[width=0.8\linewidth, height=2.5cm]{../Figures2D/meb_cem.png}}
-%\end{itemize}
+%\smallskip
+\only<1-2>{\footnotesize{for each multi-parameter $(\rho_1^j,\dots ,\rho_{N_{par}}^j)$, $j=1 , 2\dots$ of the training sample.}}
+%\only<3->{}
 %
 \end{block}
 %
 \end{frame}
 
-\begin{frame}{POD}
+\begin{frame}%{POD}
 %
 \begin{block}{Step 2 : a common function space for snapshots}
-Interpolate the solutions $\chi(\mathbf{y},\rho_j)$ onto a single space $\Omega_{fluid}^0$.%, %
+\begin{itemize}
+\item<+-> The solutions $\chi(\mathbf{y},\rho^j)$ do not lie in the same space
+\item<+-> We must interpolate them on a single space $\Omega_{fluid}^0$
+\end{itemize}
 %so that we have a family of snapshots belonging to the \emph{same} functional space $H:\mathcal{L}^2(\Omega_{fluid}^0)$.
 \only<1>{%
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
-\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/sol_1_sur8cer_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=1.6cm]{../Figures2D/sol_1_sur8cer_un_ray.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/sol_2_sur8cer_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=1.6cm]{../Figures2D/sol_2_sur8cer_un_ray.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/sol_3_sur8cer_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=1.6cm]{../Figures2D/sol_3_sur8cer_un_ray.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/sol_4_sur8cer_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=1.6cm]{../Figures2D/sol_4_sur8cer_un_ray.png}%
 \\
 \hline
-\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/sol_5_sur8cer_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=1.6cm]{../Figures2D/sol_5_sur8cer_un_ray.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/sol_6_sur8cer_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=1.6cm]{../Figures2D/sol_6_sur8cer_un_ray.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/sol_7_sur8cer_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=1.6cm]{../Figures2D/sol_7_sur8cer_un_ray.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/sol_8_sur8cer_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=1.6cm]{../Figures2D/sol_8_sur8cer_un_ray.png}%
 \\
 \hline
 \end{tabular}
@@ -180,57 +187,58 @@ Interpolate the solutions $\chi(\mathbf{y},\rho_j)$ onto a single space $\Omega_
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
-\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/snap_1_sur8cer_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=1.6cm]{../Figures2D/snap_1_sur8cer_un_ray.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/snap_2_sur8cer_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=1.6cm]{../Figures2D/snap_2_sur8cer_un_ray.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/snap_3_sur8cer_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=1.6cm]{../Figures2D/snap_3_sur8cer_un_ray.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/snap_4_sur8cer_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=1.6cm]{../Figures2D/snap_4_sur8cer_un_ray.png}%
 \\
 \hline
-\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/snap_5_sur8cer_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=1.6cm]{../Figures2D/snap_5_sur8cer_un_ray.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/snap_6_sur8cer_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=1.6cm]{../Figures2D/snap_6_sur8cer_un_ray.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/snap_7_sur8cer_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=1.6cm]{../Figures2D/snap_7_sur8cer_un_ray.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/snap_8_sur8cer_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=1.6cm]{../Figures2D/snap_8_sur8cer_un_ray.png}%
 \\
 \hline
 \end{tabular}
 \end{center}
 }
 %
+\footnotesize{Here $\rho^j$ is a single real parameter : the radius of a disc, $j=1 \dots 8$.}
 \end{block}
 %
-\begin{block}{Step 3 : POD on $\mathcal{L}^2(\Omega_f^0)$}<+->
+\begin{block}{Step 3 : POD on $\mathcal{L}^2(\Omega_{fluid}^0)$}<3->
 \begin{itemize}
 \item<+-> Compute the $(\lambda_i,\phi_i)_{i=1}^{N_{snap}}$ using matrix $\mathcal{C}$ ;%and linear algebra ;
 %
-\begin{center}
-\begin{tabular}{|c|c|c|c|}
-\hline
-\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/phi_1_cer_un_ray.png}%
-&%
-\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/phi_2_cer_un_ray.png}%
-&%
-\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/phi_3_cer_un_ray.png}%
-&%
-\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures3D/phi_4_cer_un_ray.png}%
-\\
-\hline
-\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/phi_5_cer_un_ray.png}%
-&%
-\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/phi_6_cer_un_ray.png}%
-&%
-\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/phi_7_cer_un_ray.png}%
-&%
-\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/phi_8_cer_un_ray.png}%
-\\
-\hline
-\end{tabular}
-\end{center}
+%\begin{center}
+%\begin{tabular}{|c|c|c|c|}
+%\hline
+%\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/phi_1_cer_un_ray.png}%
+%&%
+%\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/phi_2_cer_un_ray.png}%
+%&%
+%\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/phi_3_cer_un_ray.png}%
+%&%
+%\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures3D/phi_4_cer_un_ray.png}%
+%\\
+%\hline
+%\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/phi_5_cer_un_ray.png}%
+%&%
+%\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/phi_6_cer_un_ray.png}%
+%&%
+%\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/phi_7_cer_un_ray.png}%
+%&%
+%\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/phi_8_cer_un_ray.png}%
+%\\
+%\hline
+%\end{tabular}
+%\end{center}
 %
 %\item<+-> Compute $(\phi_i)_{i=1}^{N_{snap}}$ using the $a_i$ ;
 \item<+-> Choose the number of modes $N_{rom}$ to be kept.%to keep for a reduced order model.
@@ -239,24 +247,31 @@ Interpolate the solutions $\chi(\mathbf{y},\rho_j)$ onto a single space $\Omega_
 %
 \end{frame}
 
-\begin{frame}{The algorithm we use : inline}
+\begin{frame}%{The algorithm we use : inline}
 %
 \begin{block}{Step 4 : set a parameter $\rho^{new}$}<+->
 \begin{itemize}
-\item<+-> Project the $\phi_i$ POD vectors on the new fluid domain $\Omega_f$ ;
+\item<+-> Project the $\phi_i$ POD vectors on the new fluid domain $\Omega_f$
 \item<+-> We obtain $N_{rom}$ spatial modes $\phi_i^{new}$.
-\item<+-> Resolve the $N_{rom}\times N_{rom}-$linear problem in $a_k(\rho^{new})$ :
+\item<+-> Resolve the $N_{rom}\times N_{rom}-$linear problem to compute $a_k(\rho^{new})$ :
 \end{itemize}
-\visible<3->{
-\[%
-\begin{split}
-\sum\limits_{k=1}^{N_{rom}} a_k(\rho^{new})&\int\limits_{\Omega}Tr\left(\langle grad_y\phi_k^{new} \left(\mathbf{y},\rho\right)|grad_y\left(\phi_i^{new}(\mathbf{y}\right)\rangle\right)\text{d}\Omega\\%
-=-&\int\limits_{\Gamma_{sf}}\langle n_{sf}|\phi_i^{new}(\mathbf{y})\rangle \text{d}s
-\end{split}
-\]
+\visible<4->{
+%\[%
+%\begin{split}
+%\sum\limits_{k=1}^{N_{rom}} a_k(\rho^{new})&\int\limits_{\Omega}Tr\left(\langle grad_y\phi_k^{new} \left(\mathbf{y},\rho\right)|grad_y\left(\phi_i^{new}(\mathbf{y}\right)\rangle\right)\text{d}\Omega\\%
+%=-&\int\limits_{\Gamma_{sf}}\langle n_{sf}|\phi_i^{new}(\mathbf{y})\rangle \text{d}s
+%\end{split}
+%\]
+\(
+\sum\limits_{k=1}^{N_{rom}} a_k(\rho^{new})%
+\int\limits_{\Omega}%
+Tr\left(\langle grad_{\mathbf{y}}\phi_k^{new}|grad_{\mathbf{y}}\phi_i^{new}\rangle\right)%
+\text{d}\Omega~=%
+-\int\limits_{\Gamma_{sf}}\langle n_{sf}|\phi_i^{new}(\mathbf{y})\rangle \text{d}s
+\)
 }
 \begin{itemize}
-\item<+-> Compute $\chi(\mathbf{y},\rho^{new})$ : $\chi\left(\mathbf{y},\rho^{new}\right)\simeq \sum\limits_{i=1}^{N_{rom}} a_i \left(\rho^{new}\right)\phi_i^{new}(\mathbf{y})$
+\item<+-> Deduce $\chi(\mathbf{y},\rho^{new})$ : $\chi\left(\mathbf{y},\rho^{new}\right)\simeq \sum\limits_{i=1}^{N_{rom}} a_i \left(\rho^{new}\right)\phi_i^{new}(\mathbf{y})$
 \end{itemize}
 \end{block}
 %
