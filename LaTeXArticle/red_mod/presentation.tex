@@ -45,7 +45,7 @@ $\phi_l= \arg\max\limits_{\phi\in H}\left\langle\left(\phi\left|\sum\limits_{k=1
 %
 \begin{description}
 \item<+-> [Eigenvalue problem] $C_{\tau,\tau'}A_i(\tau)=\lambda_i A_i(\tau)$
-\item<+-> [Time-correlation tensor] $C(\tau,\tau ')=\dfrac{1}{N_{\tau}}\int\limits_{\Omega} w(\mathbf{x},\tau)w(\mathbf{x},\tau')\text{d}\mathbf{x}$
+\item<+-> [Time-correlation tensor] $C(\tau,\tau ')=\dfrac{1}{N_{snap}}\int\limits_{\Omega} w(\mathbf{x},\tau)w(\mathbf{x},\tau')\text{d}\mathbf{x}$
 \item<+-> $C$ is a $N_{snap}\times N_{snap}-$ symmetric positive matrix.
 \end{description}
 %
@@ -76,7 +76,7 @@ $\dfrac{Ener_{N_{rom}}}{Ener_{N_{snap}}}\text{ \textit{id.est} }\dfrac{\sum\limi
 \[%
 \begin{split}
 \left\langle\left.\mathcal{A}\left(\sum\limits_{k=1}^{N_{rom}} a_k(\tau^{new})\phi_k(\mathbf{x})\right) \right|\phi_i\left(\mathbf{x}\right)\right\rangle_H =& %
-\left\langle\left(\mathbf{x},\tau^{new}\right)|\phi_i(\mathbf{x})\right\rangle_H\\%
+\left\langle f \left(\mathbf{x},\tau^{new}\right)|\phi_i(\mathbf{x})\right\rangle_H\\%
 %
 &+\left\langle\left.\mathcal{R}_{N_{rom}}(\mathbf{x},\tau^{new})\right|\phi_i\right\rangle_H
 \end{split}
@@ -215,32 +215,6 @@ We use Finite Element Method
 \begin{block}{Step 3 : POD on $\mathcal{L}^2(\Omega_{fluid}^0)$}<3->
 \begin{itemize}
 \item<+-> Compute the $(\lambda_i,\phi_i)_{i=1}^{N_{snap}}$ using matrix $\mathcal{C}$ ;%and linear algebra ;
-%
-%\begin{center}
-%\begin{tabular}{|c|c|c|c|}
-%\hline
-%\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/phi_1_cer_un_ray.png}%
-%&%
-%\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/phi_2_cer_un_ray.png}%
-%&%
-%\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/phi_3_cer_un_ray.png}%
-%&%
-%\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures3D/phi_4_cer_un_ray.png}%
-%\\
-%\hline
-%\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/phi_5_cer_un_ray.png}%
-%&%
-%\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/phi_6_cer_un_ray.png}%
-%&%
-%\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/phi_7_cer_un_ray.png}%
-%&%
-%\includegraphics[width=0.2\linewidth, height=1.4cm]{../Figures2D/phi_8_cer_un_ray.png}%
-%\\
-%\hline
-%\end{tabular}
-%\end{center}
-%
-%\item<+-> Compute $(\phi_i)_{i=1}^{N_{snap}}$ using the $a_i$ ;
 \item<+-> Choose the number of modes $N_{rom}$ to be kept.%to keep for a reduced order model.
 \end{itemize}
 \end{block}
@@ -255,13 +229,7 @@ We use Finite Element Method
 \item<+-> We obtain $N_{rom}$ spatial modes $\phi_i^{new}$.
 \item<+-> Resolve the $N_{rom}\times N_{rom}-$linear problem to compute $a_k(\rho^{new})$ :
 \end{itemize}
-\visible<4->{
-%\[%
-%\begin{split}
-%\sum\limits_{k=1}^{N_{rom}} a_k(\rho^{new})&\int\limits_{\Omega}Tr\left(\langle grad_y\phi_k^{new} \left(\mathbf{y},\rho\right)|grad_y\left(\phi_i^{new}(\mathbf{y}\right)\rangle\right)\text{d}\Omega\\%
-%=-&\int\limits_{\Gamma_{sf}}\langle n_{sf}|\phi_i^{new}(\mathbf{y})\rangle \text{d}s
-%\end{split}
-%\]
+\visible<4->{%
 \(
 \sum\limits_{k=1}^{N_{rom}} a_k(\rho^{new})%
 \int\limits_{\Omega}%
@@ -273,6 +241,18 @@ Tr\left(\langle grad_{\mathbf{y}}\phi_k^{new}|grad_{\mathbf{y}}\phi_i^{new}\rang
 \begin{itemize}
 \item<+-> Deduce $\chi(\mathbf{y},\rho^{new})$ : $\chi\left(\mathbf{y},\rho^{new}\right)\simeq \sum\limits_{i=1}^{N_{rom}} a_i \left(\rho^{new}\right)\phi_i^{new}(\mathbf{y})$
 \end{itemize}
+
+\visible<+->{
+\begin{multicols}{2}
+\includegraphics[width=0.8\linewidth, height=1.8cm]{../Figures2D/HassanEFvsRO.png}
+
+\columnbreak
+$D^{hom}$ for a circular inclusion, $r=0.28$
+
+\par
+\footnotesize{Ghra\"ieb 2018}
+\end{multicols}
+}
 \end{block}
 %
 \end{frame}
