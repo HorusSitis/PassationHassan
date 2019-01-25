@@ -1,6 +1,6 @@
 \section{Results and discussion}
 
-\subsection{Spherical inclusion}
+%\subsection{Spherical inclusion}
 
 \begin{frame}{Snapshots with FEM}
 %
@@ -81,13 +81,15 @@
 \end{tabular}
 \end{center}
 
-\pause
-We choose $N_{rom}=4$, for a threshold of $99,99\%$.
+\begin{itemize}
+\item<+-> Cumulated energy $99,99\%$ : $N_{rom}=4$
+\item<+-> Cumulated energy $99,99\%$ : $N_{rom}=2$
+\end{itemize}
 \end{block}
-%
+
 \end{frame}
 
-\begin{frame}{Performances}
+\begin{frame}{Performances : $N_{snap}=4$}
 %
 \begin{block}{Results}
 %
@@ -127,48 +129,38 @@ $\rho^{new}$&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
 %
 \end{frame}
 
-\subsection{Cylinder inclusion}
-
-\begin{frame}%{ROM vs FEM}
+\begin{frame}{Performances : $N_{snap}=2$}
 %
-\begin{block}{Offline}<+->
-\begin{itemize}
-\item<+-> We compute $\chi(\mathbf{y},\rho_j)$ for $\rho_j$ in $0,05 \dots 0,40$ with FEM ;
-\item<+-> We set $N_{rom}=\dots$ for a threshold of $99,99\%$.
-%\item<+->
-\end{itemize}
-\end{block}
-%
-\begin{block}{Results}<+->
+\begin{block}{Results}
 %
 \begin{center}
 \begin{tabular}{|c|c||c|c||}%c|c||c|}
 \hline
 $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$\\%&$Err$&$\phi_i^{new}$&ROM&FEM\\
 \hline
-0,22&&&\\%&&&&\\
+0,22&0,9555&0,9357&0,9356\\%&&&&\\
 \hline
-0,33&&&\\%&&&&\\
+0,33&0,8494&0,7911&0,7910\\%&&&&\\
 \hline
-0,44&&&\\%&&&&\\
+0,44&0,6431&0,5406&0,5405\\%&&&&\\
 \hline
 \end{tabular}
 \end{center}
 %
 \end{block}
 %
-\begin{block}{ROM vs FEM}<+->
+\begin{block}{Accuracy and time}<+->
 %
 \begin{center}
-\begin{tabular}{|c|c||c|c||c|}%c|c||c|}
+\begin{tabular}{|c|c||c|c||c||c|}%c|c||c|}
 \hline
-$\rho^{new}$&$Err$&$\phi_i^{new}$&ROM&FEM\\
+$\rho^{new}$&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
 \hline
-0,22&&&&\\
+0,22&0,011\%&10s&$<$1s&75s&20724\\
 \hline
-0,33&&&&\\
+0,33&0,013\%&9s&$<$1s&60s&20544\\
 \hline
-0,44&&&&\\
+0,44&0,018\%&6s&$<$1s&30s&16953\\
 \hline
 \end{tabular}
 \end{center}
