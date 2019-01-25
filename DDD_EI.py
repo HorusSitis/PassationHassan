@@ -40,34 +40,6 @@ else:
 
 V_fixe=VectorFunctionSpace(mesh_fixe, "P", 2, constrained_domain=PeriodicBoundary())
 
-#if fig_todo=='aff':
-# #représentation graphique du maillage
-# plot(mesh_fixe)
-# plt.show()
-# plt.close()
-#else:
-# #sauvegarde de la figure
-# plot(mesh_fixe)
-# plt.savefig("Figures3D/mesh_fixe.png")
-# plt.close()
-
-
-
-
-#chi_s=snapshot_sph_per([0.5,0.5,0.5],0.25,res)
-#chi_c=snapshot_cyl_per([0.5,0.5],0.1,slices_cyl,res)
-#plot(chi_s)
-#if fig_todo=='aff':
-# plt.show()
-#plt.close()
-#plot(chi_c)
-#plt.show()
-#plt.close()
-
-##Snapshot unique, avec les maillages de Cyrille
-
-
-
 
 
 ## Boucle pour la création des snapshots, avec un paramètre pouvant être le rayon d'une inclusion circulaire, ou l'emplacement de son centre 
