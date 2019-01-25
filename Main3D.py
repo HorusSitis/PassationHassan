@@ -59,11 +59,11 @@ rempUsnap='par8'#'seq'
 #c_z=0.5
 #r=0.35#pour une réalisation unique
 npas_err=20
-fig_todo='aff'#'aff'
+fig_todo='save'#'aff'
 
 typ_msh='gms'#''
 ## choix du domaine fixe
-dom_fixe=''#'0001'
+dom_fixe='0001'#'0001'#'0001'
 
 # nom de l'appareil utilisé pour générer les données enregistrées
 computer='MECALAC_29x8'##'T1700_35x8'#
@@ -137,7 +137,7 @@ if EI :
 
 ## -------------------- Etape II -------------------- ##
 
-exsnap_done=False
+exsnap_done=True
 
 if EII :
  exec(open("DDD_EII.py").read())
@@ -157,7 +157,7 @@ N_mor=8#100%
 
 ## -------------------- Etape IV -------------------- ##
 
-N_mor=1
+N_mor=4
 
 r_nouv=0.22#0.33#0.44
 

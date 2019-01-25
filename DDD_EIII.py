@@ -2,6 +2,17 @@
 ## Etape III : en utilisant la méthode des snapshots, calcul de la POD et des coefficients aléatoires, toujours dans domaine_fixe ##
 ####################################################################################################################################
 
+### ------------ Reproduire éventuellement pour des étapes ultérieures. Laisser seulement dans DDD_fun_obj ? ------------ ###
+
+tol=1e-10
+
+xinf=0.0
+yinf=0.0
+zinf=0.0
+xsup=1.0
+ysup=1.0
+zsup=1.0
+
 dimension=3
 
 class PeriodicBoundary(SubDomain):
@@ -16,20 +27,30 @@ class PeriodicBoundary(SubDomain):
    else:
     y[i]=x[i]
 
-if dom_fixe=='0001':
- mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_0001fixe.xml")
-elif dom_fixe=='':
- mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle.xml")
+# maillage du domaine fixe
 
-V_fixe=VectorFunctionSpace(mesh_fixe, 'P', 2, constrained_domain=PeriodicBoundary())
+if dom_fixe=='':
+ mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle.xml")
+elif dom_fixe=='0001':
+ mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_0001fixe.xml")
+elif dom_fixe=='0000':
+ mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_0000fixe.xml")
+
+# fonctions test du domaine fixe
+
+V_fixe=VectorFunctionSpace(mesh_fixe,'P',2,constrained_domain=PeriodicBoundary())
+
+### ------------ Etapes reproduites : dépendances directes de Main3D ------------ ###
+
+
 
 ##
 from PO23D import *
 ##
 
-## Chargement de la marice des snapshots
+# Chargement de la matrice des snapshots
 
-u_name='Usnap'+dom_fixe+'_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+u_name='Usnap_'+dom_fixe+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
 
 with sh.open(repertoire_parent+u_name) as u_loa:
  Usnap = u_loa["maliste"]

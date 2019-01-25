@@ -2,6 +2,17 @@
 ######################################### Etape II : extrapolation des clichés, domaine_fixe ########################################
 #####################################################################################################################################
 
+### ------------ Reproduire éventuellement pour des étapes ultérieures. Laisser seulement dans DDD_fun_obj ? ------------ ###
+
+tol=1e-10
+
+xinf=0.0
+yinf=0.0
+zinf=0.0
+xsup=1.0
+ysup=1.0
+zsup=1.0
+
 dimension=3
 
 class PeriodicBoundary(SubDomain):
@@ -16,20 +27,29 @@ class PeriodicBoundary(SubDomain):
    else:
     y[i]=x[i]
 
-if dom_fixe=='0001':
- mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_0001fixe.xml")
-elif dom_fixe=='':
- mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle.xml")
+# maillage du domaine fixe
 
-V_fixe=V=VectorFunctionSpace(mesh_fixe, 'P', 2, constrained_domain=PeriodicBoundary())
+if dom_fixe=='':
+ mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle.xml")
+elif dom_fixe=='0001':
+ mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_0001fixe.xml")
+elif dom_fixe=='0000':
+ mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_0000fixe.xml")
+
+# fonctions test du domaine fixe
+
+V_fixe=VectorFunctionSpace(mesh_fixe,'P',2,constrained_domain=PeriodicBoundary())
+
+### ------------ Etapes reproduites : dépendances directes de Main3D ------------ ###
 
 # Chargement de la liste des snapshots physiques
 
 l_name='Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
-
+print(l_name)
 with sh.open(repertoire_parent+l_name) as l_loa:
-    list_chi_v = l_loa["maliste"]
+ list_chi_v = l_loa["maliste"]
 
+#sys.exit()
 # Extrapolation au domaine Omega_fixe : inclusion sphérique de rayon 0.0001, chi_prime défini sur ce domaine
 
 def extra_snap(n):
@@ -68,14 +88,13 @@ if not exsnap_done:
    if list_chi_n_prime_v[i][0]==n:
     Usnap[:,n-1]=list_chi_n_prime_v[i][1]
  # Stochage de la matrice des snapshots
- u_name='Usnap_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+ u_name='Usnap_'+dom_fixe+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
  #
  with sh.open(repertoire_parent+u_name) as u_sto:
   u_sto["maliste"] = Usnap
- sys.exit()#---------------------------------
 else:
  # Chargement de la matrice des snapshots
- u_name='Usnap_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+ u_name='Usnap_'+dom_fixe+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
  with sh.open(repertoire_parent+u_name) as u_loa:
   Usnap = u_loa["maliste"]
 
