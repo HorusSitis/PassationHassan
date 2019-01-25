@@ -16,18 +16,20 @@ class PeriodicBoundary(SubDomain):
    else:
     y[i]=x[i]
 
-#import PO23D as pod
-#pod = reload(pod)
-from PO23D import *
-#
-
-mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_0001fixe.xml")
+if dom_fixe=='0001':
+ mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_0001fixe.xml")
+elif dom_fixe=='':
+ mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle.xml")
 
 V_fixe=VectorFunctionSpace(mesh_fixe, 'P', 2, constrained_domain=PeriodicBoundary())
 
+##
+from PO23D import *
+##
+
 ## Chargement de la marice des snapshots
 
-u_name='Usnap_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+u_name='Usnap'+dom_fixe+'_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
 
 with sh.open(repertoire_parent+u_name) as u_loa:
  Usnap = u_loa["maliste"]
@@ -56,16 +58,16 @@ print(val_propres)
 
 ## Enregistrement de la matrice de la base POD, sous la forme vectorielle
 
-phi_name='Phi_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
 
 with sh.open(repertoire_parent+phi_name) as p_sto:
-    p_sto["maliste"] = Phi_prime_v
+ p_sto["maliste"] = Phi_prime_v
 
 #sys.exit()#-----------------------------------------------------------------
 ## Pour réintroduire la base de POD dans l'espace des fonctions définies dans le domaine fixe
 
-mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_0001fixe.xml")
-V_fixe=V=VectorFunctionSpace(mesh_fixe, 'P', 2, constrained_domain=PeriodicBoundary())
+#mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_0001fixe.xml")
+#V_fixe=V=VectorFunctionSpace(mesh_fixe, 'P', 3, constrained_domain=PeriodicBoundary())
 
 ## Tests : orthogonalité ou orthonrmalité de Phi_prime
 ui=Function(V_fixe)
@@ -103,7 +105,7 @@ phi=Function(V_fixe)
 for i in range(Nsnap):
  phi.vector().set_local(Phi_prime_v[:,i])
  plot(phi, linewidth=0.08)
- if fig_todo=='aff':
+ if fig_todo=='':#aff':
   plt.show()
  else:
   plt.savefig("Figures3D/phi_"+str(i+1)+"_"+config+'_'+geo_p+".png")

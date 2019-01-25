@@ -42,12 +42,11 @@ from matplotlib.patches import Circle, PathPatch
 E_=False
 E_lL=False
 
-EI=True
+EI=False
 EII=False
 
 EIII=False
-EIV=False
-
+EIV=True
 
 res_fixe=6
 fixe_aff=False
@@ -63,9 +62,11 @@ npas_err=20
 fig_todo='aff'#'aff'
 
 typ_msh='gms'#''
+## choix du domaine fixe
+dom_fixe=''#'0001'
 
 # nom de l'appareil utilisé pour générer les données enregistrées
-computer='T1700_35x8'#'MECALAC_29x8'##
+computer='MECALAC_29x8'##'T1700_35x8'#
 
 
 
@@ -126,7 +127,7 @@ if E_lL :
 
 # Exécution
 
-snap_done=True#False #-------------------> pour calculer les snapshots seulement si nécessaire
+snap_done=False#False #-------------------> pour calculer les snapshots seulement si nécessaire
 
 if EI :
  exec(open("DDD_EI.py").read())
@@ -135,6 +136,8 @@ if EI :
 ### Pour les étapes qui suivent, on peut choisir l'ordinateur qui a effectué le calcul des snapshots physiques
 
 ## -------------------- Etape II -------------------- ##
+
+exsnap_done=False
 
 if EII :
  exec(open("DDD_EII.py").read())
@@ -154,7 +157,7 @@ N_mor=8#100%
 
 ## -------------------- Etape IV -------------------- ##
 
-N_mor=4
+N_mor=1
 
 r_nouv=0.22#0.33#0.44
 

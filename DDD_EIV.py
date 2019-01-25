@@ -16,6 +16,13 @@ class PeriodicBoundary(SubDomain):
    else:
     y[i]=x[i]
 
+if dom_fixe=='0001':
+ mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_0001fixe.xml")
+elif dom_fixe=='':
+ mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle.xml")
+
+V_fixe=VectorFunctionSpace(mesh_fixe, 'P', 2, constrained_domain=PeriodicBoundary())
+
 #r_nouv=0.22
 nb_modes=N_mor
 
@@ -27,16 +34,14 @@ V_nouv=VectorFunctionSpace(mesh_nouv, "P", 2, constrained_domain=PeriodicBoundar
 
 # --------------------- SE1 : projection de la base POD sur le nouveau domaine --------------------- #
 
-mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_0001fixe.xml")
-V_fixe=V=VectorFunctionSpace(mesh_fixe, 'P', 2, constrained_domain=PeriodicBoundary())
 nb_noeuds_fixe=V_fixe.dim()
 
 ## Chargement de la base POD complète
 
-phi_name='Phi_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
 
 with sh.open(repertoire_parent+phi_name) as phi_loa:
-    Phi_prime_v = phi_loa["maliste"]
+ Phi_prime_v = phi_loa["maliste"]
 
 ## Création de la base POD tronquée, sous forme vectorielle
 
@@ -64,7 +69,7 @@ for n in range(0,nb_modes):
 
 
 print('se1 faite')
-
+#sys.exit()#-------------------------------------
 # --------------------- SE2 : résolution du modèle réduit --------------------- #
 
 ## On écrit les deux tenseurs qui comportent les coefficients de l'équation du modèle réduit : ceux-ci dépendent des vecteurs de la base POD projetée
