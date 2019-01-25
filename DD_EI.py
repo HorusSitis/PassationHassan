@@ -164,6 +164,10 @@ for n in range(1,1+Nsnap):#[0.111,0.211,0.316,0.423]:#,0.49]:#attention le rayon
  chi_n.vector().set_local(chi_n_v)
  # Figures et erreurs
  plot(chi_n)
+ if n==1:
+  plt.title("R = 0,05", fontsize=40)
+ else:
+  plt.title("R = 0,"+str(int(round(100*r,2))),fontsize=40)
  #plot(grad(chi_n)[:,0]
  #plot(grad(chi_n)[:,1]
  if fig_todo=='aff':

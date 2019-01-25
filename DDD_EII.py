@@ -115,6 +115,10 @@ for n in range(1,1+Nsnap):
  chi_prime_n=list_snap[n-1]
  # Affichage des valeurs de la solution interpolée
  plot(chi_prime_n)
+ if n==1:
+  plt.title("R = 0,05", fontsize=40)
+ else:
+  plt.title("R = 0,"+str(int(round(100*r,2))),fontsize=40)
  if fig_todo=='aff':
   plt.show()
  else:

@@ -163,6 +163,10 @@ for n in range(1,1+Nsnap):
  chi_n.vector().set_local(chi_n_v)
  # Représentation graphique
  plot(chi_n, linewidth=0.235)
+ if n==1:
+  plt.title("R = 0,05", fontsize=40)
+ else:
+  plt.title("R = 0,"+str(int(round(100*r,2))),fontsize=40)
  if fig_todo=='aff':
   plt.show()
  else:

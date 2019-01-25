@@ -125,7 +125,12 @@ for i in range(Nsnap):
 phi=Function(V_fixe)
 for i in range(Nsnap):
  phi.vector().set_local(Phi_prime_v[:,i])
- plot(phi, linewidth=0.08)
+ plot(phi, linewidth=0.3)
+ r=0.05*(i+1)
+ if i+1==1:
+  plt.title("R = 0,05", fontsize=40)
+ else:
+  plt.title("R = 0,"+str(int(round(100*r,2))),fontsize=40)
  if fig_todo=='':#aff':
   plt.show()
  else:
