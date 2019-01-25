@@ -1,10 +1,10 @@
-%\section{Results and discussion}
+\section{Results and discussion}
 
 \subsection{Spherical inclusion}
 
 \begin{frame}{Snapshots with FEM}
 %
-\begin{block}{$8$ solutions $\chi(\mathbf{x},\rho_j)$, $j=1\dots 8$}<+->
+\begin{block}{$8$ solutions $\chi(\mathbf{x},\rho^j)$, $j=1\dots 8$}<+->
 %
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
@@ -31,8 +31,8 @@
 \end{center}
 %
 \begin{itemize}
-\item<+-> $\rho = 0,05 ; 0,10 \dots 0,40$.
-\item<+-> We interpolate the $\chi(\mathbf{y},\rho_j)$ on the unit square $\Omega_{fluid}^0$.
+\item<+-> $\rho^j$ is the radius of a sphere at the center of the cell.
+\item<+-> We interpolate the $\chi(\mathbf{y},\rho^j)$ on the unit square $\Omega_{fluid}^0$.
 \end{itemize}
 %
 \end{block}
@@ -110,15 +110,15 @@ $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$\\%&$Err$&$\p
 \begin{block}{Accuracy and time}<+->
 %
 \begin{center}
-\begin{tabular}{|c|c||c|c||c|}%c|c||c|}
+\begin{tabular}{|c|c||c|c||c||c|}%c|c||c|}
 \hline
-$\rho^{new}$&$Err$&$\phi_i^{new}$&ROM&FEM\\
+$\rho^{new}$&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
 \hline
-0,22&0,011\%&10s&$<$1s&75s\\
+0,22&0,011\%&10s&$<$1s&75s&20724\\
 \hline
-0,33&0,013\%&9s&$<$1s&60s\\
+0,33&0,013\%&9s&$<$1s&60s&20544\\
 \hline
-0,44&0,018\%&6s&$<$1s&30s\\
+0,44&0,018\%&6s&$<$1s&30s&16953\\
 \hline
 \end{tabular}
 \end{center}
