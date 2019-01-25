@@ -153,6 +153,7 @@ elif config=='cyl_un':#'cylindre unique':
 else :
  por=(1-4/3*pi*r_s**3-pi*r_c**2)
  D=por*np.eye(3)
+print('Noeuds :',V_nouv.dim())
 print('Porosité :',por)
 ## Calcul et affichage du tenseur Dhom
 Dhom_kMEF=D_k*(D+T_chi.T)
