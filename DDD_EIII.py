@@ -50,7 +50,7 @@ from PO23D import *
 
 # Chargement de la matrice des snapshots
 
-u_name='Usnap_'+dom_fixe+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+u_name='Usnap'+dom_fixe+'_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
 
 with sh.open(repertoire_parent+u_name) as u_loa:
  Usnap = u_loa["maliste"]
@@ -127,10 +127,7 @@ for i in range(Nsnap):
  phi.vector().set_local(Phi_prime_v[:,i])
  plot(phi, linewidth=0.3)
  r=0.05*(i+1)
- if i+1==1:
-  plt.title("R = 0,05", fontsize=40)
- else:
-  plt.title("R = 0,"+str(int(round(100*r,2))),fontsize=40)
+ plt.title("Mode "+str(i+1),fontsize=40)
  if fig_todo=='':#aff':
   plt.show()
  else:
@@ -143,20 +140,24 @@ for i in range(Nsnap):
 ener_pour=energie_pourcentage(val_propres)[0]
 ener_pour_cumul=energie_pourcentage(val_propres)[1]
 
+
+
 absc=np.arange(1,Nsnap+1,1)
 
-plt.plot(absc,ener_pour)
+plt.plot(absc,ener_pour, linewidth=2)
 plt.xlabel('valeurs propres')
 plt.ylabel('pourcentage_energie')
+plt.yscale('log')
 if fig_todo=='aff':
  plt.show()
 else:
  plt.savefig("Figures3D/ener_vp_"+config+'_'+geo_p+".png")
 plt.close()
 
-plt.plot(absc,ener_pour_cumul)
+plt.plot(absc,ener_pour_cumul, linewidth=2)
 plt.xlabel('valeurs propres')
 plt.ylabel('pourcentage_energie_cumule')
+#plt.yscale('log')
 if fig_todo=='aff':
  plt.show()
 else:
