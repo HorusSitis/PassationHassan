@@ -90,8 +90,8 @@ def energie_pourcentage(vp):
   s_n=0
   for j in range(i+1):
    s_n=s_n+vp[j]
-   ener_pour[i]=(s/s_t)*100
-   ener_pour_cumul[i]=(s_n/s_t)*100
+  ener_pour[i]=(s/s_t)*100
+  ener_pour_cumul[i]=(s_n/s_t)*100
  return([ener_pour,ener_pour_cumul])
 
 ##################################################################################################################################################################
