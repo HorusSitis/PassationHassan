@@ -12,9 +12,9 @@
 %
 \begin{block}{A model for electrodiffusion}<+->
 \begin{description}
-\item<+-> [The Nernst-Planck equation] $\dfrac{\partial{c_k}}{\partial{t}}=div\left(-D_k\left(grad(c_k)+\dfrac{F}{RT}grad(\Psi)c_k\right)\right)$
+\item<+-> [The Nernst-Planck equation] $\dfrac{\partial{c_k}}{\partial{t}}=div\left(-D_k\left(grad(c_k)+\dfrac{F}{RT}grad(\Psi)z_k c_k\right)\right)$
 \item<+-> [Poisson equation] $\epsilon_v \Delta \Psi=-\rho$
-\item<+-> [] $\displaystyle \rho=\sum\limits_k z_k c_k$, $z_k$ is the valence of ion $k$.
+\item<+-> [] $\displaystyle \rho=\sum\limits_k z_k c_k F$, $z_k$ is the valence of ion $k$ and $F$ the Faraday constant.
 \end{description}
 \end{block}
 %
@@ -27,7 +27,9 @@
 \includegraphics[width=0.8\linewidth, height=3cm]{../Figures2D/macro_micro_xvsy.png}
 
 \par
+\tiny
 Bourbatache, PhD thesis, chapter 2.
+\normalsize
 %
 %\pause
 \begin{itemize}
@@ -69,7 +71,7 @@ We modelize the porous medium as a periodical structure
 \end{center}
 \vspace{-0.2cm}
 
-Variable $\mathbf{x}$ : position of each voxel
+Variable $\mathbf{x}$ : position in the periodic structure.
 %
 \end{block}
 %
@@ -109,12 +111,12 @@ Variable $\mathbf{y}$ : position in the elementary cell.
 \begin{frame}{The homogenized diffusion tensor}
 %
 \begin{block}{Homogenized diffusion-migration equation}<+->
-\[\derp{c_k}{t}-div_{\mathbf{x}}\left(D_k^{hom}\derp{c_k}{\mathbf{x}}+D_k^{hom}\frac{F}{RT}z_k \derp{\Psi}{\mathbf{x}}\right)=0\]
+\[\derp{c_k}{t}-div_{\mathbf{x}}\left(D_k^{hom}\derp{c_k}{\mathbf{x}}+D_k^{hom}\frac{F}{RT}z_k c_k\derp{\Psi}{\mathbf{x}}\right)=0\]
 \end{block}
 %c_k 
 \begin{block}{$D_k^{hom}$ and the microstructure}<+->% : the $\chi$ vector field}<+->
 %\item<+-> 
-\[D_k^{hom}:=\int\limits_{\Omega_f}\left(I+\derp{\chi}{\mathbf{y}}^T\right)\text{d}\Omega\]
+\[D_k^{hom}:=\dfrac{D_k}{|\Omega|}\int\limits_{\Omega_f}\left(I+\derp{\chi}{\mathbf{y}}^T\right)\text{d}\Omega\]
 \end{block}
 %
 \begin{block}{Vector $\chi$ : local problem}<+->
@@ -193,7 +195,9 @@ mean and variance for yellow or grey inclusions.
 \end{description}
 %
 %\par
-\footnotesize{Images : Chalen\c con et al., 2009}
+\tiny
+Images : Chalen\c con et al., 2009
+\normalsize
 \end{block}
 %
 \end{frame}

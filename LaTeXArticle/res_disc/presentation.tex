@@ -1,10 +1,25 @@
 \section{Results and discussion}
 
+\begin{frame}{Material}
+%
+\begin{block}{In the following computation}
+%
+\begin{description}
+\item<+-> [Machine] 1$\times$CPU 2.90GHz
+\item<+-> [FEM] Resolution of the weak problem in $\chi$ was done with FEniCS, %
+an open-source platform programmed in Python designed for Finite Element Method.
+\item<+-> [ROM] The numpy package of python 3 was used for POD.
+\end{description}
+%
+\end{block}
+%
+\end{frame}
+
 %\subsection{Spherical inclusion}
 
-\begin{frame}{Snapshots with FEM}
+\begin{frame}{Application of the ROM : a spherical inclusion}
 %
-\begin{block}{$8$ solutions $\chi(\mathbf{x},\rho^j)$, $j=1\dots 8$}<+->
+\begin{block}{$8$ solutions $\chi(\mathbf{x},\rho^j)$, $j=1\dots 8$, FEM}<+->
 %
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
@@ -32,14 +47,14 @@
 %
 \begin{itemize}
 \item<+-> $\rho^j$ is the radius of a sphere at the center of the cell.
-\item<+-> We interpolate the $\chi(\mathbf{y},\rho^j)$ on the unit square $\Omega_{fluid}^0$.
+\item<+-> We interpolate the $\chi(\mathbf{y},\rho^j)$ on the unit cube $\Omega_{fluid}^0$.
 \end{itemize}
 %
 \end{block}
 %
 \end{frame}
 
-\begin{frame}{The Reduced Order Model}
+\begin{frame}%{The Reduced Order Model}
 %
 \begin{block}{The POD basis on $\Omega_{fluid}^0$}<+->
 %
@@ -81,15 +96,22 @@
 \end{tabular}
 \end{center}
 
+\begin{multicols}{2}
+Cumulated energy :
+
+\columnbreak
 \begin{itemize}
-\item<+-> Cumulated energy $99,99\%$ : $N_{rom}=4$
-\item<+-> Cumulated energy $99,99\%$ : $N_{rom}=2$
+\item<+-> $99,99\%$ : $N_{rom}=4$
+\item<+-> $99,9\%$ : $N_{rom}=2$
 \end{itemize}
+%
+\end{multicols}
+%
 \end{block}
 
 \end{frame}
 
-\begin{frame}{Performances : $N_{snap}=4$}
+\begin{frame}{Performances : $N_{snap}=\only<1>{4}\only<2->{\mathbf{2}}$}
 %
 \begin{block}{Results}
 %
@@ -98,11 +120,11 @@
 \hline
 $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$\\%&$Err$&$\phi_i^{new}$&ROM&FEM\\
 \hline
-0,22&0,9555&0,9357&0,9356\\%&&&&\\
+0,22&0,9553&\only<1>{0,9357}\only<2>{\textbf{0.9363}}&0,9356\\%&&&&\\
 \hline
-0,33&0,8494&0,7911&0,7910\\%&&&&\\
+0,33&0,8494&\only<1>{0,7911}\only<2>{\textbf{0.7992}}&0,7910\\%&&&&\\
 \hline
-0,44&0,6431&0,5406&0,5405\\%&&&&\\
+0,44&0,6431&\only<1>{0,5406}\only<2>{\textbf{0.5408}}&0,5405\\%&&&&\\
 \hline
 \end{tabular}
 \end{center}
@@ -116,11 +138,11 @@ $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$\\%&$Err$&$\p
 \hline
 $\rho^{new}$&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
 \hline
-0,22&0,011\%&10s&$<$1s&75s&20724\\
+0,22&\only<1>{0,011}\only<2>{\textbf{0.086}}\%&\only<1>{10}\only<2>{\textbf{5}}s&$<$1s&75s&20724\\
 \hline
-0,33&0,013\%&9s&$<$1s&60s&20544\\
+0,33&\only<1>{0,013}\only<2>{\textbf{0.013}}\%&\only<1>{9}\only<2>{\textbf{4}}s&$<$1s&60s&20544\\
 \hline
-0,44&0,018\%&6s&$<$1s&30s&16953\\
+0,44&\only<1>{0,018}\only<2>{\textbf{0.048}}\%&\only<1>{6}\only<2>{\textbf{4}}s&$<$1s&30s&16953\\
 \hline
 \end{tabular}
 \end{center}
@@ -129,41 +151,21 @@ $\rho^{new}$&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
 %
 \end{frame}
 
-\begin{frame}{Performances : $N_{snap}=2$}
+\begin{frame}{Perspectives}
 %
-\begin{block}{Results}
+\begin{block}{}
 %
-\begin{center}
-\begin{tabular}{|c|c||c|c||}%c|c||c|}
-\hline
-$\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$\\%&$Err$&$\phi_i^{new}$&ROM&FEM\\
-\hline
-0,22&0,9555&0,9357&0,9356\\%&&&&\\
-\hline
-0,33&0,8494&0,7911&0,7910\\%&&&&\\
-\hline
-0,44&0,6431&0,5406&0,5405\\%&&&&\\
-\hline
-\end{tabular}
-\end{center}
+\begin{itemize}
+\item<+-> The ROM method is good !
+\item<+-> But it could be great if we overcome the interpolation issue :
 %
-\end{block}
+\begin{enumerate}[label=Interp \arabic*]
+\item<+-> More than $90\%$ of the execution time ;
+\item<+-> Mathematically not completly satisfying.
+\end{enumerate}
 %
-\begin{block}{Accuracy and time}<+->
-%
-\begin{center}
-\begin{tabular}{|c|c||c|c||c||c|}%c|c||c|}
-\hline
-$\rho^{new}$&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
-\hline
-0,22&0,011\%&10s&$<$1s&75s&20724\\
-\hline
-0,33&0,013\%&9s&$<$1s&60s&20544\\
-\hline
-0,44&0,018\%&6s&$<$1s&30s&16953\\
-\hline
-\end{tabular}
-\end{center}
+\item<+-> To be continued !
+\end{itemize}
 %
 \end{block}
 %
