@@ -25,10 +25,11 @@ nb_noeuds = V_fixe.dim()
 ## Chargement de la marice des snapshots
 
 u_name='Usnap_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+print(repertoire_parent+u_name)
 
 with sh.open(repertoire_parent+u_name) as u_loa:
  Usnap = u_loa["maliste"]
-
+#sys.exit()#----------------------------------------------------------------
 # matrice de corrélation
 
 C=mat_corr_temp(V_fixe,Nsnap,Usnap)
@@ -43,6 +44,14 @@ val_propres=vp_A_phi[0]
 Aleat=vp_A_phi[1]
 ## Attention les objets rangés dans tableau suivant sont des vecteurs
 Phi_prime_v=vp_A_phi[2]
+
+## Enregistrement de la matrice de la base POD, sous la forme vectorielle
+
+phi_name='Phi'+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+"res"+str(res)+'_'+ordo+'_'+computer
+#+dom_fixe
+
+with sh.open(repertoire_parent+phi_name) as p_sto:
+ p_sto["maliste"] = Phi_prime_v
 
 ## Tests : orthogonalité ou orthonrmalité de Phi_prime
 ui=Function(V_fixe)
@@ -99,12 +108,21 @@ absc=np.arange(1,Nsnap+1,1)
 plt.plot(absc,ener_pour)
 plt.xlabel('valeurs propres')
 plt.ylabel('pourcentage_energie')
-plt.show()
+plt.yscale('log')
+if fig_todo=='aff':
+ plt.show()
+else:
+ plt.savefig("Figures2D/ener_vp_"+config+'_'+geo_p+"_res"+str(res)+".png")
+plt.close()
 
 plt.plot(absc,ener_pour_cumul)
 plt.xlabel('valeurs propres')
 plt.ylabel('pourcentage_energie_cumule')
-plt.show()
+if fig_todo=='aff':
+ plt.show()
+else:
+ plt.savefig("Figures2D/ener_cumul_vp_"+config+'_'+geo_p+"_res"+str(res)+".png")
+plt.close()
 
 ## Choix du nombre de modes, avec une valeur seuil d'énergie à atteindre avec les vacteurs de la base POD
 nb_modes=0

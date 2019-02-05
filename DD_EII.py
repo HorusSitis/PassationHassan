@@ -37,10 +37,9 @@ with sh.open(repertoire_parent+l_name) as l_loa:
 
 # Extrapolation au domaine Omega_fixe : 
 mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2d.xml")
-#Mesh("maillages_per/3D/cubesphere_periodique_triangle_0001fixe.xml")
 
 V_fixe=VectorFunctionSpace(mesh_fixe, 'P', 3, constrained_domain=PeriodicBoundary())
-
+sys.exit()
 # Extrapolation des solutions du problème physique
 
 def extra_snap(n):
@@ -90,6 +89,7 @@ if not exsnap_done:
 else:
  # Chargement de la matrice des snapshots
  u_name='Usnap_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+ print(repertoire_parent+u_name)
  with sh.open(repertoire_parent+u_name) as u_loa:
   Usnap = u_loa["maliste"]
 
