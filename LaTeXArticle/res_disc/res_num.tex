@@ -1,9 +1,156 @@
-%\section{Results and discussion}
+\section{Results and discussion}\label{res}
 %\subsection{Numerical simulations}
 
 %CPU $\times$ 8 \dots
 
+\subsection{Material}
+
+\begin{description}
+\item [Machine] 1$\times$CPU 2.90GHz
+\item [FEM] Resolution of the weak problem in $\chi$ was done with FEniCS, %
+an open-source platform programmed in Python designed for Finite Element Method.
+\item [ROM] The numpy package of python 3 was used for POD.
+\end{description}
 
 \subsection{Two-dimensional case : varying the radius of a single circular inclusion}
+
+\dotfill
+
+\subsection{Three-dimensional case}
+
+\subsubsection{A single spherical inclusion}
+
+\begin{figure}[H]
+%
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_1_sur8sph_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_2_sur8sph_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_3_sur8sph_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_4_sur8sph_un_ray.png}%
+\\
+\hline
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_5_sur8sph_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_6_sur8sph_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_7_sur8sph_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_8_sur8sph_un_ray.png}%
+\\
+\hline
+\end{tabular}
+\end{center}
+\caption{$8$ solutions of the physical problem}
+%
+\end{figure}
+
+%\begin{itemize}
+%\item $\rho^j$ is the radius of a sphere at the center of the cell.
+%\item We interpolate the $\chi(\mathbf{y},\rho^j)$ on the unit cube minus $\mathcal{S}(\mathbf{0},0,0001)$.
+%\end{itemize}
+
+%\etoile
+
+\begin{figure}[H]%<+->
+%
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/phi_1_sph_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/phi_2_sph_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/phi_3_sph_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/phi_4_sph_un_ray.png}%
+\\
+\hline
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/phi_5_sph_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/phi_6_sph_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/phi_7_sph_un_ray.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/phi_8_sph_un_ray.png}%
+\\
+\hline
+\end{tabular}
+\end{center}
+%
+\caption{The POD basis on $\Omega_{fluid}^0$ : the unit cube minus $\mathcal{S}(\mathbf{0},0,0001)$}
+\end{figure}
+
+\begin{figure}[H]
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+\includegraphics[width=0.4\linewidth, height=3cm]{../Figures3D/ener_vp_sph_un_ray.png}
+&%
+\includegraphics[width=0.4\linewidth, height=3cm]{../Figures3D/ener_cumul_vp_sph_un_ray.png}
+\\ \hline
+\end{tabular}
+\end{center}
+\caption{Energy of POD modes}
+\end{figure}
+
+\begin{multicols}{2}
+Cumulated energy :
+
+\columnbreak
+\begin{itemize}
+\item $99,99\%$ : $N_{rom}=4$
+\item $99,9\%$ : $N_{rom}=2$
+\end{itemize}
+%
+\end{multicols}
+
+\ligneinter
+
+\begin{figure}[H]%{Results}
+%
+\begin{center}
+\begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
+\hline
+$\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\%&$Err$&$\phi_i^{new}$&ROM&FEM\\
+\hline
+0,22&0,9553&0,9357&0,9356&0,011\%&10s&$<$1s&75s&20724\\
+\hline
+0,33&0,8494&0,7911&0,7910&0,013\%&9s&$<$1s&60s&20544\\
+\hline
+0,44&0,6431&0,5406&0,5405&0,018\%&6s&$<$1s&30s&16953\\
+\hline
+\end{tabular}
+\end{center}
+\caption{$\Omega_f^0=\dots$, $N_{rom}=4$}
+%
+\end{figure}
+%%
+
+\etoile
+
+%%
+\begin{figure}[H]%{Results}
+%
+\begin{center}
+\begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
+\hline
+$\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\%&$Err$&$\phi_i^{new}$&ROM&FEM\\
+\hline
+0,22&0,9553&\textbf{0.9363}&0,9356&\textbf{0.086}\%&\textbf{5}s&$<$1s&75s&20724\\
+\hline
+0,33&0,8494&\textbf{0.7992}&0,7910&\textbf{0.013}\%&\textbf{4}s&$<$1s&60s&20544\\
+\hline
+0,44&0,6431&\textbf{0.5408}&0,5405&\textbf{0.048}\%&\textbf{4}s&$<$1s&30s&16953\\
+\hline
+\end{tabular}
+\end{center}
+\caption{$\Omega_f^0=\dots$, $N_{rom}=2$}
+%
+\end{figure}
 
 
