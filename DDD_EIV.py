@@ -95,7 +95,7 @@ print('se1 faite')
 
 #from PO23D import *
 
-Coeff=calc_Ab(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,cen_snap_ray,nb_modes)
+Coeff=calc_Ab_3D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,cen_snap_ray,nb_modes)
 A=Coeff[0]
 b=Coeff[1]
 
