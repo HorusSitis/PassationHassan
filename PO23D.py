@@ -103,7 +103,41 @@ def energie_pourcentage(vp):
 
 
 tol=1e-10
-def calc_Ab(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,cen,nb_modes):
+def calc_Ab_2D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,cen,nb_modes):
+ A=np.zeros((nb_modes,nb_modes))
+ b=np.zeros(nb_modes)
+ ### Fonctions à définir pour calculer les coefficients des deux tenseurs, qui dépendent de la métrique de l'espace des fonctions test
+ phi_nouv_k=Function(V_nouv)
+ phi_nouv_i=Function(V_nouv)
+ # boucle pour le calcul de la matrice de coefficients
+ for k in range(nb_modes):
+  phi_nouv_k.vector().set_local(Phi_nouv_v[:,k])
+  for i in range(nb_modes):
+   phi_nouv_i.vector().set_local(Phi_nouv_v[:,i])
+   # On calcule le coefficient Aki
+   A[k,i]=assemble(tr(dot((grad(phi_nouv_k)).T, grad(phi_nouv_i)))*dx)
+ # création de l'interface solide-fluide
+ l_cen=[cen]
+ print(l_cen)
+ r=r_nouv
+ class inclusion_periodique(SubDomain):
+  def inside(self,x,on_boundary):
+   return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]))
+ Gamma_sf=inclusion_periodique()
+ boundaries = MeshFunction("size_t", mesh_nouv, mesh_nouv.topology().dim()-1)
+ boundaries.set_all(1)
+ Gamma_sf.mark(boundaries, 7)
+ ds = Measure("ds")(subdomain_data=boundaries)
+ num_ff=1
+ num_front_inc=7
+ normale=FacetNormal(mesh_nouv)
+ # boucle pour le calcul du second membre du problème linéaire MOR
+ for i in range(nb_modes):
+  phi_nouv_i.vector().set_local(Phi_nouv_v[:,i])
+  b[i]=assemble(dot(normale,phi_nouv_i)*ds(num_front_inc))
+ return([A,b])
+
+def calc_Ab_3D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,cen,nb_modes):
  A=np.zeros((nb_modes,nb_modes))
  b=np.zeros(nb_modes)
  ### Fonctions à définir pour calculer les coefficients des deux tenseurs, qui dépendent de la métrique de l'espace des fonctions test
@@ -136,8 +170,6 @@ def calc_Ab(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,cen,nb_modes):
   phi_nouv_i.vector().set_local(Phi_nouv_v[:,i])
   b[i]=assemble(dot(normale,phi_nouv_i)*ds(num_front_inc))
  return([A,b])
-
-
 
 
 
