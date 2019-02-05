@@ -34,13 +34,18 @@ class PeriodicBoundary(SubDomain):
 domaine_fixe=Box(Point(xinf,yinf,zinf),Point(xsup,ysup,zsup))
 
 if typ_msh=='gms':
- mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_0001fixe.xml")
+ # maillage du domaine fixe avec gmsh
+ if dom_fixe=='':
+  mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle.xml")
+ elif dom_fixe=='0001':
+  mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_sur"+str(res)+"_0001fixe.xml")
+  print("maillages_per/3D/cubesphere_periodique_triangle_sur"+str(res)+"_0001fixe")
+ elif dom_fixe=='0000':
+  mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_sur"+str(res)+"_0000fixe.xml")
 else:
  mesh_fixe=generate_mesh(domaine_fixe,res_fixe)
 
 V_fixe=VectorFunctionSpace(mesh_fixe, "P", 2, constrained_domain=PeriodicBoundary())
-
-
 
 ## Boucle pour la création des snapshots, avec un paramètre pouvant être le rayon d'une inclusion circulaire, ou l'emplacement de son centre 
 
@@ -51,7 +56,7 @@ V_fixe=VectorFunctionSpace(mesh_fixe, "P", 2, constrained_domain=PeriodicBoundar
 #if geo_p=='ray':
 cen_snap_ray=[0.5,0.5,0.5]
 def snap_sph_ray(r_par):
- chi_r=snapshot_sph_per(cen_snap_ray,0.05*r_par,res)
+ chi_r=snapshot_sph_per(cen_snap_ray,0.05*r_par,res_gmsh)
  chi_r_v=chi_r.vector().get_local()
  return([r_par,chi_r_v])
 
@@ -61,7 +66,7 @@ def snap_sph_ray(r_par):
 #c_par : paramètre scalaire pour la position du centre
 def snap_sph_cen(c_par):
  cen_snap_ray=csr_list[c_par-1]
- chi_c=snapshot_sph_per(cen_snap_ray,ray_snap_cen,res)
+ chi_c=snapshot_sph_per(cen_snap_ray,ray_snap_cen,res_gmsh)
  chi_c_v=chi_c.vector().get_local()
  return([c_par,chi_c_v])
 
@@ -115,13 +120,13 @@ if not snap_done:
    chi_n_v=list_chi_n_v[i][1]
    list_chi_v.append(chi_n_v)
  # Liste des snapshots : sauvegarde, on précise l'identité de la machine qui a effectué le calcul
- l_name='Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+ l_name='Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+"sur"+str(res)+'_'+ordo+'_'+computer
  # sauvegarde de la liste des solutions indexées calculées avec la méthode des éléments finis
  with sh.open(repertoire_parent+l_name) as l_sto:
   l_sto["maliste"] = list_chi_v
  # Matrice des snapshots : plus tard, voir l'étape II
 else :
- l_name='Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+ l_name='Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+"sur"+str(res)+'_'+ordo+'_'+computer
  with sh.open(repertoire_parent+l_name) as l_loa:
   list_chi_v = l_loa["maliste"]
 
@@ -137,8 +142,8 @@ for n in range(1,1+Nsnap):
    cen=cen_snap_ray
    r=n*0.05
    if typ_msh=='gms':
-    print("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+".xml")
-    mesh=Mesh("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+".xml")
+    print("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml")
+    mesh=Mesh("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml")
    else:
     mesh=creer_maill_sph(cen,r,res)
   elif geo_p=='cen':
@@ -162,7 +167,7 @@ for n in range(1,1+Nsnap):
  chi_n=Function(V_n)
  chi_n.vector().set_local(chi_n_v)
  # Représentation graphique
- plot(chi_n, linewidth=0.235)
+ plot(chi_n, linewidth=0.27)#35)
  if n==1:
   plt.title("R = 0,05", fontsize=40)
  else:
@@ -170,7 +175,7 @@ for n in range(1,1+Nsnap):
  if fig_todo=='aff':
   plt.show()
  else:
-  plt.savefig("Figures3D/sol_"+str(n)+"_sur"+str(Nsnap)+config+'_'+geo_p+".png")
+  plt.savefig("Figures3D/sol_"+str(n)+"_sur"+str(Nsnap)+config+'_'+geo_p+"res"+str(res)+".png")
  plt.close()
  # Affichage des valeurs et erreurs de la solution périodique, quelle que soit la configuration
  #err_per_ind_01(chi_n,cen,r,npas_err)
@@ -191,5 +196,6 @@ for n in range(1,1+Nsnap):
  ## Calcul et affichage du tenseur Dhom
  Dhom_k=D_k*(D+T_chi.T)
  #print(('Tenseur Dhom_k',Dhom_k))
+ print("Noeuds",V_n.dim())
  print('Coefficient Dhom_k11EF, snapshot '+str(n)+", "+config+', '+geo_p+" variable :",Dhom_k[0,0])
 #

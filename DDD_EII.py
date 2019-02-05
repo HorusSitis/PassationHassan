@@ -32,9 +32,9 @@ class PeriodicBoundary(SubDomain):
 if dom_fixe=='':
  mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle.xml")
 elif dom_fixe=='0001':
- mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_0001fixe.xml")
+ mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_sur"+str(res)+"_0001fixe.xml")
 elif dom_fixe=='0000':
- mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_0000fixe.xml")
+ mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_sur"+str(res)+"_0000fixe.xml")
 
 # fonctions test du domaine fixe
 
@@ -44,7 +44,7 @@ V_fixe=VectorFunctionSpace(mesh_fixe,'P',2,constrained_domain=PeriodicBoundary()
 
 # Chargement de la liste des snapshots physiques
 
-l_name='Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+l_name='Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+"sur"+str(res)+'_'+ordo+'_'+computer
 print(l_name)
 with sh.open(repertoire_parent+l_name) as l_loa:
  list_chi_v = l_loa["maliste"]
@@ -58,8 +58,8 @@ def extra_snap(n):
  chi_n_v=list_chi_v[n-1]
  # mise sous forme d'une fonction EF
  if typ_msh=='gms':
-  print("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+".xml")
-  mesh=Mesh("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+".xml")
+  print("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml")
+  mesh=Mesh("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml")
  else:
   mesh=creer_maill_sph(cen,r,res)
  V_n=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
@@ -88,13 +88,13 @@ if not exsnap_done:
    if list_chi_n_prime_v[i][0]==n:
     Usnap[:,n-1]=list_chi_n_prime_v[i][1]
  # Stochage de la matrice des snapshots
- u_name='Usnap_'+dom_fixe+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+ u_name='Usnap_'+dom_fixe+'_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+"res"+str(res)+'_'+ordo+'_'+computer
  #
  with sh.open(repertoire_parent+u_name) as u_sto:
   u_sto["maliste"] = Usnap
 else:
  # Chargement de la matrice des snapshots
- u_name='Usnap_'+dom_fixe+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+ u_name='Usnap_'+dom_fixe+'_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+"res"+str(res)+'_'+ordo+'_'+computer
  with sh.open(repertoire_parent+u_name) as u_loa:
   Usnap = u_loa["maliste"]
 

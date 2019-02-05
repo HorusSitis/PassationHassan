@@ -126,8 +126,8 @@ def creer_maill_cyl(top,r,slices_cyl,res):#valable quel que soit la position de 
 def snapshot_sph_per(cen,r,res):
  c_x,c_y,c_z=cen[0],cen[1],cen[2]
  if typ_msh=='gms':
-  print("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+".xml")
-  mesh_s_r=Mesh("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+".xml")
+  print("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml")
+  mesh_s_r=Mesh("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml")
  else:
   print('pfrrh')
   mesh_s_r=creer_maill_sph([c_x,c_y,c_z],r,res)

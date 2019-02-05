@@ -32,9 +32,9 @@ class PeriodicBoundary(SubDomain):
 if dom_fixe=='':
  mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle.xml")
 elif dom_fixe=='0001':
- mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_0001fixe.xml")
+ mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_sur"+str(res)+"_0001fixe.xml")
 elif dom_fixe=='0000':
- mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_0000fixe.xml")
+ mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_sur"+str(res)+"_0000fixe.xml")
 
 # fonctions test du domaine fixe
 
@@ -46,7 +46,7 @@ V_fixe=VectorFunctionSpace(mesh_fixe,'P',2,constrained_domain=PeriodicBoundary()
 nb_modes=N_mor
 
 if typ_msh=='gms':
- mesh_nouv=Mesh("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r_nouv,2)))+".xml")
+ mesh_nouv=Mesh("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r_nouv,2)))+"sur"+str(res)+".xml")
 #else:mesh_nouv=creer_maill_sph(cen,r_nouv,res)
 
 V_nouv=VectorFunctionSpace(mesh_nouv, "P", 2, constrained_domain=PeriodicBoundary())
@@ -57,7 +57,7 @@ nb_noeuds_fixe=V_fixe.dim()
 
 ## Chargement de la base POD complète
 
-phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+"res"+str(res)+'_'+ordo+'_'+computer
 
 with sh.open(repertoire_parent+phi_name) as phi_loa:
  Phi_prime_v = phi_loa["maliste"]
@@ -146,7 +146,7 @@ print('se3 faite')
 #sys.exit()#-------------------------------------
 # --------------------- SE4 : comparaison avec la méthode des éléments finis --------------------- #
 
-res=20
+#res=20
 if config=='sph_un':
  chi_nouv=snapshot_sph_per(cen_snap_ray,r_nouv,res)
 elif config=='cyl_un':

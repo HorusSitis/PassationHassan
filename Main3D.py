@@ -42,15 +42,16 @@ from matplotlib.patches import Circle, PathPatch
 E_=False
 E_lL=False
 
-EI=False
+EI=True
+
 EII=False
 
-EIII=True
+EIII=False
 EIV=False
 
 res_fixe=6
 fixe_aff=False
-res=6
+#res=6
 #slices_cyl=5
 Nsnap=8
 rempUsnap='par8'#'seq'
@@ -63,7 +64,7 @@ fig_todo='save'#'aff'
 
 typ_msh='gms'#''
 ## choix du domaine fixe
-dom_fixe='0000'#'0001'#'0001'
+dom_fixe='0001'#'0001'#''
 
 # nom de l'appareil utilisé pour générer les données enregistrées
 computer='MECALAC_29x8'##'T1700_35x8'#
@@ -83,6 +84,13 @@ ordo='Ordr'#'Nordr'
 # Parallélisation du calcul des snapshots
 
 parallelize=True
+
+# Choix de la résolution du maillage : nombre de noeuds par côté du cube
+
+res_gmsh=20
+
+if typ_msh=='gms':
+ res=res_gmsh
 
 # Choix du paramètre géométrique : variable et message de sortie _mess
 
@@ -127,7 +135,7 @@ if E_lL :
 
 # Exécution
 
-snap_done=True#False #-------------------> pour calculer les snapshots seulement si nécessaire
+snap_done=False #-------------------> pour calculer les snapshots seulement si nécessaire
 
 if EI :
  exec(open("DDD_EI.py").read())
@@ -137,7 +145,7 @@ if EI :
 
 ## -------------------- Etape II -------------------- ##
 
-exsnap_done=True
+exsnap_done=False
 
 if EII :
  exec(open("DDD_EII.py").read())
@@ -158,8 +166,7 @@ N_mor=8#100%
 ## -------------------- Etape IV -------------------- ##
 
 N_mor=4
-
-r_nouv=0.22#0.33#0.44
+r_nouv=0.33#0.22#0.33#0.44
 
 #0.22 : 0.011% d'erreur, tps d'éxécution ~ 1''/70''
 #0.33 : 0.012% d'erreur, tps d'éxécution ~ 1''/60''

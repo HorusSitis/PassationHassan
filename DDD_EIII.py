@@ -32,9 +32,9 @@ class PeriodicBoundary(SubDomain):
 if dom_fixe=='':
  mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle.xml")
 elif dom_fixe=='0001':
- mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_0001fixe.xml")
+ mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_sur"+str(res)+"_0001fixe.xml")
 elif dom_fixe=='0000':
- mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_0000fixe.xml")
+ mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_sur"+str(res)+"_0000fixe.xml")
 
 # fonctions test du domaine fixe
 
@@ -50,7 +50,7 @@ from PO23D import *
 
 # Chargement de la matrice des snapshots
 
-u_name='Usnap'+dom_fixe+'_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+u_name='Usnap_'+dom_fixe+'_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+"res"+str(res)+'_'+ordo+'_'+computer
 
 with sh.open(repertoire_parent+u_name) as u_loa:
  Usnap = u_loa["maliste"]
@@ -79,7 +79,7 @@ print(val_propres)
 
 ## Enregistrement de la matrice de la base POD, sous la forme vectorielle
 
-phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+"res"+str(res)+'_'+ordo+'_'+computer
 
 with sh.open(repertoire_parent+phi_name) as p_sto:
  p_sto["maliste"] = Phi_prime_v
@@ -131,7 +131,7 @@ for i in range(Nsnap):
  if fig_todo=='':#aff':
   plt.show()
  else:
-  plt.savefig("Figures3D/phi_"+str(i+1)+"_"+config+'_'+geo_p+".png")
+  plt.savefig("Figures3D/phi_"+str(i+1)+"_"+config+'_'+geo_p+"_res"+str(res)+".png")
  plt.close()
 
 # Energie et énergie cumulée des modes spatiaux, choix du nombre de modes
@@ -151,7 +151,7 @@ plt.yscale('log')
 if fig_todo=='aff':
  plt.show()
 else:
- plt.savefig("Figures3D/ener_vp_"+config+'_'+geo_p+".png")
+ plt.savefig("Figures3D/ener_vp_"+config+'_'+geo_p+"_res"+str(res)+".png")
 plt.close()
 
 plt.plot(absc,ener_pour_cumul, linewidth=2)
@@ -161,7 +161,7 @@ plt.ylabel('pourcentage_energie_cumule')
 if fig_todo=='aff':
  plt.show()
 else:
- plt.savefig("Figures3D/ener_cumul_vp_"+config+'_'+geo_p+".png")
+ plt.savefig("Figures3D/ener_cumul_vp_"+config+'_'+geo_p+"_res"+str(res)+".png")
 plt.close()
 
 ## Choix du nombre de modes, avec une valeur seuil d'énergie à atteindre avec les vacteurs de la base POD
