@@ -1,7 +1,8 @@
 \documentclass[a4paper,10pt]{article}
 \usepackage[utf8]{inputenc}
 
-%\includeonly{diff_ion/diff_hom}
+%\includeonly{res_disc/res_num}
+\includeonly{diff_ion/diff_hom}
 
 %\def\Lang{En}%{Fr}
 %\usepackage[english,french]{babel}
@@ -27,25 +28,22 @@
 
 \end{abstract}
 
-%\include{state_art/article.tex}
-\section{State of the art}\label{st_a}
-\input{state_art/article.tex}
+%\section{State of the art}\label{st_a}
+%\input{state_art/article.tex}
+\include{state_art/article}
 
-\section{Ionic diffusion in porous media}\label{hom_d}
-\input{diff_ion/diff_hom.tex}
-%Nernst-Planck
-%DSE
-%\chi
+%\section{Ionic diffusion in porous media}\label{hom_d}
+%\input{diff_ion/diff_hom.tex}
+\include{diff_ion/diff_hom}
 
-\section{A Reduced Order Model}\label{rom}
-\input{red_mod/rom.tex}
+%\section{A Reduced Order Model}\label{rom}
+%\input{red_mod/rom.tex}
+\include{red_mod/rom}
 
-%Weak problem, solutions, periodicity
-%
-
-\section{Results and discussion}\label{res}
+%\section{Results and discussion}\label{res}
 %\subsection{Numerical simulations}
-\input{res_disc/res_num.tex}
+%\input{res_disc/res_num.tex}
+\include{res_disc/res_num}
 
 %%CPU time and execution
 %%Efficiency, parameters : porosity, center of a spherical inclusion
