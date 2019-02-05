@@ -55,14 +55,14 @@ E_lL=False
 EI=False
 EII=False
 
-EIII=True
-EIV=False
+EIII=False
+EIV=True
 
 res_fixe=20
 res=20
 
 fixe_aff=False
-fig_todo='save'
+fig_todo='aff'
 
 ### ------------ Etape 0 : Génération de microstructures périodiques aléatoires ------------ ###
 
@@ -79,7 +79,7 @@ typ_msh='gms'#'gms'#''
 print(typ_msh)
 
 # nom de l'appareil utilisé pour générer les données enregistrées
-computer='MECALAC_29x8'#'T1700_35x8'###
+computer='T1700_35x8'#'MECALAC_29x8'###
 
 
 
@@ -152,13 +152,19 @@ if EII :
 from PO23D import *
 rempUsnap='par8'#'seq'
 
+# On soustrait éventuellement la moyenne des snapshots interpolés à chaque snapshot
+moy_mod='soust_m'#'' par défaut
+
 if EIII :
  exec(open("DD_EIII.py").read())
 
-
 ## ---------- Etape IV ---------- ##
 
+N_mor=4
+r_nouv=0.22
 
+if EIV :
+ exec(open("DD_EIV.py").read())
 
 
 
