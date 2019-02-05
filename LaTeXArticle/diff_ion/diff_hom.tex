@@ -1,4 +1,5 @@
-%\section{Ionic diffusion in porous media}
+\section{Ionic diffusion in porous media}\label{hom_d}
+
 In this section, we present the method of periodic homogenization for the diffusion of ionic species in cementitious material.
 
 \par
@@ -325,9 +326,9 @@ The value of $D_k^{hom}$ and performances of the calculus are given below.
 
 \begin{tabular}{|c|c|c|c|c|}
 \hline
-Radius :&Porosity :&Time elapsed : 1CPU$\times$2.9GHz&$D_k^{hom}$ :Mesh resolution:\\
+Radius :&Porosity :&Time elapsed : 1CPU$\times$2.9GHz&$D_k^{hom}$ :&Mesh resolution :\\
 \hline
-$0.35$&$0.6151549$&10${}^{''}$&$\left(\begin{array}{cc}0.630227160266 & 2.46470607 \cdot 10^{-11}\\2.46462659 \cdot 10^{-11}& 0.630227110\end{array}\right)$&\\
+$0.35$&$0.6151549$&10${}^{''}$&$\left(\begin{array}{cc}0.630227160266 & 2.46470607 \cdot 10^{-11}\\2.46462659 \cdot 10^{-11}& 0.630227110\end{array}\right)$&\dots \\
 \hline
 \end{tabular}
 
@@ -336,11 +337,22 @@ $0.35$&$0.6151549$&10${}^{''}$&$\left(\begin{array}{cc}0.630227160266 & 2.464706
 Algorithms are the same as in the two-dimensional case, but we will see that CPU times is much biggers, %
 even if the mesh resolution is reasonable.
 
+\begin{comment}
+\begin{figure}[H]
+%
+\begin{center}
+%
+\end{center}
+%
+\end{figure}
+\end{comment}
+
 \begin{figure}[H]
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
-\subfloat[Mesh around the inclusion]{\includegraphics[width=0.24\linewidth,height=3.2cm]{../Figures3D/maillageCyrille_facettes.png}}
+\subfloat[Mesh around the inclusion]{\includegraphics[width=0.28\linewidth,height=3cm]{../Figures3D/maillage_mshSc035.png}}
+%%{\includegraphics[width=0.24\linewidth,height=3.2cm]{../Figures3D/maillageCyrille_facettes.png}}
 &%\hfill
 \subfloat[$\derp{\chi^1}{y}$]{\includegraphics[width=0.24\linewidth,height=3.2cm]{../Figures3D/Cyrille35grady1.png}}
 &%\hfill
@@ -357,9 +369,9 @@ even if the mesh resolution is reasonable.
 
 \begin{tabular}{|c|c|c|c|c|}
 \hline
-Radius :&Porosity :&Time elapsed : 1CPU$\times$2.9GHz&$D_k^{hom}$ :&Mesh resolution:\\
+Radius :&Porosity :&Time elapsed : 1CPU$\times$2.9GHz&$D_k^{hom}$ :&Nodes :\\
 \hline
-$0.35$&$0.8204$&35${}^{''}$&0.799883932&\\%$\left(\begin{array}{ccc}0.799883932 & 2.46470607 \cdot 10^{-11}&\\2.46462659 \cdot 10^{-11}& 0.630227110&\\&&\end{array}\right)$&\\
+$0.35$&$0.8204$&35${}^{''}$&0.799883932&19164\\%$\left(\begin{array}{ccc}0.799883932 & 2.46470607 \cdot 10^{-11}&\\2.46462659 \cdot 10^{-11}& 0.630227110&\\&&\end{array}\right)$&\\
 \hline
 \end{tabular}
 
