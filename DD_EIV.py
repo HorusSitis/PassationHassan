@@ -73,11 +73,18 @@ for n in range(0,nb_modes):
  # extrapolation du snapshot au domaine fixe
  phi_fixe.set_allow_extrapolation(True)
  phi_n_nouv=interpolate(phi_fixe,V_nouv)
+ # affichage des modes extrapolés
+ plot(phi_n_nouv)
+ if fig_todo=='aff':
+  plt.show()
+ else:
+  plt.savefig("Figures2D/phi_nouv_"+str(n+1)+"_"+config+'_'+geo_p+".png")
+ plt.close()
  # on range le vecteur de POD interpolée dans la matrice Phi_nouv_v
  Phi_nouv_v[:,n]=phi_n_nouv.vector().get_local()
 
 print('se1 faite')
-#sys.exit()#-------------------------------------
+sys.exit()#-------------------------------------
 # --------------------- SE2 : résolution du modèle réduit --------------------- #
 
 ## On écrit les deux tenseurs qui comportent les coefficients de l'équation du modèle réduit : ceux-ci dépendent des vecteurs de la base POD projetée

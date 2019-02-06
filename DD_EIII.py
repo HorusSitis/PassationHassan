@@ -112,7 +112,7 @@ plt.yscale('log')
 if fig_todo=='aff':
  plt.show()
 else:
- plt.savefig("Figures2D/ener_vp_"+config+'_'+geo_p+"_res"+str(res)+".png")
+ plt.savefig("Figures2D/ener_vp_"+config+'_'+geo_p+".png")#+"_res"+str(res)
 plt.close()
 
 plt.plot(absc,ener_pour_cumul)
@@ -121,7 +121,7 @@ plt.ylabel('pourcentage_energie_cumule')
 if fig_todo=='aff':
  plt.show()
 else:
- plt.savefig("Figures2D/ener_cumul_vp_"+config+'_'+geo_p+"_res"+str(res)+".png")
+ plt.savefig("Figures2D/ener_cumul_vp_"+config+'_'+geo_p+".png")#+"_res"+str(res)
 plt.close()
 
 ## Choix du nombre de modes, avec une valeur seuil d'énergie à atteindre avec les vacteurs de la base POD
