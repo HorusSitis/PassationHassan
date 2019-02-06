@@ -97,7 +97,7 @@ and the tensor $\mathcal{R}$ is a matrix of shape $N_x\times N_x$, $N_x :=|\Omeg
 The point is that, for practical purposes, $R(x,x')$ is a full-size matrix, with $N_x$ so large that the problem in $\lambda_i$ wouldn't be resolved ; %
 this is the case in the problem of periodic homogenization.
 
-\subsubsection{Snapshot method}
+\subsubsection{Method of snapshots}
 
 In this paragraph, we make some hypotheses :
 
@@ -110,7 +110,7 @@ In this paragraph, we make some hypotheses :
 The spatial functions $w(\mathbf{x}, \tau_j)$ are called the \emph{snapshots}, a few of them should be enough to build a POD.
 
 \par
-Notice that the last hypothesis entails the POD basis contains a finite number $N_{POD}$ of vectors, and that $N_{POD}<N_t$.
+Notice that the last hypothesis entails the POD basis contains a finite number $N_{POD}$ of vectors, and that $N_{POD}<N_{\tau}$.
 
 \par
 By construction, $\Phi$ depends on the data $w(\mathbf{x},\tau_j)$ and is'nt supposed to be universal, as can be the Fourier basis of a $\mathcal{L}^2$ space. %
@@ -127,7 +127,7 @@ Using Fubini theorem, Fredholm equation can be rewritten :
 where :
 \begin{itemize}
 \item $\mathcal{C}$ is the temporal-correlation tensor : $\displaystyle C(\tau,\tau ')=\dfrac{1}{N_{\tau}}\int w(\mathbf{x},\tau)w(\mathbf{x},\tau')\text{d}\mathbf{x}$ ;
-\item $\star_{\tau}$ is the contracted product, with respect to the parameter $\tau$ : here, an integral on $\tau$ is a finite sum $\sum\limits{j=1}^{N_{\tau}}$.
+\item $\star_{\tau}$ is the contracted product, with respect to the parameter $\tau$ : here, an integral on $\tau$ is a finite sum $\sum\limits_{j=1}^{N_{\tau}}$.
 \end{itemize}
 
 Since \ref{hs2}, equation \ref{tenct} gives the following problem in $(\lambda_j , \alpha_j)$ :
@@ -181,8 +181,8 @@ they can be experimental measurements or numerical simulation ;
 \item\label{so1} Sort the proper-values $\lambda_i$ in a decreasing order ;
 \item Compute the $\phi_i$ using the proper vectors found for $[C]$ ;
 \item\label{so2} Evaluate the energy contained in each mode : $Ener^i:=\dfrac{\sum\limits_{k=1}^i\lambda_k}{\sum\limits_{k=1}^{N_{POD}}\lambda_k}$ ;
-\item\label{so3} Choose the first $N$ for which $Ener^i >\nu$, where $\nu$ is the energy threshold we want - typically, $99\%$ ;
-\item\label{so4} Compute the approximation error with the subset $(\phi_i)_{i=1}^{N}$.
+\item\label{so3} Choose the first $N_{rom}$ for which $Ener^i >\nu$, where $\nu$ is the energy threshold we want - typically, $99,99\%$ ;
+\item\label{so4} Compute the approximation error with the subset $(\phi_i)_{i=1}^{N_{rom}}$.
 \end{enumerate}
 \end{algo}
 
@@ -201,7 +201,7 @@ then the above reasonment leads us to build a basis $\Phi$ whose vectors are sol
 We have written a sample of functions of space $w$, parametrized with a finite set of the real number $\tau$ :
 
 \begin{equation}
-w(\mathbf{x},\tau)\simeq\sum\limits_{i=1}^N a_i(\tau)\phi_i(\mathbf{x})
+w(\mathbf{x},\tau)\simeq\sum\limits_{i=1}^{N_{rom}} a_i(\tau)\phi_i(\mathbf{x})
 \end{equation}
 
 Now, suppose that $w(\mathbf{x},\tau)$ is solution to the problem :
@@ -216,7 +216,7 @@ and $f$ a function, both depending on \emph{continuous} variables $\mathbf{x}$ a
 \par
 We write the general solution $w(\mathbf{x},\tau)$ of this problem in the same way as for the snapshots $w(\mathbf{x},\tau)$ :
 
-\[w(\mathbf{x},\tau)=\sum\limits_{i=1}^N a_i(\tau)\phi_i(\mathbf{x})+\mathcal{R}_N(\mathbf{x},\tau)\]
+\[w(\mathbf{x},\tau)=\sum\limits_{i=1}^{N_{rom}} a_i(\tau)\phi_i(\mathbf{x})+\mathcal{R}_N(\mathbf{x},\tau)\]
 
 and we make the hypothesis that $\mathcal{R}(\mathbf{x},\tau)$ is orthogonal to the modes $\phi_i$ for all $\tau$.
 
@@ -224,22 +224,22 @@ and we make the hypothesis that $\mathcal{R}(\mathbf{x},\tau)$ is orthogonal to 
 Galerkin projection along the $i-$th spatial mode of the problem \ref{genp} for $w$ is written :
 
 \[%
-\left(\left.\mathcal{A}\left(\sum\limits_{k=1}^N a_k(\tau)\phi_k(\mathbf{x})\right) \right|\phi_i\left(\mathbf{x}\right)\right)_H %
+\left(\left.\mathcal{A}\left(\sum\limits_{k=1}^{N_{rom}} a_k(\tau)\phi_k(\mathbf{x})\right) \right|\phi_i\left(\mathbf{x}\right)\right)_H %
 = \left(f\left(\mathbf{x},\tau\right)|\phi_i(\mathbf{x})\right)_H%
 \]
 
-where $a_k-$s are $N$ functions of the parameter $\tau$, solution of the so-called Reduces Order Model.
+where $a_k-$s are $N_{rom}$ functions of the parameter $\tau$, solution of the so-called Reduced Order Model.
 
 \par
-Notice that the above projection of the strong problem \ref{genp} gives us a system of $N$ equations, each involving the $N$ coefficient functions $a_k$ %
-that are known for the set of values $\tau_j$, which must much easier to resolve than the original problem and will give us, %
+Notice that the above projection of the strong problem \ref{genp} gives us a system of $N_{rom}$ equations, each involving the $N_{rom}$ coefficient functions $a_k$ %
+that are known for the set of values $\tau_j$, which must be much easier to resolve than the original problem and will give us, %
 in practical cases, a very good approximation of the parametrized function $w(\mathbf{x},\tau)$.
 
 \par
 We can also use Galerkin projection for a weak problem, that's we are doing in this work with \ref{chiw}.
 
 \etoile
-In this section, we define a ROM of the system \ref{chiw} using the so-called Galerkin projection on the basis $(\phi_i)_{i=1}^N$.
+In this section, we define a ROM of the system \ref{chiw} using the so-called Galerkin projection on the basis $(\phi_i)_{i=1}^{N_{rom}}$.
 
 One more step is however required for our purpose.
 
@@ -264,7 +264,7 @@ The $\phi_j$ modes will satisfy the partial differential equation \ref{chiw} ; %
 they will also satisfy periodicity and mean-value conditions of strong problem \ref{chistr} if they are regular enough.
 
 \etoile
-Once we have computed the POD basis, and chosen the smallest number $N$ of modes for which energy exceeds $99\%$ of all spatial modes $\phi_i$. %
+Once we have computed the POD basis, and chosen the smallest number $N_{rom}$ of modes for which energy exceeds $99,99\%$ of all spatial modes $\phi_i$. %
 Let us write :
 
 \[\chi^0\left(\mathbf{y},\rho\right)\text{ for all $\mathbf{y}$ in the fluid domain $\Omega_f^0$ and all meaningful $\rho$}\]
@@ -273,7 +273,7 @@ Let us write :
 Galerkin projection of \ref{chiw}, with respect to the components of the test vector field $v(\mathbf{y})$, is written :
 
 \begin{equation}\label{morchiz}
-\sum\limits_{k=1}^N a_k(\rho)\int\limits_{\Omega}Tr\left(\langle grad_y\phi_k^0 \left(\mathbf{y},\rho\right)|grad_y\left(\phi_i^0(\mathbf{y}\right)\rangle\right)\text{d}\Omega+%
+\sum\limits_{k=1}^{N_{rom}} a_k(\rho)\int\limits_{\Omega}Tr\left(\langle grad_y\phi_k^0 \left(\mathbf{y},\rho\right)|grad_y\left(\phi_i^0(\mathbf{y}\right)\rangle\right)\text{d}\Omega+%
 \int\limits_{\Gamma_{sf}}\langle n_{sf}|\phi_i^0(\mathbf{y})\rangle \text{d}s %
 =0
 \end{equation}
@@ -295,7 +295,7 @@ which is not zero.
 
 \par
 Let now $\rho^{new}$ be an a parameter, which is not one of the $\rho_j$ parameters of the snapshots, %
-we want to compute $\chi(\mathbf{y},\rho^{new}$ in the fluid domain $\Omega_f^{new}$ of the cell with solid inclusion of size $\rho^{new}$.
+we want to compute $\chi(\mathbf{y},\rho^{new})$ in the fluid domain $\Omega_f^{new}$ of the cell with solid inclusion of size $\rho^{new}$.
 
 \par
 We begin with extrapolating the modes $\phi_i^0(\mathbf{y})$, defined for $\mathbf{y}$ in the fluid domain $\Omega_f^0$. %
@@ -306,7 +306,7 @@ analogous to the interpolation that has been unsed to map the $\chi(\cdot,\rho_j
 We resolve the \ref{morchiz} look-alike system with the basis $(\phi_i^{new})_i$ obtained with this transformation :
 
 \begin{equation}
-\sum\limits_{k=1}^N a_k(\rho^{new})\int\limits_{\Omega}Tr\left(\langle grad_y\phi_k^{new} \left(\mathbf{y},\rho\right)|grad_y\left(\phi_i^{new}(\mathbf{y}\right)\rangle\right)\text{d}\Omega+%
+\sum\limits_{k=1}^{N_{rom}} a_k(\rho^{new})\int\limits_{\Omega}Tr\left(\langle grad_y\phi_k^{new} \left(\mathbf{y},\rho\right)|grad_y\left(\phi_i^{new}(\mathbf{y}\right)\rangle\right)\text{d}\Omega+%
 \int\limits_{\Gamma_{sf}}\langle n_{sf}|\phi_i^{new}(\mathbf{y})\rangle \text{d}s %
 =0
 \label{morchi}
@@ -318,7 +318,7 @@ and obtain the physically-relevant $a_k -$s, which are not the same than in \ref
 The $\chi(\mathbf{y},\rho^{new})$ we were looking for is simply the linear combination of the $\phi_i^{new}$ given by the truncated POD :
 
 \begin{equation}\label{newrom}
-\chi\left(\mathbf{y},\rho^{new}\right)\simeq \sum\limits_{i=1}^N a_i \left(\rho^{new}\right)\phi_i^{new}(\mathbf{y})\text{ for all $\mathbf{y}$ in $\Omega_f^{new}$}
+\chi\left(\mathbf{y},\rho^{new}\right)\simeq \sum\limits_{i=1}^{N_{rom}} a_i \left(\rho^{new}\right)\phi_i^{new}(\mathbf{y})\text{ for all $\mathbf{y}$ in $\Omega_f^{new}$}
 \end{equation}
 
 \par
@@ -342,7 +342,7 @@ Let us summarize the steps we follow in this work, and that we implement with Py
 using Finite Element Method ;
 \item Map the $\chi (\cdot,\rho_j)$ from their respective fluid domain to the single $\Omega_f^0$, we obtain a collection of snapshots $(\chi^0(\mathbf{y},\rho_j)$ %
 defined for $\mathbf{y}$ in $\Omega_f^0$ ;
-\item With algorithm \ref{a_snap}, compute the $\phi^0_i$, for integer $i$ between $1$ and some $N$ depending on the energy fraction we want for our model, typically $99\%$ ;
+\item With algorithm \ref{a_snap}, compute the $\phi^0_i$, for integer $i$ between $1$ and some $N_{rom}$ depending on the energy fraction we want for our model, typically $99,99\%$ ;
 \item Reduced Order Model : we choose a new parameter $\rho^{new}$.
 \begin{enumerate}[label=(\textbf{se}\ \roman*)]
 \item Map the $\phi_i^0$ to the space $H^{new}$ of functions defined on the domain $\Omega_f^{new}$, with the norm $L^2$, $H^1$ etc we have chosen for our work ;
