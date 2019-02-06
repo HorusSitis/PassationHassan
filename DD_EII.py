@@ -39,7 +39,7 @@ with sh.open(repertoire_parent+l_name) as l_loa:
 mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2d.xml")
 
 V_fixe=VectorFunctionSpace(mesh_fixe, 'P', 3, constrained_domain=PeriodicBoundary())
-sys.exit()
+#sys.exit()
 # Extrapolation des solutions du problème physique
 
 def extra_snap(n):

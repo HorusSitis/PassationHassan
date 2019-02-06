@@ -55,14 +55,14 @@ E_lL=False
 EI=False
 EII=False
 
-EIII=False
-EIV=True
+EIII=True
+EIV=False
 
 res_fixe=20
 res=20
 
 fixe_aff=False
-fig_todo='aff'
+fig_todo='save'
 
 ### ------------ Etape 0 : Génération de microstructures périodiques aléatoires ------------ ###
 
@@ -79,7 +79,7 @@ typ_msh='gms'#'gms'#''
 print(typ_msh)
 
 # nom de l'appareil utilisé pour générer les données enregistrées
-computer='T1700_35x8'#'MECALAC_29x8'###
+computer='MECALAC_29x8'#'T1700_35x8'###
 
 
 
@@ -135,7 +135,7 @@ if E_lL :
 
 # Exécution
 
-snap_done=True#-------------------> pour calculer les snapshots seulement si nécessaire
+snap_done=False#-------------------> pour calculer les snapshots seulement si nécessaire
 
 if EI :
  exec(open("DD_EI.py").read())
