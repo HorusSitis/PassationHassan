@@ -19,22 +19,24 @@ $z_k$ is the valence of ion $k$.
 \begin{equation}\label{npp_f}
 \left\{%
 \begin{array}{lcl}
-\dfrac{\partial{c_k}}{\partial{t}}&=&div\left(-D_k\left(grad(c_k)+\dfrac{F}{RT}grad(\Psi)\right)\right)\\
+\dfrac{\partial{c_k}}{\partial{t}}&=&div\left(-D_k\left(grad(c_k)+\dfrac{F}{RT}grad(\Psi)c_k z_k\right)\right)\\
 \epsilon_p \Delta \Psi&=&-\rho
 \end{array}
 \right.
 \end{equation}
 
 For the diffusion equations $D_k$ is the self-diffusion of ion $k$, $F$ and $R$ are the Faraday and perfect gas constants, $T$ the temperature ; %
-for the Poisson equation $\Psi$ is the electrical potential, $\epsilon_v$ the dielectrical constant of the porous medium and $\rho$ the volumetric electrical charge.
+for the Poisson equation $\Psi$ is the electrical potential, $\epsilon_v$ the dielectrical constant of the porous medium and $\rho$ the volumetric electrical charge which satisfies :
 
-\par
+\[\rho=\sum\limits_k z_k c_k F\]
+
+%\par
 The above system is completed by the Neumann condition on $\Gamma_{sf}$ :
 
 \begin{equation}\label{npp_sf}
 \left\{%
 \begin{array}{lcr}
-D_k\left(grad(c_k)+\dfrac{F}{RT}grad(\Psi)\right)\cdot \vec{n}_{sf}&=&0\\
+D_k\left(grad(c_k)+\dfrac{F}{RT}grad(\Psi)c_k z_k\right)\cdot \vec{n}_{sf}&=&0\\
 grad \Psi\cdot \vec{n}_{sf}&=&0
 \end{array}
 \right.
@@ -198,7 +200,7 @@ For diffusion-migration of ions in porous media, we derive from Nernst-Planck-Po
 
 \begin{description}
 \item[Homogenized equation :] %
-\[\derp{c_k}{t}-div_{\mathbf{x}}\left(D_k^{hom}\derp{c_k}{\mathbf{x}}+D_k^{hom}\frac{F}{RT}z_k \derp{\Psi}{\mathbf{x}}\right)=0\]
+\[\derp{c_k}{t}-div_{\mathbf{x}}\left(D_k^{hom}\derp{c_k}{\mathbf{x}}+D_k^{hom}\frac{F}{RT}z_k c_k\derp{\Psi}{\mathbf{x}}\right)=0\]
 \item[Homogenized tensor $D_k^{hom}$ :] 
 \[D_k^{hom}:=\int\limits_{\Omega_f}\left(I+\derp{\chi}{\mathbf{y}}^T\right)\text{d}\Omega\]
 \end{description}
@@ -351,7 +353,7 @@ even if the mesh resolution is reasonable.
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
-\subfloat[Mesh around the inclusion]{\includegraphics[width=0.28\linewidth,height=3cm]{../Figures3D/maillage_mshSc035.png}}
+\subfloat[Mesh around the inclusion]{\includegraphics[width=0.24\linewidth,height=2.55cm]{../Figures3D/maillage_mshSc035.png}}
 %%{\includegraphics[width=0.24\linewidth,height=3.2cm]{../Figures3D/maillageCyrille_facettes.png}}
 &%\hfill
 \subfloat[$\derp{\chi^1}{y}$]{\includegraphics[width=0.24\linewidth,height=3.2cm]{../Figures3D/Cyrille35grady1.png}}
