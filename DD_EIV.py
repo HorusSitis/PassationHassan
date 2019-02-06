@@ -84,7 +84,7 @@ for n in range(0,nb_modes):
  Phi_nouv_v[:,n]=phi_n_nouv.vector().get_local()
 
 print('se1 faite')
-sys.exit()#-------------------------------------
+#sys.exit()#-------------------------------------
 # --------------------- SE2 : résolution du modèle réduit --------------------- #
 
 ## On écrit les deux tenseurs qui comportent les coefficients de l'équation du modèle réduit : ceux-ci dépendent des vecteurs de la base POD projetée
@@ -107,10 +107,11 @@ chi_nouv_v=np.dot(Phi_nouv_v,a_nouv)
 chi_nouv=Function(V_nouv)
 chi_nouv.vector().set_local(chi_nouv_v)
 
-plot(chi_nouv, linewidth=0.55)
+plot(chi_nouv)#, linewidth=0.55)
 if fig_todo=='aff':
  plt.show()
-#else:
+else:
+ plt.savefig("Figures2D/solROM_"+config+'_'+geo_p+str(int(round(100*r_nouv,2)))+".png")
 plt.close()
 
 ## Exploitation du champ ainsi obtenu
@@ -170,3 +171,12 @@ print('Coefficient Dhom_k11 '+conf_mess+', '+geo_mess+' variable valeur '+str(rh
 
 err_rel=100*(Dhom_kMOR[0,0]-Dhom_kMEF[0,0])/Dhom_kMEF[0,0]
 print('Erreur relative MEF-MOR :', err_rel , ' pourcent')
+
+## Sortie graphique
+
+plot(chi_nouv)#, linewidth=0.55)
+if fig_todo=='aff':
+ plt.show()
+else:
+ plt.savefig("Figures2D/solFEM_"+config+'_'+geo_p+str(int(round(100*r_nouv,2)))+".png")
+plt.close()
