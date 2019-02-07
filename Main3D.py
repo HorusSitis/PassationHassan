@@ -16,7 +16,13 @@ import numpy as np
 from math import sqrt
 import sys
 
+# Calcul parallèle
+
 import multiprocessing
+
+# Performances
+
+import time
 
 # Stockage d'objets python
 
@@ -42,12 +48,12 @@ from matplotlib.patches import Circle, PathPatch
 E_=False
 E_lL=False
 
-EI=True
+EI=False
 
 EII=False
 
 EIII=False
-EIV=False
+EIV=True
 
 res_fixe=6
 fixe_aff=False
@@ -87,7 +93,7 @@ parallelize=True
 
 # Choix de la résolution du maillage : nombre de noeuds par côté du cube
 
-res_gmsh=20
+res_gmsh=10
 
 if typ_msh=='gms':
  res=res_gmsh
@@ -135,7 +141,7 @@ if E_lL :
 
 # Exécution
 
-snap_done=False #-------------------> pour calculer les snapshots seulement si nécessaire
+snap_done=True #-------------------> pour calculer les snapshots seulement si nécessaire
 
 if EI :
  exec(open("DDD_EI.py").read())
@@ -167,6 +173,10 @@ N_mor=8#100%
 
 N_mor=4
 r_nouv=0.33#0.22#0.33#0.44
+
+# La mesure du temps d'éxécution doit se faire avec l'option 'save' de fig_todo
+
+ind_res=True#False###----------> on précise la résolution du maillage, qui apparaît ou non dans le fichier contenant Phi
 
 #0.22 : 0.011% d'erreur, tps d'éxécution ~ 1''/70''
 #0.33 : 0.012% d'erreur, tps d'éxécution ~ 1''/60''

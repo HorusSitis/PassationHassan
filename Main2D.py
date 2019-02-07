@@ -55,8 +55,8 @@ E_lL=False
 EI=False
 EII=False
 
-EIII=True
-EIV=False
+EIII=False
+EIV=True
 
 res_fixe=20
 res=20
@@ -162,6 +162,8 @@ if EIII :
 
 N_mor=4
 r_nouv=0.22
+
+# La mesure du temps d'éxécution doit se faire avec l'option 'save' de fig_todo
 
 if EIV :
  exec(open("DD_EIV.py").read())
