@@ -269,6 +269,7 @@ Galerkin projection along the $i-$th spatial mode of the above problem is writte
 \[%
 \left(\left.\mathcal{A}\left(\sum\limits_{k=1}^{N_{rom}} a_k(\tau)\phi_k(\mathbf{x})\right) \right|\phi_i\left(\mathbf{x}\right)\right)_H %
 = \left(f\left(\mathbf{x},\tau\right)|\phi_i(\mathbf{x})\right)_H%
+\text{ for all $i$ in $1,\dots , k$}%
 \]
 
 \par
@@ -279,7 +280,7 @@ in practical cases, a very good approximation of the parametrized function $w(\m
 \etoile
 We can also use Galerkin projection for a weak problem, that's we are doing in the following subsection for \ref{chiw}.
 
-\subsection{Back to periodic homogenization}\label{pod_rom}
+\subsection{Back to periodic homogenization}\label{rom_chi}
 
 %\etoile
 In this section, we define a ROM of the system \ref{chiw} using the so-called Galerkin projection on the basis $(\phi_i)_{i=1}^{N_{rom}}$.
@@ -327,6 +328,22 @@ We begin the construction of our Reduced Order Model by extrapolating the snapsh
 on a same functional space $H^0$, namely the space of functions defined on the fluid domain $\Omega_f^0$ which satisfies $\rho=0$, %
 with the norm used for the spaces of the snapshots ; %
 the Hilbert space $H^0$ which appears in the prewious paragraph is typically $\mathcal{L}^2\left(\Omega_f^{\rho=0}\right)$.
+
+\par
+The following commands are written in FEniCS 2018.1.0 to obtain the snapshots :
+
+\begin{codef}
+for j in 1\dots 8\\
+\ chi\_j=Function(V\_j)\\
+\ chi\_j=\emph{load $\chi(\mathbf{x},\rho_j)$}\\
+\ \dots \\
+\ chi\_j.set\_allow\_extrapolation(True)\\
+\ chi\_j\_prime=interpolate(chi\_j,V\_fixe)\\
+\ \dots \\
+\ \emph{save snapshot $\chi'(\mathbf{x},\rho_j)$}
+\end{codef}
+
+where \begin{code}V\_fixe\end{code} and \begin{code}V\_j\end{code} are vector function spaces on fluid domains $\Omega_f^0$ and $\Omega_f^j$ respectively.
 
 \begin{figure}[H]
 \begin{center}
@@ -407,7 +424,6 @@ Once we have computed the POD basis, and chosen the smallest number $N_{rom}$ of
 
 We can see that the snapshots essentialy belong to a two-dimensional real vector space.
 
-
 \par
 For a threshold of $99,99\%$, $N_{rom}$ is taken to be $4$. %
 Thus we have the constituents of our reduced order model.
@@ -452,7 +468,22 @@ We reverse the transformation, from the functional space $H^{new}$ to $H^0$, %
 analogous to the interpolation that has been unsed to map the $\chi(\cdot,\rho_j)$ to the POD-relevant snapshots $\chi (\cdot ,\rho_j)$.
 
 \par
-We write $\phi_i^{new}$ for the extrapolation of mode $\phi_i^0$ on the fluid domain $\Omega_f^{new}$.
+The following commands in FEniCS 2018.1.0 generate the $N_{rom}$ $\phi_i^{new}$ modes on the fluid domain $\Omega_f^{new}$.
+
+\begin{codef}
+for i in 1\dots $N_{rom}$\\
+%
+\ phi\_i\_new=Function(V\_new)\\
+\ phi\_i\_fixe=Function(V\_fixe)\\
+\ phi\_i\_fixe=\emph{load $\phi_i$}\\
+\ \dots \\
+\ phi\_i\_fixe.set\_allow\_extrapolation(True)\\
+\ phi\_i\_new=interpolate(phi\_i\_fixe,V\_new)\\
+\ \dots \\
+\ \emph{save mode $\phi_i^{new}$}
+\end{codef}
+
+where \begin{code}V\_fixe\end{code} and \begin{code}V\_new\end{code} are vector function spaces on fluid domains $\Omega_f^0$ and $\Omega_f^{new}$ respectively.
 
 \begin{figure}[H]
 \begin{center}
