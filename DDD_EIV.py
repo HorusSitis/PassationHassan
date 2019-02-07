@@ -40,6 +40,10 @@ elif dom_fixe=='0000':
 
 V_fixe=VectorFunctionSpace(mesh_fixe,'P',2,constrained_domain=PeriodicBoundary())
 
+# Performances
+
+import time
+
 ### ------------ Etapes reproduites : dépendances directes de Main3D ------------ ###
 
 #r_nouv=0.22
@@ -53,11 +57,22 @@ V_nouv=VectorFunctionSpace(mesh_nouv, "P", 2, constrained_domain=PeriodicBoundar
 
 # --------------------- SE1 : projection de la base POD sur le nouveau domaine --------------------- #
 
+## On initialise le temps de calcul ##
+
+start=time.time()
+
+## Taille du maillage du domaine fixe ##
+
 nb_noeuds_fixe=V_fixe.dim()
 
 ## Chargement de la base POD complète
 
-phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+"res"+str(res)+'_'+ordo+'_'+computer
+if ind_res:
+ phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+"res"+str(res)+'_'+ordo+'_'+computer
+else:
+ phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+
+print(phi_name)
 
 with sh.open(repertoire_parent+phi_name) as phi_loa:
  Phi_prime_v = phi_loa["maliste"]
@@ -85,11 +100,17 @@ for n in range(0,nb_modes):
 
 ## Stockage de la matrice du modèle réduit
 
+## On enregistre et imprime le temps d'éxécution de SE1
 
+end=time.time()
 
-print('se1 faite')
+print('se1 faite ',end-start,' secondes')
 #sys.exit()#-------------------------------------
 # --------------------- SE2 : résolution du modèle réduit --------------------- #
+
+## On réinitialise le temps de calcul ##
+
+start=time.time()
 
 ## On écrit les deux tenseurs qui comportent les coefficients de l'équation du modèle réduit : ceux-ci dépendent des vecteurs de la base POD projetée
 
@@ -103,8 +124,18 @@ b=Coeff[1]
 
 a_nouv=np.linalg.solve(A.T,-b)
 
-print('se2 faite')
+## On enregistre et imprime le temps d'éxécution de SE2
+
+end=time.time()
+
+print('se2 faite ',end-start,' secondes')
 # --------------------- SE3 : calcul du nouveau champ de vecteurs, affichage --------------------- #
+
+## On réinitialise le temps de calcul ##
+
+start=time.time()
+
+## On initialise et affiche le champ chi_nouv
 
 chi_nouv_v=np.dot(Phi_nouv_v,a_nouv)
 chi_nouv=Function(V_nouv)
@@ -142,9 +173,19 @@ Dhom_kMOR=D_k*(D+T_chi.T)
 #print(('Tenseur Dhom_k',Dhom_k))
 print('Coefficient Dhom_k11 '+conf_mess+', '+geo_mess+' variable valeur '+str(rho)+' MOR :',Dhom_kMOR[0,0])
 
-print('se3 faite')
+## On enregistre et imprime le temps d'éxécution de SE3
+
+end=time.time()
+
+print('se3 faite ',end-start,' secondes')
 #sys.exit()#-------------------------------------
 # --------------------- SE4 : comparaison avec la méthode des éléments finis --------------------- #
+
+## On réinitialise le temps de calcul ##
+
+start=time.time()
+
+## On réinitialise le champ chi_nouv pour la méthode des éléments finis
 
 #res=20
 if config=='sph_un':
@@ -189,6 +230,8 @@ print('Coefficient Dhom_k11 '+conf_mess+', '+geo_mess+' variable valeur '+str(rh
 err_rel=100*(Dhom_kMOR[0,0]-Dhom_kMEF[0,0])/Dhom_kMEF[0,0]
 print('Erreur relative MEF-MOR :', err_rel , ' pourcent')
 
+## On enregistre et imprime le temps d'éxécution de SE4
 
+end=time.time()
 
-
+print('se4 faite ',end-start,' secondes')
