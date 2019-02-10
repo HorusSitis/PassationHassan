@@ -158,7 +158,7 @@ else :
 #mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2d_am.xml")
 #V_fixe=VectorFunctionSpace(mesh_fixe, 'P', 3, constrained_domain=PeriodicBoundary())
 
-for n in range(3,6):#1+Nsnap):#attention le rayon d'un cercle doit être non nul
+for n in range(1,1+Nsnap):#attention le rayon d'un cercle doit être non nul
  # Extraction du snapshot de rang n
  chi_n_v=list_chi_v[n-1]
  print(config)
@@ -188,7 +188,7 @@ for n in range(3,6):#1+Nsnap):#attention le rayon d'un cercle doit être non nul
  chi_n=Function(V_n)
  print(V_n.dim())
  print(len(chi_n_v))
- sys.exit()#---------------------------------------------------
+ #sys.exit()#---------------------------------------------------
  chi_n.vector().set_local(chi_n_v)
  # Figures et erreurs
  plot(chi_n)

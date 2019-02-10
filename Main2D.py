@@ -52,17 +52,17 @@ from DD_fun_obj import *
 E_=False
 E_lL=False
 
-EI=True
+EI=False
 EII=False
 
 EIII=False
-EIV=False
+EIV=True
 
-res_fixe=20
-res=20
+#res_fixe=20
+res=100#pour les sommets#20
 
 fixe_aff=False
-fig_todo='aff'
+fig_todo='save'
 
 ### ------------ Etape 0 : Génération de microstructures périodiques aléatoires ------------ ###
 
@@ -108,7 +108,7 @@ geo_p='ray'
 if geo_p=='ray':
  geo_mess='rayon variable'
 
-cen_snap_ray=[0.5,0.5]#[0.,0.]#
+cen_snap_ray=[0.,0.]#[0.5,0.5]#
 
 ### Disque centré ou aux sommets
 
@@ -145,7 +145,7 @@ if E_lL :
 
 # Exécution
 
-snap_done=False#-------------------> pour calculer les snapshots seulement si nécessaire
+snap_done=True#-------------------> pour calculer les snapshots seulement si nécessaire
 
 if EI :
  exec(open("DD_EI.py").read())
@@ -170,8 +170,8 @@ if EIII :
 
 ## ---------- Etape IV ---------- ##
 
-N_mor=4
-r_nouv=0.22
+N_mor=5
+r_nouv=0.44
 
 # La mesure du temps d'éxécution doit se faire avec l'option 'save' de fig_todo
 
