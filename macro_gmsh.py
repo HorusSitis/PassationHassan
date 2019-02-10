@@ -5,7 +5,12 @@ import sys
 
 dimension=2
 fig_todo='aff'
-fixe=True
+
+# Génération de maillages : apprentissage, fixe et test
+appr=False
+fixe=False
+test=True
+
 Nsnap=1
 
 config='cer_un_som'#cer_un
@@ -37,7 +42,7 @@ os.chdir(os.getcwd() + "/maillages_per/"+str(dimension)+"D")
 #geo_p=
 #res_gmsh=
 
-if not fixe:
+if appr:
  for n in range(1,1+Nsnap):
   r=n*0.05
   #if r==0.05:
@@ -59,25 +64,11 @@ if not fixe:
    os.system("gmsh "+mesh_name+".msh")
   ## Conversion en .xml avec dolfin pour FEniCS
   os.system("dolfin-convert "+mesh_name+".msh "+mesh_name+".xml")
-
-
-
-
-
-
-
-
-#sys.exit("Création de maillages périodiques terminée")#--------------------------------------------
-
-# Cas du domaine sans inclusion :
-# mesh_name=mesh_prefix
-
-if fixe:
+elif fixe:
  if dimension==3:
   mesh_name=mesh_prefix+dom_fixe#+"_"
  if dimension==2:
-  #mesh_name="maillage"+dom_fixe+"_fixe2d"
-  mesh_name="maillage_fixe2d_am"
+  mesh_name="maillage_fixe2D_am"
   ## Génération d'un fichier .geo ? On commence avec un fichier unique et on modifie geo_p dans le code avant de sauvegarder sous le nom courant.
   print(mesh_name)
   ## Visualisation du fichier .geo
@@ -90,6 +81,23 @@ if fixe:
    os.system("gmsh "+mesh_name+".msh")
   ## Conversion en .xml avec dolfin pour FEniCS
   os.system("dolfin-convert "+mesh_name+".msh "+mesh_name+".xml")
-
+elif test:
+ for r in [0.22,0.33,0.44]:
+  mesh_name=mesh_prefix+"_"+str(int(round(100*r,2)))
+  if res==20:
+   mesh_name=mesh_name+"_res"+str(res)
+  ## res=100 : pas de suffixe
+  ## Génération d'un fichier .geo ? On commence avec un fichier unique et on modifie geo_p dans le code avant de sauvegarder sous le nom courant.
+  print(mesh_name)
+  ## Visualisation du fichier .geo
+  print("gmsh "+mesh_name+".geo")
+  os.system("gmsh "+mesh_name+".geo")
+  ## Conversion en .msh
+  os.system("gmsh -"+str(dimension)+" "+mesh_name+".geo")
+  ## Affichage du maillage obtenu
+  if fig_todo=='aff':
+   os.system("gmsh "+mesh_name+".msh")
+  ## Conversion en .xml avec dolfin pour FEniCS
+  os.system("dolfin-convert "+mesh_name+".msh "+mesh_name+".xml")
 
 sys.exit("Création de maillages périodiques terminée")
