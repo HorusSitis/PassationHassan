@@ -36,7 +36,7 @@ with sh.open(repertoire_parent+l_name) as l_loa:
 
 
 # Extrapolation au domaine Omega_fixe : 
-mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2d_am.xml")
+mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2D_am.xml")
 
 V_fixe=VectorFunctionSpace(mesh_fixe, 'P', 3, constrained_domain=PeriodicBoundary())
 #sys.exit()
@@ -47,7 +47,7 @@ def extra_snap(n):
  # chargement du snapshot courant
  chi_n_v=list_chi_v[n-1]
  # mise sous forme d'une fonction EF
- if cen==[0.,0.]:
+ if cen_snap_ray==[0.,0.]:
   mention="_som"
  else:
   mention=""
