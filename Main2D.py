@@ -52,17 +52,17 @@ from DD_fun_obj import *
 E_=False
 E_lL=False
 
-EI=False
+EI=True
 EII=False
 
 EIII=False
-EIV=True
+EIV=False
 
 res_fixe=20
 res=20
 
 fixe_aff=False
-fig_todo='save'
+fig_todo='aff'
 
 ### ------------ Etape 0 : Génération de microstructures périodiques aléatoires ------------ ###
 
@@ -79,7 +79,7 @@ typ_msh='gms'#'gms'#''
 print(typ_msh)
 
 # nom de l'appareil utilisé pour générer les données enregistrées
-computer='MECALAC_29x8'#'T1700_35x8'###
+computer='T1700_35x8'##'MECALAC_29x8'##
 
 
 
@@ -92,7 +92,7 @@ from LEc import *
 
 D_k=1.0
 Nsnap=8
-npas_err=20
+npas_err=50
 ordo='Ordr'#'Nordr'
 
 gen_snap='par8'#'seq'
@@ -107,9 +107,19 @@ if config=='cer_un':
 geo_p='ray'
 if geo_p=='ray':
  geo_mess='rayon variable'
+
 cen_snap_ray=[0.5,0.5]#[0.,0.]#
 
-#geo_p='centre'
+### Disque centré ou aux sommets
+
+if cen_snap_ray==[0.5,0.5]:
+ conf_mess=conf_mess+" centré"
+elif cen_snap_ray==[0.,0.]:
+ conf_mess=conf_mess+" aux sommets"
+ mention="_som"
+ config=config+mention
+
+### geo_p='centre'
 #ray_snap_cen=0.25
 #csr_list=[[0.05*k,0.5] for k in range(1,1+Nsnap)]
 

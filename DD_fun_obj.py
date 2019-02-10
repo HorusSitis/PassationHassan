@@ -79,17 +79,21 @@ def creer_maill_circ(cen,r,res):#valable quel que soit la position de l'inclusio
 
 def snapshot_circ_per(cen,r,res):
  c_x,c_y=cen[0],cen[1]
+ if cen==[0.,0.]:
+  mention="_som"
+ else:
+  mention=""
  if typ_msh=='gms':
-  mesh_c_r=Mesh("maillages_per/2D/maillage_trou2d_"+str(int(round(100*r,2)))+".xml")#
+  mesh_name="maillages_per/2D/maillage_trou2D"+mention+"_"+str(int(round(100*r,2)))+".xml"
+  print(mesh_name)
+  mesh_c_r=Mesh(mesh_name)
  else:
   mesh_c_r=creer_maill_circ([c_x,c_y],r,res)
  # On pose et on résoud le problème aux éléments finis
- V=VectorFunctionSpace(mesh_c_r, 'P', 3, form_degree=0, constrained_domain=PeriodicBoundary())#vertices))
+ V=VectorFunctionSpace(mesh_c_r, 'P', 3, form_degree=0, constrained_domain=PeriodicBoundary())
  print(V.dim(),str(int(round(20*r,2))))
- print("maillages_per/2D/maillage_trou2d_"+str(int(round(100*r,2)))+".xml")
  ## On définit la bordure du domaine, sur laquelle intégrer le second membre "L" de l'équation en dimension finie
  l_cen=[]
- #cen=[c_x,c_y]
  for i in range(-1,2):
   for j in range(-1,2):
    l_cen.append([cen[0]+i,cen[1]+j])
