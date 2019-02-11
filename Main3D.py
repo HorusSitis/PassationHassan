@@ -48,12 +48,11 @@ from matplotlib.patches import Circle, PathPatch
 E_=False
 E_lL=False
 
-EI=False
+EI=True
 
 EII=False
-
 EIII=False
-EIV=True
+EIV=False
 
 res_fixe=6
 fixe_aff=False
@@ -70,7 +69,7 @@ fig_todo='save'#'aff'
 
 typ_msh='gms'#''
 ## choix du domaine fixe
-dom_fixe='0001'#'0001'#''
+dom_fixe='0001'#'am'#'0001'#''
 
 # nom de l'appareil utilisé pour générer les données enregistrées
 computer='MECALAC_29x8'##'T1700_35x8'#
@@ -93,7 +92,7 @@ parallelize=True
 
 # Choix de la résolution du maillage : nombre de noeuds par côté du cube
 
-res_gmsh=10
+res_gmsh=20
 
 if typ_msh=='gms':
  res=res_gmsh
@@ -119,7 +118,8 @@ cen_snap_ray=[0.5,0.5,0.5]
 
 if config=='cyl_un':
  conf_mess='cylindre unique'
-#geo_p='ray'
+geo_p='ray'
+
 #geo_p='axe'
 asr_list=[[0.5,0.3+0.05*k] for k in range(1,1+Nsnap)]
 ### point auquel l'axe rencontre le plan Oxz. L'inclusion solide ne rencontre pas les bords du domaine.
@@ -141,7 +141,7 @@ if E_lL :
 
 # Exécution
 
-snap_done=True #-------------------> pour calculer les snapshots seulement si nécessaire
+snap_done=False #-------------------> pour calculer les snapshots seulement si nécessaire
 
 if EI :
  exec(open("DDD_EI.py").read())
@@ -172,7 +172,7 @@ N_mor=8#100%
 ## -------------------- Etape IV -------------------- ##
 
 N_mor=4
-r_nouv=0.33#0.22#0.33#0.44
+r_nouv=0.44#0.33#0.22#
 
 # La mesure du temps d'éxécution doit se faire avec l'option 'save' de fig_todo
 
