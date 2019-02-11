@@ -37,9 +37,10 @@ if typ_msh=='gms':
  # maillage du domaine fixe avec gmsh
  if dom_fixe=='':
   mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle.xml")
+ elif dom_fixe=="am":
+  mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle"+"_am"+"_sur"+str(res)+"_fixe.xml")
  elif dom_fixe=='0001':
   mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_sur"+str(res)+"_0001fixe.xml")
-  print("maillages_per/3D/cubesphere_periodique_triangle_sur"+str(res)+"_0001fixe")
  elif dom_fixe=='0000':
   mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_sur"+str(res)+"_0000fixe.xml")
 else:
@@ -47,6 +48,7 @@ else:
 
 V_fixe=VectorFunctionSpace(mesh_fixe, "P", 2, constrained_domain=PeriodicBoundary())
 
+#sys.exit("chargement du maillage fixe terminé")
 ## Boucle pour la création des snapshots, avec un paramètre pouvant être le rayon d'une inclusion circulaire, ou l'emplacement de son centre 
 
 # Pour avoir des fonctions "top-level" à paralléliser
@@ -197,5 +199,5 @@ for n in range(1,1+Nsnap):
  Dhom_k=D_k*(D+T_chi.T)
  #print(('Tenseur Dhom_k',Dhom_k))
  print("Noeuds",V_n.dim())
- print('Coefficient Dhom_k11EF, snapshot '+str(n)+", "+config+', '+geo_p+" variable :",Dhom_k[0,0])
+ print('Coefficient Dhom_k11EF, snapshot '+str(n)+", "+conf_mess+', '+geo_mess+" :",Dhom_k[0,0])
 #

@@ -31,10 +31,12 @@ class PeriodicBoundary(SubDomain):
 
 if dom_fixe=='':
  mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle.xml")
+elif dom_fixe=="am":
+ mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle"+"_"+dom_fixe+"_sur"+str(res)+"_fixe.xml")
 elif dom_fixe=='0001':
- mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_sur"+str(res)+"_0001fixe.xml")
+ mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_sur"+str(res)+"_"+dom_fixe+"fixe.xml")
 elif dom_fixe=='0000':
- mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_sur"+str(res)+"_0000fixe.xml")
+ mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_sur"+str(res)+"_"+dom_fixe+"fixe.xml")
 
 # fonctions test du domaine fixe
 
@@ -76,7 +78,7 @@ print(phi_name)
 
 with sh.open(repertoire_parent+phi_name) as phi_loa:
  Phi_prime_v = phi_loa["maliste"]
-
+sys.exit()
 ## Création de la base POD tronquée, sous forme vectorielle
 
 Phi_mor=Phi_prime_v[:,range(0,nb_modes)]
