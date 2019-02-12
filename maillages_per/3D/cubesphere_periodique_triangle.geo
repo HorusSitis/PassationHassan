@@ -11,7 +11,7 @@ zmax=1.;
 xc=0.5;
 yc=0.5;
 zc=0.5;
-rayon=0.45;
+rayon=0.3;
 pas_sphere=0.1;
 
 
