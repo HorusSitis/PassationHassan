@@ -79,20 +79,31 @@ Line(nlcu+12) = {npcu+3,npcu+7};
 
 Point(npcy+1) = {xc,ymin,zc,pas_cube};
 Point(npcy+2) = {xc+rayon,ymin,zc,pas_cube};
-Point(npcy+3) = {xc-rayon,ymin,zc,pas_cube};
+Point(npcy+3) = {xc,ymin,zc+rayon,pas_cube};
+Point(npcy+4) = {xc-rayon,ymin,zc,pas_cube};
+Point(npcy+5) = {xc,ymin,zc-rayon,pas_cube};
 
-Point(npcy+4) = {xc,ymax,zc,pas_cube};
-Point(npcy+5) = {xc+rayon,ymax,zc,pas_cube};
-Point(npcy+6) = {xc-rayon,ymax,zc,pas_cube};
+Point(npcy+6) = {xc,ymax,zc,pas_cube};
+Point(npcy+7) = {xc+rayon,ymax,zc,pas_cube};
+Point(npcy+8) = {xc,ymax,zc+rayon,pas_cube};
+Point(npcy+9) = {xc-rayon,ymax,zc,pas_cube};
+Point(npcy+10) = {xc,ymax,zc-rayon,pas_cube};
+
 
 // Creation des contours du cylindre
 
 Circle(nlcy+1)={npcy+2,npcy+1,npcy+3};
-Circle(nlcy+2)={npcy+3,npcy+1,npcy+2};
-Line(nlcy+3)={npcy+2,npcy+5};
+Circle(nlcy+2)={npcy+3,npcy+1,npcy+4};
+Circle(nlcy+3)={npcy+4,npcy+1,npcy+5};
+Circle(nlcy+4)={npcy+5,npcy+1,npcy+2};
 
-Circle(nlcy+4)={npcy+5,npcy+4,npcy+6};
-Circle(nlcy+5)={npcy+6,npcy+4,npcy+5};
+Line(nlcy+5)={npcy+2,npcy+7};
+
+Circle(nlcy+6)={npcy+7,npcy+6,npcy+8};
+Circle(nlcy+7)={npcy+8,npcy+6,npcy+9};
+Circle(nlcy+8)={npcy+9,npcy+6,npcy+10};
+Circle(nlcy+9)={npcy+10,npcy+6,npcy+7};
+
 
 /// Definition des contours carrés : numéros de dé
 // Definition du contour fermé et de la surface située en zmin
@@ -111,15 +122,15 @@ Plane Surface(nPSc+3) = {nlcu+3};
 /// Definition des contours des faces trouées : on ajoute les parois des trous
 // Definition du contour fermé et de la surface située en ymin
 Line Loop(nlcu+2) = {-(nlcu+11),nlcu+3,nlcu+9,nlcu+5};
-Line Loop(nlcy+6)={nlcy+1,nlcy+2};
+Line Loop(nlcy+6)={nlcy+1,nlcy+2,ncyl+3,ncyl+4};
 Plane Surface(nPSc+2) = {nlcu+2,nlcy+6};
 // Definition du contour fermé et de la surface située en ymax
 Line Loop(nlcu+5) = {nlcu+12,nlcu+7,-(nlcu+10),nlcu+1};
-Line Loop(nlcy+7)={nlcy+4,nlcy+5};
+Line Loop(nlcy+7)={nlcy+6,nlcy+7,ncyl+8,ncyl+9};
 Plane Surface(nPSc+5) = {nlcu+5,nlcy+7};
 
 /// Definition de la paroi du cylindre
-Plane Surface(num_surf_cylindre) = Extrude { {xc,0,zc}, {0,1,0}, 2*Pi } {Line{nlcy+3}};
+Plane Surface(num_surf_cylindre) = Extrude { {xc,0,zc}, {0,1,0}, 2*Pi } {Line{nlcy+5}};
 
 /// Périodicité : les orientations des lignes doivent correspondre
 
