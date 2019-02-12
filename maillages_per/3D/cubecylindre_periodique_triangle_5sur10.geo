@@ -87,12 +87,12 @@ Point(npcy+6) = {xc-rayon,ymax,zc,pas_cube};
 
 // Creation des contours du cylindre
 
-Circle(nlcy+1)={npcy+2,npcy+1,npcy+3}
-Circle(nlcy+2)={npcy+3,npcy+1,npcy+2}
-Line(nlcy+3)={npcy+2,npcy+5}
+Circle(nlcy+1)={npcy+2,npcy+1,npcy+3};
+Circle(nlcy+2)={npcy+3,npcy+1,npcy+2};
+Line(nlcy+3)={npcy+2,npcy+5};
 
-Circle(nlcy+4)={npcy+5,npcy+4,npcy+6}
-Circle(nlcy+5)={npcy+6,npcy+4,npcy+5}
+Circle(nlcy+4)={npcy+5,npcy+4,npcy+6};
+Circle(nlcy+5)={npcy+6,npcy+4,npcy+5};
 
 /// Definition des contours carrés : numéros de dé
 // Definition du contour fermé et de la surface située en zmin
@@ -110,16 +110,16 @@ Plane Surface(nPSc+3) = {nlcu+3};
 
 /// Definition des contours des faces trouées : on ajoute les parois des trous
 // Definition du contour fermé et de la surface située en ymin
-Line Loop(nlcu+2) = {-(nlcu+11),nlcu+3,nlcu+9,nlcu+5};//,-(nlcy+1),-(nlcy+2)};
-Line Loop(nlcy+6)={nlcy+1,nlcy+2}
-Plane Surface(nPSc+2) = {nlcu+2,nlcy+7};
+Line Loop(nlcu+2) = {-(nlcu+11),nlcu+3,nlcu+9,nlcu+5};
+Line Loop(nlcy+6)={nlcy+1,nlcy+2};
+Plane Surface(nPSc+2) = {nlcu+2,nlcy+6};
 // Definition du contour fermé et de la surface située en ymax
-Line Loop(nlcu+5) = {nlcu+12,nlcu+7,-(nlcu+10),nlcu+1};//,nlcy+4,nlcy+5};
-Line Loop(nlcy+7)={nlcy+4,nlcy+5}
+Line Loop(nlcu+5) = {nlcu+12,nlcu+7,-(nlcu+10),nlcu+1};
+Line Loop(nlcy+7)={nlcy+4,nlcy+5};
 Plane Surface(nPSc+5) = {nlcu+5,nlcy+7};
 
 /// Definition de la paroi du cylindre
-Surface(num_surf_cylindre) = Extrude { { xc, 0, yc }, { 0, 1, 0 }, 2*Pi } {nlcy+3}
+Plane Surface(num_surf_cylindre) = Extrude { {xc,0,zc}, {0,1,0}, 2*Pi } {Line{nlcy+3}};
 
 /// Périodicité : les orientations des lignes doivent correspondre
 
