@@ -1,6 +1,6 @@
 \section{A Reduced Order Model}\label{rom}
 
-As we have seen in the previous section, computing solutions of equation \ref{chiw} for a given geometry %
+As we have seen in previous section, computing solutions of equation \ref{chiw} for a given geometry %
 can be time-expensive even, in the three-dimensional case, for an elementary cell with an euclidean bowl in its center.
 
 \par
@@ -333,6 +333,12 @@ the Hilbert space $H^0$ which appears in the prewious paragraph is typically $\m
 The following commands are written in FEniCS 2018.1.0 to obtain the snapshots :
 
 \begin{codef}
+\# \ packages required for POD-ROM\\
+import numpy\\
+from fenics import $\ast$\\
+from dolfin import $\ast$\\
+from mshr import $\ast$\\
+\# \ generation of the snapshots\\
 for j in 1\dots 8\\
 \ chi\_j=Function(V\_j)\\
 \ chi\_j=\emph{load $\chi(\mathbf{x},\rho_j)$}\\
@@ -405,7 +411,7 @@ they will also satisfy periodicity and mean-value conditions of strong problem \
 \end{figure}
 
 %\etoile
-Once we have computed the POD basis, and chosen the smallest number $N_{rom}$ of modes for which energy exceeds $99,99\%$ of all spatial modes $\phi_i$. %
+%Once we have computed the POD basis, and chosen the smallest number $N_{rom}$ of modes for which energy exceeds $99,99\%$ of all spatial modes $\phi_i$. %
 
 \begin{figure}[H]
 \begin{center}
@@ -418,7 +424,7 @@ Once we have computed the POD basis, and chosen the smallest number $N_{rom}$ of
 \hline
 \end{tabular}
 \end{center}
-\caption{Representativity of modes : eigenvalues $\lambda_j$}
+\caption{Representativity of POD modes : eigenvalues $\lambda_j$}
 \label{2d_mesh}
 \end{figure}
 
@@ -484,6 +490,9 @@ for i in 1\dots $N_{rom}$\\
 \end{codef}
 
 where \begin{code}V\_fixe\end{code} and \begin{code}V\_new\end{code} are vector function spaces on fluid domains $\Omega_f^0$ and $\Omega_f^{new}$ respectively.
+
+%\par
+%The following packages are required for thees commands :
 
 \begin{figure}[H]
 \begin{center}
