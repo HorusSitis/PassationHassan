@@ -104,29 +104,33 @@ Plane Surface(nPSc+4) = {nlcu+4};
 Line Loop(nlcu+3) = {nlcu+11,nlcu+6,-(nlcu+12),nlcu+2};
 Plane Surface(nPSc+3) = {nlcu+3};
 
-/// Definition des contours carrés réunis avec les sections de cylindre
+/// Definition des contours des faces trouées
+
+
+
 
 // Definition du contour fermé et de la surface située en ymin
 Line Loop(nlc+2) = {-(nlcu+11),nlcu+5,nlcu+9,nlcu+3,-(nlcy+1)};
 Plane Surface(nPSc+2) = {nlc+2};
 // Definition du contour fermé et de la surface située en ymax
-Line Loop(nlc+5) = {nlc+5,nlc+6,nlc+7,nlc+8,nlcy+2};
+Line Loop(nlc+5) = {nlc+12,nlc+7,-(nlc+10),nlc+1,nlcy+2};
 Plane Surface(nPSc+5) = {nlc+5};
 
 /// Definition des parois du cylindre
 
 
 
-
+/// Périodicité : les orientations des lignes doivent correspondre
 
 // // On impose la periodicité entre les surfaces d'équations xmin et xmax
-Periodic Surface nPSc+23 {nlc+12,-(nlc+7), nlc+13, -(nlc+2)} = nPSc+19 {nlc+10, nlc+9, nlc+11, nlc+4};
-// On impose la periodicité entre les surfaces d'équations ymin et ymax
-Periodic Surface nPSc+21 {nlc+11,-(nlc+8), nlc+13, -(nlc+1)} = nPSc+25 {nlc+10, nlc+6, nlc+12, nlc+3};
+Periodic Surface nPSc+4 {nlc+11,-(nlc+6), nlc+12, -(nlc+2)} = nPSc+3 {nlc+9, nlc+8, nlc+10, nlc+4};
 // // On impose la periodicité entre les surfaces d'équations zmin et zmax
-Periodic Surface nPSc+17 {-(nlc+8),-(nlc+7), -(nlc+6), -(nlc+9)} = nPSc+15 {nlc+1, nlc+2, nlc+3, nlc+4};
+Periodic Surface nPSc+6 {-(nlc+7),-(nlc+6), -(nlc+5), -(nlc+8)} = nPSc+1 {nlc+1, nlc+2, nlc+3, nlc+4};
 
+// On impose la periodicité entre les surfaces d'équations ymin et ymax
+Periodic Surface nPSc+2 {nlc+10,-(nlc+7), nlc+12, -(nlc+1)} = nPSc+5 {nlc+9, nlc+5, nlc+11, nlc+2};
 
+// Surface du domaine fluide
 Surface Loop(num_surf_loop_cube) = {nPSc+17,-(nPSc+25),-(nPSc+23),-(nPSc+21),nPSc+19,nPSc+15};
 
 /////////////////////////////////////////////////////////////////
