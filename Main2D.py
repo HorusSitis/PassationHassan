@@ -1,28 +1,36 @@
 ### ------------ Paquets à importer ------------ ###
 
-import subprocess
-
+# paquets mathématiques
 import numpy as np
 import random as rd
+from math import sqrt
+from math import exp
+
+# affichage etc
+
 import pylab as pl
-from pylab import *
-#import matplotlib.pylab as pl
+#from pylab import *
+
+import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+import matplotlib.gridspec as gridspec
+
+# système
+
 import os
+import sys
 
 from importlib import reload
 
-#threading
+# calcul parallèle
 
 import threading
 import time
 import multiprocessing
 
-#multiprocessing
+import subprocess
 
-import multiprocessing
-#from joblib import Parallel, delayed
-
-#stockage d'objets python
+# stockage d'objets python
 
 import marshal as ma
 import shelve as sh
@@ -32,12 +40,6 @@ import shelve as sh
 from fenics import *
 from dolfin import *
 from mshr import *
-import matplotlib.pyplot as plt
-from mpl_toolkits.axes_grid1 import make_axes_locatable
-import matplotlib.gridspec as gridspec
-from math import sqrt
-from math import exp
-import sys
 
 # Fonctions 2D
 
