@@ -10,7 +10,6 @@ zmax=1.;
 
 // Caracteristique maillage cylindre
 xc=0.5;
-
 zc=0.5;
 
 rayon=0.05;
@@ -20,17 +19,26 @@ pas_cylindre=0.1;
 ///
 
 // Numero (moins 1) du premier point définissant le cube
-npc=100;
+npcu=100;
+// Numero (moins 1) du premier point définissant les sections frontales du cylindre
+npcy=200;
+
 // Numero (moins 1) de la première ligne définissant le cube
-nlc=200;
+nlcu=300;
+// Numero (moins 1) de la première ligne définissant le cylindre
+nlcy=400;
+
 // Numero (moins 1) de la première Surface plane définissant le cube
-nPSc=300;
+nPSc=500;
 // Numero (moins 1) de la première Surface définissant le cube
 nsc=400;
+
 // Numero de la surface totale définissant le cube
 num_surf_loop_cube=600;
+
 // Numero du volume
 num_vol=500;
+
 // Numero des surfaces physiques
 num_phys=10;
 
@@ -41,52 +49,74 @@ num_phys=10;
 /////////////////////////////////////////////////////////////////
 
 // Creation des 8 points du bord du cube
-Point(npc+1) = {xmin,ymin,zmin,pas_cube};
-Point(npc+2) = {xmax,ymin,zmin,pas_cube};
-Point(npc+3) = {xmax,ymax,zmin,pas_cube};
-Point(npc+4) = {xmin,ymax,zmin,pas_cube};
-Point(npc+5) = {xmin,ymin,zmax,pas_cube};
-Point(npc+6) = {xmax,ymin,zmax,pas_cube};
-Point(npc+7) = {xmax,ymax,zmax,pas_cube};
-Point(npc+8) = {xmin,ymax,zmax,pas_cube};
+Point(npcu+1) = {xmin,ymin,zmin,pas_cube};
+Point(npcu+2) = {xmax,ymin,zmin,pas_cube};
+Point(npcu+3) = {xmax,ymax,zmin,pas_cube};
+Point(npcu+4) = {xmin,ymax,zmin,pas_cube};
+Point(npcu+5) = {xmin,ymin,zmax,pas_cube};
+Point(npcu+6) = {xmax,ymin,zmax,pas_cube};
+Point(npcu+7) = {xmax,ymax,zmax,pas_cube};
+Point(npcu+8) = {xmin,ymax,zmax,pas_cube};
 
-// Creation des 8 arêtes du cube
-Line(nlc+1) = {npc+4,npc+3};
-Line(nlc+2) = {npc+3,npc+2};
-Line(nlc+3) = {npc+2,npc+1};
-Line(nlc+4) = {npc+1,npc+4};
-Line(nlc+6) = {npc+5,npc+6};
-Line(nlc+7) = {npc+6,npc+7};
-Line(nlc+8) = {npc+7,npc+8};
-Line(nlc+9) = {npc+8,npc+5};
-Line(nlc+10) = {npc+1,npc+5};
-Line(nlc+11) = {npc+4,npc+8};
-Line(nlc+12) = {npc+2,npc+6};
-Line(nlc+13) = {npc+3,npc+7};
+// Creation des 12 arêtes du cube
+Line(nlcu+1) = {npcu+4,npcu+3};
+Line(nlcu+2) = {npcu+3,npcu+2};
+Line(nlcu+3) = {npcu+2,npcu+1};
+Line(nlcu+4) = {npcu+1,npcu+4};
 
-// Creation des points d'inersection entre l'axe du cylindre et les faces frontales
+Line(nlcu+5) = {npcu+5,npcu+6};
+Line(nlcu+6) = {npcu+6,npcu+7};
+Line(nlcu+7) = {npcu+7,npcu+8};
+Line(nlcu+8) = {npcu+8,npcu+5};
 
+Line(nlcu+9) = {npcu+1,npcu+5};
+Line(nlcu+10) = {npcu+4,npcu+8};
+Line(nlcu+11) = {npcu+2,npcu+6};
+Line(nlcu+12) = {npcu+3,npcu+7};
+
+// Creation des points d'intersection entre l'axe du cylindre et les faces frontales
+
+Point(npcy+1) = {xc,ymin,zc,pas_cube};
+Point(npcy+2) = {xc+rayon,ymin,zc,pas_cube};
+Point(npcy+3) = {xc-rayon,ymin,zc,pas_cube};
+
+Point(npcy+4) = {xc,ymax,zc,pas_cube};
+Point(npcy+5) = {xc+rayon,ymax,zc,pas_cube};
+Point(npcy+6) = {xc-rayon,ymax,zc,pas_cube};
 
 // Creation des sections du cylindre sur les faces frontales
 
+Circle(nlcy+1)={npcy+2,npcy+1,npcy+3}
+Circle(nlcy+2)={npcy+5,npcy+4,npcy+6}
 
+/// Definition des contours carrés : numéros de dé
 
 // Definition du contour fermé et de la surface située en zmin
-Line Loop(nlc+14) = {nlc+3,nlc+4,nlc+1,nlc+2};
-Plane Surface(nPSc+15) = {nlc+14};
+Line Loop(nlcu+6) = {nlcu+3,nlcu+4,nlcu+1,nlcu+2};
+Plane Surface(nPSc+6) = {nlcu+6};
 // Definition du contour fermé et de la surface située en zmax
-Line Loop(nlc+16) = {nlc+6,nlc+7,nlc+8,nlc+9};
-Plane Surface(nPSc+17) = {nlc+16};
+Line Loop(nlcu+1) = {nlcu+5,nlcu+6,nlcu+7,nlcu+8};
+Plane Surface(nPSc+1) = {nlcu+1};
 // Definition du contour fermé et de la surface située en xmin
-Line Loop(nlc+18) = {nlc+10,-(nlc+9),-(nlc+11),-(nlc+4)};
-Plane Surface(nPSc+19) = {nlc+18};
+Line Loop(nlcu+4) = {nlcu+9,-(nlcu+8),-(nlcu+10),-(nlcu+4)};
+Plane Surface(nPSc+4) = {nlcu+4};
 // Definition du contour fermé et de la surface située en xmax
-Line Loop(nlc+22) = {nlc+12,nlc+7,-(nlc+13),nlc+2};
-Plane Surface(nPSc+23) = {nlc+22};
+Line Loop(nlcu+3) = {nlcu+11,nlcu+6,-(nlcu+12),nlcu+2};
+Plane Surface(nPSc+3) = {nlcu+3};
+
+/// Definition des contours carrés réunis avec les sections de cylindre
+
+// Definition du contour fermé et de la surface située en ymin
+Line Loop(nlc+2) = {-(nlcu+11),nlcu+5,nlcu+9,nlcu+3,-(nlcy+1)};
+Plane Surface(nPSc+2) = {nlc+2};
+// Definition du contour fermé et de la surface située en ymax
+Line Loop(nlc+5) = {nlc+5,nlc+6,nlc+7,nlc+8,nlcy+2};
+Plane Surface(nPSc+5) = {nlc+5};
+
+/// Definition des parois du cylindre
 
 
 
-// Definition des parois du cylindre
 
 
 // // On impose la periodicité entre les surfaces d'équations xmin et xmax
@@ -186,22 +216,28 @@ Surface Loop (num_surf_loop_sphere) = {nss+1,nss+2,nss+3,nss+4,nss+5,nss+6,nss+7
 
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
-// Creation du bolume à mailler
+// Creation du volume à mailler
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
 Volume(num_vol) = {num_surf_loop_cube,num_surf_loop_sphere};
 
 
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-// Definition des surfaces physiques
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+// Definition des surfaces physiques : numérotation pour les conditions aux limites //
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+
 Physical Surface(num_phys+1) = {nPSc+15}; //surface située en zmin
 Physical Surface(num_phys+2) = {nPSc+17}; //surface située en zmax
 Physical Surface(num_phys+3) = {nPSc+19}; // surface située en xmin
 Physical Surface(num_phys+4) = {nPSc+21}; // surface située en ymax
 Physical Surface(num_phys+5) = {nPSc+23}; // surface située en xmax
 Physical Surface(num_phys+6) = {nPSc+25}; // surface située en ymin
+
 Physical Surface(num_phys+7) = {num_surf_loop_sphere}; // surface de la sphère
-Physical Volume(num_phys+3) = {num_vol}; 
+
+/////////////////////////////////////////////////////////////////
+// Definition du volume physique
+/////////////////////////////////////////////////////////////////
+Physical Volume(num_phys+3) = {num_vol};
