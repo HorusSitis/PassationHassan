@@ -29,10 +29,10 @@ class PeriodicBoundary(SubDomain):
 
 # maillage du domaine fixe
 
-if dom_fixe=='':
- mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle.xml")
-elif dom_fixe=="am":
- mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle"+"_"+dom_fixe+"_sur"+str(res)+"_fixe.xml")
+if dom_fixe=="am":
+ mesh_name="maillages_per/3D/cube_periodique_triangle"+"_"+dom_fixe+"_sur"+str(res)+"_fixe.xml"
+ print(mesh_name)
+ mesh_fixe=Mesh(mesh_name)
 elif dom_fixe=='0001':
  mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_sur"+str(res)+"_0001fixe.xml")
 elif dom_fixe=='0000':

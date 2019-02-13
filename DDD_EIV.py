@@ -29,10 +29,10 @@ class PeriodicBoundary(SubDomain):
 
 # maillage du domaine fixe
 
-if dom_fixe=='':
- mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle.xml")
-elif dom_fixe=="am":
- mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle"+"_"+dom_fixe+"_sur"+str(res)+"_fixe.xml")
+if dom_fixe=="am":
+ mesh_name="maillages_per/3D/cube_periodique_triangle"+"_"+dom_fixe+"_sur"+str(res)+"_fixe.xml"
+ print(mesh_name)
+ mesh_fixe=Mesh(mesh_name)
 elif dom_fixe=='0001':
  mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_sur"+str(res)+"_"+dom_fixe+"fixe.xml")
 elif dom_fixe=='0000':
@@ -52,8 +52,12 @@ import time
 nb_modes=N_mor
 
 if typ_msh=='gms':
- mesh_nouv=Mesh("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r_nouv,2)))+"sur"+str(res)+".xml")
-#else:mesh_nouv=creer_maill_sph(cen,r_nouv,res)
+ if config=='sph_un':
+  mesh_nouv=Mesh("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r_nouv,2)))+"sur"+str(res_gmsh)+".xml")
+ elif config=='cyl_un':
+  mesh_name="maillages_per/3D/cubecylindre_periodique_triangle_"+str(int(round(100*r_nouv,2)))+"sur"+str(res_gmsh)+".xml"
+  print(mesh_name)
+  mesh_nouv=Mesh(mesh_name)
 
 V_nouv=VectorFunctionSpace(mesh_nouv, "P", 2, constrained_domain=PeriodicBoundary())
 
@@ -78,7 +82,7 @@ print(phi_name)
 
 with sh.open(repertoire_parent+phi_name) as phi_loa:
  Phi_prime_v = phi_loa["maliste"]
-sys.exit()
+
 ## Création de la base POD tronquée, sous forme vectorielle
 
 Phi_mor=Phi_prime_v[:,range(0,nb_modes)]
