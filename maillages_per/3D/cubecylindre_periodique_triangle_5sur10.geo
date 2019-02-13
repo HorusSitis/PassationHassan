@@ -12,7 +12,7 @@ zmax=1.;
 xc=0.5;
 zc=0.5;
 
-rayon=0.25;
+rayon=0.05;
 pas_cylindre=0.1;
 
 
@@ -31,6 +31,8 @@ nlcy=400;
 // Numero (moins 1) de la première Surface plane définissant le cube
 nPSc=500;
 
+// Nméro moins 1 de la première surface définissant le cylindre : quart de paroi
+nCSc=550;
 
 // Numero de la surface totale définissant le cube troué
 num_surf_loop_cube_trou=600;
@@ -77,17 +79,17 @@ Line(nlcu+12) = {npcu+3,npcu+7};
 
 // Creation des points d'intersection entre l'axe du cylindre et les faces frontales
 
-Point(npcy+1) = {xc,ymin,zc,pas_cube};
-Point(npcy+2) = {xc+rayon,ymin,zc,pas_cube};
-Point(npcy+3) = {xc,ymin,zc+rayon,pas_cube};
-Point(npcy+4) = {xc-rayon,ymin,zc,pas_cube};
-Point(npcy+5) = {xc,ymin,zc-rayon,pas_cube};
+Point(npcy+1) = {xc,ymin,zc,pas_cylindre};
+Point(npcy+2) = {xc+rayon,ymin,zc,pas_cylindre};
+Point(npcy+3) = {xc,ymin,zc+rayon,pas_cylindre};
+Point(npcy+4) = {xc-rayon,ymin,zc,pas_cylindre};
+Point(npcy+5) = {xc,ymin,zc-rayon,pas_cylindre};
 
-Point(npcy+6) = {xc,ymax,zc,pas_cube};
-Point(npcy+7) = {xc+rayon,ymax,zc,pas_cube};
-Point(npcy+8) = {xc,ymax,zc+rayon,pas_cube};
-Point(npcy+9) = {xc-rayon,ymax,zc,pas_cube};
-Point(npcy+10) = {xc,ymax,zc-rayon,pas_cube};
+Point(npcy+6) = {xc,ymax,zc,pas_cylindre};
+Point(npcy+7) = {xc+rayon,ymax,zc,pas_cylindre};
+Point(npcy+8) = {xc,ymax,zc+rayon,pas_cylindre};
+Point(npcy+9) = {xc-rayon,ymax,zc,pas_cylindre};
+Point(npcy+10) = {xc,ymax,zc-rayon,pas_cylindre};
 
 
 // Creation des contours du cylindre
@@ -103,6 +105,17 @@ Circle(nlcy+6)={npcy+7,npcy+6,npcy+8};
 Circle(nlcy+7)={npcy+8,npcy+6,npcy+9};
 Circle(nlcy+8)={npcy+9,npcy+6,npcy+10};
 Circle(nlcy+9)={npcy+10,npcy+6,npcy+7};
+
+/// Ajouts pour la surface du cylindre
+Line(nlcy+12)={npcy+3,npcy+8};
+Line(nlcy+13)={npcy+4,npcy+9};
+Line(nlcy+14)={npcy+5,npcy+10};
+Line Loop(nlcy+15)={nlcy+1,nlcy+12,-(nlcy+6),-(nlcy+5)};
+Line Loop(nlcy+16)={nlcy+2,nlcy+13,-(nlcy+7),-(nlcy+12)};
+Line Loop(nlcy+17)={nlcy+3,nlcy+14,-(nlcy+8),-(nlcy+13)};
+Line Loop(nlcy+18)={nlcy+4,nlcy+5,-(nlcy+9),-(nlcy+14)};
+
+//Curve(nl)
 
 
 /// Definition des contours carrés : numéros de dé
@@ -122,22 +135,30 @@ Plane Surface(nPSc+3) = {nlcu+3};
 /// Definition des contours des faces trouées : on ajoute les parois des trous
 // Definition du contour fermé et de la surface située en ymin
 Line Loop(nlcu+2) = {-(nlcu+11),nlcu+3,nlcu+9,nlcu+5};
-Line Loop(nlcy+6)={nlcy+1,nlcy+2,nlcy+3,nlcy+4};
-Plane Surface(nPSc+2) = {nlcu+2,nlcy+6};
+Line Loop(nlcy+10)={nlcy+1,nlcy+2,nlcy+3,nlcy+4};
+Plane Surface(nPSc+2) = {nlcu+2,nlcy+10};
 // Definition du contour fermé et de la surface située en ymax
 Line Loop(nlcu+5) = {nlcu+12,nlcu+7,-(nlcu+10),nlcu+1};
-Line Loop(nlcy+7)={nlcy+6,nlcy+7,nlcy+8,nlcy+9};
-Plane Surface(nPSc+5) = {nlcu+5,nlcy+7};
+Line Loop(nlcy+11)={nlcy+6,nlcy+7,nlcy+8,nlcy+9};
+Plane Surface(nPSc+5) = {nlcu+5,nlcy+11};
 
 /// Definition de la paroi du cylindre
 //num_surf_cylindre = 
 //Extrude {{0,1,0},{xc,0,zc},2*Pi} {Curve{nlcy+5};};
 //out[]
-rev[] = Extrude{{0,1,0},{xc,0,zc},2*Pi}{ Line{nlcy+5}; };
+//rev[] = 
+
+Ruled Surface(nCSc+1)={nlcy+15};
+Ruled Surface(nCSc+2)={nlcy+16};
+Ruled Surface(nCSc+3)={nlcy+17};
+Ruled Surface(nCSc+4)={nlcy+18};
+Surface Loop(num_surf_cylindre) = {nCSc+1,nCSc+2,nCSc+3,nCSc+4};
+
+////num_surf_cylindre = Extrude{{0,1,0},{xc,0,zc},2*Pi}{ Curve{nlcy+5}; };
 //Ruled 
 //Surface Loop(700) = {rev[]};
 //Surface num_surf_cylindre {rev[1]};
-Surface(num_surf_cylindre) = Surface{rev[]};
+//Surface(num_surf_cylindre) = Surface{rev[1]};
 
 /// Périodicité : les orientations des lignes doivent correspondre
 
@@ -157,7 +178,7 @@ Surface Loop(num_surf_loop_cube_trou) = {nPSc+1,-(nPSc+2),-(nPSc+3),-(nPSc+4),nP
 // Creation du volume à mailler
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
-Volume(num_vol) = {num_surf_loop_cube_trou,Surface{rev[1]}};//num_surf_cylindre};//
+Volume(num_vol) = {num_surf_loop_cube_trou,num_surf_cylindre};//Surface{rev[1]}};//
 
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
