@@ -60,12 +60,10 @@ fixe_aff=False
 #slices_cyl=5
 Nsnap=8
 rempUsnap='par8'#'seq'
-#c_x=0.5
-#c_y=0.5
-#c_z=0.5
+
 #r=0.35#pour une réalisation unique
 npas_err=20
-fig_todo='save'#'aff'
+fig_todo='aff'#'save'#
 
 typ_msh='gms'#''
 ## choix du domaine fixe
@@ -92,7 +90,7 @@ parallelize=True
 
 # Choix de la résolution du maillage : nombre de noeuds par côté du cube
 
-res_gmsh=20
+res_gmsh=10
 
 if typ_msh=='gms':
  res=res_gmsh
@@ -100,13 +98,11 @@ if typ_msh=='gms':
 # Choix du paramètre géométrique : variable et message de sortie _mess
 
 ## Cas d'une sphère unique
-config='sph_un'
-if config=='sph_un':
- conf_mess='sphère unique'
+#config='sph_un'
+#if config=='sph_un':
+# conf_mess='sphère unique'
 
 geo_p='ray'#
-if geo_p=='ray':
- geo_mess='rayon variable'
 cen_snap_ray=[0.5,0.5,0.5]
 #geo_p='centre'
 #ray_snap_cen=5
@@ -114,7 +110,7 @@ cen_snap_ray=[0.5,0.5,0.5]
 ### l'inclusion solide ne rencontre pas les bords du domaine, sous peine d'une incompatibilité entre les mailles de faces opposées (?)
 
 ## Cas d'un cylindre unique : axe parallèle à Oy
-#config='cyl_un'
+config='cyl_un'
 
 if config=='cyl_un':
  conf_mess='cylindre unique'
@@ -123,6 +119,12 @@ geo_p='ray'
 #geo_p='axe'
 asr_list=[[0.5,0.3+0.05*k] for k in range(1,1+Nsnap)]
 ### point auquel l'axe rencontre le plan Oxz. L'inclusion solide ne rencontre pas les bords du domaine.
+
+## Valable pour une sphère ou un cylindre unique"
+if geo_p=='ray':
+ geo_mess='rayon variable'
+
+
 
 ## Cas d'un cylindre périodique aux arètes et une sphère unique au centre
 #config='compl'
@@ -141,7 +143,7 @@ if E_lL :
 
 # Exécution
 
-snap_done=False #-------------------> pour calculer les snapshots seulement si nécessaire
+snap_done=True #-------------------> pour calculer les snapshots seulement si nécessaire
 
 if EI :
  exec(open("DDD_EI.py").read())

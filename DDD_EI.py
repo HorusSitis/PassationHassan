@@ -75,9 +75,9 @@ def snap_sph_cen(c_par):
 ## Cylindre unique
 
 #if geo_p=='ray':
-axe_snap_ray=[0.5,0.5]#,0.5]
+axe_snap_ray=[0.5,0.5]
 def snap_cyl_ray(r_par):
- chi_r=snapshot_sph_per(axe_snap_ray,0.05*r_par)
+ chi_r=snapshot_cyl_per(axe_snap_ray,0.05*r_par,res_gmsh)
  chi_r_v=chi_r.vector().get_local()
  return([r_par,chi_r_v])
 
@@ -135,6 +135,7 @@ else :
 # --------------------------------------------------------------------------------- #
 
 # Exploitation des solution du problème aux éléments finis
+res=res_gmsh
 for n in range(1,1+Nsnap):
  # Extraction du snapshot de rang n
  chi_n_v=list_chi_v[n-1]
@@ -144,21 +145,23 @@ for n in range(1,1+Nsnap):
    cen=cen_snap_ray
    r=n*0.05
    if typ_msh=='gms':
-    print("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml")
-    mesh=Mesh("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml")
+    mesh_name="maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml"
+    print(mesh_name)
+    mesh=Mesh(mesh_name)
    else:
     mesh=creer_maill_sph(cen,r,res)
   elif geo_p=='cen':
    r=ray_snap_cen
    mesh=creer_maill_sph(csr_list[n-1],r,res)
- elif config=='cyl_un':
+ elif config=='cyl_un':## avec gmsh
   if geo_p=='ray':
-   top=top_snap_ray
    r=n*0.05
-   mesh=creer_maill_cyl(top,r,res)
-  elif geo_p=='axe':
-   r=ray_snap_ax
-   mesh=creer_maill_cyl(acr_list[n-1],r,res)
+   mesh_name="maillages_per/3D/cubecylindre_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml"
+   print(mesh_name)
+   mesh=Mesh(mesh_name)
+  #elif geo_p=='axe':
+   #r=ray_snap_ax
+   #mesh=creer_maill_cyl(acr_list[n-1],r,res)
  else:
   if geo_p=='ray_sph':
    r=0
@@ -181,6 +184,8 @@ for n in range(1,1+Nsnap):
  plt.close()
  # Affichage des valeurs et erreurs de la solution périodique, quelle que soit la configuration
  #err_per_ind_01(chi_n,cen,r,npas_err)
+ if config=='cyl_un' and geo_p=='ray':
+  cen=[0.5,0.,0.5]# on triche un peu : on prend une face prévée d'une demie-sphère au lieu d'une face privée du disque frontal du cylindre
  err_per_gr(cen,r,chi_n,npas_err,fig_todo)
  # Tenseur de diffusion homogénéisé
  ## Intégrale de khi sur le domaine fluide
