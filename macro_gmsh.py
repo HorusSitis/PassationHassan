@@ -14,11 +14,12 @@ fig_todo='aff'
 
 # Génération de maillages : apprentissage, fixe et test
 appr=False
-fixe=True
-test=False
+fixe=False
+test=True
 
-Nsnap=1
+Nsnap=8
 
+res_name=True
 #res=1# résolution implicite, contenue dans les fichiers .geo
 res=10
 #res=20
@@ -28,13 +29,9 @@ res=10
 ## configurations en dimension 2
 config='cer_un_som'#cer_un
 
-
-
-
+## configurations en dimension 3
 config='sph_un'
-if config=='sph_un':
- mesh_prefix='cubesphere_periodique_triangle'
-##elif
+config='cyl_un'
 
 if dimension==2:
  if config=='cer_un':
@@ -46,7 +43,8 @@ elif dimension==3:
   mesh_prefix="cubesphere_periodique_triangle"
  elif config=='sph_un_som':
   mesh_prefix="cubesphere_periodique_triangle_som"
- #elif config=='cyl_ax':
+ elif config=='cyl_un':
+  mesh_prefix='cubecylindre_periodique_triangle'
 
 dom_fixe="am"#""#"_0000"#"_0001"#
 
@@ -60,18 +58,19 @@ os.chdir(os.getcwd() + "/maillages_per/"+str(dimension)+"D")
 #res_gmsh=
 
 if appr:
- for n in range(1,1+Nsnap):
+ for n in range(1,2+Nsnap):
   r=n*0.05
   mesh_name=mesh_prefix+"_"+str(int(round(100*r,2)))
   if res!=100 and dimension==2:
    mesh_name=mesh_name+"_res"+str(res)
   ## res=100 : pas de suffixe
-  if res!=10 and dimension==3:
-   mesh_name=mesh_name+"_res"+str(res)
-  ## res=10 : pas de suffixe
+  if res_name and dimension==3:
+   mesh_name=mesh_name+"sur"+str(res)
+  ## res=10 : pas de suffixe dans le cas sphérique, voir avec res_name
   ###
   ## Génération d'un fichier .geo ? On commence avec un fichier unique et on modifie geo_p dans le code avant de sauvegarder sous le nom courant.
   print(mesh_name)
+  #sys.exit()
   ## Visualisation du fichier .geo
   print("gmsh "+mesh_name+".geo")
   os.system("gmsh "+mesh_name+".geo")
@@ -106,9 +105,9 @@ elif test:
   if res!=100 and dimension==2:
    mesh_name=mesh_name+"_res"+str(res)
   ## res=100 : pas de suffixe
-  if res!=10 and dimension==3:
-   mesh_name=mesh_name+"_res"+str(res)
-  ## res=10 : pas de suffixe
+  if res_name and dimension==3:
+   mesh_name=mesh_name+"sur"+str(res)
+  ## res=10 : pas de suffixe dans le cas sphérique, voir avec res_name
   ###
   ## Génération d'un fichier .geo ? On commence avec un fichier unique et on modifie geo_p dans le code avant de sauvegarder sous le nom courant.
   print(mesh_name)
