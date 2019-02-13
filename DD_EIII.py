@@ -16,8 +16,7 @@ class PeriodicBoundary(SubDomain):
    else:
     y[i]=x[i]
 
-#mesh_fixe=Mesh("maillages_per/2D/maillage_0001_fixe2d"+".xml")
-mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2d.xml")
+mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2D_am.xml")
 V_fixe=VectorFunctionSpace(mesh_fixe, "P", 3, constrained_domain=PeriodicBoundary())
 nb_noeuds = V_fixe.dim()
 
@@ -127,12 +126,15 @@ plt.close()
 ## Choix du nombre de modes, avec une valeur seuil d'énergie à atteindre avec les vacteurs de la base POD
 nb_modes=0
 
-seuil_ener=99.999
+seuil_ener=99.99
 
 i=0
 while ener_pour_cumul[i]<seuil_ener:
  nb_modes=i+1
  i+=1
 
-### 8 snapshots : 4 modes pour un seuil de 99.9%
-### 8 snapshots : 7 modes pour un seuil de 99,999%
+
+Nseuil=i
+
+print(str(seuil_ener)+':')
+print(Nseuil)

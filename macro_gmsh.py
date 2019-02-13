@@ -9,13 +9,14 @@ import time
 
 ### Options
 
-dimension=3
+dimension=2
 fig_todo='aff'
 
 # Génération de maillages : apprentissage, fixe et test
 appr=False
 fixe=False
 test=True
+
 
 Nsnap=8
 
@@ -31,6 +32,18 @@ res=10
 ## configurations en dimension 3
 config='sph_un'
 #config='cyl_un'
+
+Nsnap=1
+
+config='cer_un_som'#cer_un
+
+res=1# valeur par défaut, jamais utilisée
+#res=20
+
+#config='sph_cen'
+#if config=='sph_cen':
+# mesh_prefix=''
+##elif
 
 if dimension==2:
  if config=='cer_un':
@@ -69,7 +82,6 @@ if appr:
   ###
   ## Génération d'un fichier .geo ? On commence avec un fichier unique et on modifie geo_p dans le code avant de sauvegarder sous le nom courant.
   print(mesh_name)
-  #sys.exit()
   ## Visualisation du fichier .geo
   print("gmsh "+mesh_name+".geo")
   os.system("gmsh "+mesh_name+".geo")
@@ -110,6 +122,26 @@ elif test:
    mesh_name=mesh_name+"sur"+str(res)
   ## res=10 : pas de suffixe dans le cas sphérique, voir avec res_name
   ###
+ if dimension==2:
+  mesh_name="maillage_fixe2D_am"
+  ## Génération d'un fichier .geo ? On commence avec un fichier unique et on modifie geo_p dans le code avant de sauvegarder sous le nom courant.
+  print(mesh_name)
+  ## Visualisation du fichier .geo
+  print("gmsh "+mesh_name+".geo")
+  os.system("gmsh "+mesh_name+".geo")
+  ## Conversion en .msh
+  os.system("gmsh -"+str(dimension)+" "+mesh_name+".geo")
+  ## Affichage du maillage obtenu
+  if fig_todo=='aff':
+   os.system("gmsh "+mesh_name+".msh")
+  ## Conversion en .xml avec dolfin pour FEniCS
+  os.system("dolfin-convert "+mesh_name+".msh "+mesh_name+".xml")
+elif test:
+ for r in [0.22,0.33,0.44]:
+  mesh_name=mesh_prefix+"_"+str(int(round(100*r,2)))
+  if res==20:
+   mesh_name=mesh_name+"_res"+str(res)
+  ## res=100 : pas de suffixe
   ## Génération d'un fichier .geo ? On commence avec un fichier unique et on modifie geo_p dans le code avant de sauvegarder sous le nom courant.
   print(mesh_name)
   ## Visualisation du fichier .geo

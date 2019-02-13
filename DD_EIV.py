@@ -29,7 +29,7 @@ class PeriodicBoundary(SubDomain):
 
 # maillage et fonctions tests du domaine fixe
 
-mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2d.xml")
+mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2D_am.xml")
 
 V_fixe=VectorFunctionSpace(mesh_fixe, 'P', 3, constrained_domain=PeriodicBoundary())
 
@@ -41,9 +41,12 @@ import time
 
 nb_modes=N_mor
 
+## mention="..." ## affectation effectuée en préambule, voir Main2D.py
+
 if typ_msh=='gms':
- mesh_nouv=Mesh("maillages_per/2D/maillage_trou2d_"+str(int(round(100*r_nouv,2)))+".xml")#
-#else:mesh_nouv=creer_maill_sph(cen,r_nouv,res)
+ mesh_name="maillages_per/2D/maillage_trou2D"+mention+"_"+str(int(round(100*r_nouv,2)))+".xml"
+ print(mesh_name)
+ mesh_nouv=Mesh(mesh_name)
 
 V_nouv=VectorFunctionSpace(mesh_nouv, "P", 3, constrained_domain=PeriodicBoundary())
 
@@ -162,7 +165,7 @@ D=por*np.eye(2)
 ## Calcul et affichage du tenseur Dhom
 Dhom_kMOR=D_k*(D+T_chi.T)
 #print(('Tenseur Dhom_k',Dhom_k))
-print('Coefficient Dhom_k11 '+conf_mess+', '+geo_mess+' variable valeur '+str(rho)+' MOR :',Dhom_kMOR[0,0])
+print('Coefficient Dhom_k11 '+conf_mess+', '+geo_mess+' valeur '+str(rho)+' MOR :',Dhom_kMOR[0,0])
 
 ## On enregistre et imprime le temps d'éxécution de SE3
 
@@ -203,7 +206,7 @@ print('Porosité :',por)
 ## Calcul et affichage du tenseur Dhom
 Dhom_kMEF=D_k*(D+T_chi.T)
 #print(('Tenseur Dhom_k',Dhom_k))
-print('Coefficient Dhom_k11 '+conf_mess+', '+geo_mess+' variable valeur '+str(rho)+ ' MEF :',Dhom_kMEF[0,0])
+print('Coefficient Dhom_k11 '+conf_mess+', '+geo_mess+' valeur '+str(rho)+ ' MEF :',Dhom_kMEF[0,0])
 
 ## Comparaison
 
