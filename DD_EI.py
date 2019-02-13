@@ -209,7 +209,7 @@ for n in range(1,1+Nsnap):#attention le rayon d'un cercle doit être non nul
  ##
  # Tenseur de diffusion homogénéisé
  ## Intégrale de chi sur le domaine fluide
- T_chi=array([[0.,0.],[0.,0.]])
+ T_chi=np.zeros((2,2))
  for k in range(0,2):
   for l in range(0,2):
    T_chi[k,l]=assemble(grad(chi_n)[k,l]*dx)
