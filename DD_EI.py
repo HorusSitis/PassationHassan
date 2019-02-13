@@ -75,7 +75,7 @@ for cen in []:#[[0.5,0.5],[0.0,0.0],[0.5,0.0],[0.0,0.5]]:
 
 # exemple de résolution du problème variationnel
 
-res=100
+#res=100
 #typ_msh='gms'
 #chi_testEF=snapshot_circ_per(cen_snap_ray,r,res)
 #
@@ -86,10 +86,10 @@ res=100
 # plt.savefig()
 #plt.close()
 #
-Npas=100
+#Npas=100
 #err_per_gr(cen_snap_ray,r,chi_testEF,Npas,fig_todo)
 
-#sys.exit("test pour l'homogénéisation périodique effectué")#---------------------------------------------------
+
 
 ## Boucle pour la création des snapshots, avec un paramètre pouvant être le rayon d'une inclusion circulaire, ou l'emplacement de son centre ##
 # Calcule aussi le tenseur de diffusion homogénéisé #
@@ -115,7 +115,7 @@ def snap_circ_cen(c_par):
  return([c_par,chi_c_v])
 
 # ------------------------- Snapshots, conditionnellement ------------------------- #
-
+#sys.exit("test pour l'homogénéisation périodique effectué")#---------------------------------------------------
 if not snap_done:
  # Calcul des snapshots, sous forme vectorielle
  ##if parallelize: Calcul parallèle oblligatoire

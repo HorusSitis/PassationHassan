@@ -44,7 +44,9 @@ nb_modes=N_mor
 ## mention="..." ## affectation effectuée en préambule, voir Main2D.py
 
 if typ_msh=='gms':
- mesh_nouv=Mesh("maillages_per/2D/maillage_trou2D"+mention+"_"+str(int(round(100*r_nouv,2)))+".xml")
+ mesh_name="maillages_per/2D/maillage_trou2D"+mention+"_"+str(int(round(100*r_nouv,2)))+".xml"
+ print(mesh_name)
+ mesh_nouv=Mesh(mesh_name)
 
 V_nouv=VectorFunctionSpace(mesh_nouv, "P", 3, constrained_domain=PeriodicBoundary())
 

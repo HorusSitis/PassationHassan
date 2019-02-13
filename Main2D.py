@@ -59,7 +59,8 @@ EIII=False
 EIV=True
 
 #res_fixe=20
-res=100#pour les sommets#20
+#res=100#pour les sommets#20
+res_gmsh=100
 
 fixe_aff=False
 fig_todo='save'
@@ -75,8 +76,11 @@ if E_ :
 
 # choix du type de maillage
 
-typ_msh='gms'#'gms'#''
+typ_msh='gms'#''
 print(typ_msh)
+if typ_msh=='gms':
+ res=res_gmsh
+ res_fixe=res_gmsh
 
 # nom de l'appareil utilisé pour générer les données enregistrées
 computer='T1700_35x8'##'MECALAC_29x8'##
@@ -108,12 +112,13 @@ geo_p='ray'
 if geo_p=='ray':
  geo_mess='rayon variable'
 
-cen_snap_ray=[0.,0.]#[0.5,0.5]#
+cen_snap_ray=[0.5,0.5]#[0.,0.]#
 
 ### Disque centré ou aux sommets
 
 if cen_snap_ray==[0.5,0.5]:
  conf_mess=conf_mess+" centré"
+ mention=""
 elif cen_snap_ray==[0.,0.]:
  conf_mess=conf_mess+" aux sommets"
  mention="_som"
@@ -145,14 +150,14 @@ if E_lL :
 
 # Exécution
 
-snap_done=True#-------------------> pour calculer les snapshots seulement si nécessaire
+snap_done=False#-------------------> pour calculer les snapshots seulement si nécessaire
 
 if EI :
  exec(open("DD_EI.py").read())
 
 ## ---------- Etape II ---------- ##
 
-exsnap_done=True
+exsnap_done=False
 
 if EII :
  exec(open("DD_EII.py").read())
@@ -171,7 +176,7 @@ if EIII :
 ## ---------- Etape IV ---------- ##
 
 N_mor=5
-r_nouv=0.44
+r_nouv=0.33
 
 # La mesure du temps d'éxécution doit se faire avec l'option 'save' de fig_todo
 
