@@ -32,7 +32,9 @@ class PeriodicBoundary(SubDomain):
 if dom_fixe=='':
  mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle.xml")
 elif dom_fixe=="am":
- mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle"+"_"+dom_fixe+"_sur"+str(res)+"_fixe.xml")
+ mesh_name="maillages_per/3D/cube_periodique_triangle"+"_"+dom_fixe+"_sur"+str(res)+"_fixe.xml"
+ print(mesh_name)
+ mesh_fixe=Mesh(mesh_name)
 elif dom_fixe=='0001':
  mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_sur"+str(res)+"_0001fixe.xml")
 elif dom_fixe=='0000':
@@ -59,11 +61,12 @@ def extra_snap(n):
  # chargement du snapshot courant
  chi_n_v=list_chi_v[n-1]
  # mise sous forme d'une fonction EF
- if typ_msh=='gms':
-  print("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml")
-  mesh=Mesh("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml")
- else:
-  mesh=creer_maill_sph(cen,r,res)
+ if config=='sph_un':
+  mesh_name="maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml"
+ elif config=='cyl_un':
+  mesh_name="maillages_per/3D/cubecylindre_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml"
+ print(mesh_name)
+ mesh=Mesh(mesh_name)
  V_n=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
  chi_n=Function(V_n)
  chi_n.vector().set_local(chi_n_v)
@@ -94,6 +97,7 @@ if not exsnap_done:
  #
  with sh.open(repertoire_parent+u_name) as u_sto:
   u_sto["maliste"] = Usnap
+ #sys.exit()#------------------------------------------------------------
 else:
  # Chargement de la matrice des snapshots
  u_name='Usnap_'+dom_fixe+'_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+"res"+str(res)+'_'+ordo+'_'+computer
@@ -129,4 +133,6 @@ for n in range(1,1+Nsnap):
  # Affichage des valeurs et erreurs de la solution périodique, quelle que soit la configuration
  #err_per_ind_01(chi_prime_n,cen,r,npas_err)
  r=n*0.05
+ # Dans ce cas, les faces du cube sont entières
+ cen=[0.5,0.5,0.5]
  err_per_gr(cen,r,chi_prime_n,npas_err,fig_todo)

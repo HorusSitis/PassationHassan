@@ -48,13 +48,13 @@ from matplotlib.patches import Circle, PathPatch
 E_=False
 E_lL=False
 
-EI=True
+EI=False
+EII=True
 
-EII=False
 EIII=False
 EIV=False
 
-res_fixe=6
+#res_fixe=6
 fixe_aff=False
 #res=6
 #slices_cyl=5
@@ -67,7 +67,7 @@ fig_todo='aff'#'save'#
 
 typ_msh='gms'#''
 ## choix du domaine fixe
-dom_fixe='0001'#'am'#'0001'#''
+dom_fixe='am'#'0001'#'0001'#''
 
 # nom de l'appareil utilisé pour générer les données enregistrées
 computer='MECALAC_29x8'##'T1700_35x8'#
