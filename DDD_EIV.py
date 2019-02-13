@@ -31,7 +31,6 @@ class PeriodicBoundary(SubDomain):
 
 if dom_fixe=="am":
  mesh_name="maillages_per/3D/cube_periodique_triangle"+"_"+dom_fixe+"_sur"+str(res)+"_fixe.xml"
- print(mesh_name)
  mesh_fixe=Mesh(mesh_name)
 elif dom_fixe=='0001':
  mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_sur"+str(res)+"_"+dom_fixe+"fixe.xml")
@@ -51,13 +50,13 @@ import time
 #r_nouv=0.22
 nb_modes=N_mor
 
-if typ_msh=='gms':
- if config=='sph_un':
-  mesh_nouv=Mesh("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r_nouv,2)))+"sur"+str(res_gmsh)+".xml")
- elif config=='cyl_un':
-  mesh_name="maillages_per/3D/cubecylindre_periodique_triangle_"+str(int(round(100*r_nouv,2)))+"sur"+str(res_gmsh)+".xml"
-  print(mesh_name)
-  mesh_nouv=Mesh(mesh_name)
+if config=='sph_un':
+ mesh_name="maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r_nouv,2)))+"sur"+str(res_gmsh)+".xml"
+elif config=='cyl_un':
+ mesh_name="maillages_per/3D/cubecylindre_periodique_triangle_"+str(int(round(100*r_nouv,2)))+"sur"+str(res_gmsh)+".xml"
+
+print(mesh_name)
+mesh_nouv=Mesh(mesh_name)
 
 V_nouv=VectorFunctionSpace(mesh_nouv, "P", 2, constrained_domain=PeriodicBoundary())
 
@@ -75,8 +74,10 @@ nb_noeuds_fixe=V_fixe.dim()
 
 if ind_res:
  phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+"res"+str(res)+'_'+ordo+'_'+computer
-else:
+elif ind_fixe:
  phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+else:
+ phi_name='Phi'+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
 
 print(phi_name)
 
@@ -229,7 +230,7 @@ print('Porosité :',por)
 ## Calcul et affichage du tenseur Dhom
 Dhom_kMEF=D_k*(D+T_chi.T)
 #print(('Tenseur Dhom_k',Dhom_k))
-print('Coefficient Dhom_k11 '+conf_mess+', '+geo_mess+' variable valeur '+str(rho)+ ' MEF :',Dhom_kMEF[0,0])
+print('Coefficient Dhom_k11 '+conf_mess+', '+geo_mess+' valeur '+str(rho)+ ' MEF :',Dhom_kMEF[0,0])
 
 ## Comparaison
 

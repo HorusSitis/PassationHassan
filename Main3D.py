@@ -49,10 +49,12 @@ E_=False
 E_lL=False
 
 EI=False
-EII=True
+snap_done=False
+EII=False
+exsnap_done=False
 
 EIII=False
-EIV=False
+EIV=True
 
 #res_fixe=6
 fixe_aff=False
@@ -63,14 +65,14 @@ rempUsnap='par8'#'seq'
 
 #r=0.35#pour une réalisation unique
 npas_err=20
-fig_todo='aff'#'save'#
+fig_todo='save'#'aff'#
 
 typ_msh='gms'#''
 ## choix du domaine fixe
-dom_fixe='am'#'0001'#'0001'#''
+dom_fixe='am'#'0001'#
 
 # nom de l'appareil utilisé pour générer les données enregistrées
-computer='MECALAC_29x8'##'T1700_35x8'#
+computer='T1700_35x8'#'MECALAC_29x8'##
 
 
 
@@ -96,11 +98,11 @@ if typ_msh=='gms':
  res=res_gmsh
 
 # Choix du paramètre géométrique : variable et message de sortie _mess
-
+config=''
 ## Cas d'une sphère unique
-#config='sph_un'
-#if config=='sph_un':
-# conf_mess='sphère unique'
+config='sph_un'
+if config=='sph_un':
+ conf_mess='sphère unique'
 
 geo_p='ray'#
 cen_snap_ray=[0.5,0.5,0.5]
@@ -111,7 +113,6 @@ cen_snap_ray=[0.5,0.5,0.5]
 
 ## Cas d'un cylindre unique : axe parallèle à Oy
 config='cyl_un'
-
 if config=='cyl_un':
  conf_mess='cylindre unique'
 geo_p='ray'
@@ -143,8 +144,6 @@ if E_lL :
 
 # Exécution
 
-snap_done=True #-------------------> pour calculer les snapshots seulement si nécessaire
-
 if EI :
  exec(open("DDD_EI.py").read())
 
@@ -152,8 +151,6 @@ if EI :
 ### Pour les étapes qui suivent, on peut choisir l'ordinateur qui a effectué le calcul des snapshots physiques
 
 ## -------------------- Etape II -------------------- ##
-
-exsnap_done=False
 
 if EII :
  exec(open("DDD_EII.py").read())
@@ -173,11 +170,12 @@ N_mor=8#100%
 
 ## -------------------- Etape IV -------------------- ##
 
-N_mor=4
-r_nouv=0.44#0.33#0.22#
+N_mor=5
+r_nouv=0.33#0.22#0.44#
 
 # La mesure du temps d'éxécution doit se faire avec l'option 'save' de fig_todo
 
+ind_fixe=True##-----------> dom_fixe devant le 'Phi'
 ind_res=True#False###----------> on précise la résolution du maillage, qui apparaît ou non dans le fichier contenant Phi
 
 #0.22 : 0.011% d'erreur, tps d'éxécution ~ 1''/70''
