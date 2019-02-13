@@ -12,7 +12,7 @@ zmax=1.;
 xc=0.5;
 zc=0.5;
 
-rayon=0.05;
+rayon=0.25;
 pas_cylindre=0.1;
 
 
@@ -122,25 +122,32 @@ Plane Surface(nPSc+3) = {nlcu+3};
 /// Definition des contours des faces trouées : on ajoute les parois des trous
 // Definition du contour fermé et de la surface située en ymin
 Line Loop(nlcu+2) = {-(nlcu+11),nlcu+3,nlcu+9,nlcu+5};
-Line Loop(nlcy+6)={nlcy+1,nlcy+2,ncyl+3,ncyl+4};
+Line Loop(nlcy+6)={nlcy+1,nlcy+2,nlcy+3,nlcy+4};
 Plane Surface(nPSc+2) = {nlcu+2,nlcy+6};
 // Definition du contour fermé et de la surface située en ymax
 Line Loop(nlcu+5) = {nlcu+12,nlcu+7,-(nlcu+10),nlcu+1};
-Line Loop(nlcy+7)={nlcy+6,nlcy+7,ncyl+8,ncyl+9};
+Line Loop(nlcy+7)={nlcy+6,nlcy+7,nlcy+8,nlcy+9};
 Plane Surface(nPSc+5) = {nlcu+5,nlcy+7};
 
 /// Definition de la paroi du cylindre
-Plane Surface(num_surf_cylindre) = Extrude { {xc,0,zc}, {0,1,0}, 2*Pi } {Line{nlcy+5}};
+//num_surf_cylindre = 
+//Extrude {{0,1,0},{xc,0,zc},2*Pi} {Curve{nlcy+5};};
+//out[]
+rev[] = Extrude{{0,1,0},{xc,0,zc},2*Pi}{ Line{nlcy+5}; };
+//Ruled 
+//Surface Loop(700) = {rev[]};
+//Surface num_surf_cylindre {rev[1]};
+Surface(num_surf_cylindre) = Surface{rev[]};
 
 /// Périodicité : les orientations des lignes doivent correspondre
 
 // // On impose la periodicité entre les surfaces d'équations xmin et xmax
-Periodic Surface nPSc+4 {nlcu+11,-(nlcu+6), nlcu+12, -(nlcu+2)} = nPSc+3 {nlcu+9, nlcu+8, nlcu+10, nlcu+4};
+Periodic Surface nPSc+3 {nlcu+11,-(nlcu+6), nlcu+12, -(nlcu+2)} = nPSc+4 {nlcu+9, nlcu+8, nlcu+10, nlcu+4};
 // // On impose la periodicité entre les surfaces d'équations zmin et zmax
-Periodic Surface nPSc+6 {-(nlcu+7),-(nlcu+6), -(nlcu+5), -(nlcu+8)} = nPSc+1 {nlcu+1, nlcu+2, nlcu+3, nlcu+4};
+Periodic Surface nPSc+1 {-(nlcu+7),-(nlcu+6), -(nlcu+5), -(nlcu+8)} = nPSc+6 {nlcu+1, nlcu+2, nlcu+3, nlcu+4};
 
 // On impose la periodicité entre les surfaces d'équations ymin et ymax
-Periodic Surface nPSc+2 {nlcu+11,-(nlcu+3), nlcu+9, nlcu+5, nlcy+1, nlcy+2} = nPSc+5 {nlcu+9, nlcu+5, nlcu+11, nlcu+2, nlcy+4, nlcy+5};
+Periodic Surface nPSc+2 {nlcu+11,-(nlcu+5), -(nlcu+9), -(nlcu+3), nlcy+1, nlcy+2, nlcy+3, nlcy+4} = nPSc+5 {nlcu+12, nlcu+7, -(nlcu+10), nlcu+1, nlcy+6, nlcy+7, nlcy+8, nlcy+9};
 
 // Surface du domaine fluide
 Surface Loop(num_surf_loop_cube_trou) = {nPSc+1,-(nPSc+2),-(nPSc+3),-(nPSc+4),nPSc+5,nPSc+6};
@@ -150,7 +157,7 @@ Surface Loop(num_surf_loop_cube_trou) = {nPSc+1,-(nPSc+2),-(nPSc+3),-(nPSc+4),nP
 // Creation du volume à mailler
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
-Volume(num_vol) = {num_surf_loop_cube_trou,num_surf_cylindre};
+Volume(num_vol) = {num_surf_loop_cube_trou,Surface{rev[1]}};//num_surf_cylindre};//
 
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
