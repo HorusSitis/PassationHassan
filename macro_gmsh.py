@@ -20,18 +20,17 @@ test=True
 Nsnap=8
 
 res_name=True
-#res=1# résolution implicite, contenue dans les fichiers .geo
 res=10
 #res=20
 #res=50
 #res=100
 
 ## configurations en dimension 2
-config='cer_un_som'#cer_un
+#config='cer_un_som'#cer_un
 
 ## configurations en dimension 3
 config='sph_un'
-config='cyl_un'
+#config='cyl_un'
 
 if dimension==2:
  if config=='cer_un':
@@ -46,7 +45,7 @@ elif dimension==3:
  elif config=='cyl_un':
   mesh_prefix='cubecylindre_periodique_triangle'
 
-dom_fixe="am"#""#"_0000"#"_0001"#
+dom_fixe="am"#"0001"#
 
 ### On choisit un répertoire
 
@@ -83,8 +82,10 @@ if appr:
   os.system("dolfin-convert "+mesh_name+".msh "+mesh_name+".xml")
 elif fixe:
  if dimension==3:
-  #mesh_name=mesh_prefix+dom_fixe#+"_"
-  mesh_name=mesh_prefix+"_am"+"_sur"+str(res)+"_fixe"
+  if dom_fixe=="am":
+   mesh_name=mesh_prefix+"_am"+"_sur"+str(res)+"_fixe"
+  elif dom_fixe=="0001":
+   mesh_name=mesh_prefix+"_sur"+str(res)+"_"+dom_fixe+"fixe"
  if dimension==2:
   mesh_name="maillage_fixe2D_am"
  ## Génération d'un fichier .geo ? On commence avec un fichier unique et on modifie geo_p dans le code avant de sauvegarder sous le nom courant.
