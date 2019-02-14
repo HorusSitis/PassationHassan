@@ -10,12 +10,12 @@ import time
 ### Options
 
 dimension=2
-fig_todo='aff'
+fig_todo=''
 
 # Génération de maillages : apprentissage, fixe et test
-appr=False
+appr=True
 fixe=False
-test=True
+test=False
 
 
 Nsnap=8
@@ -28,15 +28,13 @@ res=10
 
 ## configurations en dimension 2
 if dimension==2:
- config='cer_un'
- #config='cer_un_som'
+ #config='cer_un'
+ config='cer_un_som'
 
 ## configurations en dimension 3
 if dimension==3:
  #config='sph_un'
  config='cyl_un'
-
-Nsnap=8
 
 if dimension==2:
  if config=='cer_un':
