@@ -34,6 +34,7 @@ class PeriodicBoundary(SubDomain):
 domaine_fixe=Box(Point(xinf,yinf,zinf),Point(xsup,ysup,zsup))
 
 if typ_msh=='gms':
+ res=res_gmsh
  # maillage du domaine fixe avec gmsh
  if dom_fixe=='':
   mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle.xml")
@@ -176,9 +177,9 @@ for n in range(1,1+Nsnap):
  # Représentation graphique
  plot(chi_n, linewidth=0.27)#35)
  if n==1:
-  plt.title("R = 0,05", fontsize=40)
+  plt.title("Rho = 0,05", fontsize=40)
  else:
-  plt.title("R = 0,"+str(int(round(100*r,2))),fontsize=40)
+  plt.title("Rho = 0,"+str(int(round(100*r,2))),fontsize=40)
  if fig_todo=='aff':
   plt.show()
  else:

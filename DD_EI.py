@@ -199,9 +199,9 @@ for n in range(1,1+Nsnap):#attention le rayon d'un cercle doit être non nul
  # Figures et erreurs
  plot(chi_n)
  if n==1:
-  plt.title("R = 0,05", fontsize=40)
+  plt.title("Rho = 0,05", fontsize=40)
  else:
-  plt.title("R = 0,"+str(int(round(100*r,2))),fontsize=40)
+  plt.title("Rho = 0,"+str(int(round(100*r,2))),fontsize=40)
  #plot(grad(chi_n)[:,0]
  #plot(grad(chi_n)[:,1]
  if fig_todo=='aff':

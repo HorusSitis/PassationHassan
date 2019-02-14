@@ -139,6 +139,7 @@ chi_nouv=Function(V_nouv)
 chi_nouv.vector().set_local(chi_nouv_v)
 
 plot(chi_nouv)#, linewidth=0.55)
+plt.title("Rho = 0,"+str(int(round(100*r_nouv,2))),fontsize=40)
 if fig_todo=='aff':
  plt.show()
 else:

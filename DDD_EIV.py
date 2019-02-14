@@ -148,9 +148,11 @@ chi_nouv=Function(V_nouv)
 chi_nouv.vector().set_local(chi_nouv_v)
 
 plot(chi_nouv, linewidth=0.55)
+plt.title("Rho = 0,"+str(int(round(100*r_nouv,2))),fontsize=40)
 if fig_todo=='aff':
  plt.show()
-#else:
+elif fig_todo=='save':
+ plt.savefig("Figures3D/sol_rom"+str(int(round(100*r_nouv,2)))+"_sur"+str(Nsnap)+config+'_'+geo_p+"res"+str(res)+".png")
 plt.close()
 
 ## Exploitation du champ ainsi obtenu
