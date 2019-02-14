@@ -33,8 +33,6 @@ l_name='Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
 with sh.open(repertoire_parent+l_name) as l_loa:
  list_chi_v = l_loa["maliste"]
 
-
-
 # Extrapolation au domaine Omega_fixe : 
 mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2D_am.xml")
 
