@@ -78,6 +78,10 @@ if E_ :
 ### ----------------- Etapes I à IV ----------------- ###
 #########################################################
 
+config='compl'#'cer_un'#
+cen_snap_ray=[0.,0.]#[0.5,0.5]#
+geo_p='diag'#'lat'#
+
 # choix du type de maillage
 
 typ_msh='gms'#''
@@ -108,7 +112,7 @@ gen_snap='par8'#'seq'
 # Choix du paramètre géométrique
 
 ## Cas d'un disque unique
-config='cer_un'
+#config='cer_un'
 if config=='cer_un':
  conf_mess='disque unique'
 
@@ -117,7 +121,7 @@ if geo_p=='ray':
  geo_mess='rayon variable'
 
 #emplacement du disque unique : ici, centré ou aux sommets
-cen_snap_ray=[0.,0.]#[0.5,0.5]#
+#cen_snap_ray=[0.,0.]#[0.5,0.5]#
 
 ### Disque centré ou aux sommets
 
@@ -137,9 +141,17 @@ elif cen_snap_ray==[0.,0.]:
 ## Cas de deux inclusions périodiques : une inclusion centrale et deux ou quatre latérales par cellule
 #config='compl'
 ## le rayon du disque central est variable
-#geo_p='deuxième disque aux sommets'
-#geo_p='deuxième disque latéral'
+geo_p='diag'
+#geo_p='lat'
 #
+if config=='compl':
+ conf_mess='deux disques par période'
+ mess_prefix=' rayon central variable'
+ mention=''
+ if geo_p=='diag':
+  geo_mess='alignés en diagonale, '+mess_prefix
+ elif geo_p=='lat':
+  geo_mess='alignés horizontalement, '+mess_prefix
 
 ## ------------ Etape lL 1demi : Affichage de microstructures périodiques ------------ ##
 
@@ -177,7 +189,7 @@ if EIII :
 ## ---------- Etape IV ---------- ##
 
 N_mor=5
-r_nouv=0.22#0.44#0.33#
+r_nouv=0.44#0.22#0.33#
 
 # La mesure du temps d'éxécution doit se faire avec l'option 'save' de fig_todo
 
