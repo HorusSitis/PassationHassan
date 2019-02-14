@@ -1,7 +1,4 @@
 \section{Results and discussion}\label{res}
-%\subsection{Numerical simulations}
-
-%CPU $\times$ 8 \dots
 
 \subsection{Material}
 
@@ -14,33 +11,113 @@ an open-source platform programmed in Python designed for Finite Element Method.
 
 \subsection{Two-dimensional case : varying the radius of a single circular inclusion}
 
-\dotfill
+For all the two-dimensional cases, resolution is set to $100$ : %
+100 nodes lie on each side of the unit square.
 
+\subsubsection{Centered inclusion}
+
+See section\ref{rom} for figures and choice of $N_{rom}$.
+
+\begin{figure}[H]%{Results}
+%
+\begin{center}
+\begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
+\hline
+$\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
+\hline
+0,22&0,8479&0,73607&0,73606&0,001\%&14.9s&0.8s&22.5s&202432\\
+\hline
+0,33&0,6579&0,4880&0,1887&0,006\%&11.8s&0.8s&13.3s&157456\\
+\hline
+0,44&0,3918&0,2238&0,2235&0,114\%&8.5s&0.7s&4.8s&92866\\
+\hline
+\end{tabular}
+\end{center}
+\caption{$N_{rom}=5$}
+%
+\end{figure}
+
+%$99,9 \% : N_{rom}=4$.
+
+\subsubsection{Disc at vertices}
+
+\begin{figure}[H]
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+\includegraphics[width=0.4\linewidth, height=3cm]{../Figures3D/ener_vp_cyl_un_ray_res10.png}
+&%
+\includegraphics[width=0.4\linewidth, height=3cm]{../Figures3D/ener_cumul_vp_cyl_un_ray_res10.png}
+\\ \hline
+\end{tabular}
+\end{center}
+\caption{Energy of POD modes}
+\end{figure}
+
+\begin{multicols}{2}
+Cumulated energy :
+
+\columnbreak
+\begin{itemize}
+\item $99,9 \% : N_{rom}=4$ ;
+\item $99,99 \% : N_{rom}=5$.
+\end{itemize}
+%
+\end{multicols}
+
+\begin{figure}[H]%{Results}
+%
+\begin{center}
+\begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
+\hline
+$\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
+\hline
+0,22&0,8479&0,7369&0,7367&0,025\%&15.3s&1.1s&22.4s&205906\\
+\hline
+0,33&0,6579&0,4898&0,4895&0,044\%&11.9s&0.8s&11.0s&158356\\
+\hline
+0,44&0,3918&0,2234&0,2230&0,172\%&7.4s&0.6s&4.7s&96598\\
+\hline
+\end{tabular}
+\end{center}
+\caption{$N_{rom}=5$}
+%
+\end{figure}
+
+\subsubsection{Diagonal alignement}
+
+\subsubsection{Horizontal alignement}
+
+
+
+
+
+%\Floatbarrier
 \subsection{Three-dimensional case}
 
 \subsubsection{A single spherical inclusion}
 
-\begin{figure}[H]
+\begin{figure}[H]%[!p]
 %
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_1_sur8sph_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_1_sur8sph_un_rayres10.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_2_sur8sph_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_2_sur8sph_un_rayres10.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_3_sur8sph_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_3_sur8sph_un_rayres10.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_4_sur8sph_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_4_sur8sph_un_rayres10.png}%
 \\
 \hline
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_5_sur8sph_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_5_sur8sph_un_rayres10.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_6_sur8sph_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_6_sur8sph_un_rayres10.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_7_sur8sph_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_7_sur8sph_un_rayres10.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_8_sur8sph_un_ray.png}%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_8_sur8sph_un_rayres10.png}%
 \\
 \hline
 \end{tabular}
@@ -82,16 +159,16 @@ an open-source platform programmed in Python designed for Finite Element Method.
 \end{tabular}
 \end{center}
 %
-\caption{The POD basis on $\Omega_{fluid}^0$ : the unit cube minus $\mathcal{S}(\mathbf{0};0,0001)$}
+\caption{The POD basis on $\Omega_{fluid}^0$ : the unit cube}
 \end{figure}
 
 \begin{figure}[H]
 \begin{center}
 \begin{tabular}{|c|c|}
 \hline
-\includegraphics[width=0.4\linewidth, height=3cm]{../Figures3D/ener_vp_sph_un_ray.png}
+\includegraphics[width=0.4\linewidth, height=3cm]{../Figures3D/ener_vp_sph_un_ray_res10.png}
 &%
-\includegraphics[width=0.4\linewidth, height=3cm]{../Figures3D/ener_cumul_vp_sph_un_ray.png}
+\includegraphics[width=0.4\linewidth, height=3cm]{../Figures3D/ener_cumul_vp_sph_un_ray_res10.png}
 \\ \hline
 \end{tabular}
 \end{center}
@@ -103,8 +180,8 @@ Cumulated energy :
 
 \columnbreak
 \begin{itemize}
-\item $99,99\%$ : $N_{rom}=4$
-\item $99,9\%$ : $N_{rom}=2$
+\item $99,99\%$ : $N_{rom}=5$
+\item $99,9\%$ : $N_{rom}=3$
 \end{itemize}
 %
 \end{multicols}
@@ -116,21 +193,21 @@ Cumulated energy :
 \begin{center}
 \begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
 \hline
-$\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\%&$Err$&$\phi_i^{new}$&ROM&FEM\\
+$\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
 \hline
-0,22&0,9553&0,9357&0,9356&0,011\%&10s&$<$1s&75s&20724\\
+0,22&0,9554&0,9360&0,9358&0,029\%&9.8s&1.1s&63.7s&19578\\
 \hline
-0,33&0,8494&0,7911&0,7910&0,013\%&9s&$<$1s&60s&20544\\
+0,33&0,8495&0,7911&0,7910&0,013\%&9.4s&1.1s&67.8s&20043\\
 \hline
-0,44&0,6431&0,5406&0,5405&0,018\%&6s&$<$1s&30s&16953\\
+0,44&0,6432&0,5406&0,5405&0,018\%&7.3s&1.0s&26.8s&16941\\
 \hline
 \end{tabular}
 \end{center}
-\caption{$\Omega_f^0=\dots$, $N_{rom}=4$}
+\caption{$N_{rom}=5$}
 %
 \end{figure}
 %%
-
+\begin{comment}
 \etoile
 
 %%
@@ -139,7 +216,7 @@ $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&$Err$&$\phi_
 \begin{center}
 \begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
 \hline
-$\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\%&$Err$&$\phi_i^{new}$&ROM&FEM\\
+$\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
 \hline
 0,22&0,9553&\textbf{0.9363}&0,9356&\textbf{0.086}\%&\textbf{5}s&$<$1s&75s&20724\\
 \hline
@@ -149,8 +226,87 @@ $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&$Err$&$\phi_
 \hline
 \end{tabular}
 \end{center}
-\caption{$\Omega_f^0=\dots$, $N_{rom}=2$}
+\caption{$\mathbf{N_{rom}=3}$}
 %
 \end{figure}
+\end{comment}
+\subsubsection{A single cylinder}
+
+\begin{figure}[H]
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+\includegraphics[width=0.4\linewidth, height=3cm]{../Figures3D/ener_vp_cyl_un_ray_res10.png}
+&%
+\includegraphics[width=0.4\linewidth, height=3cm]{../Figures3D/ener_cumul_vp_cyl_un_ray_res10.png}
+\\ \hline
+\end{tabular}
+\end{center}
+\caption{Energy of POD modes}
+\end{figure}
+
+\begin{multicols}{2}
+Cumulated energy :
+
+\columnbreak
+\begin{itemize}
+\item $99,99\%$ : $N_{rom}=5$
+\item $99,9\%$ : $N_{rom}=3$
+\end{itemize}
+%
+\end{multicols}
+
+\ligneinter
+
+\begin{figure}[H]%{Results}
+%
+\begin{center}
+\begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
+\hline
+$\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
+\hline
+0,22&0,8479&0,7390&0,7383&0,085\%&7.9s&1.1s&33.6s&16458\\
+\hline
+0,33&0,6579&0,4896&0,4893&0,049\%&6.6s&1.1s&21.1s&14868\\
+\hline
+0,44&0,3918&0,2228&0,2223&0,2099\%&5.96s&1.1s&10.5s&13923\\
+\hline
+\end{tabular}
+\end{center}
+\caption{$N_{rom}=5$}
+%
+\end{figure}
+%%
+\begin{comment}
+\etoile
+
+%%
+\begin{figure}[H]%{Results}
+%
+\begin{center}
+\begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
+\hline
+$\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
+\hline
+0,22&0,9553&\textbf{0.9363}&0,9356&\textbf{0.086}\%&\textbf{5}s&$<$1s&75s&20724\\
+\hline
+0,33&0,8494&\textbf{0.7992}&0,7910&\textbf{0.013}\%&\textbf{4}s&$<$1s&60s&20544\\
+\hline
+0,44&0,6431&\textbf{0.5408}&0,5405&\textbf{0.048}\%&\textbf{4}s&$<$1s&30s&16953\\
+\hline
+\end{tabular}
+\end{center}
+\caption{$\mathbf{N_{rom}=3}$}
+%
+\end{figure}
+\end{comment}
+%\Floatbarrier
+\subsubsection{Two spheres}
+
+\subsubsection{One sphere and one cylinder : $\rho$ is the radius of the sphere}
+
+\subsubsection{One sphere and one cylinder : $\rho$ is the radius of the cylinder}
+
+
 
 
