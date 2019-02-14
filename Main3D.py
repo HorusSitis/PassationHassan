@@ -49,9 +49,9 @@ E_=False
 E_lL=False
 
 EI=False
-snap_done=False
+snap_done=True
 EII=False
-exsnap_done=False
+exsnap_done=True
 
 EIII=False
 EIV=True
@@ -72,7 +72,7 @@ typ_msh='gms'#''
 dom_fixe='am'#'0001'#
 
 # nom de l'appareil utilisé pour générer les données enregistrées
-computer='T1700_35x8'#'MECALAC_29x8'##
+computer='MECALAC_29x8'#'T1700_35x8'#
 
 
 
@@ -163,15 +163,14 @@ from PO23D import *
 if EIII :
  exec(open("DDD_EIII.py").read())
 
-N_mor=2#99,9%
-N_mor=4#99,99%
-N_mor=6#99,999%
-N_mor=8#100%
+## Sphère ou cylindre unique
+#N_mor=4#99,9%
+#N_mor=5#99,99%
 
 ## -------------------- Etape IV -------------------- ##
 
 N_mor=5
-r_nouv=0.33#0.22#0.44#
+r_nouv=0.44#0.22#0.33#
 
 # La mesure du temps d'éxécution doit se faire avec l'option 'save' de fig_todo
 
