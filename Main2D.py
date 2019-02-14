@@ -55,7 +55,9 @@ E_=False
 E_lL=False
 
 EI=False
+snap_done=False
 EII=False
+exsnap_done=False
 
 EIII=False
 EIV=True
@@ -85,7 +87,7 @@ if typ_msh=='gms':
  res_fixe=res_gmsh
 
 # nom de l'appareil utilisé pour générer les données enregistrées
-computer='T1700_35x8'##'MECALAC_29x8'##
+computer='MECALAC_29x8'##'T1700_35x8'##
 
 
 
@@ -114,6 +116,7 @@ geo_p='ray'
 if geo_p=='ray':
  geo_mess='rayon variable'
 
+#emplacement du disque unique : ici, centré ou aux sommets
 cen_snap_ray=[0.5,0.5]#[0.,0.]#
 
 ### Disque centré ou aux sommets
@@ -152,14 +155,10 @@ if E_lL :
 
 # Exécution
 
-snap_done=False#-------------------> pour calculer les snapshots seulement si nécessaire
-
 if EI :
  exec(open("DD_EI.py").read())
 
 ## ---------- Etape II ---------- ##
-
-exsnap_done=False
 
 if EII :
  exec(open("DD_EII.py").read())
@@ -178,7 +177,7 @@ if EIII :
 ## ---------- Etape IV ---------- ##
 
 N_mor=5
-r_nouv=0.33
+r_nouv=0.44#0.22#0.33#
 
 # La mesure du temps d'éxécution doit se faire avec l'option 'save' de fig_todo
 

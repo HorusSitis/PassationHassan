@@ -181,7 +181,7 @@ start=time.time()
 
 ## On réinitialise le champ chi_nouv pour la méthode des éléments finis
 
-res=20
+#res=20
 chi_nouv=snapshot_circ_per(cen_snap_ray,r_nouv,res)
 
 ## Exploitation du champ ainsi obtenu

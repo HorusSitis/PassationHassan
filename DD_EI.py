@@ -27,10 +27,16 @@ class PeriodicBoundary(SubDomain):
    else:
     y[i]=x[i]
 
+## Domaine fixe sans gmsh
 #res_fixe=30#résolution du maillage sans obstacle
+#domaine_fixe=Rectangle(Point(xinf,yinf),Point(xsup,ysup))
+#mesh_fixe=generate_mesh(domaine_fixe,res_fixe)
 
-domaine_fixe=Rectangle(Point(xinf,yinf),Point(xsup,ysup))
-mesh_fixe=generate_mesh(domaine_fixe,res_fixe)
+if typ_msh=='gms':
+ res_fixe=res_gmsh
+ mesh_f_name="maillages_per/2D/maillage_fixe2D_am.xml"
+ mesh_fixe=Mesh(mesh_f_name)
+
 V_fixe=VectorFunctionSpace(mesh_fixe, "P", 3, form_degree=1, constrained_domain=PeriodicBoundary())
 
 if fixe_aff:
