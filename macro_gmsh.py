@@ -20,30 +20,23 @@ test=True
 
 Nsnap=8
 
-res_name=True
+res_name=False
 res=10
 #res=20
 #res=50
 #res=100
 
 ## configurations en dimension 2
-#config='cer_un_som'#cer_un
+if dimension==2:
+ config='cer_un'
+ #config='cer_un_som'
 
 ## configurations en dimension 3
-config='sph_un'
-#config='cyl_un'
+if dimension==3:
+ #config='sph_un'
+ config='cyl_un'
 
-Nsnap=1
-
-config='cer_un'#'cer_un_som'#
-
-res=1# valeur par défaut, jamais utilisée
-#res=20
-
-#config='sph_cen'
-#if config=='sph_cen':
-# mesh_prefix=''
-##elif
+Nsnap=8
 
 if dimension==2:
  if config=='cer_un':
@@ -73,7 +66,7 @@ if appr:
  for n in range(1,2+Nsnap):
   r=n*0.05
   mesh_name=mesh_prefix+"_"+str(int(round(100*r,2)))
-  if res!=100 and dimension==2:
+  if res_name and dimension==2:
    mesh_name=mesh_name+"_res"+str(res)
   ## res=100 : pas de suffixe
   if res_name and dimension==3:
@@ -115,13 +108,14 @@ elif fixe:
 elif test:
  for r in [0.22,0.33,0.44]:
   mesh_name=mesh_prefix+"_"+str(int(round(100*r,2)))
-  if res!=100 and dimension==2:
+  if res_name and dimension==2:
    mesh_name=mesh_name+"_res"+str(res)
   ## res=100 : pas de suffixe
   if res_name and dimension==3:
    mesh_name=mesh_name+"sur"+str(res)
   ## res=10 : pas de suffixe dans le cas sphérique, voir avec res_name
-  mesh_name=mesh_prefix+"_"+str(int(round(100*r,2)))
+  else:
+   mesh_name=mesh_prefix+"_"+str(int(round(100*r,2)))
   ## Génération d'un fichier .geo ? On commence avec un fichier unique et on modifie geo_p dans le code avant de sauvegarder sous le nom courant.
   print(mesh_name)
   ## Visualisation du fichier .geo
