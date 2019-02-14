@@ -137,7 +137,7 @@ def calc_Ab_2D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,cen,nb_modes):
   b[i]=assemble(dot(normale,phi_nouv_i)*ds(num_front_inc))
  return([A,b])
 
-def calc_Ab_3D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,cen,nb_modes):
+def calc_Ab_3D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,origin,nb_modes,config):
  A=np.zeros((nb_modes,nb_modes))
  b=np.zeros(nb_modes)
  ### Fonctions à définir pour calculer les coefficients des deux tenseurs, qui dépendent de la métrique de l'espace des fonctions test
@@ -151,12 +151,19 @@ def calc_Ab_3D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,cen,nb_modes):
    # On calcule le coefficient Aki
    A[k,i]=assemble(tr(dot((grad(phi_nouv_k)).T, grad(phi_nouv_i)))*dx)
  # création de l'interface solide-fluide
- l_cen=[cen]
- print(l_cen)
  r=r_nouv
- class inclusion_periodique(SubDomain):
-  def inside(self,x,on_boundary):
-   return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[2]-c[2]), (-r-tol, r+tol)) for c in l_cen]))
+ if config=='sph_un':
+  l_cen=[origin]
+  print(l_cen)
+  class inclusion_periodique(SubDomain):
+   def inside(self,x,on_boundary):
+    return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[2]-c[2]), (-r-tol, r+tol)) for c in l_cen]))
+ elif config=='cyl_un':
+  l_axe=[origin]
+  print(l_axe)
+  class inclusion_periodique(SubDomain):
+   def inside(self,x,on_boundary):
+    return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_axe]) and any([between((x[2]-c[2]), (-r-tol, r+tol)) for c in l_axe]))
  Gamma_sf=inclusion_periodique()
  boundaries = MeshFunction("size_t", mesh_nouv, mesh_nouv.topology().dim()-1)
  boundaries.set_all(1)

@@ -29,12 +29,11 @@ class PeriodicBoundary(SubDomain):
 
 # maillage du domaine fixe
 
+res=res_gmsh
 if dom_fixe=="am":
  mesh_name="maillages_per/3D/cube_periodique_triangle"+"_"+dom_fixe+"_sur"+str(res)+"_fixe.xml"
  mesh_fixe=Mesh(mesh_name)
 elif dom_fixe=='0001':
- mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_sur"+str(res)+"_"+dom_fixe+"fixe.xml")
-elif dom_fixe=='0000':
  mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_sur"+str(res)+"_"+dom_fixe+"fixe.xml")
 
 # fonctions test du domaine fixe
@@ -123,7 +122,7 @@ start=time.time()
 
 #from PO23D import *
 
-Coeff=calc_Ab_3D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,cen_snap_ray,nb_modes)
+Coeff=calc_Ab_3D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,cen_snap_ray,nb_modes,config)
 A=Coeff[0]
 b=Coeff[1]
 
