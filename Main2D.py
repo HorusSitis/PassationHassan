@@ -55,9 +55,9 @@ E_=False
 E_lL=False
 
 EI=False
-snap_done=False
+snap_done=True
 EII=False
-exsnap_done=False
+exsnap_done=True
 
 EIII=False
 EIV=True
@@ -117,7 +117,7 @@ if geo_p=='ray':
  geo_mess='rayon variable'
 
 #emplacement du disque unique : ici, centré ou aux sommets
-cen_snap_ray=[0.5,0.5]#[0.,0.]#
+cen_snap_ray=[0.,0.]#[0.5,0.5]#
 
 ### Disque centré ou aux sommets
 
@@ -141,7 +141,7 @@ elif cen_snap_ray==[0.,0.]:
 #geo_p='deuxième disque latéral'
 #
 
-## ------------ Etape lL 1demi : Affichage de midrostructures périodiques ------------ ##
+## ------------ Etape lL 1demi : Affichage de microstructures périodiques ------------ ##
 
 nb_lcells=1
 cem_color='grey'#'r'
@@ -177,7 +177,7 @@ if EIII :
 ## ---------- Etape IV ---------- ##
 
 N_mor=5
-r_nouv=0.44#0.22#0.33#
+r_nouv=0.22#0.44#0.33#
 
 # La mesure du temps d'éxécution doit se faire avec l'option 'save' de fig_todo
 

@@ -117,8 +117,10 @@ def calc_Ab_2D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,cen,nb_modes):
    # On calcule le coefficient Aki
    A[k,i]=assemble(tr(dot((grad(phi_nouv_k)).T, grad(phi_nouv_i)))*dx)
  # création de l'interface solide-fluide
- l_cen=[cen]
- print(l_cen)
+ l_cen=[]
+ for i in range(-1,2):
+  for j in range(-1,2):
+   l_cen.append([cen[0]+i,cen[1]+j])
  r=r_nouv
  class inclusion_periodique(SubDomain):
   def inside(self,x,on_boundary):
