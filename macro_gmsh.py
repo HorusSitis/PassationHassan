@@ -10,7 +10,7 @@ import time
 ### Options
 
 dimension=2
-fig_todo=''
+fig_todo='aff'
 
 # Génération de maillages : apprentissage, fixe et test
 appr=True
@@ -18,7 +18,7 @@ fixe=False
 test=False
 
 
-Nsnap=8
+Nsnap=1
 
 res_name=False
 res=10
@@ -29,7 +29,9 @@ res=10
 ## configurations en dimension 2
 if dimension==2:
  #config='cer_un'
- config='cer_un_som'
+ #config='cer_un_som'
+ config='compl'
+ geo_p='diag'
 
 ## configurations en dimension 3
 if dimension==3:
@@ -39,8 +41,10 @@ if dimension==3:
 if dimension==2:
  if config=='cer_un':
   mesh_prefix="maillage_trou2D"#"maillage_trou2d"#
- else:
+ elif config=='cer_un_som':
   mesh_prefix="maillage_trou2D_som"
+ elif config=='compl':
+  mesh_prefix="maillage_trous2D_"+geo_p  
 elif dimension==3:
  if config=='sph_un':
   mesh_prefix="cubesphere_periodique_triangle"

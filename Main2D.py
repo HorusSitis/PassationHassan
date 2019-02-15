@@ -150,7 +150,7 @@ if config=='compl':
  mention=''
  if geo_p=='diag':
   geo_mess='alignés en diagonale, '+mess_prefix
- elif geo_p=='lat':
+ elif geo_p=='hor':
   geo_mess='alignés horizontalement, '+mess_prefix
 
 ## ------------ Etape lL 1demi : Affichage de microstructures périodiques ------------ ##
