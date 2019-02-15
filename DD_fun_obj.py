@@ -127,6 +127,40 @@ def snapshot_circ_per(cen,r,res):
  # Résultat : snapshot
  return(chi)
 
+def snapshot_compl_per(geo_p,rho,res):
+ ##
+ mesh_name="maillages_per/2D/maillage_trous2D_"+geo_p+"_"+str(int(round(100*rho,2)))+"_sur"+str(res)#+".xml"
+ print(mesh_name)
+ ## Maillage : condition de résolution et de configuration
+ mesh=Mesh(mesh_name+".xml")
+ # On pose et on résoud le problème aux éléments finis
+ V=VectorFunctionSpace(mesh, 'P', 3, form_degree=0, constrained_domain=PeriodicBoundary())
+ print('Noeuds :',V.dim())
+ print('Numéro : ',str(int(round(20*rho,2))))
+ ## On définit la bordure du domaine, sur laquelle intégrer le second membre "L" de l'équation en dimension finie
+ #
+ ## Marquage des bordures pour la condition de Neumann
+ boundaries = MeshFunction('size_t', mesh, mesh_name+"_facet_region"+".xml")
+ ds = Measure("ds")(subdomain_data=boundaries)
+ #num_solid=5
+ ## On résoud le problème faible, avec une condition de type Neumann au bord de l'obstacle
+ normale = FacetNormal(mesh)
+ nb_noeuds=V.dim()
+ u = TrialFunction(V)
+ v = TestFunction(V)
+ a=tr(dot((grad(u)).T, grad(v)))*dx
+ L=-dot(normale,v)*ds(num_solid)
+ ### Résolution
+ u=Function(V)
+ solve(a==L,u)
+ ## Annulation de la valeur moyenne
+ moy_u_x=assemble(u[0]*dx)/(1-pi*(rho**2+0.15**2))
+ moy_u_y=assemble(u[1]*dx)/(1-pi*(rho**2+0.15**2))
+ moy=Function(V)
+ moy=Constant((moy_u_x,moy_u_y))
+ chi=project(u-moy,V)
+ # Résultat : snapshot
+ return(chi)
 
 ############################# Pour avoir quelques représentations graphiques #############################
 
