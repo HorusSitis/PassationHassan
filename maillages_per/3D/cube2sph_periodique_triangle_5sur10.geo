@@ -168,8 +168,8 @@ Circle(nars+20)={npar+10,npcu+5,npar+17};
 ///zmax
 Circle(nars+21)={npar+6,npcu+4,npar+15};
 Circle(nars+22)={npar+13,npcu+3,npar+5};
-Circle(nars+23)={npar+14,npcu+7,npar+22};
-Circle(nars+24)={npar+16,npcu+8,npar+21};
+Circle(nars+23)={npar+21,npcu+7,npar+14};
+Circle(nars+24)={npar+16,npcu+8,npar+22};
 
 
 
@@ -192,29 +192,103 @@ Circle(nari+11)={npin+7,npin+1,npin+3};
 Circle(nari+12)={npin+3,npin+1,npin+6};
 
 
-
-
-
 // Contours des faces puis faces
 
+//xmin : 1
+Line Loop(nlf+1)={nldr+5,-(nars+10),-(nldr+12),-(nars+11),-(nldr+8),-(nars+12),nldr+4,-(nars+9)};
+Plane Surface(nFPl+1)={nlf+1};
 
+//xmax : 6
+Line Loop(nlf+6)={nldr+6,-(nars+14),nldr+10,-(nars+15),-(nldr+7),-(nars+16),-(nldr+2),-(nars+13)};
+Plane Surface(nFPl+6)={nlf+6};
 
+//ymin : 3
+Line Loop(nlf+3)={nldr+1,-(nars+2),nldr+2,-(nars+3),nldr+3,-(nars+4),nldr+4,-(nars+1)};
+Plane Surface(nFPl+3)={nlf+3};
+
+//ymax : 4
+Line Loop(nlf+4)={nldr+9,-(nars+6),nldr+10,-(nars+7),nldr+11,-(nars+8),nldr+12,-(nars+5)};
+Plane Surface(nFPl+4)={nlf+4};
+
+//zmin : 2
+Line Loop(nlf+2)={nldr+1,-(nars+18),nldr+6,-(nars+19),-(nldr+9),-(nars+20),-(nldr+5),-(nars+17)};
+Plane Surface(nFPl+2)={nlf+2};
+
+//zmax : 5
+Line Loop(nlf+5)={-(nldr+3),-(nars+22),nldr+7,-(nars+23),nldr+11,-(nars+24),-(nldr+8),-(nars+21)};
+Plane Surface(nFPl+5)={nlf+5};
 
 
 
 // Huitièmes des sphères centrés aux sommets : contours puis surfaces
+//y=ymin
+Line Loop(nls+1)={nars+17,nars+9,-(nars+1)};
+Line Loop(nls+2)={nars+18,-(nars+2),-(nars+13)};
+Line Loop(nls+3)={nars+22,nars+3,nars+16};
+Line Loop(nls+4)={nars+21,-(nars+12),nars+4};
+//y=ymax
+Line Loop(nls+5)={nars+20,nars+5,nars+10};
+Line Loop(nls+6)={nars+19,-(nars+14),nars+6};
+Line Loop(nls+7)={(nars+23),nars+15,-(nars+7)};
+Line Loop(nls+8)={(nars+24),-(nars+8),-(nars+11)};
 
-
-
+Ruled Surface(nSsom+1)={nls+1};
+Ruled Surface(nSsom+2)={nls+2};
+Ruled Surface(nSsom+3)={nls+3};
+Ruled Surface(nSsom+4)={nls+4};
+Ruled Surface(nSsom+5)={nls+5};
+Ruled Surface(nSsom+6)={nls+6};
+Ruled Surface(nSsom+7)={nls+7};
+Ruled Surface(nSsom+8)={nls+8};
 
 // Sphère intérieure
+//z>=zc
+Line Loop(nli+1)={nari+1,nari+12,-(nari+5)};
+Line Loop(nli+2)={nari+2,-(nari+6),-(nari+12)};
+Line Loop(nli+3)={nari+3,-(nari+9),nari+6};
+Line Loop(nli+4)={nari+4,nari+5,nari+9};
+//z<=zc
+Line Loop(nli+5)={nari+4,-(nari+8),-(nari+10)};
+Line Loop(nli+6)={nari+3,nari+10,-(nari+7)};
+Line Loop(nli+7)={nari+2,nari+7,nari+11};
+Line Loop(nli+8)={nari+1,-(nari+11),nari+8};
+
+Ruled Surface(nSint+1)={nli+1};
+Ruled Surface(nSint+2)={nli+2};
+Ruled Surface(nSint+3)={nli+3};
+Ruled Surface(nSint+4)={nli+4};
+Ruled Surface(nSint+5)={nli+5};
+Ruled Surface(nSint+6)={nli+6};
+Ruled Surface(nSint+7)={nli+7};
+Ruled Surface(nSint+8)={nli+8};
+
+Surface Loop(num_surf_int)={nSint+1,-(nSint+2),nSint+3,-(nSint+4),-(nSint+5),(nSint+6),-(nSint+7),(nSint+8)};
+
+// Surface fluide-fluide : assemblage des faces planes et périodicité
+
+//Surface Loop(num_surf_ff)={(nFPl+1),(nFPl+3),(nFPl+5),(nFPl+6),(nFPl+4),(nFPl+2)};
+
+/// ouest-est : 1-6
+Periodic Surface nFPl+1 {(nldr+5),(nars+12),-(nldr+12),(nars+9),(nldr+8),(nars+11),(nldr+4),(nars+10)}= nFPl+6 {(nldr+6),(nars+16),(nldr+10),(nars+13),(nldr+7),(nars+15),-(nldr+2),(nars+14)};
+
+/// sud-nord : 3-4
+Periodic Surface nFPl+3 {(nldr+1),(nars+1),(nldr+2),(nars+2),(nldr+3),(nars+3),(nldr+4),(nars+4)}= nFPl+4 {(nldr+9),(nars+5),(nldr+10),(nars+6),(nldr+11),(nars+7),(nldr+12),(nars+8)};
+
+/// bas-haut : 2-5
+Periodic Surface nFPl+2 {(nldr+1),(nars+17),(nldr+6),(nars+20),(nldr+9),(nars+19),(nldr+5),(nars+18)}= nFPl+5 {-(nldr+3),(nars+21),(nldr+7),(nars+24),-(nldr+11),(nars+23),(nldr+8),(nars+22)};
 
 
 
+// Volume à mailler
 
+Volume(num_vol)={num_surf_int};//,num_surf_ff,nSsom+1,nSsom+2,nSsom+3,nSsom+4,nSsom+5,nSsom+6,nSsom+7,nSsom+8};
 
+// Surfaces et volume physiques
 
+Physical Surface(nPhys_sol)={num_surf_int,nSsom+1,nSsom+2,nSsom+3,nSsom+4,nSsom+5,nSsom+6,nSsom+7,nSsom+8};
+Physical Surface(nPhys_ff)={num_surf_ff};
 
+Physical Volume(nPhys_fluide)={num_vol};
 
 
 
