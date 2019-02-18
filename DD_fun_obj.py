@@ -19,6 +19,7 @@ ysup=1.0
 typ_msh='gms'
 
 dimension=2
+VFS_degree=2
 
 class PeriodicBoundary(SubDomain):
  # Left boundary is "target domain" G
@@ -90,7 +91,7 @@ def snapshot_circ_per(cen,r,res):
  else:
   mesh_c_r=creer_maill_circ([c_x,c_y],r,res)
  # On pose et on résoud le problème aux éléments finis
- V=VectorFunctionSpace(mesh_c_r, 'P', 3, form_degree=0, constrained_domain=PeriodicBoundary())
+ V=VectorFunctionSpace(mesh_c_r, 'P', VFS_degree, form_degree=0, constrained_domain=PeriodicBoundary())
  print(V.dim(),str(int(round(20*r,2))))
  ## On définit la bordure du domaine, sur laquelle intégrer le second membre "L" de l'équation en dimension finie
  l_cen=[]
@@ -127,29 +128,34 @@ def snapshot_circ_per(cen,r,res):
  # Résultat : snapshot
  return(chi)
 
-def snapshot_compl_per(geo_p,rho,res):
+def snapshot_compl_per(geo_p,rho):#,res):
  ##
- mesh_name="maillages_per/2D/maillage_trous2D_"+geo_p+"_"+str(int(round(100*rho,2)))+"_sur"+str(res)#+".xml"
+ mesh_name="maillages_per/2D/maillage_trous2D_"+geo_p+"_"+str(int(round(100*rho,2)))#+"_sur"+str(res)#+".xml"
  print(mesh_name)
  ## Maillage : condition de résolution et de configuration
  mesh=Mesh(mesh_name+".xml")
- # On pose et on résoud le problème aux éléments finis
- V=VectorFunctionSpace(mesh, 'P', 3, form_degree=0, constrained_domain=PeriodicBoundary())
+ V=VectorFunctionSpace(mesh, 'P', VFS_degree, form_degree=0, constrained_domain=PeriodicBoundary())
  print('Noeuds :',V.dim())
  print('Numéro : ',str(int(round(20*rho,2))))
  ## On définit la bordure du domaine, sur laquelle intégrer le second membre "L" de l'équation en dimension finie
+ class SolidBoundary(SubDomain):
+  def inside(self, x, on_boundary):
+   return on_boundary and not(near(x[0],xinf,tol) or near(x[0],xsup,tol) or near(x[1],yinf,tol) or near(x[1],ysup,tol))
+ Gamma_sf = SolidBoundary()
  #
  ## Marquage des bordures pour la condition de Neumann
  boundaries = MeshFunction('size_t', mesh, mesh_name+"_facet_region"+".xml")
+ boundaries.set_all(0)
+ Gamma_sf.mark(boundaries, 1)
  ds = Measure("ds")(subdomain_data=boundaries)
- #num_solid=5
+ num_solid_boundary=1
  ## On résoud le problème faible, avec une condition de type Neumann au bord de l'obstacle
  normale = FacetNormal(mesh)
  nb_noeuds=V.dim()
  u = TrialFunction(V)
  v = TestFunction(V)
  a=tr(dot((grad(u)).T, grad(v)))*dx
- L=-dot(normale,v)*ds(num_solid)
+ L=-dot(normale,v)*ds(num_solid_boundary)
  ### Résolution
  u=Function(V)
  solve(a==L,u)

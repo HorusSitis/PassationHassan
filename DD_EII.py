@@ -28,15 +28,18 @@ class PeriodicBoundary(SubDomain):
     y[i]=x[i]
 # Chargement de la liste des snapshots physiques
 
-l_name='Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+l_name='Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
 
 with sh.open(repertoire_parent+l_name) as l_loa:
  list_chi_v = l_loa["maliste"]
 
-# Extrapolation au domaine Omega_fixe : 
-mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2D_am.xml")
+# Extrapolation au domaine Omega_fixe :
+if dom_fixe=="am":
+ mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2D_am.xml")
+elif config=='compl':
+ mesh_fixe=Mesh("maillages_per/2D/maillage_trous2D_"+geo_p+"_fixe.xml")
 
-V_fixe=VectorFunctionSpace(mesh_fixe, 'P', 3, constrained_domain=PeriodicBoundary())
+V_fixe=VectorFunctionSpace(mesh_fixe, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
 #sys.exit()
 # Extrapolation des solutions du problème physique
 
@@ -45,15 +48,19 @@ def extra_snap(n):
  # chargement du snapshot courant
  chi_n_v=list_chi_v[n-1]
  # mise sous forme d'une fonction EF
- if cen_snap_ray==[0.,0.]:
-  mention="_som"
+ if config!='compl':
+  if cen_snap_ray==[0.,0.]:
+   mention="_som"
+  else:
+   mention=""
+  if typ_msh=='gms':
+   mesh_name="maillages_per/2D/maillage_trou2D"+mention+"_"+str(int(round(100*r,2)))+".xml"
+   print(mesh_name)
+   mesh=Mesh(mesh_name)
  else:
-  mention=""
- if typ_msh=='gms':
-  mesh_name="maillages_per/2D/maillage_trou2D"+mention+"_"+str(int(round(100*r,2)))+".xml"
-  print(mesh_name)
+  mesh_name="maillages_per/2D/maillage_trous2D_"+geo_p+"_"+str(int(round(100*r,2)))+".xml"
   mesh=Mesh(mesh_name)
- V_n=VectorFunctionSpace(mesh, 'P', 3, constrained_domain=PeriodicBoundary())
+ V_n=VectorFunctionSpace(mesh, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
  chi_n=Function(V_n)
  chi_n.vector().set_local(chi_n_v)
  # extrapolation du snapshot au domaine fixe
@@ -77,7 +84,7 @@ def extra_snap(n):
 if not exsnap_done:
  pool=multiprocessing.Pool(processes=8)
  list_chi_n_prime_v=pool.map(extra_snap,(n for n in range(1,1+Nsnap)))
- # Remplissabe de la matrice
+ # Remplissage de la matrice
  nb_noeuds=V_fixe.dim()
  Usnap=np.zeros((nb_noeuds,Nsnap))
  for n in range(1,1+Nsnap):
@@ -85,13 +92,13 @@ if not exsnap_done:
    if list_chi_n_prime_v[i][0]==n:
     Usnap[:,n-1]=list_chi_n_prime_v[i][1]
  # Stochage de la matrice des snapshots
- u_name='Usnap_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+ u_name='Usnap_'+dom_fixe+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
  #
  with sh.open(repertoire_parent+u_name) as u_sto:
   u_sto["maliste"] = Usnap
 else:
  # Chargement de la matrice des snapshots
- u_name='Usnap_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+ u_name='Usnap_'+dom_fixe+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
  print(repertoire_parent+u_name)
  with sh.open(repertoire_parent+u_name) as u_loa:
   Usnap = u_loa["maliste"]

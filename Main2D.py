@@ -67,7 +67,7 @@ EIV=True
 res_gmsh=100
 
 fixe_aff=False
-fig_todo='save'
+fig_todo='aff'
 
 ### ------------ Etape 0 : Génération de microstructures périodiques aléatoires ------------ ###
 
@@ -78,9 +78,22 @@ if E_ :
 ### ----------------- Etapes I à IV ----------------- ###
 #########################################################
 
+### ------------------ Important : degré pour la résolution par éléments finis ------------------ ###
+VFS_degree=2#3#
+## degré 2 : comme en dimension 3, permet d'éviter les erreurs de périodicité pour des pas qui nen sont pas de la forme 2"n, où n est un diviseur de 100 ##
+
+dom_fixe="am"#"solid"#éventuellement "solid" pour une configuration complexe
 config='compl'#'cer_un'#
-cen_snap_ray=[0.,0.]#[0.5,0.5]#
+#cen_snap_ray=[0.,0.]#[0.5,0.5]#
+
 geo_p='diag'#'lat'#
+
+# Disque fixe, utilisé pour l'intégration des coefficients du modèle réduit
+if config=='compl':
+ if geo_p=='diag':
+  cen_snap_ray=[0.,0.]
+ elif geo_p=='hor':
+  cen_snap_ray=[0.,0.5]
 
 # choix du type de maillage
 
@@ -109,10 +122,12 @@ ordo='Ordr'#'Nordr'
 
 gen_snap='par8'#'seq'
 
+
+
 # Choix du paramètre géométrique
 
 ## Cas d'un disque unique
-#config='cer_un'
+##config='cer_un'
 if config=='cer_un':
  conf_mess='disque unique'
 
@@ -121,17 +136,17 @@ if geo_p=='ray':
  geo_mess='rayon variable'
 
 #emplacement du disque unique : ici, centré ou aux sommets
-#cen_snap_ray=[0.,0.]#[0.5,0.5]#
+
 
 ### Disque centré ou aux sommets
-
-if cen_snap_ray==[0.5,0.5]:
- conf_mess=conf_mess+" centré"
- mention=""
-elif cen_snap_ray==[0.,0.]:
- conf_mess=conf_mess+" aux sommets"
- mention="_som"
- config=config+mention
+if config!='compl':
+ if cen_snap_ray==[0.5,0.5]:
+  conf_mess=conf_mess+" centré"
+  mention=""
+ elif cen_snap_ray==[0.,0.]:
+  conf_mess=conf_mess+" aux sommets"
+  mention="_som"
+  config=config+mention
 
 ### geo_p='centre'
 #ray_snap_cen=0.25
@@ -152,6 +167,8 @@ if config=='compl':
   geo_mess='alignés en diagonale, '+mess_prefix
  elif geo_p=='hor':
   geo_mess='alignés horizontalement, '+mess_prefix
+
+
 
 ## ------------ Etape lL 1demi : Affichage de microstructures périodiques ------------ ##
 
@@ -188,8 +205,8 @@ if EIII :
 
 ## ---------- Etape IV ---------- ##
 
-N_mor=5
-r_nouv=0.44#0.22#0.33#
+N_mor=4#cer_ _som ; 3 pour diag ; 
+r_nouv=0.11#0.22#0.44#0.33#
 
 # La mesure du temps d'éxécution doit se faire avec l'option 'save' de fig_todo
 

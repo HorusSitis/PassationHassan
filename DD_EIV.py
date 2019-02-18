@@ -29,9 +29,14 @@ class PeriodicBoundary(SubDomain):
 
 # maillage et fonctions tests du domaine fixe
 
-mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2D_am.xml")
 
-V_fixe=VectorFunctionSpace(mesh_fixe, 'P', 3, constrained_domain=PeriodicBoundary())
+if dom_fixe=="am":
+ mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2D_am.xml")
+elif config=='compl':
+ mesh_fixe=Mesh("maillages_per/2D/maillage_trous2D_"+geo_p+"_fixe.xml")
+
+
+V_fixe=VectorFunctionSpace(mesh_fixe, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
 
 # Performances
 
@@ -44,11 +49,16 @@ nb_modes=N_mor
 ## mention="..." ## affectation effectuée en préambule, voir Main2D.py
 
 if typ_msh=='gms':
- mesh_name="maillages_per/2D/maillage_trou2D"+mention+"_"+str(int(round(100*r_nouv,2)))+".xml"
- print(mesh_name)
- mesh_nouv=Mesh(mesh_name)
+ mesh_repository="maillages_per/2D/"
+ if config!='compl':
+  mesh_name="maillage_trou2D"+mention+"_"+str(int(round(100*r_nouv,2)))+".xml"
+ else:
+  mesh_name="maillage_trous2D_"+geo_p+"_"+str(int(round(100*r_nouv,2)))+".xml"
 
-V_nouv=VectorFunctionSpace(mesh_nouv, "P", 3, constrained_domain=PeriodicBoundary())
+print("Maillage de Omega_nouv",mesh_repository+mesh_name)
+mesh_nouv=Mesh(mesh_repository+mesh_name)
+
+V_nouv=VectorFunctionSpace(mesh_nouv, "P", VFS_degree, constrained_domain=PeriodicBoundary())
 
 # --------------------- SE1 : projection de la base POD sur le nouveau domaine --------------------- #
 
@@ -62,7 +72,7 @@ nb_noeuds_fixe=V_fixe.dim()
 
 ## Chargement de la base POD complète
 
-phi_name='Phi'+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+"res"+str(res)+'_'+ordo+'_'+computer
+phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+"res"+str(res)+'_'+ordo+'_'+computer
 
 print(phi_name)
 
@@ -73,7 +83,7 @@ with sh.open(repertoire_parent+phi_name) as phi_loa:
 
 Phi_mor=Phi_prime_v[:,range(0,nb_modes)]
 
-## Extrpolation des fonctions de la base POD pour former le modèle réduit défini sur V_nouv
+## Extrapolation des fonctions de la base POD pour former le modèle réduit défini sur V_nouv
 
 nb_noeuds_nouv=V_nouv.dim()
 Phi_nouv_v=np.zeros((nb_noeuds_nouv,nb_modes))
@@ -89,6 +99,7 @@ for n in range(0,nb_modes):
  phi_n_nouv=interpolate(phi_fixe,V_nouv)
  # affichage des modes extrapolés
  plot(phi_n_nouv)
+ plt.title("Phi "+str(n+1)+" sur Omega_nouv",fontsize=30)
  if fig_todo=='aff':
   plt.show()
  else:
@@ -113,7 +124,10 @@ start=time.time()
 
 #from PO23D import *
 
-Coeff=calc_Ab_2D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,cen_snap_ray,nb_modes)
+if config!='compl':
+ Coeff=calc_Ab_2D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,cen,nb_modes)
+else:
+ Coeff=calc_Ab_compl(V_nouv,mesh_nouv,Phi_nouv_v,nb_modes)
 A=Coeff[0]
 b=Coeff[1]
 
@@ -139,7 +153,7 @@ chi_nouv=Function(V_nouv)
 chi_nouv.vector().set_local(chi_nouv_v)
 
 plot(chi_nouv)#, linewidth=0.55)
-plt.title("Rho = 0,"+str(int(round(100*r_nouv,2))),fontsize=40)
+plt.title("Solution ROM", fontsize=30)#"Rho = 0,"+str(int(round(100*r_nouv,2))),fontsize=40)
 if fig_todo=='aff':
  plt.show()
 else:
@@ -153,7 +167,7 @@ rho=r_nouv
 # Affichage des valeurs et erreurs de la solution périodique, quelle que soit la configuration
 #err_per_ind_01(chi_n,cen,r,npas_err)
 
-err_per_gr(cen_snap_ray,r_nouv,chi_nouv,npas_err,fig_todo)
+#err_per_gr(cen_snap_ray,r_nouv,chi_nouv,npas_err,fig_todo)
 # Tenseur de diffusion homogénéisé
 ## Intégrale de chi sur le domaine fluide
 T_chi=np.zeros((2,2))
@@ -161,7 +175,10 @@ for k in range(0,2):
  for l in range(0,2):
   T_chi[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
 ## Intégrale de l'identité sur le domaine fluide
-por=(1-pi*r**2)
+if config!='compl':
+ por=(1-pi*r**2)
+else:
+ por=1-pi*(r**2+0.15**2)
 D=por*np.eye(2)
 ## Calcul et affichage du tenseur Dhom
 Dhom_kMOR=D_k*(D+T_chi.T)
@@ -183,7 +200,10 @@ start=time.time()
 ## On réinitialise le champ chi_nouv pour la méthode des éléments finis
 
 #res=20
-chi_nouv=snapshot_circ_per(cen_snap_ray,r_nouv,res)
+if config!='compl':
+ chi_nouv=snapshot_circ_per(cen_snap_ray,r_nouv,res)
+else:
+ chi_nouv=snapshot_compl_per(geo_p,r_nouv)
 
 ## Exploitation du champ ainsi obtenu
 rho=r_nouv
@@ -191,7 +211,8 @@ r=r_nouv
 
 # Affichage des valeurs et erreurs de la solution périodique, quelle que soit la configuration
 #err_per_ind_01(chi_n,cen,r,npas_err)
-err_per_gr(cen_snap_ray,r_nouv,chi_nouv,npas_err,fig_todo)
+for npas_test in []:#30,40]:#7,15,16,60,125,250]:
+ err_per_gr(cen_snap_ray,r_nouv,chi_nouv,npas_test,fig_todo)
 
 # Tenseur de diffusion homogénéisé
 ## Intégrale de chi sur le domaine fluide
@@ -200,7 +221,10 @@ for k in range(0,2):
  for l in range(0,2):
   T_chi[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
 ## Intégrale de l'identité sur le domaine fluide
-por=(1-pi*r**2)
+if config!='compl':
+ por=(1-pi*r**2)
+else:
+ por=1-pi*(r**2+0.15**2)
 D=por*np.eye(2)
 print('Noeuds :',V_nouv.dim())
 print('Porosité :',por)
@@ -217,6 +241,7 @@ print('Erreur relative MEF-MOR :', err_rel , ' pourcent')
 ## Sortie graphique
 
 plot(chi_nouv)#, linewidth=0.55)
+plt.title("Solution EF",fontsize=30)
 if fig_todo=='aff':
  plt.show()
 else:

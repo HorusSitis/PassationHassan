@@ -16,14 +16,20 @@ class PeriodicBoundary(SubDomain):
    else:
     y[i]=x[i]
 
-mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2D_am.xml")
-V_fixe=VectorFunctionSpace(mesh_fixe, "P", 3, constrained_domain=PeriodicBoundary())
+if dom_fixe=="am":
+ mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2D_am.xml")
+elif config=='compl':
+ mesh_fixe=Mesh("maillages_per/2D/maillage_trous2D_"+geo_p+"_fixe.xml")
+
+print("maillages_per/2D/maillage_trous2D_"+geo_p+"_fixe.xml")
+
+V_fixe=VectorFunctionSpace(mesh_fixe, "P", VFS_degree, constrained_domain=PeriodicBoundary())
 nb_noeuds = V_fixe.dim()
 
 
 ## Chargement de la marice des snapshots
 
-u_name='Usnap_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+u_name='Usnap_'+dom_fixe+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
 print(repertoire_parent+u_name)
 
 with sh.open(repertoire_parent+u_name) as u_loa:
@@ -46,7 +52,7 @@ Phi_prime_v=vp_A_phi[2]
 
 ## Enregistrement de la matrice de la base POD, sous la forme vectorielle
 
-phi_name='Phi'+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+"res"+str(res)+'_'+ordo+'_'+computer
+phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+"res"+str(res)+'_'+ordo+'_'+computer
 #+dom_fixe
 
 with sh.open(repertoire_parent+phi_name) as p_sto:

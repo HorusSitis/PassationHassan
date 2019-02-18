@@ -34,10 +34,14 @@ class PeriodicBoundary(SubDomain):
 
 if typ_msh=='gms':
  res_fixe=res_gmsh
- mesh_f_name="maillages_per/2D/maillage_fixe2D_am.xml"
- mesh_fixe=Mesh(mesh_f_name)
+ if dom_fixe=="am":
+  mesh_f_name="maillages_per/2D/maillage_fixe2D_am.xml"
+ elif config=='compl':
+  mesh_f_name="maillages_per/2D/maillage_trous2D_"+geo_p+"_fixe.xml"
 
-V_fixe=VectorFunctionSpace(mesh_fixe, "P", 3, form_degree=1, constrained_domain=PeriodicBoundary())
+mesh_fixe=Mesh(mesh_f_name)
+
+V_fixe=VectorFunctionSpace(mesh_fixe, "P", VFS_degree, form_degree=1, constrained_domain=PeriodicBoundary())
 
 if fixe_aff:
  #représentation graphique du maillage
@@ -64,7 +68,7 @@ else:
 
 r=0.35
 
-# Exemples de maillages raffiniés autour d'une inclusion périodique
+# Exemples de maillages raffinés autour d'une inclusion périodique
 for cen in []:#[[0.5,0.5],[0.0,0.0],[0.5,0.0],[0.0,0.5]]:
  mesh_c_r=creer_maill_circ(cen,r,res)
  #
@@ -78,24 +82,6 @@ for cen in []:#[[0.5,0.5],[0.0,0.0],[0.5,0.0],[0.0,0.5]]:
   plt.tight_layout()
   plt.savefig("Figures2D/mesh_r_per"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r,2)))+".png")
   plt.close()
-
-# exemple de résolution du problème variationnel
-
-#res=100
-#typ_msh='gms'
-#chi_testEF=snapshot_circ_per(cen_snap_ray,r,res)
-#
-#plot(chi_testEF)
-#if fig_todo=='aff':
-# plt.show()
-#else:
-# plt.savefig()
-#plt.close()
-#
-#Npas=100
-#err_per_gr(cen_snap_ray,r,chi_testEF,Npas,fig_todo)
-
-
 
 ## Boucle pour la création des snapshots, avec un paramètre pouvant être le rayon d'une inclusion circulaire, ou l'emplacement de son centre ##
 # Calcule aussi le tenseur de diffusion homogénéisé #
@@ -120,6 +106,11 @@ def snap_circ_cen(c_par):
  chi_c_v=chi_c.vector().get_local()
  return([c_par,chi_c_v])
 
+def snap_compl_ray(r_par):
+ chi_compl=snapshot_compl_per('diag',0.05*r_par)
+ chi_compl_v=chi_compl.vector().get_local()
+ return([r_par,chi_compl_v])
+
 # ------------------------- Snapshots, conditionnellement ------------------------- #
 #sys.exit("test pour l'homogénéisation périodique effectué")#---------------------------------------------------
 if not snap_done:
@@ -134,6 +125,8 @@ if not snap_done:
    list_chi_n_v=pool.map(snap_circ_cen,(n for n in range(1,1+Nsnap)))
  elif config=='cer_un_som':
   list_chi_n_v=pool.map(snap_circ_ray,(n for n in range(1,1+Nsnap)))
+ elif config=='compl':
+  list_chi_n_v=pool.map(snap_compl_ray,(n for n in range(1,1+Nsnap)))
  ## enregistrement des données dans une liste
  # Construction de la liste des snapshots vectorisés : cas d'un paramètre géométrique définissant un ordre - lien avec la porosité ; ou non.
  list_chi_v=[]
@@ -148,13 +141,13 @@ if not snap_done:
    chi_n_v=list_chi_n_v[i][1]
    list_chi_v.append(chi_n_v)
  # Liste des snapshots : sauvegarde, on précise l'identité de la machine qui a effectué le calcul
- l_name='Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+ l_name='Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
  # sauvegarde de la liste des solutions indexées calculées avec la méthode des éléments finis
  with sh.open(repertoire_parent+l_name) as l_sto:
   l_sto["maliste"] = list_chi_v
  # Matrice des snapshots : plus tard, voir l'étape II
 else :
- l_name='Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+ l_name='Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
  with sh.open(repertoire_parent+l_name) as l_loa:
   list_chi_v = l_loa["maliste"]
 
@@ -169,27 +162,39 @@ for n in range(1,1+Nsnap):#attention le rayon d'un cercle doit être non nul
  chi_n_v=list_chi_v[n-1]
  print(config)
  # On crée un maillage pour réécrire les snapshots sous la forme de fonctions
+ mesh_directory="maillages_per/2D/"
  if config=='cer_un':
   if geo_p=='ray':
    cen=cen_snap_ray
    r=n*0.05
    if typ_msh=='gms':
-    mesh_name="maillages_per/2D/maillage_trou2D_"+str(int(round(100*r,2)))+".xml"
+    mesh_name="maillage_trou2D_"+str(int(round(100*r,2)))
     print(mesh_name)
-    mesh=Mesh(mesh_name)
+    mesh=Mesh(mesh_directory+mesh_name+".xml")
    else:
     mesh=creer_maill_circ(cen,r,res)
  if config=='cer_un_som':
   r=n*0.05
   mention="_som"
   if typ_msh=='gms':
-   mesh_name="maillages_per/2D/maillage_trou2D"+mention+"_"+str(int(round(100*r,2)))+".xml"
+   mesh_name="maillages_per/2D/maillage_trou2D"+mention+"_"+str(int(round(100*r,2)))
    print(mesh_name)
-   mesh=Mesh(mesh_name)
+   mesh=Mesh(mesh_directory+mesh_name+".xml")
   else:
    mesh=creer_maill_circ([c_x,c_y],r,res)
   #elif geo_p=='cen':
- V_n=VectorFunctionSpace(mesh, 'P', 3, constrained_domain=PeriodicBoundary())
+ else:
+  rho=n*0.05
+  mesh_name="maillage_trous2D_"+geo_p+"_"+str(int(round(100*rho,2)))
+  mesh=Mesh(mesh_directory+mesh_name+".xml")
+  plot(mesh)
+  plt.title("Periodical mesh", fontsize=30)
+  if fig_todo=='aff':
+   plt.show()
+  elif fig_todo=='save' and r==0.25:
+   plt.savefig
+  plt.close()
+ V_n=VectorFunctionSpace(mesh, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
  # On restitue la forme fonctionnelle du snapshot courant
  chi_n=Function(V_n)
  print(V_n.dim())
@@ -220,7 +225,10 @@ for n in range(1,1+Nsnap):#attention le rayon d'un cercle doit être non nul
   for l in range(0,2):
    T_chi[k,l]=assemble(grad(chi_n)[k,l]*dx)
  ## Intégrale de l'identité sur le domaine fluide
- por=(1-pi*r**2)
+ if config!='compl':
+  por=(1-pi*r**2)
+ else:
+  por=1-pi*(r**2+0.15**2)
  D=por*np.eye(2)
  ## Calcul et affichage du tenseur Dhom
  Dhom_k=D_k*(D+T_chi.T)

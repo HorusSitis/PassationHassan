@@ -10,6 +10,13 @@ from math import *
 import numpy as np
 import matplotlib.pyplot as plt
 
+tol=1e-10
+
+xinf=0.0
+yinf=0.0
+xsup=1.0
+ysup=1.0
+
 #########################################
 ####Matrice de Corrélation temporelle####
 #########################################
@@ -180,6 +187,37 @@ def calc_Ab_3D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,origin,nb_modes,config):
   b[i]=assemble(dot(normale,phi_nouv_i)*ds(num_front_inc))
  return([A,b])
 
+### Valable en toutes dimensions ###
 
-
+def calc_Ab_compl(V_nouv,mesh_nouv,Phi_nouv_v,nb_modes):
+ A=np.zeros((nb_modes,nb_modes))
+ b=np.zeros(nb_modes)
+ ## Fonctions à définir pour calculer les coefficients des deux tenseurs, qui dépendent de la métrique de l'espace des fonctions test
+ phi_nouv_k=Function(V_nouv)
+ phi_nouv_i=Function(V_nouv)
+ ## Boucle pour le calcul de la matrice de coefficients
+ for k in range(nb_modes):
+  phi_nouv_k.vector().set_local(Phi_nouv_v[:,k])
+  for i in range(nb_modes):
+   phi_nouv_i.vector().set_local(Phi_nouv_v[:,i])
+   # On calcule le coefficient Aki
+   A[k,i]=assemble(tr(dot((grad(phi_nouv_k)).T, grad(phi_nouv_i)))*dx)
+ ## On définit la bordure du domaine, sur laquelle intégrer le second membre "L" de l'équation en dimension finie
+ class SolidBoundary(SubDomain):
+  def inside(self, x, on_boundary):
+   return on_boundary and not(near(x[0],xinf,tol) or near(x[0],xsup,tol) or near(x[1],yinf,tol) or near(x[1],ysup,tol))
+ ### Marquage des bordures
+ Gamma_sf=SolidBoundary()
+ boundaries = MeshFunction("size_t", mesh_nouv, mesh_nouv.topology().dim()-1)
+ boundaries.set_all(0)
+ Gamma_sf.mark(boundaries, 1)
+ ds = Measure("ds")(subdomain_data=boundaries)
+ #num_ff=0
+ num_front_inc=0
+ normale=FacetNormal(mesh_nouv)
+ # boucle pour le calcul du second membre du problème linéaire MOR
+ for i in range(nb_modes):
+  phi_nouv_i.vector().set_local(Phi_nouv_v[:,i])
+  b[i]=assemble(dot(normale,phi_nouv_i)*ds(num_front_inc))
+ return([A,b])
 
