@@ -67,7 +67,7 @@ else:
 #cen_snap_ray=[0.5,0.5]
 def snap_circ_ray(r_par):
  if test_snap=='test' or test_snap=='testbis':
-  chi_r=snapshot_compl_per(geo_p,0.05*r_par,cen_snap_ray)
+  chi_r=snapshot_compl_per(geo_p,0.05*r_par,cen_snap_ray,test_snap)
  else:
   chi_r=snapshot_circ_per(cen_snap_ray,0.05*r_par,res)
  chi_r_v=chi_r.vector().get_local()
@@ -84,7 +84,11 @@ def snap_circ_cen(c_par):
  return([c_par,chi_c_v])
 
 def snap_compl_ray(r_par):
- chi_compl=snapshot_compl_per(geo_p,0.05*r_par,cen_snap_ray)
+ if geo_p=='diag':
+  rho=0.05*r_par
+ elif geo_p=='hor':
+  rho=0.01+0.04*r_par
+ chi_compl=snapshot_compl_per(geo_p,rho,cen_snap_ray,test_snap)
  chi_compl_v=chi_compl.vector().get_local()
  return([r_par,chi_compl_v])
 
@@ -161,10 +165,14 @@ for n in range(1,1+Nsnap):#attention le rayon d'un cercle doit être non nul
    mesh=creer_maill_circ([c_x,c_y],r,res)
   #elif geo_p=='cen':
  else:
-  rho=n*0.05
+  if geo_p=='diag':
+   rho=0.05*n
+  elif geo_p=='hor':
+   rho=0.01+0.04*n
   r=rho
   r_fixe=0.15
   mesh_name="maillage_trous2D_"+geo_p+"_"+str(int(round(100*rho,2)))
+  print(mesh_name)
   mesh=Mesh(mesh_directory+mesh_name+".xml")
   plot(mesh)
   plt.title("Periodical mesh", fontsize=30)
@@ -174,7 +182,6 @@ for n in range(1,1+Nsnap):#attention le rayon d'un cercle doit être non nul
    plt.savefig
   plt.close()
  V_n=VectorFunctionSpace(mesh, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
-
  # On restitue la forme fonctionnelle du snapshot courant
  chi_n=Function(V_n)
  print(V_n.dim())
