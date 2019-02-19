@@ -10,15 +10,15 @@ import time
 ### Options
 
 dimension=2
-fig_todo='aff'
+fig_todo=''
 
 # Génération de maillages : apprentissage, fixe et test
-appr=True
+appr=False
 fixe=False
-test=False
+test=True
 
 
-Nsnap=1
+Nsnap=8
 
 res_name=False
 res=10
@@ -53,7 +53,7 @@ elif dimension==3:
  elif config=='cyl_un':
   mesh_prefix='cubecylindre_periodique_triangle'
 
-dom_fixe="am"#"0001"#
+dom_fixe="am"
 
 ### On choisit un répertoire
 
@@ -94,7 +94,11 @@ elif fixe:
   elif dom_fixe=="0001":
    mesh_name=mesh_prefix+"_sur"+str(res)+"_"+dom_fixe+"fixe"
  if dimension==2:
-  mesh_name="maillage_fixe2D_am"
+  if config!='compl':
+   mesh_name="maillage_fixe2D_am"
+  else:
+   mesh_name=mesh_prefix+"_fixe"
+   print(mesh_name)
  ## Génération d'un fichier .geo ? On commence avec un fichier unique et on modifie geo_p dans le code avant de sauvegarder sous le nom courant.
  print(mesh_name)
  ## Visualisation du fichier .geo
@@ -108,7 +112,7 @@ elif fixe:
  ## Conversion en .xml avec dolfin pour FEniCS
  os.system("dolfin-convert "+mesh_name+".msh "+mesh_name+".xml")
 elif test:
- for r in [0.22,0.33,0.44]:
+ for r in [0.11,0.22,0.33,0.44]:# pour compl
   mesh_name=mesh_prefix+"_"+str(int(round(100*r,2)))
   if res_name and dimension==2:
    mesh_name=mesh_name+"_res"+str(res)
