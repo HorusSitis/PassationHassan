@@ -14,8 +14,8 @@ fig_todo=''
 
 # Génération de maillages : apprentissage, fixe et test
 appr=False
-fixe=False
-test=True
+fixe=True
+test=False
 
 
 Nsnap=8
@@ -31,7 +31,8 @@ if dimension==2:
  #config='cer_un'
  #config='cer_un_som'
  config='compl'
- geo_p='diag'
+ #geo_p='diag'
+ geo_p='hor'
 
 ## configurations en dimension 3
 if dimension==3:
@@ -66,7 +67,12 @@ os.chdir(os.getcwd() + "/maillages_per/"+str(dimension)+"D")
 
 if appr:
  for n in range(1,2+Nsnap):
-  r=n*0.05
+  if dimension==2 and geo_p=='hor':
+   r=n*0.04+0.01
+  elif dimension==3 and geo_p=='lat':
+   r=n*0.04+0.01##??
+  else:
+   r=n*0.05
   mesh_name=mesh_prefix+"_"+str(int(round(100*r,2)))
   if res_name and dimension==2:
    mesh_name=mesh_name+"_res"+str(res)
