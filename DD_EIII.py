@@ -52,8 +52,8 @@ Phi_prime_v=vp_A_phi[2]
 
 ## Enregistrement de la matrice de la base POD, sous la forme vectorielle
 
-phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+"res"+str(res)+'_'+ordo+'_'+computer
-#+dom_fixe
+phi_name=test_snap+'Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+"res"+str(res)+'_'+ordo+'_'+computer
+print(phi_name)
 
 with sh.open(repertoire_parent+phi_name) as p_sto:
  p_sto["maliste"] = Phi_prime_v

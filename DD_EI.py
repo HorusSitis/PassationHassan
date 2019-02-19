@@ -55,33 +55,7 @@ else:
  plt.savefig("Figures2D/mesh_fixe.png")
  plt.close()
 
-###-------------------- Commandes pour l'écriture de fichiers, à déplacer dans le script éventuellement --------------------###
 
-
-
-#repertoire_final=repertoire_parent+suffixe
-#File(repertoire_parent+"mesh_circulaire.xml.gz") << mesh_fixe
-#ch_file,KH_SAVE=creation_fichier_pourecriture_champ_hdf5(repertoire_final,mesh_fixe)
-#file_rayon_ecriture = open("%s/rayon_ecriture.txt" %(repertoire_final), "w")#kfic=1
-# Famille de cellules élémentaires : 8 clichés, inclusion circulaire, paramétrée par le rayon du cercle
-
-
-r=0.35
-
-# Exemples de maillages raffinés autour d'une inclusion périodique
-for cen in []:#[[0.5,0.5],[0.0,0.0],[0.5,0.0],[0.0,0.5]]:
- mesh_c_r=creer_maill_circ(cen,r,res)
- #
- if fig_todo=='aff':
-  plot(mesh_c_r)
-  plt.show()
-  plt.close()
- #
- elif fig_todo=='save':
-  plot(mesh_c_r)
-  plt.tight_layout()
-  plt.savefig("Figures2D/mesh_r_per"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r,2)))+".png")
-  plt.close()
 
 ## Boucle pour la création des snapshots, avec un paramètre pouvant être le rayon d'une inclusion circulaire, ou l'emplacement de son centre ##
 # Calcule aussi le tenseur de diffusion homogénéisé #
@@ -92,7 +66,10 @@ for cen in []:#[[0.5,0.5],[0.0,0.0],[0.5,0.0],[0.0,0.5]]:
 #if geo_p=='ray':
 #cen_snap_ray=[0.5,0.5]
 def snap_circ_ray(r_par):
- chi_r=snapshot_circ_per(cen_snap_ray,0.05*r_par,res)
+ if test_snap=='test' or test_snap=='testbis':
+  chi_r=snapshot_compl_per(geo_p,0.05*r_par,cen_snap_ray)
+ else:
+  chi_r=snapshot_circ_per(cen_snap_ray,0.05*r_par,res)
  chi_r_v=chi_r.vector().get_local()
  return([r_par,chi_r_v])
 
@@ -107,7 +84,7 @@ def snap_circ_cen(c_par):
  return([c_par,chi_c_v])
 
 def snap_compl_ray(r_par):
- chi_compl=snapshot_compl_per('diag',0.05*r_par)
+ chi_compl=snapshot_compl_per(geo_p,0.05*r_par,cen_snap_ray)
  chi_compl_v=chi_compl.vector().get_local()
  return([r_par,chi_compl_v])
 
@@ -173,11 +150,11 @@ for n in range(1,1+Nsnap):#attention le rayon d'un cercle doit être non nul
     mesh=Mesh(mesh_directory+mesh_name+".xml")
    else:
     mesh=creer_maill_circ(cen,r,res)
- if config=='cer_un_som':
+ elif config=='cer_un_som':
   r=n*0.05
   mention="_som"
   if typ_msh=='gms':
-   mesh_name="maillages_per/2D/maillage_trou2D"+mention+"_"+str(int(round(100*r,2)))
+   mesh_name="maillage_trou2D"+mention+"_"+str(int(round(100*r,2)))
    print(mesh_name)
    mesh=Mesh(mesh_directory+mesh_name+".xml")
   else:
@@ -185,6 +162,8 @@ for n in range(1,1+Nsnap):#attention le rayon d'un cercle doit être non nul
   #elif geo_p=='cen':
  else:
   rho=n*0.05
+  r=rho
+  r_fixe=0.15
   mesh_name="maillage_trous2D_"+geo_p+"_"+str(int(round(100*rho,2)))
   mesh=Mesh(mesh_directory+mesh_name+".xml")
   plot(mesh)
@@ -195,11 +174,12 @@ for n in range(1,1+Nsnap):#attention le rayon d'un cercle doit être non nul
    plt.savefig
   plt.close()
  V_n=VectorFunctionSpace(mesh, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
+
  # On restitue la forme fonctionnelle du snapshot courant
  chi_n=Function(V_n)
  print(V_n.dim())
  print(len(chi_n_v))
- #sys.exit()#---------------------------------------------------
+ #sys.exit("code déboggué")#---------------------------------------------------
  chi_n.vector().set_local(chi_n_v)
  # Figures et erreurs
  plot(chi_n)
@@ -214,8 +194,12 @@ for n in range(1,1+Nsnap):#attention le rayon d'un cercle doit être non nul
  elif fig_todo=='save':
   plt.savefig("Figures2D/sol_"+str(n)+"_sur"+str(Nsnap)+config+'_'+geo_p+".png")
  plt.close()
- #fig_chi([c_x,c_y],0.05*n,chi_n,fig_todo)
- err_per_gr(cen_snap_ray,r,chi_n,npas_err,fig_todo)
+ if config!='compl':
+  #fig_chi([c_x,c_y],0.05*n,chi_n,fig_todo)
+  err_per_gr(cen_snap_ray,r,chi_n,npas_err,fig_todo)
+ else:
+  #fig_chi([c_x,c_y],r_fixe,chi_n,fig_todo)
+  err_per_gr(cen_snap_ray,r_fixe,chi_n,npas_err,fig_todo)
  #err_per_ind_01(chi_n,20)
  ##
  # Tenseur de diffusion homogénéisé

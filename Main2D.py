@@ -54,20 +54,22 @@ from DD_fun_obj import *
 E_=False
 E_lL=False
 
-EI=False
-snap_done=True
+EI=True
+snap_done=False
 EII=False
-exsnap_done=True
+exsnap_done=False
 
 EIII=False
-EIV=True
+EIV=False
+
+test_snap=''#'test'#'testbis'#'ntest'#
 
 #res_fixe=20
 #res=100#pour les sommets#20
 res_gmsh=100
 
 fixe_aff=False
-fig_todo='aff'
+fig_todo=''
 
 ### ------------ Etape 0 : Génération de microstructures périodiques aléatoires ------------ ###
 
@@ -84,10 +86,10 @@ VFS_degree=2#3#
 
 dom_fixe="am"#"solid"#éventuellement "solid" pour une configuration complexe
 config='compl'#'cer_un'#
-#cen_snap_ray=[0.,0.]#[0.5,0.5]#
+cen_snap_ray=[0.5,0.5]#[0.,0.]#
 
-geo_p='diag'#'lat'#
-
+##geo_p='ray'#'diag'#'lat'#
+geo_p='diag'
 # Disque fixe, utilisé pour l'intégration des coefficients du modèle réduit
 if config=='compl':
  if geo_p=='diag':
@@ -104,7 +106,7 @@ if typ_msh=='gms':
  res_fixe=res_gmsh
 
 # nom de l'appareil utilisé pour générer les données enregistrées
-computer='MECALAC_29x8'##'T1700_35x8'##
+computer='T1700_35x8'##'MECALAC_29x8'##
 
 
 
@@ -131,7 +133,7 @@ gen_snap='par8'#'seq'
 if config=='cer_un':
  conf_mess='disque unique'
 
-geo_p='ray'
+#geo_p='ray'
 if geo_p=='ray':
  geo_mess='rayon variable'
 
@@ -156,7 +158,7 @@ if config!='compl':
 ## Cas de deux inclusions périodiques : une inclusion centrale et deux ou quatre latérales par cellule
 #config='compl'
 ## le rayon du disque central est variable
-geo_p='diag'
+#geo_p='diag'
 #geo_p='lat'
 #
 if config=='compl':
@@ -198,14 +200,18 @@ from PO23D import *
 rempUsnap='par8'#'seq'
 
 # On soustrait éventuellement la moyenne des snapshots interpolés à chaque snapshot
-moy_mod='soust_m'#'' par défaut
+##moy_mod='soust_m'#'' par défaut
 
 if EIII :
  exec(open("DD_EIII.py").read())
 
+##99,99% :
+### compl diag N_mor=3 pour "solid", 4 pour "am"
+### compl hor ...
+
 ## ---------- Etape IV ---------- ##
 
-N_mor=4#cer_ _som ; 3 pour diag ; 
+N_mor=3#cer_ _som ; 
 r_nouv=0.11#0.22#0.44#0.33#
 
 # La mesure du temps d'éxécution doit se faire avec l'option 'save' de fig_todo

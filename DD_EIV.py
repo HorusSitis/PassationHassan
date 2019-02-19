@@ -72,7 +72,7 @@ nb_noeuds_fixe=V_fixe.dim()
 
 ## Chargement de la base POD complète
 
-phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+"res"+str(res)+'_'+ordo+'_'+computer
+phi_name=test_snap+'Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+"res"+str(res)+'_'+ordo+'_'+computer
 
 print(phi_name)
 
@@ -102,7 +102,7 @@ for n in range(0,nb_modes):
  plt.title("Phi "+str(n+1)+" sur Omega_nouv",fontsize=30)
  if fig_todo=='aff':
   plt.show()
- else:
+ elif fig_todo=='save':
   plt.savefig("Figures2D/phi_nouv_"+str(n+1)+"_"+config+'_'+geo_p+".png")
  plt.close()
  # on range le vecteur de POD interpolée dans la matrice Phi_nouv_v
@@ -125,7 +125,7 @@ start=time.time()
 #from PO23D import *
 
 if config!='compl':
- Coeff=calc_Ab_2D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,cen,nb_modes)
+ Coeff=calc_Ab_2D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,cen_snap_ray,nb_modes)
 else:
  Coeff=calc_Ab_compl(V_nouv,mesh_nouv,Phi_nouv_v,nb_modes)
 A=Coeff[0]
@@ -203,7 +203,7 @@ start=time.time()
 if config!='compl':
  chi_nouv=snapshot_circ_per(cen_snap_ray,r_nouv,res)
 else:
- chi_nouv=snapshot_compl_per(geo_p,r_nouv)
+ chi_nouv=snapshot_compl_per(geo_p,r_nouv,cen_snap_ray)
 
 ## Exploitation du champ ainsi obtenu
 rho=r_nouv

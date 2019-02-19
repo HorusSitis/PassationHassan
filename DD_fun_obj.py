@@ -17,7 +17,8 @@ xsup=1.0
 ysup=1.0
 
 typ_msh='gms'
-
+test_snap=''#'test'
+mention=''#_som'
 dimension=2
 VFS_degree=2
 
@@ -128,9 +129,11 @@ def snapshot_circ_per(cen,r,res):
  # Résultat : snapshot
  return(chi)
 
-def snapshot_compl_per(geo_p,rho):#,res):
+def snapshot_compl_per(geo_p,rho,cen):#,res):
  ##
- mesh_name="maillages_per/2D/maillage_trous2D_"+geo_p+"_"+str(int(round(100*rho,2)))#+"_sur"+str(res)#+".xml"
+ mesh_name="maillages_per/2D/maillage_trous2D_"+geo_p+"_"+str(int(round(100*rho,2)))
+ if test_snap=='test'or test_snap=='testbis':
+  mesh_name="maillages_per/2D/maillage_trou2D"+mention+"_"+str(int(round(100*rho,2)))
  print(mesh_name)
  ## Maillage : condition de résolution et de configuration
  mesh=Mesh(mesh_name+".xml")
@@ -141,7 +144,19 @@ def snapshot_compl_per(geo_p,rho):#,res):
  class SolidBoundary(SubDomain):
   def inside(self, x, on_boundary):
    return on_boundary and not(near(x[0],xinf,tol) or near(x[0],xsup,tol) or near(x[1],yinf,tol) or near(x[1],ysup,tol))
- Gamma_sf = SolidBoundary()
+ if test_snap=='testbis':
+  r=rho
+  l_cen=[]
+  for i in range(-1,2):
+   for j in range(-1,2):
+    l_cen.append([cen[0]+i,cen[1]+j])
+  class inclusion_periodique(SubDomain):
+   def inside(self,x,on_boundary):
+    return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]))
+  Gamma_sf=inclusion_periodique()
+ else:
+  Gamma_sf = SolidBoundary()
+  print('solid boundary')
  #
  ## Marquage des bordures pour la condition de Neumann
  boundaries = MeshFunction('size_t', mesh, mesh_name+"_facet_region"+".xml")
