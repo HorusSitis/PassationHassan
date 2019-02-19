@@ -208,12 +208,13 @@ def calc_Ab_compl(V_nouv,mesh_nouv,Phi_nouv_v,nb_modes):
    return on_boundary and not(near(x[0],xinf,tol) or near(x[0],xsup,tol) or near(x[1],yinf,tol) or near(x[1],ysup,tol))
  ### Marquage des bordures
  Gamma_sf=SolidBoundary()
+ #boundaries = MeshFunction('size_t', mesh_nouv, "maillages_per/2D/maillage_trous2D_diag_11"+"_facet_region"+".xml")
  boundaries = MeshFunction("size_t", mesh_nouv, mesh_nouv.topology().dim()-1)
  boundaries.set_all(0)
  Gamma_sf.mark(boundaries, 1)
  ds = Measure("ds")(subdomain_data=boundaries)
  #num_ff=0
- num_front_inc=0
+ num_front_inc=1
  normale=FacetNormal(mesh_nouv)
  # boucle pour le calcul du second membre du problème linéaire MOR
  for i in range(nb_modes):
