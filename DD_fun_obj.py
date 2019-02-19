@@ -18,7 +18,7 @@ ysup=1.0
 
 typ_msh='gms'
 
-mention=''#_som'
+
 dimension=2
 VFS_degree=2
 
@@ -129,7 +129,7 @@ def snapshot_circ_per(cen,r,res):
  # Résultat : snapshot
  return(chi)
 
-def snapshot_compl_per(geo_p,rho,cen,test_snap):#,res):
+def snapshot_compl_per(geo_p,rho,cen,mention,test_snap):#,res):
  ##
  mesh_name="maillages_per/2D/maillage_trous2D_"+geo_p+"_"+str(int(round(100*rho,2)))
  if geo_p!='diag' and geo_p!='hor':
@@ -139,7 +139,6 @@ def snapshot_compl_per(geo_p,rho,cen,test_snap):#,res):
  mesh=Mesh(mesh_name+".xml")
  V=VectorFunctionSpace(mesh, 'P', VFS_degree, form_degree=0, constrained_domain=PeriodicBoundary())
  print('Noeuds :',V.dim())
- print('Numéro : ',str(int(round(20*rho,2))))
  ## On définit la bordure du domaine, sur laquelle intégrer le second membre "L" de l'équation en dimension finie
  class SolidBoundary(SubDomain):
   def inside(self, x, on_boundary):
