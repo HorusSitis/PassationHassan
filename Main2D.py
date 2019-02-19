@@ -62,7 +62,7 @@ exsnap_done=False
 EIII=False
 EIV=True
 
-test_snap='testbis'#'test'#''#'ntest'#
+
 
 #res_fixe=20
 #res=100#pour les sommets#20
@@ -84,9 +84,10 @@ if E_ :
 VFS_degree=2#3#
 ## degré 2 : comme en dimension 3, permet d'éviter les erreurs de périodicité pour des pas qui nen sont pas de la forme 2"n, où n est un diviseur de 100 ##
 
-config='cer_un'#'compl'#
+config='compl'#'cer_un'#
 
 if config=='cer_un':
+ test_snap='test'#'testbis'#''#'ntest'#
  dom_fixe="am"
  ##
  geo_p='ray'#'cen'#
@@ -108,9 +109,11 @@ if config=='cer_un':
   mention="_som"
   config=config+mention
 elif config=='compl':
- dom_fixe="am"#"solid"#
+ test_snap=''#'test'#
  ##
- geo_p='hor'#'diag'#
+ dom_fixe="solid"#"am"#
+ ##
+ geo_p='diag'#'hor'#
  ##
  if geo_p=='diag':
   cen_snap_ray=[0.,0.]
@@ -192,12 +195,19 @@ if EIII :
 ## ---------- Etape IV ---------- ##
 
 N_mor=4#cer_ _som ; 
-r_nouv=0.22#0.44#0.33#0.11#0.10#
+#r_nouv=0.11#0.22#0.44#0.33#0.10#
 
 # La mesure du temps d'éxécution doit se faire avec l'option 'save' de fig_todo
 
 if EIV :
- exec(open("DD_EIV.py").read())
+ ## initialisation : chargement des résultats des étapes précédentes
+ phi_name=test_snap+'Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+"res"+str(res)+'_'+ordo+'_'+computer
+ with sh.open(repertoire_parent+phi_name) as phi_loa:
+  Phi_prime_v = phi_loa["maliste"]
+ ## Appel du script de l'étape IV
+ ## boucle pour l'éxécution du modèle réduit sur le jeu de parapètres de test
+ for r_nouv in [0.11,0.22,0.33,0.44]:
+  exec(open("DD_EIV.py").read())
 
 
 

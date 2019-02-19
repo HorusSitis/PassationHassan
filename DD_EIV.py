@@ -1,7 +1,8 @@
 #################################################################################################
 ## Etape IV : Prédictions. Choisir les paramètres du problème à résoudre par le modèle réduit. ##
 #################################################################################################
-
+if r_nouv!=0.11:
+ print('désolé')
 ### ------------ Reproduire pour des étapes I à IV. ------------ ###
 
 tol=1e-10
@@ -72,12 +73,12 @@ nb_noeuds_fixe=V_fixe.dim()
 
 ## Chargement de la base POD complète
 
-phi_name=test_snap+'Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+"res"+str(res)+'_'+ordo+'_'+computer
+#phi_name=test_snap+'Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+"res"+str(res)+'_'+ordo+'_'+computer
 
 print(phi_name)
 
-with sh.open(repertoire_parent+phi_name) as phi_loa:
- Phi_prime_v = phi_loa["maliste"]
+#with sh.open(repertoire_parent+phi_name) as phi_loa:
+# Phi_prime_v = phi_loa["maliste"]
 
 ## Création de la base POD tronquée, sous forme vectorielle
 
