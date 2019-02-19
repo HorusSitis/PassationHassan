@@ -17,7 +17,7 @@ xsup=1.0
 ysup=1.0
 
 typ_msh='gms'
-test_snap=''#'test'
+
 mention=''#_som'
 dimension=2
 VFS_degree=2
@@ -129,10 +129,10 @@ def snapshot_circ_per(cen,r,res):
  # Résultat : snapshot
  return(chi)
 
-def snapshot_compl_per(geo_p,rho,cen):#,res):
+def snapshot_compl_per(geo_p,rho,cen,test_snap):#,res):
  ##
  mesh_name="maillages_per/2D/maillage_trous2D_"+geo_p+"_"+str(int(round(100*rho,2)))
- if test_snap=='test'or test_snap=='testbis':
+ if geo_p!='diag' and geo_p!='hor':
   mesh_name="maillages_per/2D/maillage_trou2D"+mention+"_"+str(int(round(100*rho,2)))
  print(mesh_name)
  ## Maillage : condition de résolution et de configuration

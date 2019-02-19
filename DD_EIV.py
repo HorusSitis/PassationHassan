@@ -124,10 +124,11 @@ start=time.time()
 
 #from PO23D import *
 
-if config!='compl':
+if config!='compl' and test_snap!='test':
  Coeff=calc_Ab_2D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,cen_snap_ray,nb_modes)
 else:
  Coeff=calc_Ab_compl(V_nouv,mesh_nouv,Phi_nouv_v,nb_modes)
+ print('modèle réduit complexe utilisé')
 A=Coeff[0]
 b=Coeff[1]
 
@@ -200,10 +201,11 @@ start=time.time()
 ## On réinitialise le champ chi_nouv pour la méthode des éléments finis
 
 #res=20
-if config!='compl':
+if config!='compl' and test_snap!='test':
  chi_nouv=snapshot_circ_per(cen_snap_ray,r_nouv,res)
+ chi_nouv=snapshot_compl_per(geo_p,r_nouv,cen_snap_ray,test_snap)
 else:
- chi_nouv=snapshot_compl_per(geo_p,r_nouv,cen_snap_ray)
+ chi_nouv=snapshot_compl_per(geo_p,r_nouv,cen_snap_ray,test_snap)
 
 ## Exploitation du champ ainsi obtenu
 rho=r_nouv

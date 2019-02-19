@@ -106,7 +106,7 @@ else:
 
 
 
-
+#sys.exit()
 
 # Représentations graphiques
 
@@ -128,7 +128,8 @@ for n in range(1,1+Nsnap):
  if fig_todo=='aff':
   plt.show()
  else:
-  plt.savefig("Figures2D/snap_"+str(n)+"_sur"+str(Nsnap)+config+'_'+geo_p+".png")
+  #plt.savefig("Figures2D/snap_"+str(n)+"_sur"+str(Nsnap)+config+'_'+geo_p+".png")
+  print('pffrrh !')
  plt.close()
  # Affichage des valeurs et erreurs de la solution périodique, quelle que soit la configuration
  #err_per_ind_01(chi_prime_n,cen,r,npas_err)

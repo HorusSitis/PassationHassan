@@ -54,22 +54,22 @@ from DD_fun_obj import *
 E_=False
 E_lL=False
 
-EI=True
-snap_done=False
-EII=False
+EI=False
+snap_done=True
+EII=True
 exsnap_done=False
 
 EIII=False
 EIV=False
 
-test_snap=''#'test'#'testbis'#'ntest'#
+test_snap='test'#'testbis'#''#'ntest'#
 
 #res_fixe=20
 #res=100#pour les sommets#20
 res_gmsh=100
 
 fixe_aff=False
-fig_todo=''
+fig_todo='aff'
 
 ### ------------ Etape 0 : Génération de microstructures périodiques aléatoires ------------ ###
 
@@ -84,18 +84,46 @@ if E_ :
 VFS_degree=2#3#
 ## degré 2 : comme en dimension 3, permet d'éviter les erreurs de périodicité pour des pas qui nen sont pas de la forme 2"n, où n est un diviseur de 100 ##
 
-dom_fixe="am"#"solid"#éventuellement "solid" pour une configuration complexe
 config='compl'#'cer_un'#
-cen_snap_ray=[0.5,0.5]#[0.,0.]#
 
-##geo_p='ray'#'diag'#'lat'#
-geo_p='diag'
-# Disque fixe, utilisé pour l'intégration des coefficients du modèle réduit
-if config=='compl':
+if config=='cer_un':
+ dom_fixe="am"
+ ##
+ geo_p='ray'#'cen'#
+ cen_snap_ray=[0.,0.]#[0.5,0.5]#
+ ##
+ conf_mess='disque unique'
+ ##
+ if geo_p=='ray':
+  geo_mess='rayon variable'
+ ### geo_p='centre'
+ #ray_snap_cen=0.25
+ #csr_list=[[0.05*k,0.5] for k in range(1,1+Nsnap)]
+ ##
+ if cen_snap_ray==[0.5,0.5]:
+  conf_mess=conf_mess+" centré"
+  mention=""
+ elif cen_snap_ray==[0.,0.]:
+  conf_mess=conf_mess+" aux sommets"
+  mention="_som"
+  config=config+mention
+elif config=='compl':
+ dom_fixe="am"#"solid"#
+ ##
+ geo_p='hor'#'diag'#
+ ##
  if geo_p=='diag':
   cen_snap_ray=[0.,0.]
  elif geo_p=='hor':
   cen_snap_ray=[0.,0.5]
+ ##
+ conf_mess='deux disques par période'
+ mess_prefix=' rayon central variable'
+ mention=''
+ if geo_p=='diag':
+  geo_mess='alignés en diagonale, '+mess_prefix
+ elif geo_p=='hor':
+  geo_mess='alignés horizontalement, '+mess_prefix
 
 # choix du type de maillage
 
@@ -123,54 +151,6 @@ npas_err=50
 ordo='Ordr'#'Nordr'
 
 gen_snap='par8'#'seq'
-
-
-
-# Choix du paramètre géométrique
-
-## Cas d'un disque unique
-##config='cer_un'
-if config=='cer_un':
- conf_mess='disque unique'
-
-#geo_p='ray'
-if geo_p=='ray':
- geo_mess='rayon variable'
-
-#emplacement du disque unique : ici, centré ou aux sommets
-
-
-### Disque centré ou aux sommets
-if config!='compl':
- if cen_snap_ray==[0.5,0.5]:
-  conf_mess=conf_mess+" centré"
-  mention=""
- elif cen_snap_ray==[0.,0.]:
-  conf_mess=conf_mess+" aux sommets"
-  mention="_som"
-  config=config+mention
-
-### geo_p='centre'
-#ray_snap_cen=0.25
-#csr_list=[[0.05*k,0.5] for k in range(1,1+Nsnap)]
-
-
-## Cas de deux inclusions périodiques : une inclusion centrale et deux ou quatre latérales par cellule
-#config='compl'
-## le rayon du disque central est variable
-#geo_p='diag'
-#geo_p='lat'
-#
-if config=='compl':
- conf_mess='deux disques par période'
- mess_prefix=' rayon central variable'
- mention=''
- if geo_p=='diag':
-  geo_mess='alignés en diagonale, '+mess_prefix
- elif geo_p=='hor':
-  geo_mess='alignés horizontalement, '+mess_prefix
-
-
 
 ## ------------ Etape lL 1demi : Affichage de microstructures périodiques ------------ ##
 
