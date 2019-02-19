@@ -14,8 +14,8 @@ fig_todo=''
 
 # Génération de maillages : apprentissage, fixe et test
 appr=False
-fixe=True
-test=False
+fixe=False
+test=True
 
 
 Nsnap=8
@@ -42,17 +42,26 @@ if dimension==3:
 if dimension==2:
  if config=='cer_un':
   mesh_prefix="maillage_trou2D"#"maillage_trou2d"#
+  list_test=[0.11,0.22,0.33,0.44]
  elif config=='cer_un_som':
   mesh_prefix="maillage_trou2D_som"
+  list_test=[0.11,0.22,0.33,0.44]
  elif config=='compl':
-  mesh_prefix="maillage_trous2D_"+geo_p  
+  mesh_prefix="maillage_trous2D_"+geo_p
+  if geo_p=='diag':
+   list_test=[0.11,0.22,0.33,0.44]
+  elif geo_p=='hor':
+   list_test=[0.04,0.1,0.2,0.3]
 elif dimension==3:
  if config=='sph_un':
   mesh_prefix="cubesphere_periodique_triangle"
+  list_test=[0.22,0.33,0.44]
  elif config=='sph_un_som':
   mesh_prefix="cubesphere_periodique_triangle_som"
+  list_test=[0.22,0.33,0.44]
  elif config=='cyl_un':
   mesh_prefix='cubecylindre_periodique_triangle'
+  list_test=[0.22,0.33,0.44]
 
 dom_fixe="am"
 
@@ -118,7 +127,7 @@ elif fixe:
  ## Conversion en .xml avec dolfin pour FEniCS
  os.system("dolfin-convert "+mesh_name+".msh "+mesh_name+".xml")
 elif test:
- for r in [0.11,0.22,0.33,0.44]:# pour compl
+ for r in list_test:# pour compl
   mesh_name=mesh_prefix+"_"+str(int(round(100*r,2)))
   if res_name and dimension==2:
    mesh_name=mesh_name+"_res"+str(res)
