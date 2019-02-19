@@ -67,7 +67,7 @@ else:
 #cen_snap_ray=[0.5,0.5]
 def snap_circ_ray(r_par):
  if test_snap=='test' or test_snap=='testbis':
-  chi_r=snapshot_compl_per(geo_p,0.05*r_par,cen_snap_ray,test_snap)
+  chi_r=snapshot_compl_per(geo_p,0.05*r_par,cen_snap_ray,mention,test_snap)
  else:
   chi_r=snapshot_circ_per(cen_snap_ray,0.05*r_par,res)
  chi_r_v=chi_r.vector().get_local()
@@ -88,7 +88,7 @@ def snap_compl_ray(r_par):
   rho=0.05*r_par
  elif geo_p=='hor':
   rho=0.01+0.04*r_par
- chi_compl=snapshot_compl_per(geo_p,rho,cen_snap_ray,test_snap)
+ chi_compl=snapshot_compl_per(geo_p,rho,cen_snap_ray,mention,test_snap)
  chi_compl_v=chi_compl.vector().get_local()
  return([r_par,chi_compl_v])
 

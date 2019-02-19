@@ -201,11 +201,10 @@ start=time.time()
 ## On réinitialise le champ chi_nouv pour la méthode des éléments finis
 
 #res=20
-if config!='compl' and test_snap!='test':
+if config!='compl' and test_snap=='ntest':
  chi_nouv=snapshot_circ_per(cen_snap_ray,r_nouv,res)
- chi_nouv=snapshot_compl_per(geo_p,r_nouv,cen_snap_ray,test_snap)
 else:
- chi_nouv=snapshot_compl_per(geo_p,r_nouv,cen_snap_ray,test_snap)
+ chi_nouv=snapshot_compl_per(geo_p,r_nouv,cen_snap_ray,mention,test_snap)
 
 ## Exploitation du champ ainsi obtenu
 rho=r_nouv

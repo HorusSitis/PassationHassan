@@ -44,7 +44,10 @@ V_fixe=VectorFunctionSpace(mesh_fixe, 'P', VFS_degree, constrained_domain=Period
 # Extrapolation des solutions du problème physique
 
 def extra_snap(n):
- r=n*0.05
+ if geo_p=='hor':
+  r=0.01+0.04*n
+ else:
+  r=0.05*n
  # chargement du snapshot courant
  chi_n_v=list_chi_v[n-1]
  # mise sous forme d'une fonction EF
@@ -120,7 +123,10 @@ for n in range(1,1+Nsnap):
 
 cen=cen_snap_ray
 for n in range(1,1+Nsnap):
- r=0.05*n
+ if geo_p=='hor':
+  r=0.01+0.04*n
+ else:
+  r=0.05*n
  chi_prime_n=list_snap[n-1]
  # Affichage des valeurs de la solution interpolée
  plot(chi_prime_n)

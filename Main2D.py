@@ -56,20 +56,20 @@ E_lL=False
 
 EI=False
 snap_done=True
-EII=True
+EII=False
 exsnap_done=False
 
 EIII=False
-EIV=False
+EIV=True
 
-test_snap='test'#'testbis'#''#'ntest'#
+test_snap='testbis'#'test'#''#'ntest'#
 
 #res_fixe=20
 #res=100#pour les sommets#20
 res_gmsh=100
 
 fixe_aff=False
-fig_todo='aff'
+fig_todo=''
 
 ### ------------ Etape 0 : Génération de microstructures périodiques aléatoires ------------ ###
 
@@ -84,7 +84,7 @@ if E_ :
 VFS_degree=2#3#
 ## degré 2 : comme en dimension 3, permet d'éviter les erreurs de périodicité pour des pas qui nen sont pas de la forme 2"n, où n est un diviseur de 100 ##
 
-config='compl'#'cer_un'#
+config='cer_un'#'compl'#
 
 if config=='cer_un':
  dom_fixe="am"
@@ -187,12 +187,12 @@ if EIII :
 
 ##99,99% :
 ### compl diag N_mor=3 pour "solid", 4 pour "am"
-### compl hor ...
+### compl hor N_mor=4
 
 ## ---------- Etape IV ---------- ##
 
-N_mor=3#cer_ _som ; 
-r_nouv=0.11#0.22#0.44#0.33#
+N_mor=4#cer_ _som ; 
+r_nouv=0.22#0.44#0.33#0.11#0.10#
 
 # La mesure du temps d'éxécution doit se faire avec l'option 'save' de fig_todo
 
