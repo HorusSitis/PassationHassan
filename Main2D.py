@@ -84,14 +84,14 @@ if E_ :
 VFS_degree=2#3#
 ## degré 2 : comme en dimension 3, permet d'éviter les erreurs de périodicité pour des pas qui nen sont pas de la forme 2"n, où n est un diviseur de 100 ##
 
-config='compl'#'cer_un'#
+config='cer_un'#'compl'#
 
 if config=='cer_un':
- test_snap='solid_1'#'i_per'#'solid_2'#''#
+ test_snap='i_per'#'solid_1'#'solid_2'#''#
  dom_fixe="am"
  ##
  geo_p='ray'#'cen'#
- cen_snap_ray=[0.,0.]#[0.5,0.5]#
+ cen_snap_ray=[0.5,0.5]#[0.,0.]#
  ##
  conf_mess='disque unique'
  ##
@@ -107,6 +107,7 @@ if config=='cer_un':
  elif cen_snap_ray==[0.,0.]:
   conf_mess=conf_mess+" aux sommets"
   mention="_som"
+  ### 'i_per' : Nrom=2 ; 'solid_1': Nrom=2 ;
   config=config+mention
   ### 'i_per' : Nrom=2 ; 'solid_1': Nrom=5 ;
 elif config=='compl':
@@ -196,7 +197,7 @@ if EIII :
 
 ## ---------- Etape IV ---------- ##
 
-N_mor=3
+N_mor=2
 r_nouv=0.22#0.11#0.44#0.33#0.10#
 
 # La mesure du temps d'éxécution doit se faire avec l'option 'save' de fig_todo
