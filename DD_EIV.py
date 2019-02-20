@@ -1,8 +1,7 @@
 #################################################################################################
 ## Etape IV : Prédictions. Choisir les paramètres du problème à résoudre par le modèle réduit. ##
 #################################################################################################
-if r_nouv!=0.11:
- print('désolé')
+
 ### ------------ Reproduire pour des étapes I à IV. ------------ ###
 
 tol=1e-10
@@ -73,12 +72,12 @@ nb_noeuds_fixe=V_fixe.dim()
 
 ## Chargement de la base POD complète
 
-#phi_name=test_snap+'Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+"res"+str(res)+'_'+ordo+'_'+computer
+phi_name=test_snap+'Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+"res"+str(res)+'_'+ordo+'_'+computer
 
 print(phi_name)
 
-#with sh.open(repertoire_parent+phi_name) as phi_loa:
-# Phi_prime_v = phi_loa["maliste"]
+with sh.open(repertoire_parent+phi_name) as phi_loa:
+ Phi_prime_v = phi_loa["maliste"]
 
 ## Création de la base POD tronquée, sous forme vectorielle
 
@@ -125,11 +124,12 @@ start=time.time()
 
 #from PO23D import *
 
-if config!='compl' and test_snap!='test':
+if test_snap=='i_per':
  Coeff=calc_Ab_2D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,cen_snap_ray,nb_modes)
 else:
- Coeff=calc_Ab_compl(V_nouv,mesh_nouv,Phi_nouv_v,nb_modes)
+ Coeff=calc_Ab_compl(V_nouv,mesh_nouv,Phi_nouv_v,nb_modes,test_snap)
  print('modèle réduit complexe utilisé')
+
 A=Coeff[0]
 b=Coeff[1]
 
@@ -202,7 +202,7 @@ start=time.time()
 ## On réinitialise le champ chi_nouv pour la méthode des éléments finis
 
 #res=20
-if config!='compl' and test_snap=='ntest':
+if test_snap=='i_per':
  chi_nouv=snapshot_circ_per(cen_snap_ray,r_nouv,res)
 else:
  chi_nouv=snapshot_compl_per(geo_p,r_nouv,cen_snap_ray,mention,test_snap)

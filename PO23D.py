@@ -189,7 +189,7 @@ def calc_Ab_3D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,origin,nb_modes,config):
 
 ### Valable en toutes dimensions ###
 
-def calc_Ab_compl(V_nouv,mesh_nouv,Phi_nouv_v,nb_modes):
+def calc_Ab_compl(V_nouv,mesh_nouv,Phi_nouv_v,nb_modes,test_snap):
  A=np.zeros((nb_modes,nb_modes))
  b=np.zeros(nb_modes)
  ## Fonctions à définir pour calculer les coefficients des deux tenseurs, qui dépendent de la métrique de l'espace des fonctions test
@@ -203,18 +203,25 @@ def calc_Ab_compl(V_nouv,mesh_nouv,Phi_nouv_v,nb_modes):
    # On calcule le coefficient Aki
    A[k,i]=assemble(tr(dot((grad(phi_nouv_k)).T, grad(phi_nouv_i)))*dx)
  ## On définit la bordure du domaine, sur laquelle intégrer le second membre "L" de l'équation en dimension finie
- class SolidBoundary(SubDomain):
-  def inside(self, x, on_boundary):
-   return on_boundary and not(near(x[0],xinf,tol) or near(x[0],xsup,tol) or near(x[1],yinf,tol) or near(x[1],ysup,tol))
- ### Marquage des bordures
- Gamma_sf=SolidBoundary()
- #boundaries = MeshFunction('size_t', mesh_nouv, "maillages_per/2D/maillage_trous2D_diag_11"+"_facet_region"+".xml")
  boundaries = MeshFunction("size_t", mesh_nouv, mesh_nouv.topology().dim()-1)
- boundaries.set_all(0)
- Gamma_sf.mark(boundaries, 1)
+ #boundaries = MeshFunction('size_t', mesh, mesh_name+"_facet_region"+".xml")
  ds = Measure("ds")(subdomain_data=boundaries)
- #num_ff=0
  num_front_inc=1
+ ## Marquage des bordures pour la condition de Neumann
+ if test_snap=='solid_1':
+  class SolidBoundary(SubDomain):
+   def inside(self, x, on_boundary):
+    return on_boundary and not(near(x[0],xinf,tol) or near(x[0],xsup,tol) or near(x[1],yinf,tol) or near(x[1],ysup,tol))
+  Gamma_sf = SolidBoundary()
+  print('Gamma sf ne coupe pas le bord du carré')
+  boundaries.set_all(0)
+  Gamma_sf.mark(boundaries, 1)
+ elif test_snap=='solid_2':
+  #
+  print('Gamma sf coupe le bord du carré')
+  boundaries.set_all(0)
+  #
+ ## On intègre les vecteurs POD pour obtenir les coefficients du modèle réduit
  normale=FacetNormal(mesh_nouv)
  # boucle pour le calcul du second membre du problème linéaire MOR
  for i in range(nb_modes):

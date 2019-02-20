@@ -66,10 +66,10 @@ else:
 #if geo_p=='ray':
 #cen_snap_ray=[0.5,0.5]
 def snap_circ_ray(r_par):
- if test_snap=='test' or test_snap=='testbis':
-  chi_r=snapshot_compl_per(geo_p,0.05*r_par,cen_snap_ray,mention,test_snap)
- else:
+ if test_snap=='i_per':
   chi_r=snapshot_circ_per(cen_snap_ray,0.05*r_par,res)
+ else:
+  chi_r=snapshot_compl_per(geo_p,0.05*r_par,cen_snap_ray,mention,test_snap)
  chi_r_v=chi_r.vector().get_local()
  return([r_par,chi_r_v])
 
@@ -122,13 +122,13 @@ if not snap_done:
    chi_n_v=list_chi_n_v[i][1]
    list_chi_v.append(chi_n_v)
  # Liste des snapshots : sauvegarde, on précise l'identité de la machine qui a effectué le calcul
- l_name='Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
+ l_name=test_snap+'Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
  # sauvegarde de la liste des solutions indexées calculées avec la méthode des éléments finis
  with sh.open(repertoire_parent+l_name) as l_sto:
   l_sto["maliste"] = list_chi_v
  # Matrice des snapshots : plus tard, voir l'étape II
 else :
- l_name='Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
+ l_name=test_snap+'Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
  with sh.open(repertoire_parent+l_name) as l_loa:
   list_chi_v = l_loa["maliste"]
 

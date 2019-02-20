@@ -28,7 +28,7 @@ class PeriodicBoundary(SubDomain):
     y[i]=x[i]
 # Chargement de la liste des snapshots physiques
 
-l_name='Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
+l_name=test_snap+'Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
 
 with sh.open(repertoire_parent+l_name) as l_loa:
  list_chi_v = l_loa["maliste"]
@@ -95,13 +95,13 @@ if not exsnap_done:
    if list_chi_n_prime_v[i][0]==n:
     Usnap[:,n-1]=list_chi_n_prime_v[i][1]
  # Stochage de la matrice des snapshots
- u_name='Usnap_'+dom_fixe+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
+ u_name=test_snap+'Usnap_'+dom_fixe+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
  #
  with sh.open(repertoire_parent+u_name) as u_sto:
   u_sto["maliste"] = Usnap
 else:
  # Chargement de la matrice des snapshots
- u_name='Usnap_'+dom_fixe+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
+ u_name=test_snap+'Usnap_'+dom_fixe+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
  print(repertoire_parent+u_name)
  with sh.open(repertoire_parent+u_name) as u_loa:
   Usnap = u_loa["maliste"]

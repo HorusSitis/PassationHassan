@@ -55,7 +55,7 @@ E_=False
 E_lL=False
 
 EI=False
-snap_done=True
+snap_done=False
 EII=False
 exsnap_done=False
 
@@ -87,7 +87,7 @@ VFS_degree=2#3#
 config='compl'#'cer_un'#
 
 if config=='cer_un':
- test_snap='test'#'testbis'#''#'ntest'#
+ test_snap='solid_1'#'i_per'#'solid_2'#''#
  dom_fixe="am"
  ##
  geo_p='ray'#'cen'#
@@ -108,8 +108,9 @@ if config=='cer_un':
   conf_mess=conf_mess+" aux sommets"
   mention="_som"
   config=config+mention
+  ### 'i_per' : Nrom=2 ; 'solid_1': Nrom=5 ;
 elif config=='compl':
- test_snap=''#'test'#
+ test_snap='solid_1'#'solid_2'#''#
  ##
  dom_fixe="solid"#"am"#
  ##
@@ -117,6 +118,7 @@ elif config=='compl':
  ##
  if geo_p=='diag':
   cen_snap_ray=[0.,0.]
+  ### 'solid_1': Nrom=3 ;
  elif geo_p=='hor':
   cen_snap_ray=[0.,0.5]
  ##
@@ -194,30 +196,11 @@ if EIII :
 
 ## ---------- Etape IV ---------- ##
 
-N_mor=4#cer_ _som ; 
-#r_nouv=0.11#0.22#0.44#0.33#0.10#
+N_mor=3
+r_nouv=0.22#0.11#0.44#0.33#0.10#
 
 # La mesure du temps d'éxécution doit se faire avec l'option 'save' de fig_todo
 
 if EIV :
- ## initialisation : chargement des résultats des étapes précédentes
- phi_name=test_snap+'Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+"res"+str(res)+'_'+ordo+'_'+computer
- with sh.open(repertoire_parent+phi_name) as phi_loa:
-  Phi_prime_v = phi_loa["maliste"]
- ## Appel du script de l'étape IV
- ## boucle pour l'éxécution du modèle réduit sur le jeu de parapètres de test
- for r_nouv in [0.11,0.22,0.33,0.44]:
-  exec(open("DD_EIV.py").read())
-
-
-
-
-
-
-
-
-
-
-
-
+ exec(open("DD_EIV.py").read())
 
