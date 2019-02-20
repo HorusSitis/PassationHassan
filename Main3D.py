@@ -97,40 +97,42 @@ res_gmsh=10
 if typ_msh=='gms':
  res=res_gmsh
 
-# Choix du paramètre géométrique : variable et message de sortie _mess
-config=''
-## Cas d'une sphère unique
-config='sph_un'
+config='sph_un'#'cyl_un'#'2sph'#'cyl_sph'#
+
+### inclusions simples
 if config=='sph_un':
+ dom_fixe="am"
+ geo_p='ray'#'cen'#
+ ##
  conf_mess='sphère unique'
-
-geo_p='ray'#
-cen_snap_ray=[0.5,0.5,0.5]
-#geo_p='centre'
-#ray_snap_cen=5
-#csr_list=[[0.5,0.5,0.3+0.05*k] for k in range(1,1+Nsnap)]
-### l'inclusion solide ne rencontre pas les bords du domaine, sous peine d'une incompatibilité entre les mailles de faces opposées (?)
-
-## Cas d'un cylindre unique : axe parallèle à Oy
-config='cyl_un'
-if config=='cyl_un':
- conf_mess='cylindre unique'
-geo_p='ray'
-
-#geo_p='axe'
-asr_list=[[0.5,0.3+0.05*k] for k in range(1,1+Nsnap)]
-### point auquel l'axe rencontre le plan Oxz. L'inclusion solide ne rencontre pas les bords du domaine.
-
-## Valable pour une sphère ou un cylindre unique"
-if geo_p=='ray':
- geo_mess='rayon variable'
-
-
-
-## Cas d'un cylindre périodique aux arètes et une sphère unique au centre
-#config='compl'
-#geo_p='sphh'
-#geo_p='sph_cyl'
+ if geo_p=='ray':
+  geo_mess='rayon variable'
+  cen_snap_ray=[0.5,0.5,0.5]
+ elif geo_p=='cen':
+  geo_mess='centre variable'
+  ray_snap_cen=0.35
+  csr_list=[[0.5,0.5,0.3+0.05*k] for k in range(1,1+Nsnap)]
+elif config=='cyl_un':
+ dom_fixe="am"
+ geo_p='ray'#'axe'#
+ ##
+ if geo_p=='ray':
+  geo_mess='rayon variable'
+ elif geo_p=='axe':
+  asr_list=[[0.5,0.3+0.05*k] for k in range(1,1+Nsnap)]
+### inclusions composées
+elif config=='2sph':
+ dom_fixe="solid"#"axe"#
+ geo_p='ray'
+ ##
+elif config=='cyl_sph':
+ dom_fixe="solid"#"axe"#
+ geo_p='cyl'#'sph'#
+ ##
+ if geo_p=='ray_cyl':
+  geo_mess='rayon du cylindre variable'
+ elif geo_p=='ray_sph':
+  geo_mess='rayon de la sphère variable'
 
 ## ------------ Etape lL 1demi : Affichage de midrostructures périodiques ------------ ##
 
