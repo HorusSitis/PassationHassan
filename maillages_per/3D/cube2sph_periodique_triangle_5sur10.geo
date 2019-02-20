@@ -266,7 +266,9 @@ Surface Loop(num_surf_int)={nSint+1,-(nSint+2),nSint+3,-(nSint+4),-(nSint+5),(nS
 
 // Surface fluide-fluide : assemblage des faces planes et périodicité
 
-//Surface Loop(num_surf_ff)={(nFPl+1),(nFPl+3),(nFPl+5),(nFPl+6),(nFPl+4),(nFPl+2)};
+////
+Surface Loop(num_surf_ff)={(nFPl+1),(nFPl+5),-(nFPl+3),(nFPl+6),(nFPl+2),-(nFPl+4),nSsom+1,nSsom+2,nSsom+3,nSsom+4,nSsom+5,nSsom+6,nSsom+7,nSsom+8};
+////
 
 /// ouest-est : 1-6
 Periodic Surface nFPl+1 {(nldr+5),(nars+12),-(nldr+12),(nars+9),(nldr+8),(nars+11),(nldr+4),(nars+10)}= nFPl+6 {(nldr+6),(nars+16),(nldr+10),(nars+13),(nldr+7),(nars+15),-(nldr+2),(nars+14)};
@@ -281,12 +283,12 @@ Periodic Surface nFPl+2 {(nldr+1),(nars+17),(nldr+6),(nars+20),(nldr+9),(nars+19
 
 // Volume à mailler
 
-Volume(num_vol)={num_surf_int};//,num_surf_ff,nSsom+1,nSsom+2,nSsom+3,nSsom+4,nSsom+5,nSsom+6,nSsom+7,nSsom+8};
+Volume(num_vol)={num_surf_int,num_surf_ff};//nSsom+1,nSsom+2,nSsom+3,nSsom+4,nSsom+5,nSsom+6,nSsom+7,nSsom+8,(nFPl+1),(nFPl+3),(nFPl+5),(nFPl+6),(nFPl+4),(nFPl+2)};//
 
 // Surfaces et volume physiques
 
 Physical Surface(nPhys_sol)={num_surf_int,nSsom+1,nSsom+2,nSsom+3,nSsom+4,nSsom+5,nSsom+6,nSsom+7,nSsom+8};
-Physical Surface(nPhys_ff)={num_surf_ff};
+Physical Surface(nPhys_ff)={(nFPl+1),(nFPl+3),(nFPl+5),(nFPl+6),(nFPl+4),(nFPl+2)};//,num_surf_ff
 
 Physical Volume(nPhys_fluide)={num_vol};
 
