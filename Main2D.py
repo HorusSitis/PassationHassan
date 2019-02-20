@@ -87,11 +87,11 @@ VFS_degree=2#3#
 config='cer_un'#'compl'#
 
 if config=='cer_un':
- test_snap='i_per'#'solid_1'#'solid_2'#''#
+ test_snap='solid_1'#'solid_2'#'i_per'#''#
  dom_fixe="am"
  ##
  geo_p='ray'#'cen'#
- cen_snap_ray=[0.5,0.5]#[0.,0.]#
+ cen_snap_ray=[0.,0.]#[0.5,0.5]#
  ##
  conf_mess='disque unique'
  ##
@@ -104,12 +104,12 @@ if config=='cer_un':
  if cen_snap_ray==[0.5,0.5]:
   conf_mess=conf_mess+" centré"
   mention=""
+  ### 'i_per' : Nrom=... ; 'solid_1': Nrom=... ; ### ???
  elif cen_snap_ray==[0.,0.]:
   conf_mess=conf_mess+" aux sommets"
   mention="_som"
-  ### 'i_per' : Nrom=2 ; 'solid_1': Nrom=2 ;
   config=config+mention
-  ### 'i_per' : Nrom=2 ; 'solid_1': Nrom=5 ;
+  ### 'i_per' : Nrom=2 ; 'solid_1': Nrom=5 ; 'solid_2': Nrom=2 ---> ne fonctionne pas
 elif config=='compl':
  test_snap='solid_1'#'solid_2'#''#
  ##
@@ -197,7 +197,7 @@ if EIII :
 
 ## ---------- Etape IV ---------- ##
 
-N_mor=2
+N_mor=5
 r_nouv=0.22#0.11#0.44#0.33#0.10#
 
 # La mesure du temps d'éxécution doit se faire avec l'option 'save' de fig_todo
