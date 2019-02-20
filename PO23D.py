@@ -206,9 +206,9 @@ def calc_Ab_compl(V_nouv,mesh_nouv,Phi_nouv_v,nb_modes,test_snap):
  boundaries = MeshFunction("size_t", mesh_nouv, mesh_nouv.topology().dim()-1)
  #boundaries = MeshFunction('size_t', mesh, mesh_name+"_facet_region"+".xml")
  ds = Measure("ds")(subdomain_data=boundaries)
- num_front_inc=1
  ## Marquage des bordures pour la condition de Neumann
  if test_snap=='solid_1':
+  num_front_inc=1
   class SolidBoundary(SubDomain):
    def inside(self, x, on_boundary):
     return on_boundary and not(near(x[0],xinf,tol) or near(x[0],xsup,tol) or near(x[1],yinf,tol) or near(x[1],ysup,tol))
@@ -218,8 +218,8 @@ def calc_Ab_compl(V_nouv,mesh_nouv,Phi_nouv_v,nb_modes,test_snap):
   Gamma_sf.mark(boundaries, 1)
  elif test_snap=='solid_2':
   #
+  num_front_inc=11
   print('Gamma sf coupe le bord du carré')
-  boundaries.set_all(0)
   #
  ## On intègre les vecteurs POD pour obtenir les coefficients du modèle réduit
  normale=FacetNormal(mesh_nouv)

@@ -142,9 +142,9 @@ def snapshot_compl_per(geo_p,rho,cen,mention,test_snap):#,res):
  ## On définit la bordure du domaine, sur laquelle intégrer le second membre "L" de l'équation en dimension finie
  boundaries = MeshFunction('size_t', mesh, mesh_name+"_facet_region"+".xml")
  ds = Measure("ds")(subdomain_data=boundaries)
- num_solid_boundary=1
  ## Marquage des bordures pour la condition de Neumann
  if test_snap=='solid_1':
+  num_solid_boundary=1
   class SolidBoundary(SubDomain):
    def inside(self, x, on_boundary):
     return on_boundary and not(near(x[0],xinf,tol) or near(x[0],xsup,tol) or near(x[1],yinf,tol) or near(x[1],ysup,tol))
@@ -154,8 +154,9 @@ def snapshot_compl_per(geo_p,rho,cen,mention,test_snap):#,res):
   Gamma_sf.mark(boundaries, 1)
  elif test_snap=='solid_2':
   #
+  num_solid_boundary=11
   print('Gamma sf coupe le bord du carré')
-  boundaries.set_all(0)
+  ##boundaries.set_all(0)
   #
  ## On résoud le problème faible, avec une condition de type Neumann au bord de l'obstacle
  normale = FacetNormal(mesh)
