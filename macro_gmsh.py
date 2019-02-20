@@ -9,18 +9,18 @@ import time
 
 ### Options
 
-dimension=2
-fig_todo=''
+dimension=3
+fig_todo='aff'
 
 # Génération de maillages : apprentissage, fixe et test
 appr=False
-fixe=False
-test=True
+fixe=True
+test=False
 
 
 Nsnap=8
 
-res_name=False
+res_name=True
 res=10
 #res=20
 #res=50
@@ -37,7 +37,8 @@ if dimension==2:
 ## configurations en dimension 3
 if dimension==3:
  #config='sph_un'
- config='cyl_un'
+ #config='cyl_un'
+ config='2sph'
 
 if dimension==2:
  if config=='cer_un':
@@ -62,8 +63,12 @@ elif dimension==3:
  elif config=='cyl_un':
   mesh_prefix='cubecylindre_periodique_triangle'
   list_test=[0.22,0.33,0.44]
+ elif config=='2sph':
+  mesh_prefix='cube'+config+'_periodique_triangle'
+  list_test=[0.11,0.22,0.33]
+ #elif config=='cyl_sph':
 
-dom_fixe="am"
+dom_fixe="solid"#"am"#
 
 ### On choisit un répertoire
 
@@ -78,8 +83,8 @@ if appr:
  for n in range(1,2+Nsnap):
   if dimension==2 and geo_p=='hor':
    r=n*0.04+0.01
-  elif dimension==3 and geo_p=='lat':
-   r=n*0.04+0.01##??
+  #elif dimension==3 and geo_p=='lat':
+  # r=n*0.04+0.01##??
   else:
    r=n*0.05
   mesh_name=mesh_prefix+"_"+str(int(round(100*r,2)))
@@ -105,9 +110,18 @@ if appr:
 elif fixe:
  if dimension==3:
   if dom_fixe=="am":
-   mesh_name=mesh_prefix+"_am"+"_sur"+str(res)+"_fixe"
+   mesh_name=mesh_prefix+"_"+dom_fixe+"_sur"+str(res)+"_fixe"
   elif dom_fixe=="0001":
    mesh_name=mesh_prefix+"_sur"+str(res)+"_"+dom_fixe+"fixe"
+  elif dom_fixe=="solid":
+   if config=='2sph':
+    mesh_name=mesh_prefix+"_"+"fixe"+"_sur"+str(res)
+   elif geo_p=='ray_cyl':
+    r_c=0.15
+    mesh_name=mesh_prefix+"_"+"fixe"+str(int(round(100*r_c,2)))+"_sur"+str(res)
+   elif geo_p=='ray_sph':
+    r_a=0.15
+    mesh_name=mesh_prefix+"_"+str(int(round(100*r_a,2)))+"fixe"+"_sur"+str(res)
  if dimension==2:
   if config!='compl':
    mesh_name="maillage_fixe2D_am"
@@ -127,12 +141,9 @@ elif fixe:
  ## Conversion en .xml avec dolfin pour FEniCS
  os.system("dolfin-convert "+mesh_name+".msh "+mesh_name+".xml")
 elif test:
- for r in list_test:# pour compl
+ for r in list_test:
   mesh_name=mesh_prefix+"_"+str(int(round(100*r,2)))
-  if res_name and dimension==2:
-   mesh_name=mesh_name+"_res"+str(res)
-  ## res=100 : pas de suffixe
-  if res_name and dimension==3:
+  if dimension==3 and res_name:
    mesh_name=mesh_name+"sur"+str(res)
   ## res=10 : pas de suffixe dans le cas sphérique, voir avec res_name
   else:
