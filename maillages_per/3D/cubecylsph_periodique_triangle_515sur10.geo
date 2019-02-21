@@ -13,7 +13,7 @@ xc=0.5;
 yc=0.5;
 zc=0.5;
 
-rayon_sph=0.35;
+rayon_sph=0.05;
 
 // Caracteristique sphere aux sommets : rayon fixe
 rayon_cyl=0.15;
