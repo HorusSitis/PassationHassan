@@ -94,23 +94,78 @@ def snap_cyl_axe(c_par):
  chi_c_v=chi_c.vector().get_local()
  return([c_par,chi_c_v])
 
+def link(rho):
+ por=1-(4/3*pi*0.35**3+pi*0.15**2)
+ ray=1
+ return(ray)
+
+def snap_compl_ray(rho_par):
+ ## deux sphères ##
+ if geo_p=='ray':
+  rho=0.05*rho_par
+  chi_compl=snapshot_compl_per(rho,0.15,res_gmsh)
+ ## un cylindre et une sphère ##
+ elif geo_p=='ray_sph':
+  rho=0.05*rho_par
+  chi_compl=snapshot_compl_per(rho,0.15,res_gmsh)
+ elif geo_p=='ray_cyl':
+  rho=0.05*rho_par
+  chi_compl=snapshot_compl_per(0.15,rho,res_gmsh)
+ elif geo_p=='ray_linked':
+  rho=0.15+0.02*(rho_par-1)
+  ray_link=link(rho)#((1/3)*(0.35**3-rho**3)+0.25**2)**(0.5)
+  chi_compl=snapshot_compl_per(rho,ray_link,res_gmsh)
+ ## on vectorise la fonction calculée par MEF ##
+ chi_compl_v=chi_compl.vector().get_local()
+ ## on renvoie un vecteur étiqueté, utilisable avec l'option 'par8' ##
+ return([r_par,chi_compl_v])
+
+
+
+
+
+
 # ------------------------- Snapshots, conditionnellement ------------------------- #
 
 if not snap_done:
- # Calcul des snapshots, sous forme vectorielle
- ##if parallelize: Calcul parallèle oblligatoire
- # Génération parallèle des snapshots
- pool=multiprocessing.Pool(processes=8)
- if config=='sph_un':
-  if geo_p=='ray':
-   list_chi_n_v=pool.map(snap_sph_ray,(n for n in range(1,1+Nsnap)))
-  elif geo_p=='cen':
-   list_chi_n_v=pool.map(snap_sph_cen,(n for n in range(1,1+Nsnap)))
- elif config=='cyl_un':
-  if geo_p=='ray':
-   list_chi_n_v=pool.map(snap_cyl_ray,(n for n in range(1,1+Nsnap)))
-  elif geo_p=='axe':
-   list_chi_n_v=pool.map(snap_cyl_axe,(n for n in range(1,1+Nsnap)))
+ # -------- Calcul des snapshots, sous forme vectorielle -------- #
+ ### Génération parallèle des snapshots ###
+ if gen_snap=='par8':
+  pool=multiprocessing.Pool(processes=8)
+  if config=='sph_un':
+   if geo_p=='ray':
+    list_chi_n_v=pool.map(snap_sph_ray,(n for n in range(1,1+Nsnap)))
+   elif geo_p=='cen':
+    list_chi_n_v=pool.map(snap_sph_cen,(n for n in range(1,1+Nsnap)))
+  elif config=='cyl_un':
+   if geo_p=='ray':
+    list_chi_n_v=pool.map(snap_cyl_ray,(n for n in range(1,1+Nsnap)))
+   elif geo_p=='axe':
+    list_chi_n_v=pool.map(snap_cyl_axe,(n for n in range(1,1+Nsnap)))
+ else:
+  list_chi_n_v=pool.map(snap_compl_ray,(n for n in range(1,1+Nsnap)))
+ #elif config=='2sph':
+ #elif config=='cylsph':
+ # if geo_p=='ray_sph':
+ # elif geo_p=='ray_cyl':
+ # elif geo_p=='ray_linked':
+ ### Génération séquentielle des snapshots, pour des tests de la méthods des éléments finis ###
+ elif gen_snap=='seq':
+  list_chi_n_v=[]
+  for n in range(deb,deb+Nsnap):
+  if config=='sph_un':
+   if geo_p=='ray':
+    list_chi_n_v.append(snap_sph_ray(n))
+   elif geo_p=='cen':
+    list_chi_n_v.append(snap_sph_cen(n))
+  elif config=='cyl_un':
+   if geo_p=='ray':
+    list_chi_n_v.append(snap_cyl_ray(n))
+   elif geo_p=='axe':
+    list_chi_n_v.append(snap_cyl_axe(n))
+ ### Génération parallèle pour chaque snapshot, pour de gros maillages ###
+ elif gen_snap=='seq_par':
+  list_chi_n_v=[]
  ## enregistrement des données dans une liste
  # Construction de la liste des snapshots vectorisés : cas d'un paramètre géométrique définissant un ordre - lien avec la porosité ; ou non.
  list_chi_v=[]

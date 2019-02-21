@@ -215,6 +215,55 @@ def snapshot_cyl_per(top,r,res):### ------------------> résolution : avec gmsh
  # Résultat : snapshot
  return(chi)
 
+def snapshot_compl_per(r_cen,r_per,res):### ------------------> résolution : avec gmsh
+ ##
+ if (r_per==0.15 and config=='2sph'):
+  mesh_name="maillages_per/3D/cube"+config+"_periodique_triangle_"+str(int(round(100*r_cen,2)))+"sur"+str(res)
+ elif (r_per==0.2 and config=='2sph') or config=='cylsph':
+  mesh_name="maillages_per/3D/cube"+config+"_periodique_triangle_"+str(int(round(100*r_cen,2)))+str(int(round(100*r_per,2)))+"sur"+str(res)
+ print(mesh_name)
+ ## Maillage : condition de résolution et de configuration
+ mesh=Mesh(mesh_name+".xml")
+ V=VectorFunctionSpace(mesh_c_r, 'P', 2, constrained_domain=PeriodicBoundary())
+ print('Noeuds :',V.dim())
+ ## On définit la bordure du domaine, sur laquelle intégrer le second membre "L" de l'équation en dimension finie
+ boundaries = MeshFunction('size_t', mesh, mesh_name+"_facet_region"+".xml")
+ ds = Measure("ds")(subdomain_data=boundaries)
+ ## Marquage des bordures pour la condition de Neumann
+ num_solid_boundary=1
+ class SolidBoundary(SubDomain):
+  def inside(self, x, on_boundary):
+   return on_boundary and not(near(x[0],xinf,tol) or near(x[0],xsup,tol) or near(x[1],yinf,tol) or near(x[1],ysup,tol))
+ Gamma_sf = SolidBoundary()
+ print('Gamma sf ne coupe pas le bord du carré')
+ boundaries.set_all(0)
+ Gamma_sf.mark(boundaries, 1)
+ #num_ff=1
+ num_solid_boundary=1
+ ## On résoud le problème faible, avec une condition de type Neumann au bord de l'obstacle
+ normale = FacetNormal(mesh)
+ nb_noeuds=V.dim()
+ u = TrialFunction(V)
+ v = TestFunction(V)
+ a=tr(dot((grad(u)).T, grad(v)))*dx
+ L=-dot(normale,v)*ds(num_solid_boundary)
+ ### Résolution
+ u=Function(V)
+ solve(a==L,u)
+ ## Annulation de la valeur moyenne
+ if config=='2sph':
+  porosity=1-(4/3)*pi*(r_cen**3+r_per**3)
+ elif config=='cylsph':
+  porosity=1-(4/3)*pi*r_cen**3-pi*r_per**2
+ moy_u_x=assemble(u[0]*dx)/porosity
+ moy_u_y=assemble(u[1]*dx)/porosity
+ moy_u_z=assemble(u[2]*dx)/porosity
+ moy=Function(V)
+ moy=Constant((moy_u_x,moy_u_y,moy_u_z))
+ chi=project(u-moy,V)
+ # Résultat : snapshot
+ return(chi)
+
 ############################# Pour tester la périodicité d'un champ : impression des valeurs du champ ou de son gradient, ou représentation graphique #############################
 
 def err_per_ind_01(u,cen,r,Npas):# comparaison entre les valeurs individuelles prises par khi aux frontières de la cellule

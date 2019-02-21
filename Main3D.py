@@ -61,7 +61,7 @@ fixe_aff=False
 #res=6
 #slices_cyl=5
 Nsnap=8
-rempUsnap='par8'#'seq'
+##rempUsnap='par8'#'seq'
 
 #r=0.35#pour une réalisation unique
 npas_err=20
@@ -74,7 +74,11 @@ dom_fixe='am'#'0001'#
 # nom de l'appareil utilisé pour générer les données enregistrées
 computer='MECALAC_29x8'#'T1700_35x8'#
 
+# apprentissage : calcul parallèle ou séquentiel, prise en compte de la résolution
 
+gen_snap='par8'#'seq'#'seq_par'#
+
+# répertoire pour les résultats
 
 repertoire_parent="Res3D/"
 
@@ -125,7 +129,7 @@ elif config=='2sph':
  dom_fixe="solid"#"axe"#
  geo_p='ray'
  ##
-elif config=='cyl_sph':
+elif config=='cylsph':
  dom_fixe="solid"#"axe"#
  geo_p='cyl'#'sph'#
  ##
@@ -133,6 +137,8 @@ elif config=='cyl_sph':
   geo_mess='rayon du cylindre variable'
  elif geo_p=='ray_sph':
   geo_mess='rayon de la sphère variable'
+ elif geo_p=='ray_linked':
+  geo_mess='rayons liés'
 
 ## ------------ Etape lL 1demi : Affichage de midrostructures périodiques ------------ ##
 
