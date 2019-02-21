@@ -215,19 +215,20 @@ def snapshot_cyl_per(top,r,res):### ------------------> résolution : avec gmsh
  # Résultat : snapshot
  return(chi)
 
-def snapshot_compl_per(r_cen,r_per,res):### ------------------> résolution : avec gmsh
+def snapshot_compl_per(r_cen,r_per,config,res):### ------------------> résolution : avec gmsh
  ##
- if (r_per==0.15 and config=='2sph'):
-  mesh_name="maillages_per/3D/cube"+config+"_periodique_triangle_"+str(int(round(100*r_cen,2)))+"sur"+str(res)
- elif (r_per==0.2 and config=='2sph') or config=='cylsph':
-  mesh_name="maillages_per/3D/cube"+config+"_periodique_triangle_"+str(int(round(100*r_cen,2)))+str(int(round(100*r_per,2)))+"sur"+str(res)
+ mesh_prefix="maillages_per/3D/"
+ if config=='2sph':
+  mesh_name="cube"+config+"_periodique_triangle_"+str(int(round(100*r_cen,2)))+str(int(round(100*r_per,2)))+"sur"+str(res)
+ elif config=='cylsph':
+  mesh_name="cube"+config+"_periodique_triangle_"+str(int(round(100*r_per,2)))+str(int(round(100*r_cen,2)))+"sur"+str(res)
  print(mesh_name)
  ## Maillage : condition de résolution et de configuration
- mesh=Mesh(mesh_name+".xml")
- V=VectorFunctionSpace(mesh_c_r, 'P', 2, constrained_domain=PeriodicBoundary())
+ mesh=Mesh(mesh_prefix+mesh_name+".xml")
+ V=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
  print('Noeuds :',V.dim())
  ## On définit la bordure du domaine, sur laquelle intégrer le second membre "L" de l'équation en dimension finie
- boundaries = MeshFunction('size_t', mesh, mesh_name+"_facet_region"+".xml")
+ boundaries = MeshFunction('size_t', mesh, mesh_prefix+mesh_name+"_facet_region"+".xml")
  ds = Measure("ds")(subdomain_data=boundaries)
  ## Marquage des bordures pour la condition de Neumann
  num_solid_boundary=1
