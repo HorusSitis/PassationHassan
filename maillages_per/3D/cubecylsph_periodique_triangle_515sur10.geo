@@ -13,7 +13,7 @@ xc=0.5;
 yc=0.5;
 zc=0.5;
 
-rayon_sph=0.05;
+rayon_sph=0.35;
 
 // Caracteristique sphere aux sommets : rayon fixe
 rayon_cyl=0.15;
@@ -232,13 +232,13 @@ Surface Loop(num_surf_ext)={-(nSsom+4),(nFPl+1),-(nSsom+1),(nFPl+2),-(nFPl+3),(n
 ////
 
 /// ouest-est : 1-6
-Periodic Surface nFPl+1 {(nldr+5),(nldr+16),(nldr+12),(nldr+4)}= nFPl+6 {-(nldr+8),-(nldr+14),-(nldr+9),-(nldr+2)};
+Periodic Surface nFPl+1 {(nldr+5),(nldr+16),(nldr+12),(nldr+4)}= nFPl+6 {(nldr+8),-(nldr+14),(nldr+9),-(nldr+2)};
 
 /// sud-nord : 3-4
-Periodic Surface nFPl+3 {(nldr+1),(nars+2),(nldr+2),(nars+3),(nldr+3),(nars+4),(nldr+4),(nars+1)}= nFPl+4 {-(nldr+13),-(nars+6),-(nldr+14),-(nars+7),-(nldr+15),-(nars+8),-(nldr+16),(nars+5)};
+Periodic Surface nFPl+3 {(nldr+1),(nars+2),(nldr+2),(nars+3),(nldr+3),(nars+4),(nldr+4),(nars+1)}=nFPl+4 {(nldr+13),(nars+6),(nldr+14),(nars+7),(nldr+15),(nars+8),(nldr+16),nars+5};
 
 /// bas-haut : 2-5
-Periodic Surface nFPl+2 {(nldr+1),(nldr+7),(nldr+13),(nldr+6)}= nFPl+5 {-(nldr+3),-(nldr+10),-(nldr+15),-(nldr+11)};
+Periodic Surface nFPl+2 {(nldr+1),(nldr+7),(nldr+13),(nldr+6)}= nFPl+5 {-(nldr+3),(nldr+10),-(nldr+15),(nldr+11)};
 
 
 
