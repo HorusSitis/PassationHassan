@@ -292,24 +292,25 @@ which is, when combinated with the mean-value condition $\langle\chi\rangle_{\Om
 
 \subsubsection{The two-dimensional case}
 
-Solutions of the variational problem \ref{chiw} are computed on FEniCS.
-
-\ligneinter
-A major concern is the construction of the mesh and the vector function space which we will use for the resolution.
+The software FEniCS, which allows to write textually a physical equation in a Python code, %
+and solve it using Finite Element Method, %
+was used to compute vector $\chi$.
 
 \par
-Indeed, two hypotheses nedd to be satisfied in the implementation of \ref{chiw} :
+Periodicity of $\chi$, which is a condition of our model, is ensured with the \begin{code}VectorFutionSpace\end{code} object in FEniCS, %
+and periodic meshes generated with the software \begin{code}Gmsh\end{code}.
 
+\begin{comment}
 \begin{itemize}
-\item Periodicity of the solution of $\ref{chiw}$ : it is performed using a \begin{code}PeriodicBoundary()\end{code} condition to define the vector function space of the variational problem ; this is well-known in FEniCS ;
-\item Periodicity of the mesh : this is more dificult, it wes eventually performed, in some particular cases, using \begin{code}Mshr\end{code}.
+\item On one hand, for the classical resolution of problem \ref{chiw}, we used FEM and meshes generated with \begin{code}Gmsh\end{code} ;
+\item On the other hand, we compile the information obtained with a finite set of solutions \dots
 \end{itemize}
+\end{comment}
 
 \etoile
-The following gives the results of computation of $\chi$ on a single elementary cell, %
-with a centered circular inclusion of radius $0.35$. %
-The value of $D_k^{hom}$ and performances of the calculus are given below.
+We computed the vector $\chi$, from which we derive the homogenized diffution tensor $\D_k^{hom}$, for the elementary cells seen in figure \ref{macro_micro_2d} :
 
+\begin{comment}
 %%%Maillages, raffinement : exemples, figures
 \begin{figure}[H]
 \begin{center}
@@ -325,19 +326,57 @@ The value of $D_k^{hom}$ and performances of the calculus are given below.
 \caption{A single centered inclusion}
 \label{2d_mesh}
 \end{figure}
+\end{comment}
 
-\begin{tabular}{|c|c|c|c|c|}
+\begin{figure}[H]
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
 \hline
-Radius :&Porosity :&Time elapsed : 1CPU$\times$2.9GHz&$D_k^{hom}$ :&Mesh resolution :\\
+\subfloat[Centered inclusion]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/maillage_gmsh_per_cer_unray_ray25.png}}
+&
+\subfloat[Disc at vertices]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/maillage_gmsh_per_cer_un_somray_ray25.png}}
+&
+\subfloat[Diagonal alignement]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/maillage_gmsh_per_compldiag_ray25.png}}
+&
+\subfloat[Horizontal alignement]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/maillage_gmsh_per_complhor_ray25.png}}
+\\
 \hline
-$0.35$&$0.6151549$&10${}^{''}$&$\left(\begin{array}{cc}0.630227160266 & 2.46470607 \cdot 10^{-11}\\2.46462659 \cdot 10^{-11}& 0.630227110\end{array}\right)$&\dots \\
+\subfloat[Vector $\chi(\mathbf{y},\rho)$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/sol_5_sur8cer_un_ray.png}}
+&
+\subfloat[Vector $\chi(\mathbf{y},\rho)$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/sol_5_sur8cer_un_som_ray.png}}
+&
+\subfloat[Vector $\chi(\mathbf{y},\rho)$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/sol_5_sur8compl_diag.png}}
+&
+\subfloat[Vector $\chi(\mathbf{y},\rho)$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/sol_5_sur8compl_hor.png}}
+\\
 \hline
 \end{tabular}
+\end{center}
+\caption{Periodical meshes and vector $\chi$ with Finite Element Method}
+\label{mesh_sol_2d}
+\end{figure}
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\rowcolor{gray} Configuration :&Porosity :&Time elapsed : 1CPU$\times$2.9GHz&$D_k^{hom, \ 11}$ :&Nodes :\\
+\hline
+%%Centered inclusion&$0.6151549$&15,84${}^{''}$&$\left(\begin{array}{cc}0.630227160266 & 2.46470607 \cdot 10^{-11}\\2.46462659 \cdot 10^{-11}& 0.630227110\end{array}\right)$&85658 \\
+Centered inclusion&$0,803650459$&5,84${}^{''}$&$0.676481674$&85658 \\
+\hline
+Disc at vertices&$0,803650459$&5,92${}^{''}$&$0.671647652$&87454 \\
+\hline
+Diagonal alignement&$0,732964624$&3,93${}^{''}$&$0.581939290$&78136 \\
+\hline
+Horizontal alignement&$0,732964624$&5,23${}^{''}$&$0.636400060$&78256 \\
+\hline
+\end{tabular}
+\end{center}
 
 \subsubsection{The three-dimensional case}
 
-Algorithms are the same as in the two-dimensional case, but we will see that CPU times is much bigger, %
-even if the mesh resolution is reasonable.
+Algorithms are the same as in the two-dimensional case, but we will see that CPU time for computation is much bigger. %
+We compare elapsed time and results from two different resolutions : $10$ or $20$ nodes for one side of the cube.
 
 \begin{comment}
 \begin{figure}[H]
@@ -349,64 +388,36 @@ even if the mesh resolution is reasonable.
 \end{figure}
 \end{comment}
 
-\begin{figure}[H]
-\begin{center}
-\begin{tabular}{|c|c|c|c|}
-\hline
-\subfloat[Mesh around the inclusion]{\includegraphics[width=0.24\linewidth,height=2.55cm]{../Figures3D/maillage_mshSc035.png}}
-%%{\includegraphics[width=0.24\linewidth,height=3.2cm]{../Figures3D/maillageCyrille_facettes.png}}
-&%\hfill
-\subfloat[$\derp{\chi^1}{y}$]{\includegraphics[width=0.24\linewidth,height=3.2cm]{../Figures3D/Cyrille35grady1.png}}
-&%\hfill
-\subfloat[$\derp{\chi^2}{y}$]{\includegraphics[width=0.24\linewidth,height=3.2cm]{../Figures3D/Cyrille35grady2.png}}
-&%\hfill
-\subfloat[$\derp{\chi^3}{y}$]{\includegraphics[width=0.24\linewidth,height=3.2cm]{../Figures3D/Cyrille35grady3.png}}
-\\
-\hline
-\end{tabular}
-\end{center}
-\caption{A single spherical inclusion}
-\label{2d_mesh}
-\end{figure}
 
+
+\begin{center}
 \begin{tabular}{|c|c|c|c|c|}
 \hline
-Radius :&Porosity :&Time elapsed : 1CPU$\times$2.9GHz&$D_k^{hom}$ :&Nodes :\\
+\rowcolor{gray} Configuration :&Porosity :&Time elapsed : 1CPU$\times$2.9GHz&$D_k^{hom, \ 11}$ :&Nodes :\\
 \hline
-$0.35$&$0.8204$&35${}^{''}$&0.799883932&19164\\%$\left(\begin{array}{ccc}0.799883932 & 2.46470607 \cdot 10^{-11}&\\2.46462659 \cdot 10^{-11}& 0.630227110&\\&&\end{array}\right)$&\\
+Single sphere&$0,$&,${}^{''}$&$0.$& \\
+\hline
+Single cylinder&$0,$&,${}^{''}$&$0.$& \\
+\hline
+Two spheres&$0,$&,${}^{''}$&$0.$& \\
+\hline
+One sphere and one cylinder&$0,$&,${}^{''}$&$0.$& \\
 \hline
 \end{tabular}
+\end{center}
+
 
 
 \begin{comment}
 \begin{figure}[H]
+%
 \begin{center}
-\begin{tabular}{|c|c|c|c|}
-\hline
-\subfloat[Centered inclusion]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/macro_micro_Lsurl1unique_par505025.png}}
-&
-\subfloat[Disc at vertices]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/macro_micro_Lsurl1unique_par0025.png}}
-&
-\subfloat[Diagonal alignement]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/macro_micro_Lsurl1sommets_par50502515.png}}
-&
-\subfloat[Horizontal alignement]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/macro_micro_Lsurl1lat_par50502515.png}}
-\\
-\hline
-\subfloat[Porosity : $0,803650459$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/macro_micro_Lsurl8unique_par505025.png}}
-&
-\subfloat[Porosity : $0,803650459$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/macro_micro_Lsurl8unique_par0025.png}}
-&
-\subfloat[Porosity : $0,732964624$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/macro_micro_Lsurl8sommets_par50502515.png}}
-&
-\subfloat[Porosity : $0,732964624$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/macro_micro_Lsurl8lat_par50502515.png}}
-\\
-\hline
-\end{tabular}
+%
 \end{center}
-\caption{Two-dimensional case : \dots}
-\label{mesh_sol_2d}
+%
 \end{figure}
 \end{comment}
+
 
 
 
@@ -417,15 +428,11 @@ $0.35$&$0.8204$&35${}^{''}$&0.799883932&19164\\%$\left(\begin{array}{ccc}0.79988
 %%%r de 0.05 à 0.40
 %%%Dhom_k : 0.93455015305 ; 0.93455015305 ; 0.93455015305 ; 0.937713361944 ; 0.942352510417 ; 0.94383619236 ; 0.941721377617
 
+%\subsection{Performances with Finite Element Method}
 
-
-
-
-\subsection{Performances with Finite Element Method}
-
-$\chi$, and thus the homogenized diffusion tensor $D_k^{hom}$, depends highly of the geometry of the microstructure of the the porous medium. %
-Moreover, the CPU time for the resolution of the weak problem with Finite Element Method can be considerable, especially in the three-dimensional case, %
-as the following table shows us.
+%$\chi$, and thus the homogenized diffusion tensor $D_k^{hom}$, depends highly of the geometry of the microstructure of the the porous medium. %
+%Moreover, the CPU time for the resolution of the weak problem with Finite Element Method can be considerable, especially in the three-dimensional case, %
+%as the following table shows us.
 
 %%%Table : temps CPU pour le calcul de \chi en 2-3D, préciser la résolution du maillage.
 
