@@ -48,13 +48,13 @@ from matplotlib.patches import Circle, PathPatch
 E_=False
 E_lL=False
 
-EI=False
+EI=True
 snap_done=True
 EII=False
-exsnap_done=True
+exsnap_done=False
 
 EIII=False
-EIV=True
+EIV=False
 
 #res_fixe=6
 fixe_aff=False
@@ -65,7 +65,7 @@ Nsnap=8
 
 #r=0.35#pour une réalisation unique
 npas_err=20
-fig_todo='save'#'aff'#
+fig_todo='aff'
 
 typ_msh='gms'#''
 ## choix du domaine fixe
@@ -76,7 +76,7 @@ computer='MECALAC_29x8'#'T1700_35x8'#
 
 # apprentissage : calcul parallèle ou séquentiel, prise en compte de la résolution
 
-gen_snap='par8'#'seq'#'seq_par'#
+gen_snap='seq'#'par8'#'seq_par'#
 
 # répertoire pour les résultats
 
@@ -86,7 +86,8 @@ repertoire_parent="Res3D/"
 ## -------------------- Etape I -------------------- ##
 
 D_k=1.0
-Nsnap=8
+Nsnap=1
+deb=7
 npas_err=20
 ordo='Ordr'#'Nordr'
 
@@ -101,7 +102,7 @@ res_gmsh=10
 if typ_msh=='gms':
  res=res_gmsh
 
-config='sph_un'#'cyl_un'#'2sph'#'cyl_sph'#
+config='cylsph'#'2sph'#'cyl_un'#'sph_un'#'cyl_sph'#
 
 ### inclusions simples
 if config=='sph_un':
@@ -120,18 +121,21 @@ elif config=='cyl_un':
  dom_fixe="am"
  geo_p='ray'#'axe'#
  ##
+ conf_mess='cylindre unique'
  if geo_p=='ray':
   geo_mess='rayon variable'
  elif geo_p=='axe':
   asr_list=[[0.5,0.3+0.05*k] for k in range(1,1+Nsnap)]
 ### inclusions composées
 elif config=='2sph':
+ conf_mess='deux sphères'
  dom_fixe="solid"#"axe"#
  geo_p='ray'
  ##
 elif config=='cylsph':
+ conf_mess='un cylindre et une sphère'
  dom_fixe="solid"#"axe"#
- geo_p='cyl'#'sph'#
+ geo_p='ray_sph'#'ray_cyl'#'ray_linked'#
  ##
  if geo_p=='ray_cyl':
   geo_mess='rayon du cylindre variable'
