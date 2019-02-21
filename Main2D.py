@@ -54,13 +54,13 @@ from DD_fun_obj import *
 E_=False
 E_lL=False
 
-EI=False
-snap_done=False
+EI=True
+snap_done=True
 EII=False
 exsnap_done=False
 
 EIII=False
-EIV=True
+EIV=False
 
 
 
@@ -69,7 +69,7 @@ EIV=True
 res_gmsh=100
 
 fixe_aff=False
-fig_todo=''
+fig_todo='save'
 
 ### ------------ Etape 0 : Génération de microstructures périodiques aléatoires ------------ ###
 
@@ -87,11 +87,12 @@ VFS_degree=2#3#
 config='cer_un'#'compl'#
 
 if config=='cer_un':
- test_snap='solid_1'#'solid_2'#'i_per'#''#
+ test_snap='i_per'#'solid_1'#''#
+ ### on exclut 'solid_2' ###
  dom_fixe="am"
  ##
  geo_p='ray'#'cen'#
- cen_snap_ray=[0.,0.]#[0.5,0.5]#
+ cen_snap_ray=[0.5,0.5]#[0.,0.]#
  ##
  conf_mess='disque unique'
  ##
@@ -142,7 +143,11 @@ if typ_msh=='gms':
 # nom de l'appareil utilisé pour générer les données enregistrées
 computer='T1700_35x8'##'MECALAC_29x8'##
 
+# apprentissage : calcul parallèle ou séquentiel, prise en compte de la résolution
 
+gen_snap='par8'#'seq'#'seq_par'#
+
+# répertoire pour les résultats
 
 repertoire_parent="Res2D/"
 
@@ -153,10 +158,10 @@ from LEc import *
 
 D_k=1.0
 Nsnap=8
+deb=5
 npas_err=50
 ordo='Ordr'#'Nordr'
 
-gen_snap='par8'#'seq'
 
 ## ------------ Etape lL 1demi : Affichage de microstructures périodiques ------------ ##
 
@@ -183,7 +188,6 @@ if EII :
 ## ---------- Etape III ---------- ##
 
 from PO23D import *
-rempUsnap='par8'#'seq'
 
 # On soustrait éventuellement la moyenne des snapshots interpolés à chaque snapshot
 ##moy_mod='soust_m'#'' par défaut

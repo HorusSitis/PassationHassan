@@ -11,6 +11,8 @@ yinf=0.0
 xsup=1.0
 ysup=1.0
 
+import time
+
 #determiner le domaine fixe pour interpoler la solution
 
 dimension=2
@@ -96,18 +98,36 @@ def snap_compl_ray(r_par):
 #sys.exit("test pour l'homogénéisation périodique effectué")#---------------------------------------------------
 if not snap_done:
  # Calcul des snapshots, sous forme vectorielle
- ##if parallelize: Calcul parallèle oblligatoire
- # Génération parallèle des snapshots
- pool=multiprocessing.Pool(processes=8)
- if config=='cer_un':
-  if geo_p=='ray':
+ if gen_snap=='par8':
+  # Génération parallèle des snapshots
+  pool=multiprocessing.Pool(processes=8)
+  if config=='cer_un':
+   if geo_p=='ray':
+    list_chi_n_v=pool.map(snap_circ_ray,(n for n in range(1,1+Nsnap)))
+   elif geo_p=='cen':
+    list_chi_n_v=pool.map(snap_circ_cen,(n for n in range(1,1+Nsnap)))
+  elif config=='cer_un_som':
    list_chi_n_v=pool.map(snap_circ_ray,(n for n in range(1,1+Nsnap)))
-  elif geo_p=='cen':
-   list_chi_n_v=pool.map(snap_circ_cen,(n for n in range(1,1+Nsnap)))
- elif config=='cer_un_som':
-  list_chi_n_v=pool.map(snap_circ_ray,(n for n in range(1,1+Nsnap)))
- elif config=='compl':
-  list_chi_n_v=pool.map(snap_compl_ray,(n for n in range(1,1+Nsnap)))
+  elif config=='compl':
+   list_chi_n_v=pool.map(snap_compl_ray,(n for n in range(1,1+Nsnap)))
+ elif gen_snap=='seq':
+  start=time.time()
+  list_chi_n_v=[]
+  for n in range(deb,deb+Nsnap):
+   if geo_p=='ray':
+    list_chi_n_v.append(snap_circ_ray(n))
+   elif geo_p=='cen':
+    list_chi_n_v.append(snap_circ_cen(n))
+   elif config=='cer_un_som':
+    list_chi_n_v.append(snap_circ_ray(n))
+   elif config=='compl':
+    list_chi_n_v.append(snap_compl_ray(n))
+ #elif parallelize=='seq_par':
+  end=time.time()
+  print('résolution EF : ',end-start,' secondes')
+  sys.exit('test individuel de temps d éxécution terminé')
+ ### utilisé en 3D, pour le calcul parallèle d'un snapshot individuel
+ #
  ## enregistrement des données dans une liste
  # Construction de la liste des snapshots vectorisés : cas d'un paramètre géométrique définissant un ordre - lien avec la porosité ; ou non.
  list_chi_v=[]
@@ -152,6 +172,16 @@ for n in range(1,1+Nsnap):#attention le rayon d'un cercle doit être non nul
     mesh_name="maillage_trou2D_"+str(int(round(100*r,2)))
     print(mesh_name)
     mesh=Mesh(mesh_directory+mesh_name+".xml")
+    plot(mesh)
+    #plt.title("Periodical mesh", fontsize=30)
+    plt.tight_layout(pad=0)
+    if fig_todo=='aff':
+     plt.show()
+    elif fig_todo=='save' and r==0.25:
+     plt.savefig('Figures2D/maillage_gmsh_per_'+config+geo_p+'_ray'+str(int(round(100*r,2)))+'png')
+    else:
+     print('pfffrrrhhhh !!!')
+    plt.close()
    else:
     mesh=creer_maill_circ(cen,r,res)
  elif config=='cer_un_som':
@@ -161,6 +191,16 @@ for n in range(1,1+Nsnap):#attention le rayon d'un cercle doit être non nul
    mesh_name="maillage_trou2D"+mention+"_"+str(int(round(100*r,2)))
    print(mesh_name)
    mesh=Mesh(mesh_directory+mesh_name+".xml")
+   plot(mesh)
+   #plt.title("Periodical mesh", fontsize=30)
+   plt.tight_layout(pad=0)
+   if fig_todo=='aff':
+    plt.show()
+   elif fig_todo=='save' and r==0.25:
+    plt.savefig('Figures2D/maillage_gmsh_per_'+config+geo_p+'_ray'+str(int(round(100*r,2)))+".png")
+   else:
+    print('pfffrrrhhhh !!!')
+   plt.close()
   else:
    mesh=creer_maill_circ([c_x,c_y],r,res)
   #elif geo_p=='cen':
@@ -175,11 +215,14 @@ for n in range(1,1+Nsnap):#attention le rayon d'un cercle doit être non nul
   print(mesh_name)
   mesh=Mesh(mesh_directory+mesh_name+".xml")
   plot(mesh)
-  plt.title("Periodical mesh", fontsize=30)
+  #plt.title("Periodical mesh", fontsize=30)
+  plt.tight_layout(pad=0)
   if fig_todo=='aff':
    plt.show()
   elif fig_todo=='save' and r==0.25:
-   plt.savefig
+   plt.savefig('Figures2D/maillage_gmsh_per_'+config+geo_p+'_ray'+str(int(round(100*r,2)))+".png")
+  else:
+   print('pfffrrrhhhh !!!')
   plt.close()
  V_n=VectorFunctionSpace(mesh, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
  # On restitue la forme fonctionnelle du snapshot courant
