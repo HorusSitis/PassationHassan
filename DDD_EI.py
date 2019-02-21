@@ -13,6 +13,8 @@ xsup=1.0
 ysup=1.0
 zsup=1.0
 
+import time
+
 #determiner le domaine fixe pour interpoler la solution
 
 dimension=3
@@ -49,7 +51,7 @@ if typ_msh=='gms':
 else:
  mesh_fixe=generate_mesh(domaine_fixe,res_fixe)
 
-V_fixe=VectorFunctionSpace(mesh_fixe, "P", 2, constrained_domain=PeriodicBoundary())
+#V_fixe=VectorFunctionSpace(mesh_fixe, "P", 2, constrained_domain=PeriodicBoundary())
 
 #sys.exit("chargement du maillage fixe terminé")
 ## Boucle pour la création des snapshots, avec un paramètre pouvant être le rayon d'une inclusion circulaire, ou l'emplacement de son centre 
@@ -99,26 +101,49 @@ def link(rho):
  ray=1
  return(ray)
 
+r_s_0=0
+r_c_0=0
+r_v_0=0
+
+if config=='2sph':
+ if deb==1:
+  r_v_0=0.15
+ else:
+  r_v_0=0.2
+elif config=='cylsph':
+ if geo_p=='ray_cyl':
+  if deb==1:
+   r_s_0=0.15
+  else:
+   r_s_0=0.35
+ elif geo_p=='ray_sph':
+  if deb==1:
+   r_c_0=0.15
+  else:
+   r_c_0=0.25
+ elif geo_p=='ray_linked':
+  print('aucun rayon fixé')
+
 def snap_compl_ray(rho_par):
  ## deux sphères ##
  if geo_p=='ray':
   rho=0.05*rho_par
-  chi_compl=snapshot_compl_per(rho,0.15,res_gmsh)
+  chi_compl=snapshot_compl_per(rho,r_v_0,config,res_gmsh)
  ## un cylindre et une sphère ##
  elif geo_p=='ray_sph':
   rho=0.05*rho_par
-  chi_compl=snapshot_compl_per(rho,0.15,res_gmsh)
+  chi_compl=snapshot_compl_per(rho,r_c_0,config,res_gmsh)
  elif geo_p=='ray_cyl':
   rho=0.05*rho_par
-  chi_compl=snapshot_compl_per(0.15,rho,res_gmsh)
+  chi_compl=snapshot_compl_per(r_s_0,rho,config,res_gmsh)
  elif geo_p=='ray_linked':
   rho=0.15+0.02*(rho_par-1)
   ray_link=link(rho)#((1/3)*(0.35**3-rho**3)+0.25**2)**(0.5)
-  chi_compl=snapshot_compl_per(rho,ray_link,res_gmsh)
+  chi_compl=snapshot_compl_per(rho,ray_link,config,res_gmsh)
  ## on vectorise la fonction calculée par MEF ##
  chi_compl_v=chi_compl.vector().get_local()
  ## on renvoie un vecteur étiqueté, utilisable avec l'option 'par8' ##
- return([r_par,chi_compl_v])
+ return([rho_par,chi_compl_v])
 
 
 
@@ -128,7 +153,7 @@ def snap_compl_ray(rho_par):
 # ------------------------- Snapshots, conditionnellement ------------------------- #
 
 if not snap_done:
- # -------- Calcul des snapshots, sous forme vectorielle -------- #
+ # -------- Calcul des snapshots, sous forme vectorielle, avec des étiquettes -------- #
  ### Génération parallèle des snapshots ###
  if gen_snap=='par8':
   pool=multiprocessing.Pool(processes=8)
@@ -142,34 +167,42 @@ if not snap_done:
     list_chi_n_v=pool.map(snap_cyl_ray,(n for n in range(1,1+Nsnap)))
    elif geo_p=='axe':
     list_chi_n_v=pool.map(snap_cyl_axe,(n for n in range(1,1+Nsnap)))
- else:
-  list_chi_n_v=pool.map(snap_compl_ray,(n for n in range(1,1+Nsnap)))
+  else:
+   list_chi_n_v=pool.map(snap_compl_ray,(n for n in range(1,1+Nsnap)))
  #elif config=='2sph':
  #elif config=='cylsph':
  # if geo_p=='ray_sph':
  # elif geo_p=='ray_cyl':
  # elif geo_p=='ray_linked':
- ### Génération séquentielle des snapshots, pour des tests de la méthods des éléments finis ###
+ ### Génération séquentielle des snapshots, pour des tests de la méthode des éléments finis ###
  elif gen_snap=='seq':
+  start=time.time()
   list_chi_n_v=[]
   for n in range(deb,deb+Nsnap):
-  if config=='sph_un':
-   if geo_p=='ray':
-    list_chi_n_v.append(snap_sph_ray(n))
-   elif geo_p=='cen':
-    list_chi_n_v.append(snap_sph_cen(n))
-  elif config=='cyl_un':
-   if geo_p=='ray':
-    list_chi_n_v.append(snap_cyl_ray(n))
-   elif geo_p=='axe':
-    list_chi_n_v.append(snap_cyl_axe(n))
+   print(n)
+   if config=='sph_un':
+    if geo_p=='ray':
+     list_chi_n_v.append(snap_sph_ray(n))
+    elif geo_p=='cen':
+     list_chi_n_v.append(snap_sph_cen(n))
+   elif config=='cyl_un':
+    if geo_p=='ray':
+     list_chi_n_v.append(snap_cyl_ray(n))
+    elif geo_p=='axe':
+     list_chi_n_v.append(snap_cyl_axe(n))
+   else:
+    list_chi_n_v.append(snap_compl_ray(n))
+  end=time.time()
+  print('temps EF : ',end-start,' secondes')
  ### Génération parallèle pour chaque snapshot, pour de gros maillages ###
  elif gen_snap=='seq_par':
   list_chi_n_v=[]
- ## enregistrement des données dans une liste
+ # -------- enregistrement des fonctions vectorisées dans une liste -------- #
  # Construction de la liste des snapshots vectorisés : cas d'un paramètre géométrique définissant un ordre - lien avec la porosité ; ou non.
  list_chi_v=[]
- if geo_p=='ray' or config=='compl':
+ if deb!=1:
+  list_chi_v.append(list_chi_n_v[0][1])
+ elif geo_p=='ray' or config=='compl':
   for n in range(1,1+Nsnap):
    for i in range(0,Nsnap):
     if list_chi_n_v[i][0]==n:
@@ -194,9 +227,9 @@ else :
 
 # Exploitation des solution du problème aux éléments finis
 res=res_gmsh
-for n in range(1,1+Nsnap):
+for n in range(deb,deb+Nsnap):
  # Extraction du snapshot de rang n
- chi_n_v=list_chi_v[n-1]
+ chi_n_v=list_chi_v[n-deb]
  # On crée un maillage pour réécrire les snapshots sous la forme de fonctions
  if config=='sph_un':
   if geo_p=='ray':
@@ -220,20 +253,28 @@ for n in range(1,1+Nsnap):
   #elif geo_p=='axe':
    #r=ray_snap_ax
    #mesh=creer_maill_cyl(acr_list[n-1],r,res)
- else:
-  if geo_p=='ray_sph':
-   r=0
-  elif geo_p=='ray_cyl':
-   r=0
+ elif config=='2sph':
+  r=n*0.05
+  r_s=r
+  r_v=r_v_0
+ elif config=='cyl_sph':
+  r=n*0.05
+  if geo_p=='ray_cyl':
+   r_c=r
+   r_s=r_s_0
+  elif geo_p=='ray_sph':
+   r_c=r_c_0
+   r_s=r
  V_n=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
  # On restitue la forme fonctionnelle du snapshot courant
  chi_n=Function(V_n)
  chi_n.vector().set_local(chi_n_v)
  # Représentation graphique
  plot(chi_n, linewidth=0.27)#35)
- if n==1:
+ plt.tight_layout(pad=0)
+ if r<0.1:
   plt.title("Rho = 0,05", fontsize=40)
- else:
+ elif deb==1:
   plt.title("Rho = 0,"+str(int(round(100*r,2))),fontsize=40)
  if fig_todo=='aff':
   plt.show()
@@ -253,14 +294,18 @@ for n in range(1,1+Nsnap):
    T_chi[k,l]=assemble(grad(chi_n)[k,l]*dx)
  ## Intégrale de l'identité sur le domaine fluide
  if config=='sph_un':
-  D=(1-4/3*pi*r**3)*np.eye(3)
+  por=1-4/3*pi*r**3
  elif config=='cyl_un':
-  D=(1-pi*r**2)*np.eye(3)
- else :
-  D=(1-4/3*pi*r_s**3-pi*r_c**2)*np.eye(3)
+  por=1-pi*r**2
+ elif config=='2sph':
+  por=1-4/3*pi*(r_s**3+r_v**3)
+ elif config=='cyl_sph' :
+  por=1-4/3*pi*r_s**3-pi*r_c**2
+ D=por*np.eye(3)
  ## Calcul et affichage du tenseur Dhom
  Dhom_k=D_k*(D+T_chi.T)
  #print(('Tenseur Dhom_k',Dhom_k))
  print("Noeuds",V_n.dim())
+ print("Porosité :",por)
  print('Coefficient Dhom_k11EF, snapshot '+str(n)+", "+conf_mess+', '+geo_mess+" :",Dhom_k[0,0])
 #
