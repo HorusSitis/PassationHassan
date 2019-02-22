@@ -308,7 +308,8 @@ and periodic meshes generated with the software \begin{code}Gmsh\end{code}.
 \end{comment}
 
 \etoile
-We computed the vector $\chi$, from which we derive the homogenized diffution tensor $\D_k^{hom}$, for the elementary cells seen in figure \ref{macro_micro_2d} :
+We computed the vector $\chi$, from which we derive the homogenized diffusion tensor $D_k^{hom}$, %
+for the elementary cells seen in figure \ref{macro_micro_2d} :
 
 \begin{comment}
 %%%Maillages, raffinement : exemples, figures
@@ -341,13 +342,13 @@ We computed the vector $\chi$, from which we derive the homogenized diffution te
 \subfloat[Horizontal alignement]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/maillage_gmsh_per_complhor_ray25.png}}
 \\
 \hline
-\subfloat[Vector $\chi(\mathbf{y},\rho)$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/sol_5_sur8cer_un_ray.png}}
+\subfloat[Vector $\chi(\mathbf{y},\rho)$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/sol_5_sur1cer_un_ray.png}}
 &
-\subfloat[Vector $\chi(\mathbf{y},\rho)$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/sol_5_sur8cer_un_som_ray.png}}
+\subfloat[Vector $\chi(\mathbf{y},\rho)$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/sol_5_sur1cer_un_som_ray.png}}
 &
-\subfloat[Vector $\chi(\mathbf{y},\rho)$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/sol_5_sur8compl_diag.png}}
+\subfloat[Vector $\chi(\mathbf{y},\rho)$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/sol_5_sur1compl_diag.png}}
 &
-\subfloat[Vector $\chi(\mathbf{y},\rho)$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/sol_5_sur8compl_hor.png}}
+\subfloat[Vector $\chi(\mathbf{y},\rho)$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures2D/sol_6_sur1compl_hor.png}}
 \\
 \hline
 \end{tabular}
@@ -362,13 +363,13 @@ We computed the vector $\chi$, from which we derive the homogenized diffution te
 \rowcolor{gray} Configuration :&Porosity :&Time elapsed : 1CPU$\times$2.9GHz&$D_k^{hom, \ 11}$ :&Nodes :\\
 \hline
 %%Centered inclusion&$0.6151549$&15,84${}^{''}$&$\left(\begin{array}{cc}0.630227160266 & 2.46470607 \cdot 10^{-11}\\2.46462659 \cdot 10^{-11}& 0.630227110\end{array}\right)$&85658 \\
-Centered inclusion&$0,803650459$&5,84${}^{''}$&$0.676481674$&85658 \\
+Centered inclusion&$0,803650459$&5,95${}^{''}$&$0.676481674$&85658 \\
 \hline
-Disc at vertices&$0,803650459$&5,92${}^{''}$&$0.671647652$&87454 \\
+Disc at vertices&$0,803650459$&6,04${}^{''}$&$0.671647652$&87454 \\
 \hline
-Diagonal alignement&$0,732964624$&3,93${}^{''}$&$0.581939290$&78136 \\
+Diagonal alignement&$0,732964624$&3,91${}^{''}$&$0.581939290$&78136 \\
 \hline
-Horizontal alignement&$0,732964624$&5,23${}^{''}$&$0.636400060$&78256 \\
+Horizontal alignement&$0,732964624$&4,22${}^{''}$&$0.636400060$&78256 \\
 \hline
 \end{tabular}
 \end{center}
@@ -378,30 +379,46 @@ Horizontal alignement&$0,732964624$&5,23${}^{''}$&$0.636400060$&78256 \\
 Algorithms are the same as in the two-dimensional case, but we will see that CPU time for computation is much bigger. %
 We compare elapsed time and results from two different resolutions : $10$ or $20$ nodes for one side of the cube.
 
-\begin{comment}
 \begin{figure}[H]
-%
 \begin{center}
-%
+\begin{tabular}{|c|c|c|c|}
+\hline
+\subfloat[Mesh for a single sphere]{\includegraphics[width=0.2\linewidth,height=3cm]{../Figures3D/maillage_per3D_sph.png}}
+&
+\subfloat[Single cylinder]{\includegraphics[width=0.2\linewidth,height=3cm]{../Figures3D/maillage_per3D_cyl.png}}
+&
+\subfloat[Two spheres]{\includegraphics[width=0.2\linewidth,height=3cm]{../Figures3D/maillage_per3D_2sph.png}}
+&
+\subfloat[One sphere and one cylinder]{\includegraphics[width=0.2\linewidth,height=3cm]{../Figures3D/maillage_per3D_cylsph.png}}
+\\
+\hline
+\subfloat[Vector $\chi$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures3D/sol_7_sur1sph_un_rayres10.png}}
+&
+\subfloat[Vector $\chi$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures3D/sol_7_sur1cyl_un_rayres10.png}}
+&
+\subfloat[Vector $\chi$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures3D/sol_7_sur12sph_rayres10.png}}
+&
+\subfloat[Vector $\chi$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures3D/sol_7_sur1cylsph_ray_sphres10.png}}
+\\
+\hline
+\end{tabular}
 \end{center}
-%
+\caption{Periodical meshes and vector $\chi$ with Finite Element Method}
+\label{mesh_sol_3d}
 \end{figure}
-\end{comment}
-
-
 
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|}
 \hline
 \rowcolor{gray} Configuration :&Porosity :&Time elapsed : 1CPU$\times$2.9GHz&$D_k^{hom, \ 11}$ :&Nodes :\\
 \hline
-Single sphere&$0,$&,${}^{''}$&$0.$& \\
+Single sphere&$0,820405620$&36,62${}^{''}$&$0.753883175$&18870 \\
 \hline
-Single cylinder&$0,$&,${}^{''}$&$0.$& \\
+Single cylinder&$0,615154900$&13,16${}^{''}$&$0.44198359$&14172 \\
 \hline
-Two spheres&$0,$&,${}^{''}$&$0.$& \\
+Two spheres&$0,786895298$&72,09${}^{''}$&$0.718009229$&22896 \\
 \hline
-One sphere and one cylinder&$0,$&,${}^{''}$&$0.$& \\
+One sphere and one cylinder&$0,624056079$&27,27${}^{''}$&$0.512191706$&17199 \\
 \hline
 \end{tabular}
 \end{center}
