@@ -41,21 +41,22 @@ if typ_msh=='gms':
  elif config=='compl':
   mesh_f_name="maillages_per/2D/maillage_trous2D_"+geo_p+"_fixe.xml"
 
-mesh_fixe=Mesh(mesh_f_name)
+#mesh_fixe=Mesh(mesh_f_name)
 
-V_fixe=VectorFunctionSpace(mesh_fixe, "P", VFS_degree, form_degree=1, constrained_domain=PeriodicBoundary())
+#V_fixe=VectorFunctionSpace(mesh_fixe, "P", VFS_degree, form_degree=1, constrained_domain=PeriodicBoundary())
+#plot(mesh_fixe)
 
-if fixe_aff:
+if fig_todo=='aff':
  #représentation graphique du maillage
- plot(mesh_fixe)
  plt.show()
- plt.close()
-else:
+elif fig_todo=='save':
  #sauvegarde de la figure
- plot(mesh_fixe)
  plt.tight_layout()
  plt.savefig("Figures2D/mesh_fixe.png")
- plt.close()
+else:
+ print('pfffrrrhhh !!')
+
+#plt.close()
 
 
 
