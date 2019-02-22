@@ -236,7 +236,7 @@ def snapshot_compl_per(r_cen,r_per,config,res):### ------------------> résoluti
   def inside(self, x, on_boundary):
    return on_boundary and not(near(x[0],xinf,tol) or near(x[0],xsup,tol) or near(x[1],yinf,tol) or near(x[1],ysup,tol))
  Gamma_sf = SolidBoundary()
- print('Gamma sf ne coupe pas le bord du carré')
+ print('Gamma sf ne coupe pas les faces du cube')
  boundaries.set_all(0)
  Gamma_sf.mark(boundaries, 1)
  #num_ff=1
