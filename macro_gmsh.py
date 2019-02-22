@@ -19,6 +19,7 @@ test=False
 
 
 Nsnap=8
+i_end=1#2 pour une inclusion simple si l'on veur un rayon de 0.45#
 
 res_name=True
 res=10
@@ -38,7 +39,12 @@ if dimension==2:
 if dimension==3:
  #config='sph_un'
  #config='cyl_un'
- config='2sph'
+ #config='2sph'
+ config='cylsph'
+ if config=='2sph':
+  geo_p='ray'
+ elif config=='cylsph':
+  geo_p='ray_sph'#'ray_cyl'#'ray_linked'#
 
 if dimension==2:
  if config=='cer_un':
@@ -65,8 +71,10 @@ elif dimension==3:
   list_test=[0.22,0.33,0.44]
  elif config=='2sph':
   mesh_prefix='cube'+config+'_periodique_triangle'
-  list_test=[0.11,0.22,0.33]
- #elif config=='cyl_sph':
+  list_test=[0.11,0.22,0.33,0.44]
+ elif config=='cylsph':
+  list_test=[0.11,0.22,0.33,0.44]
+  mesh_prefix='cube'+config+'_periodique_triangle'
 
 dom_fixe="solid"#"am"#
 
@@ -80,14 +88,24 @@ os.chdir(os.getcwd() + "/maillages_per/"+str(dimension)+"D")
 #res_gmsh=
 
 if appr:
- for n in range(1,2+Nsnap):
+ for n in range(1,i_end+Nsnap):
   if dimension==2 and geo_p=='hor':
    r=n*0.04+0.01
   #elif dimension==3 and geo_p=='lat':
   # r=n*0.04+0.01##??
   else:
    r=n*0.05
-  mesh_name=mesh_prefix+"_"+str(int(round(100*r,2)))
+  if config == 'compl':
+   mesh_name=mesh_prefix+"_"+str(int(round(100*r,2)))+'15'
+  elif config=='2sph':
+   mesh_name=mesh_prefix+"_"+str(int(round(100*r,2)))+'15'
+  elif config=='cylsph':
+   if geo_p=='ray_sph':
+    mesh_name=mesh_prefix+"_"+'15'+str(int(round(100*r,2)))
+   elif geo_p=='ray_cyl':
+    mesh_name=mesh_prefix+"_"+str(int(round(100*r,2)))+'15'
+  else:
+   mesh_name=mesh_prefix+"_"+str(int(round(100*r,2)))
   if res_name and dimension==2:
    mesh_name=mesh_name+"_res"+str(res)
   ## res=100 : pas de suffixe
@@ -115,14 +133,15 @@ elif fixe:
    mesh_name=mesh_prefix+"_sur"+str(res)+"_"+dom_fixe+"fixe"
   elif dom_fixe=="solid":
    if config=='2sph':
-    mesh_name=mesh_prefix+"_"+"fixe"+"_sur"+str(res)
+    mesh_name=mesh_prefix+"_"+"fixe15"+"sur"+str(res)
    elif geo_p=='ray_cyl':
     r_c=0.15
-    mesh_name=mesh_prefix+"_"+"fixe"+str(int(round(100*r_c,2)))+"_sur"+str(res)
+    mesh_name=mesh_prefix+"_"+"fixe"+str(int(round(100*r_c,2)))+"sur"+str(res)
    elif geo_p=='ray_sph':
     r_a=0.15
-    mesh_name=mesh_prefix+"_"+str(int(round(100*r_a,2)))+"fixe"+"_sur"+str(res)
- if dimension==2:
+    mesh_name=mesh_prefix+"_"+str(int(round(100*r_a,2)))+"fixe"+"sur"+str(res)
+   #elif geo_p=='ray_linked':
+ elif dimension==2:
   if config!='compl':
    mesh_name="maillage_fixe2D_am"
   else:
@@ -142,12 +161,18 @@ elif fixe:
  os.system("dolfin-convert "+mesh_name+".msh "+mesh_name+".xml")
 elif test:
  for r in list_test:
-  mesh_name=mesh_prefix+"_"+str(int(round(100*r,2)))
-  if dimension==3 and res_name:
-   mesh_name=mesh_name+"sur"+str(res)
-  ## res=10 : pas de suffixe dans le cas sphérique, voir avec res_name
-  else:
+  if dimension==2 or (dimension==3 and config=='sph_un' and not(res_name)):
    mesh_name=mesh_prefix+"_"+str(int(round(100*r,2)))
+  ## res=10 : pas de suffixe dans le cas sphérique, voir avec res_name
+  elif config=='sph_un' or config=='cyl_un':
+   mesh_name=mesh_prefix+"_"+str(int(round(100*r,2)))+"sur"+str(res)
+  elif config=='2sph':
+   mesh_name=mesh_prefix+"_"+str(int(round(100*r,2)))+'15'+"sur"+str(res)
+  else:
+   if geo_p=='ray_sph':
+    mesh_name=mesh_prefix+"_"+'15'+str(int(round(100*r,2)))+"sur"+str(res)
+   elif geo_p=='ray_cyl':
+    mesh_name=mesh_prefix+"_"+str(int(round(100*r,2)))+'15'+"sur"+str(res)
   ## Génération d'un fichier .geo ? On commence avec un fichier unique et on modifie geo_p dans le code avant de sauvegarder sous le nom courant.
   print(mesh_name)
   ## Visualisation du fichier .geo
