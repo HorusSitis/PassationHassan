@@ -55,7 +55,7 @@ E_=False
 E_lL=False
 
 EI=True
-snap_done=False
+snap_done=True
 EII=False
 exsnap_done=False
 
@@ -69,7 +69,7 @@ EIV=False
 res_gmsh=100
 
 fixe_aff=False
-fig_todo=''
+fig_todo='save'
 
 ### ------------ Etape 0 : Génération de microstructures périodiques aléatoires ------------ ###
 
@@ -84,7 +84,7 @@ if E_ :
 VFS_degree=2#3#
 ## degré 2 : comme en dimension 3, permet d'éviter les erreurs de périodicité pour des pas qui nen sont pas de la forme 2"n, où n est un diviseur de 100 ##
 
-config='compl'#'cer_un'#
+config='cer_un'#'compl'#
 
 if config=='cer_un':
  test_snap='i_per'#'solid_1'#''#
@@ -92,7 +92,7 @@ if config=='cer_un':
  dom_fixe="am"
  ##
  geo_p='ray'#'cen'#
- cen_snap_ray=[0.,0.]#[0.5,0.5]#
+ cen_snap_ray=[0.5,0.5]#[0.,0.]#
  ##
  conf_mess='disque unique'
  ##
@@ -116,7 +116,7 @@ elif config=='compl':
  ##
  dom_fixe="solid"#"am"#
  ##
- geo_p='hor'#'diag'#
+ geo_p='diag'#'hor'#
  ##
  if geo_p=='diag':
   cen_snap_ray=[0.,0.]
@@ -158,7 +158,7 @@ from LEc import *
 
 D_k=1.0
 Nsnap=1
-deb=6
+deb=5# pour les tests cer_un et diag##6# pour hor##1# par défaut##
 npas_err=50
 ordo='Ordr'#'Nordr'
 
