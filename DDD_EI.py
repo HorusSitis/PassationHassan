@@ -237,8 +237,6 @@ for n in range(deb,deb+Nsnap):
    r=n*0.05
    if typ_msh=='gms':
     mesh_name="maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml"
-    print(mesh_name)
-    mesh=Mesh(mesh_name)
    else:
     mesh=creer_maill_sph(cen,r,res)
   elif geo_p=='cen':
@@ -248,8 +246,6 @@ for n in range(deb,deb+Nsnap):
   if geo_p=='ray':
    r=n*0.05
    mesh_name="maillages_per/3D/cubecylindre_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml"
-   print(mesh_name)
-   mesh=Mesh(mesh_name)
   #elif geo_p=='axe':
    #r=ray_snap_ax
    #mesh=creer_maill_cyl(acr_list[n-1],r,res)
@@ -257,7 +253,8 @@ for n in range(deb,deb+Nsnap):
   r=n*0.05
   r_s=r
   r_v=r_v_0
- elif config=='cyl_sph':
+  mesh_name="cube"+config+"_periodique_triangle_"+str(int(round(100*r_s,2)))+str(int(round(100*r_v_0,2)))+"sur"+str(res)
+ elif config=='cylsph':
   r=n*0.05
   if geo_p=='ray_cyl':
    r_c=r
@@ -265,6 +262,9 @@ for n in range(deb,deb+Nsnap):
   elif geo_p=='ray_sph':
    r_c=r_c_0
    r_s=r
+  mesh_name="cube"+config+"_periodique_triangle_"+str(int(round(100*r_c,2)))+str(int(round(100*r_s,2)))+"sur"+str(res)
+ print("maillages_per/3D/"+mesh_name+".xml")
+ mesh=Mesh("maillages_per/3D/"+mesh_name+".xml")
  V_n=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
  # On restitue la forme fonctionnelle du snapshot courant
  chi_n=Function(V_n)
@@ -285,7 +285,12 @@ for n in range(deb,deb+Nsnap):
  #err_per_ind_01(chi_n,cen,r,npas_err)
  if config=='cyl_un' and geo_p=='ray':
   cen=[0.5,0.,0.5]# on triche un peu : on prend une face prévée d'une demie-sphère au lieu d'une face privée du disque frontal du cylindre
- err_per_gr(cen,r,chi_n,npas_err,fig_todo)
+ if config=='2sph':
+  err_per_gr_compl(config,r_v,chi_n,npas_err,fig_todo)
+ elif config=='cylsph':
+  err_per_gr_compl(config,r_c,chi_n,npas_err,fig_todo)
+ else:
+  err_per_gr(cen,r,chi_n,npas_err,fig_todo)
  # Tenseur de diffusion homogénéisé
  ## Intégrale de khi sur le domaine fluide
  T_chi=np.zeros((3,3))
@@ -299,7 +304,7 @@ for n in range(deb,deb+Nsnap):
   por=1-pi*r**2
  elif config=='2sph':
   por=1-4/3*pi*(r_s**3+r_v**3)
- elif config=='cyl_sph' :
+ elif config=='cylsph' :
   por=1-4/3*pi*r_s**3-pi*r_c**2
  D=por*np.eye(3)
  ## Calcul et affichage du tenseur Dhom
