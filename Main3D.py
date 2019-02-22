@@ -48,12 +48,12 @@ from matplotlib.patches import Circle, PathPatch
 E_=False
 E_lL=False
 
-EI=True
-snap_done=False
+EI=False
+snap_done=True
 EII=False
-exsnap_done=False
+exsnap_done=True
 
-EIII=False
+EIII=True
 EIV=False
 
 #res_fixe=6
@@ -61,22 +61,22 @@ fixe_aff=False
 #res=6
 #slices_cyl=5
 
-##rempUsnap='par8'#'seq'
+
 
 #r=0.35#pour une réalisation unique
 npas_err=20
-fig_todo='aff'
+fig_todo='save'
 
 typ_msh='gms'#''
-## choix du domaine fixe
-dom_fixe='am'#'0001'#
+
+
 
 # nom de l'appareil utilisé pour générer les données enregistrées
 computer='MECALAC_29x8'#'T1700_35x8'#
 
 # apprentissage : calcul parallèle ou séquentiel, prise en compte de la résolution
 
-gen_snap='par8'#'seq'#'seq_par'#
+gen_snap='par8'#'seq'#''seq_par'#
 
 # répertoire pour les résultats
 
@@ -86,8 +86,8 @@ repertoire_parent="Res3D/"
 ## -------------------- Etape I -------------------- ##
 
 D_k=1.0
-Nsnap=1## 1 pour les tests individuels ##
-deb=7# pour les tests individuels avec une sphère ##1 #par défaut, apprentissage##5 pour tester un cylindre unique"##
+Nsnap=8## 1 pour les tests individuels ##
+deb=1 #par défaut, apprentissage##7# pour les tests individuels avec une sphère ##5 pour tester un cylindre unique"##
 npas_err=20
 ordo='Ordr'#'Nordr'
 
@@ -97,12 +97,12 @@ parallelize=True
 
 # Choix de la résolution du maillage : nombre de noeuds par côté du cube
 
-res_gmsh=20
+res_gmsh=10
 
 if typ_msh=='gms':
  res=res_gmsh
 
-config='sph_un'#'cylsph'#'2sph'#'cyl_un'#'cyl_sph'#
+config='cylsph'#'2sph'#'cyl_un'#'sph_un'#'cyl_sph'#
 
 ### inclusions simples
 if config=='sph_un':
@@ -136,7 +136,7 @@ elif config=='2sph':
 elif config=='cylsph':
  conf_mess='un cylindre et une sphère'
  dom_fixe="solid"#"axe"#
- geo_p='ray_sph'#'ray_cyl'#'ray_linked'#
+ geo_p='ray_cyl'#'ray_sph'#'ray_linked'###ray_sph pour le test diff_ion##
  ##
  if geo_p=='ray_cyl':
   geo_mess='rayon du cylindre variable'
@@ -145,7 +145,7 @@ elif config=='cylsph':
  elif geo_p=='ray_linked':
   geo_mess='rayons liés'
 
-## ------------ Etape lL 1demi : Affichage de midrostructures périodiques ------------ ##
+## ------------ Etape lL 1demi : Affichage de microstructures périodiques ------------ ##
 
 nb_lcells=5
 cem_color='grey'#'r'
