@@ -46,15 +46,15 @@ if typ_msh=='gms':
 #V_fixe=VectorFunctionSpace(mesh_fixe, "P", VFS_degree, form_degree=1, constrained_domain=PeriodicBoundary())
 #plot(mesh_fixe)
 
-if fig_todo=='aff':
- #représentation graphique du maillage
- plt.show()
-elif fig_todo=='save':
- #sauvegarde de la figure
- plt.tight_layout()
- plt.savefig("Figures2D/mesh_fixe.png")
-else:
- print('pfffrrrhhh !!')
+#if fig_todo=='aff':
+# #représentation graphique du maillage
+# plt.show()
+#elif fig_todo=='save':
+# #sauvegarde de la figure
+# plt.tight_layout()
+# plt.savefig("Figures2D/mesh_fixe.png")
+#else:
+# print('pfffrrrhhh !!')
 
 #plt.close()
 
@@ -126,13 +126,15 @@ if not snap_done:
  #elif parallelize=='seq_par':
   end=time.time()
   print('résolution EF : ',end-start,' secondes')
-  sys.exit('test individuel de temps d éxécution terminé')
+  #sys.exit('test individuel de temps d éxécution terminé')
  ### utilisé en 3D, pour le calcul parallèle d'un snapshot individuel
  #
  ## enregistrement des données dans une liste
  # Construction de la liste des snapshots vectorisés : cas d'un paramètre géométrique définissant un ordre - lien avec la porosité ; ou non.
  list_chi_v=[]
- if geo_p=='ray' or config=='compl':
+ if deb!=1:
+  list_chi_v.append(list_chi_n_v[0][1])
+ elif geo_p=='ray' or config=='compl':
   for n in range(1,1+Nsnap):
    for i in range(0,Nsnap):
     if list_chi_n_v[i][0]==n:
@@ -159,9 +161,10 @@ else :
 #mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2d_am.xml")
 #V_fixe=VectorFunctionSpace(mesh_fixe, 'P', 3, constrained_domain=PeriodicBoundary())
 
-for n in range(1,1+Nsnap):#attention le rayon d'un cercle doit être non nul
+for n in range(deb,deb+Nsnap):#attention le rayon d'un cercle doit être non nul
  # Extraction du snapshot de rang n
- chi_n_v=list_chi_v[n-1]
+ print(len(list_chi_v))
+ chi_n_v=list_chi_v[n-deb]
  print(config)
  # On crée un maillage pour réécrire les snapshots sous la forme de fonctions
  mesh_directory="maillages_per/2D/"
@@ -197,7 +200,7 @@ for n in range(1,1+Nsnap):#attention le rayon d'un cercle doit être non nul
    plt.tight_layout(pad=0)
    if fig_todo=='aff':
     plt.show()
-   elif fig_todo=='save' and r==0.25:
+   elif fig_todo=='save' and (r==0.25):
     plt.savefig('Figures2D/maillage_gmsh_per_'+config+geo_p+'_ray'+str(int(round(100*r,2)))+".png")
    else:
     print('pfffrrrhhhh !!!')
@@ -220,7 +223,7 @@ for n in range(1,1+Nsnap):#attention le rayon d'un cercle doit être non nul
   plt.tight_layout(pad=0)
   if fig_todo=='aff':
    plt.show()
-  elif fig_todo=='save' and r==0.25:
+  elif fig_todo=='save' and (r==0.25):
    plt.savefig('Figures2D/maillage_gmsh_per_'+config+geo_p+'_ray'+str(int(round(100*r,2)))+".png")
   else:
    print('pfffrrrhhhh !!!')
