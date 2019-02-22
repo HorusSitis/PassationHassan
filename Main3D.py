@@ -49,7 +49,7 @@ E_=False
 E_lL=False
 
 EI=True
-snap_done=True
+snap_done=False
 EII=False
 exsnap_done=False
 
@@ -76,7 +76,7 @@ computer='MECALAC_29x8'#'T1700_35x8'#
 
 # apprentissage : calcul parallèle ou séquentiel, prise en compte de la résolution
 
-gen_snap='seq'#'par8'#'seq_par'#
+gen_snap='par8'#'seq'#'seq_par'#
 
 # répertoire pour les résultats
 
@@ -86,8 +86,8 @@ repertoire_parent="Res3D/"
 ## -------------------- Etape I -------------------- ##
 
 D_k=1.0
-Nsnap=8## 1 pour les tests individuels ##
-deb=1## 7 pour les tests individuels ##
+Nsnap=1## 1 pour les tests individuels ##
+deb=7# pour les tests individuels avec une sphère ##1 #par défaut, apprentissage##5 pour tester un cylindre unique"##
 npas_err=20
 ordo='Ordr'#'Nordr'
 
@@ -97,12 +97,12 @@ parallelize=True
 
 # Choix de la résolution du maillage : nombre de noeuds par côté du cube
 
-res_gmsh=10
+res_gmsh=20
 
 if typ_msh=='gms':
  res=res_gmsh
 
-config='2sph'#'cylsph'#'cyl_un'#'sph_un'#'cyl_sph'#
+config='sph_un'#'cylsph'#'2sph'#'cyl_un'#'cyl_sph'#
 
 ### inclusions simples
 if config=='sph_un':
