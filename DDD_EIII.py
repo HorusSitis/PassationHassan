@@ -29,14 +29,24 @@ class PeriodicBoundary(SubDomain):
 
 # maillage du domaine fixe
 
-if dom_fixe=="am":
- mesh_name="maillages_per/3D/cube_periodique_triangle"+"_"+dom_fixe+"_sur"+str(res)+"_fixe.xml"
- print(mesh_name)
- mesh_fixe=Mesh(mesh_name)
-elif dom_fixe=='0001':
- mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_sur"+str(res)+"_0001fixe.xml")
-elif dom_fixe=='0000':
- mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_sur"+str(res)+"_0000fixe.xml")
+if dom_fixe=='':
+ mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle.xml")
+elif dom_fixe=="am":
+ mesh_f_name="maillages_per/3D/cube_periodique_triangle"+"_"+dom_fixe+"_sur"+str(res_gmsh)+"_fixe.xml"
+elif dom_fixe=="solid":
+ mesh_fixe_prefix="maillages_per/3D/cube"+config+"_periodique_triangle_"
+ if config=='2sph':
+  mesh_f_name=mesh_fixe_prefix+"fixe"+"15"+"sur"+str(res)+".xml"
+ elif config=='cylsph':
+  ## rayon du cylindre aux arètes ou de la sphère centrale fixés à 0.15 ##
+  if geo_p=='ray_sph':
+   mesh_f_name=mesh_fixe_prefix+"15"+"fixe"+"sur"+str(res)+".xml"
+  elif geo_p=='ray_cyl':
+   mesh_f_name=mesh_fixe_prefix+"fixe"+"15"+"sur"+str(res)+".xml"
+  #elif geo_p=='ray_linked':
+
+print(mesh_f_name)
+mesh_fixe=Mesh(mesh_f_name)
 
 # fonctions test du domaine fixe
 
