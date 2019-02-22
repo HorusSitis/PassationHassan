@@ -31,27 +31,7 @@ class PeriodicBoundary(SubDomain):
    else:
     y[i]=x[i]
 
-### Maillage sur le domaine Omega_fixe : aucune inclusion, porosité égale à 1 ###
 
-domaine_fixe=Box(Point(xinf,yinf,zinf),Point(xsup,ysup,zsup))
-
-if typ_msh=='gms':
- res=res_gmsh
- # maillage du domaine fixe avec gmsh
- if dom_fixe=='':
-  mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle.xml")
- elif dom_fixe=="am":
-  mesh_name="maillages_per/3D/cube_periodique_triangle"+"_"+dom_fixe+"_sur"+str(res)+"_fixe.xml"
-  print(mesh_name)
-  mesh_fixe=Mesh(mesh_name)
- elif dom_fixe=='0001':
-  mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_sur"+str(res)+"_0001fixe.xml")
- elif dom_fixe=='0000':
-  mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_sur"+str(res)+"_0000fixe.xml")
-else:
- mesh_fixe=generate_mesh(domaine_fixe,res_fixe)
-
-#V_fixe=VectorFunctionSpace(mesh_fixe, "P", 2, constrained_domain=PeriodicBoundary())
 
 #sys.exit("chargement du maillage fixe terminé")
 ## Boucle pour la création des snapshots, avec un paramètre pouvant être le rayon d'une inclusion circulaire, ou l'emplacement de son centre 
