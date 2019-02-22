@@ -60,7 +60,7 @@ EIV=False
 fixe_aff=False
 #res=6
 #slices_cyl=5
-Nsnap=8
+
 ##rempUsnap='par8'#'seq'
 
 #r=0.35#pour une réalisation unique
@@ -86,8 +86,8 @@ repertoire_parent="Res3D/"
 ## -------------------- Etape I -------------------- ##
 
 D_k=1.0
-Nsnap=1
-deb=7
+Nsnap=8## 1 pour les tests individuels ##
+deb=1## 7 pour les tests individuels ##
 npas_err=20
 ordo='Ordr'#'Nordr'
 
@@ -102,7 +102,7 @@ res_gmsh=10
 if typ_msh=='gms':
  res=res_gmsh
 
-config='cylsph'#'2sph'#'cyl_un'#'sph_un'#'cyl_sph'#
+config='2sph'#'cylsph'#'cyl_un'#'sph_un'#'cyl_sph'#
 
 ### inclusions simples
 if config=='sph_un':
@@ -131,6 +131,7 @@ elif config=='2sph':
  conf_mess='deux sphères'
  dom_fixe="solid"#"axe"#
  geo_p='ray'
+ geo_mess='rayon de la sphère centrale variable'
  ##
 elif config=='cylsph':
  conf_mess='un cylindre et une sphère'
