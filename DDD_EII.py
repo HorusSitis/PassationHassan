@@ -32,12 +32,21 @@ class PeriodicBoundary(SubDomain):
 if dom_fixe=='':
  mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle.xml")
 elif dom_fixe=="am":
- mesh_name="maillages_per/3D/cube_periodique_triangle"+"_"+dom_fixe+"_sur"+str(res_gmsh)+"_fixe.xml"
-elif dom_fixe=="0001":
- mesh_name="maillages_per/3D/cubesphere_periodique_triangle_sur"+str(res_gmsh)+"_"+dom_fixe+"fixe.xml"
+ mesh_f_name="maillages_per/3D/cube_periodique_triangle"+"_"+dom_fixe+"_sur"+str(res_gmsh)+"_fixe.xml"
+elif dom_fixe=="solid":
+ mesh_fixe_prefix="maillages_per/3D/cube"+config+"_periodique_triangle_"
+ if config=='2sph':
+  mesh_f_name=mesh_fixe_prefix+"fixe"+"15"+"sur"+str(res)+".xml"
+ elif config=='cylsph':
+  ## rayon du cylindre aux arètes ou de la sphère centrale fixés à 0.15 ##
+  if geo_p=='ray_sph':
+   mesh_f_name=mesh_fixe_prefix+"15"+"fixe"+"sur"+str(res)+".xml"
+  elif geo_p=='ray_cyl':
+   mesh_f_name=mesh_fixe_prefix+"fixe"+"15"+"sur"+str(res)+".xml"
+  #elif geo_p=='ray_linked':
 
-print(mesh_name)
-mesh_fixe=Mesh(mesh_name)
+print(mesh_f_name)
+mesh_fixe=Mesh(mesh_f_name)
 
 # fonctions test du domaine fixe
 
@@ -64,6 +73,22 @@ def extra_snap(n):
   mesh_name="maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml"
  elif config=='cyl_un':
   mesh_name="maillages_per/3D/cubecylindre_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml"
+ else:
+  mesh_prefix="maillages_per/3D/cube"+config+"_periodique_triangle_"
+  if config=='2sph':
+   r_v=0.15
+   mesh_name=mesh_prefix+str(int(round(100*r,2)))+str(int(round(100*r_v,2)))+"sur"+str(res)+".xml"
+  elif config=='cylsph':
+   ## rayon du cylindre aux arètes ou de la sphère centrale fixés à 0.15 ##
+   if geo_p=='ray_sph':
+    r_s=r
+    r_c=0.15
+    mesh_name=mesh_prefix+str(int(round(100*r_c,2)))+str(int(round(100*r_s,2)))+"sur"+str(res)+".xml"
+   elif geo_p=='ray_cyl':
+    r_s=0.15
+    r_c=r
+    mesh_name=mesh_prefix+str(int(round(100*r_c,2)))+str(int(round(100*r_s,2)))+"sur"+str(res)+".xml"
+ # quelle que soit la configuration
  print(mesh_name)
  mesh=Mesh(mesh_name)
  V_n=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
@@ -105,7 +130,7 @@ else:
 
 
 
-
+#sys.exit("attendons un peu pour les représentations graphiques")
 # Représentations graphiques
 
 list_snap=[]
@@ -115,7 +140,7 @@ for n in range(1,1+Nsnap):
  # remplissage de la liste de fonctions
  list_snap.append(chi_prime)
 
-cen=cen_snap_ray
+#cen=cen_snap_ray
 for n in range(1,1+Nsnap):
  chi_prime_n=list_snap[n-1]
  # Affichage des valeurs de la solution interpolée
@@ -130,5 +155,5 @@ for n in range(1,1+Nsnap):
  #err_per_ind_01(chi_prime_n,cen,r,npas_err)
  r=n*0.05
  # Dans ce cas, les faces du cube sont entières
- cen=[0.5,0.5,0.5]
- err_per_gr(cen,r,chi_prime_n,npas_err,fig_todo)
+ ##cen=[0.5,0.5,0.5]
+ ##err_per_gr(cen,r,chi_prime_n,npas_err,fig_todo)
