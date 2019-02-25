@@ -182,7 +182,7 @@ nb_modes=0
 seuil_ener=99.99#9
 
 i=0
-while ener_pour_cumul[i]<seuil_ener:
+while ener_pour_cumul[i]<seuil_ener or i==0:
  nb_modes=i+1
  i+=1
 
