@@ -15,6 +15,10 @@ zsup=1.0
 
 dimension=3
 
+r_s_0=0.15
+r_v_0=0.15
+r_c_0=0.15
+
 class PeriodicBoundary(SubDomain):
  # Left boundary is "target domain" G
  def inside(self, x, on_boundary):
@@ -29,12 +33,25 @@ class PeriodicBoundary(SubDomain):
 
 # maillage du domaine fixe
 
-res=res_gmsh
+mesh_dir="maillages_per/3D/"
+
+## inclusions simples ou rayons liés
 if dom_fixe=="am":
- mesh_name="maillages_per/3D/cube_periodique_triangle"+"_"+dom_fixe+"_sur"+str(res)+"_fixe.xml"
- mesh_fixe=Mesh(mesh_name)
-elif dom_fixe=='0001':
- mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_sur"+str(res)+"_"+dom_fixe+"fixe.xml")
+ mesh_f_name=mesh_dir+"cube_periodique_triangle"+"_"+dom_fixe+"_sur"+str(res_gmsh)+"_fixe.xml"
+## inclusions multiples, unique rayon variable
+elif dom_fixe=="solid":
+ mesh_fixe_prefix=mesh_dir+"cube"+config+"_periodique_triangle_"
+ if config=='2sph':
+  mesh_f_name=mesh_fixe_prefix+"fixe"+str(int(round(100*r_v_0,2)))+"sur"+str(res_gmsh)+".xml"
+ elif config=='cylsph':
+  ## rayon du cylindre aux arètes ou de la sphère centrale fixés à 0.15 ##
+  if geo_p=='ray_sph':
+   mesh_f_name=mesh_dir+str(int(round(100*r_c_0,2)))+"fixe"+"sur"+str(res_gmsh)+".xml"
+  elif geo_p=='ray_cyl':
+   mesh_f_name=mesh_dir+"fixe"+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)+".xml"
+
+print("Maillage fixe : ",mesh_f_name)
+mesh_fixe=Mesh(mesh_f_name)
 
 # fonctions test du domaine fixe
 
@@ -49,15 +66,27 @@ import time
 #r_nouv=0.22
 nb_modes=N_mor
 
+#mesh_dir="maillages_per/3D/"
 if config=='sph_un':
- mesh_name="maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r_nouv,2)))+"sur"+str(res_gmsh)+".xml"
+ mesh_n_name=mesh_dir+"cubesphere_periodique_triangle_"+str(int(round(100*r_nouv,2)))+"sur"+str(res_gmsh)+".xml"
 elif config=='cyl_un':
- mesh_name="maillages_per/3D/cubecylindre_periodique_triangle_"+str(int(round(100*r_nouv,2)))+"sur"+str(res_gmsh)+".xml"
+ mesh_n_name=mesh_dir+"cubecylindre_periodique_triangle_"+str(int(round(100*r_nouv,2)))+"sur"+str(res_gmsh)+".xml"
+if config=='2sph':
+ mesh_n_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_nouv,2)))+str(int(round(100*r_v_0,2)))+"sur"+str(res_gmsh)+".xml"
+elif config=='cylsph':
+ if geo_p=='ray_sph':
+  mesh_n_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_c_0,2)))+str(int(round(100*r_nouv,2)))+"sur"+str(res_gmsh)+".xml"
+ elif geo_p=='ray_cyl':
+  mesh_n_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_nouv,2)))+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)+".xml"
+ #elif geo_p=='ray_linked':
 
-print(mesh_name)
-mesh_nouv=Mesh(mesh_name)
+print(mesh_n_name)
+
+mesh_nouv=Mesh(mesh_n_name)
 
 V_nouv=VectorFunctionSpace(mesh_nouv, "P", 2, constrained_domain=PeriodicBoundary())
+
+
 
 # --------------------- SE1 : projection de la base POD sur le nouveau domaine --------------------- #
 
@@ -122,7 +151,12 @@ start=time.time()
 
 #from PO23D import *
 
-Coeff=calc_Ab_3D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,cen_snap_ray,nb_modes,config)
+
+if config=='sph_un' or config=='cyl_un':
+ Coeff=calc_Ab_3D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,cen_snap_ray,nb_modes,config)
+else:
+ Coeff=calc_Ab_compl_3D(V_nouv,mesh_nouv,Phi_nouv_v,nb_modes)
+#sys.exit("solveur ROM éxécuté pour des inclusions multiples")
 A=Coeff[0]
 b=Coeff[1]
 
@@ -160,9 +194,20 @@ r=r_nouv
 rho=r_nouv
 
 # Affichage des valeurs et erreurs de la solution périodique, quelle que soit la configuration
-#err_per_ind_01(chi_n,cen,r,npas_err)
 
-err_per_gr(cen_snap_ray,r_nouv,chi_nouv,npas_err,fig_todo)
+if config=='sph_un' or config=='cyl_un':
+ #err_per_ind_01(chi_n,cen,r,npas_err)
+ err_per_gr(cen_snap_ray,r_nouv,chi_nouv,npas_err,fig_todo)
+elif config=='2sph':
+ err_per_gr_compl(config,r_v_0,chi_nouv,npas_err,fig_todo)
+elif config=='cylsph':
+ if geo_p=='ray_sph':
+  err_per_gr_compl(config,r_c_0,chi_nouv,npas_err,fig_todo)
+ elif geo_p=='ray_cyl':
+  err_per_gr_compl(config,r_nouv,chi_nouv,npas_err,fig_todo)
+ #elif geo_p=='ray_linked':
+
+
 # Tenseur de diffusion homogénéisé
 ## Intégrale de chi sur le domaine fluide
 T_chi=np.zeros((3,3))
@@ -170,12 +215,24 @@ for k in range(0,3):
  for l in range(0,3):
   T_chi[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
 ## Intégrale de l'identité sur le domaine fluide
+### Calcul de la porosité
 if config=='sph_un':
- D=(1-4/3*pi*r**3)*np.eye(3)
+ por=1-4/3*pi*r_nouv**3
 elif config=='cyl_un':
- D=(1-pi*r**2)*np.eye(3)
-else :
- D=(1-4/3*pi*r_s**3-pi*r_c**2)*np.eye(3)
+ por=1-pi*r_nouv**2
+elif config=='2sph':
+ por=1-4/3*pi*(r_nouv**3+r_v_0**3)
+elif config=='cylsph':
+ if geo_p=='ray_sph':
+  r_s=r_nouv
+  r_c=r_c_0
+ elif geo_p=='ray_cyl':
+  r_s=r_s_0
+  r_c=r_nouv
+ #elif geo_p=='ray_linked':
+ por=1-4/3*pi*r_s**3-pi*r_c**2
+### Intégration du terme constant du coefficient d diffusion, sur le domaine fluide
+D=por*np.eye(3)
 ## Calcul et affichage du tenseur Dhom
 Dhom_kMOR=D_k*(D+T_chi.T)
 #print(('Tenseur Dhom_k',Dhom_k))
@@ -196,19 +253,33 @@ start=time.time()
 ## On réinitialise le champ chi_nouv pour la méthode des éléments finis
 
 #res=20
-if config=='sph_un':
+if config=='sph_un' or config=='cyl_un':
  chi_nouv=snapshot_sph_per(cen_snap_ray,r_nouv,res)
-elif config=='cyl_un':
- chi_nouv=snapshot_cyl_per(cen_snap_ray,r_nouv,res)
-
+elif config=='2sph':
+ if geo_p=='ray':
+  chi_nouv=snapshot_compl_per(r_nouv,r_v_0,config,res_gmsh)
+elif config=='cylsph':
+ if geo_p=='ray_sph':
+  chi_nouv=snapshot_compl_per(r_nouv,r_c_0,config,res_gmsh)
+ elif geo_p=='ray_cyl':
+  cho_nouv==snapshot_compl_per(r_s_0,r_nouv,config,res_gmsh)
 
 ## Exploitation du champ ainsi obtenu
 rho=r_nouv
 r=r_nouv
 
 # Affichage des valeurs et erreurs de la solution périodique, quelle que soit la configuration
-#err_per_ind_01(chi_n,cen,r,npas_err)
-err_per_gr(cen_snap_ray,r_nouv,chi_nouv,npas_err,fig_todo)
+if config=='sph_un' or config=='cyl_un':
+ #err_per_ind_01(chi_n,cen,r,npas_err)
+ err_per_gr(cen_snap_ray,r_nouv,chi_nouv,npas_err,fig_todo)
+elif config=='2sph':
+ err_per_gr_compl(config,r_v_0,chi_nouv,npas_err,fig_todo)
+elif config=='cylsph':
+ if geo_p=='ray_sph':
+  err_per_gr_compl(config,r_c_0,chi_nouv,npas_err,fig_todo)
+ elif geo_p=='ray_cyl':
+  err_per_gr_compl(config,r_nouv,chi_nouv,npas_err,fig_todo)
+ #elif geo_p=='ray_linked':
 
 # Tenseur de diffusion homogénéisé
 ## Intégrale de chi sur le domaine fluide
@@ -216,16 +287,7 @@ T_chi=np.zeros((3,3))
 for k in range(0,3):
  for l in range(0,3):
   T_chi[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
-## Intégrale de l'identité sur le domaine fluide
-if config=='sph_un':#'sphère unique':
- por=(1-4/3*pi*r**3)
- D=por*np.eye(3)
-elif config=='cyl_un':#'cylindre unique':
- por=(1-pi*r**2)
- D=por*np.eye(3)
-else :
- por=(1-4/3*pi*r_s**3-pi*r_c**2)
- D=por*np.eye(3)
+## Intégrale de l'identité sur le domaine fluide : voir ce qui précède avec lea porosité
 print('Noeuds :',V_nouv.dim())
 print('Porosité :',por)
 ## Calcul et affichage du tenseur Dhom

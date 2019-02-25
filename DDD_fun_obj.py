@@ -226,9 +226,10 @@ def snapshot_compl_per(r_cen,r_per,config,res):### ------------------> résoluti
  ## Maillage : condition de résolution et de configuration
  mesh=Mesh(mesh_prefix+mesh_name+".xml")
  V=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
- print('Noeuds :',V.dim())
+ print('Noeuds : ',V.dim())
  ## On définit la bordure du domaine, sur laquelle intégrer le second membre "L" de l'équation en dimension finie
  boundaries = MeshFunction('size_t', mesh, mesh_prefix+mesh_name+"_facet_region"+".xml")
+ print('Facettes : ',mesh.num_edges())
  ds = Measure("ds")(subdomain_data=boundaries)
  ## Marquage des bordures pour la condition de Neumann
  num_solid_boundary=1

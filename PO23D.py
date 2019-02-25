@@ -14,8 +14,10 @@ tol=1e-10
 
 xinf=0.0
 yinf=0.0
+zinf=0.0
 xsup=1.0
 ysup=1.0
+zsup=1.0
 
 #########################################
 ####Matrice de Corrélation temporelle####
@@ -221,6 +223,42 @@ def calc_Ab_compl(V_nouv,mesh_nouv,Phi_nouv_v,nb_modes,test_snap):
   num_front_inc=11
   print('Gamma sf coupe le bord du carré')
   #
+ ## On intègre les vecteurs POD pour obtenir les coefficients du modèle réduit
+ normale=FacetNormal(mesh_nouv)
+ # boucle pour le calcul du second membre du problème linéaire MOR
+ for i in range(nb_modes):
+  phi_nouv_i.vector().set_local(Phi_nouv_v[:,i])
+  b[i]=assemble(dot(normale,phi_nouv_i)*ds(num_front_inc))
+ return([A,b])
+
+## Dimension 3 : même algorithme ##
+
+def calc_Ab_compl_3D(V_nouv,mesh_nouv,Phi_nouv_v,nb_modes):#,test_snap):
+ A=np.zeros((nb_modes,nb_modes))
+ b=np.zeros(nb_modes)
+ ## Fonctions à définir pour calculer les coefficients des deux tenseurs, qui dépendent de la métrique de l'espace des fonctions test
+ phi_nouv_k=Function(V_nouv)
+ phi_nouv_i=Function(V_nouv)
+ ## Boucle pour le calcul de la matrice de coefficients
+ for k in range(nb_modes):
+  phi_nouv_k.vector().set_local(Phi_nouv_v[:,k])
+  for i in range(nb_modes):
+   phi_nouv_i.vector().set_local(Phi_nouv_v[:,i])
+   # On calcule le coefficient Aki
+   A[k,i]=assemble(tr(dot((grad(phi_nouv_k)).T, grad(phi_nouv_i)))*dx)
+ ## On définit la bordure du domaine, sur laquelle intégrer le second membre "L" de l'équation en dimension finie
+ boundaries = MeshFunction("size_t", mesh_nouv, mesh_nouv.topology().dim()-1)
+ #boundaries = MeshFunction('size_t', mesh, mesh_name+"_facet_region"+".xml")
+ ds = Measure("ds")(subdomain_data=boundaries)
+ ## Marquage des bordures pour la condition de Neumann
+ num_front_inc=1
+ class SolidBoundary(SubDomain):
+  def inside(self, x, on_boundary):
+   return on_boundary and not(near(x[0],xinf,tol) or near(x[0],xsup,tol) or near(x[1],yinf,tol) or near(x[1],ysup,tol) or near(x[2],zinf,tol) or near(x[2],zsup,tol))
+ Gamma_sf = SolidBoundary()
+ print('Gamma sf ne coupe pas le bord du cube')
+ boundaries.set_all(0)
+ Gamma_sf.mark(boundaries, 1)
  ## On intègre les vecteurs POD pour obtenir les coefficients du modèle réduit
  normale=FacetNormal(mesh_nouv)
  # boucle pour le calcul du second membre du problème linéaire MOR
