@@ -79,13 +79,17 @@ from PO23D import *
 # Chargement de la matrice des snapshots
 
 u_name='Usnap_'+dom_fixe+'_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+"res"+str(res)+'_'+ordo+'_'+computer
-
+print(u_name)
 with sh.open(repertoire_parent+u_name) as u_loa:
  Usnap = u_loa["maliste"]
 
 #
 ## matrice de corrélation
+print(Usnap[0:5,0:5])
 C=mat_corr_temp(V_fixe,Nsnap,Usnap)
+B=C-C.T
+print(B[0:10,0:10])
+print(C[0:5,0:5])
 #
 ## Calcul des coefficients aléatoires et la base POD
 vp_A_phi=mat_a_mat_phi(Nsnap,Usnap,C,V_fixe,'L2')

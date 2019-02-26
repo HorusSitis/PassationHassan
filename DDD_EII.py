@@ -82,16 +82,16 @@ with sh.open(repertoire_parent+l_name) as l_loa:
 # Extrapolation au domaine Omega_fixe : inclusion sphérique de rayon 0.0001, chi_prime défini sur ce domaine
 
 def extra_snap(n):
- r=n*0.05
+ r=0.05*n
  # chargement du snapshot courant
  chi_n_v=list_chi_v[n-1]
  # mise sous forme d'une fonction EF
  if config=='sph_un':
-  mesh_name="maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml"
+  mesh_name=mesh_dir+"cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml"
  elif config=='cyl_un':
-  mesh_name="maillages_per/3D/cubecylindre_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml"
+  mesh_name=mesh_dir+"cubecylindre_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml"
  else:
-  mesh_prefix="maillages_per/3D/cube"+config+"_periodique_triangle_"
+  mesh_prefix=mesh_dir+"cube"+config+"_periodique_triangle_"
   if config=='2sph':
    r_v=0.15
    mesh_name=mesh_prefix+str(int(round(100*r,2)))+str(int(round(100*r_v,2)))+"sur"+str(res)+".xml"
@@ -114,6 +114,19 @@ def extra_snap(n):
  # extrapolation du snapshot au domaine fixe
  chi_n.set_allow_extrapolation(True)
  chi_n_prime=interpolate(chi_n,V_fixe)
+ # vérification sur chi_n
+ plot(chi_n_prime, linewidth=0.2)#_prime)
+ plt.title("Snapshot "+str(n),fontsize=40)
+ if fig_todo=='aff':
+  plt.show()
+ plt.close()
+ ###
+ T_chi=np.zeros((3,3))
+ for k in range(0,3):
+  for l in range(0,3):
+   T_chi[k,l]=assemble(grad(chi_n_prime)[k,l]*dx)
+ #print('Tchi :',T_chi)
+ ###
  ## on range le snapshot dans une liste
  #list_snap.append(chi_n_prime)
  chi_n_prime_v=chi_n_prime.vector().get_local()
@@ -147,7 +160,7 @@ else:
 
 
 
-#sys.exit("attendons un peu pour les représentations graphiques")
+#sys.exit("attendons un peu pour les représentations graphiques post-traitement")
 # Représentations graphiques
 
 list_snap=[]
@@ -161,23 +174,41 @@ for n in range(1,1+Nsnap):
 for n in range(1,1+Nsnap):
  chi_prime_n=list_snap[n-1]
  # Affichage des valeurs de la solution interpolée
- plot(chi_prime_n)
+ plot(chi_prime_n, linewidth=0.2)
  plt.title("Snapshot "+str(n),fontsize=40)
  if fig_todo=='aff':
   plt.show()
  else:
   plt.savefig("Figures3D/snap_interp"+dom_fixe+"_"+str(n)+"_sur"+str(Nsnap)+config+'_'+geo_p+".png")
  plt.close()
- ###
- T_chi=np.zeros((3,3))
- for k in range(0,3):
-  for l in range(0,3):
-   T_chi[k,l]=assemble(grad(chi_prime_n)[k,l]*dx)
- print('Tchi :',T_chi)
- ###
  # Affichage des valeurs et erreurs de la solution périodique, quelle que soit la configuration
  #err_per_ind_01(chi_prime_n,cen,r,npas_err)
  r=n*0.05
+ ### Débuggage : cylindre et sphère ###
+ if config=='cylsph':
+  if geo_p=='ray_sph':
+   r_s=r
+   r_c=r_c_0
+  elif geo_p=='ray_cyl':
+   r_s=r_s_0
+   r_c=r
+  mesh_name="cube"+config+"_periodique_triangle_"+str(int(round(100*r_c,2)))+str(int(round(100*r_s,2)))+"sur"+str(res)
+  mesh=Mesh("maillages_per/3D/"+mesh_name+".xml")
+  ##
+  V_n=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
+  chi_n=Function(V_n)
+  chi_prime_n.set_allow_extrapolation(True)
+  chi_n=interpolate(chi_prime_n,V_n)
+  ##
+  T_chi=np.zeros((3,3))
+  for k in range(0,3):
+   for l in range(0,3):
+    T_chi[k,l]=assemble(grad(chi_n)[k,l]*dx)
+  por=1-4/3*pi*r_s**3-pi*r_c**2
+  D=por*np.eye(3)
+  Dhom_kUsnap=D_k*(D+T_chi.T)
+ print('Coefficient D Usnap interpolé rayon variable '+str(int(round(100*r,2)))+' : ',Dhom_kUsnap[0,0])
+ ###
  # Dans ce cas, les faces du cube sont entières
  ##cen=[0.5,0.5,0.5]
  ##err_per_gr(cen,r,chi_prime_n,npas_err,fig_todo)

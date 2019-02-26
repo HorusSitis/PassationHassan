@@ -111,7 +111,7 @@ def snap_compl_ray(rho_par):
   chi_compl=snapshot_compl_per(rho,r_v_0,config,res_gmsh)
  ## un cylindre et une sphère ##
  elif geo_p=='ray_sph':
-  rho=0.05*rho_par
+  rho=0.05#*rho_par
   chi_compl=snapshot_compl_per(rho,r_c_0,config,res_gmsh)
  elif geo_p=='ray_cyl':
   rho=0.05*rho_par
@@ -277,7 +277,7 @@ for n in range(deb,deb+Nsnap):
  for k in range(0,3):
   for l in range(0,3):
    T_chi[k,l]=assemble(grad(chi_n)[k,l]*dx)
- print(T_chi)
+ #print(T_chi)
  ## Intégrale de l'identité sur le domaine fluide
  if config=='sph_un':
   por=1-4/3*pi*r**3
