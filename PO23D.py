@@ -256,7 +256,7 @@ def calc_Ab_compl_3D(V_nouv,mesh_nouv,Phi_nouv_v,nb_modes):#,test_snap):
   def inside(self, x, on_boundary):
    return on_boundary and not(near(x[0],xinf,tol) or near(x[0],xsup,tol) or near(x[1],yinf,tol) or near(x[1],ysup,tol) or near(x[2],zinf,tol) or near(x[2],zsup,tol))
  Gamma_sf = SolidBoundary()
- print('Gamma sf ne coupe pas le bord du cube')
+ #print('Gamma sf ne coupe pas le bord du cube')
  boundaries.set_all(0)
  Gamma_sf.mark(boundaries, 1)
  ## On intègre les vecteurs POD pour obtenir les coefficients du modèle réduit

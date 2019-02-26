@@ -216,7 +216,7 @@ for n in range(deb,deb+Nsnap):
    cen=cen_snap_ray
    r=n*0.05
    if typ_msh=='gms':
-    mesh_name="maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml"
+    mesh_name="cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)
    else:
     mesh=creer_maill_sph(cen,r,res)
   elif geo_p=='cen':
@@ -225,7 +225,7 @@ for n in range(deb,deb+Nsnap):
  elif config=='cyl_un':## avec gmsh
   if geo_p=='ray':
    r=n*0.05
-   mesh_name="maillages_per/3D/cubecylindre_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml"
+   mesh_name="cubecylindre_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)
   #elif geo_p=='axe':
    #r=ray_snap_ax
    #mesh=creer_maill_cyl(acr_list[n-1],r,res)
@@ -277,6 +277,7 @@ for n in range(deb,deb+Nsnap):
  for k in range(0,3):
   for l in range(0,3):
    T_chi[k,l]=assemble(grad(chi_n)[k,l]*dx)
+ print(T_chi)
  ## Intégrale de l'identité sur le domaine fluide
  if config=='sph_un':
   por=1-4/3*pi*r**3

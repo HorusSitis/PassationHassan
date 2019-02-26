@@ -13,6 +13,12 @@ xsup=1.0
 ysup=1.0
 zsup=1.0
 
+r_s_0=0.15
+r_v_0=0.15
+r_c_0=0.15
+
+r_min=0.05
+
 dimension=3
 
 class PeriodicBoundary(SubDomain):
@@ -29,23 +35,33 @@ class PeriodicBoundary(SubDomain):
 
 # maillage du domaine fixe
 
-if dom_fixe=='':
- mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle.xml")
-elif dom_fixe=="am":
- mesh_f_name="maillages_per/3D/cube_periodique_triangle"+"_"+dom_fixe+"_sur"+str(res_gmsh)+"_fixe.xml"
+mesh_dir="maillages_per/3D/"
+
+## inclusions simples ou rayons liés
+if dom_fixe=="am":
+ mesh_f_name=mesh_dir+"cube_periodique_triangle"+"_"+dom_fixe+"_sur"+str(res_gmsh)+"_fixe.xml"
+## inclusions multiples, unique rayon variable
 elif dom_fixe=="solid":
- mesh_fixe_prefix="maillages_per/3D/cube"+config+"_periodique_triangle_"
+ mesh_fixe_prefix=mesh_dir+"cube"+config+"_periodique_triangle_"
  if config=='2sph':
-  mesh_f_name=mesh_fixe_prefix+"fixe"+"15"+"sur"+str(res)+".xml"
+  mesh_f_name=mesh_fixe_prefix+"fixe"+str(int(round(100*r_v_0,2)))+"sur"+str(res_gmsh)+".xml"
  elif config=='cylsph':
   ## rayon du cylindre aux arètes ou de la sphère centrale fixés à 0.15 ##
   if geo_p=='ray_sph':
-   mesh_f_name=mesh_fixe_prefix+"15"+"fixe"+"sur"+str(res)+".xml"
+   mesh_f_name=mesh_fixe_prefix+str(int(round(100*r_c_0,2)))+"fixe"+"sur"+str(res_gmsh)+".xml"
   elif geo_p=='ray_cyl':
-   mesh_f_name=mesh_fixe_prefix+"fixe"+"15"+"sur"+str(res)+".xml"
-  #elif geo_p=='ray_linked':
+   if fixe_comp=='cyl_sph':
+    mesh_f_name=mesh_fixe_prefix+"fixe"+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)+".xml"
+   elif fixe_comp=='sph_un':
+    mesh_f_name=mesh_dir+"cubesphere_periodique_triangle_"+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)+".xml"
+elif dom_fixe=="ray_min":
+ fixe_comp=True#utilisation du domaine fixe avec annulation du rayon du cylindre dans le fichier général
+ if config=='cylsph':
+  if geo_p=='ray_sph':
+   mesh_f_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_c_0,2)))+str(int(round(100*r_min,2)))+"sur"+str(res_gmsh)+".xml"
+  elif geo_p=='ray_cyl':
+   mesh_f_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_min,2)))+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)+".xml"
 
-print(mesh_f_name)
 mesh_fixe=Mesh(mesh_f_name)
 
 # fonctions test du domaine fixe

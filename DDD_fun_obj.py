@@ -222,7 +222,7 @@ def snapshot_compl_per(r_cen,r_per,config,res):### ------------------> résoluti
   mesh_name="cube"+config+"_periodique_triangle_"+str(int(round(100*r_cen,2)))+str(int(round(100*r_per,2)))+"sur"+str(res)
  elif config=='cylsph':
   mesh_name="cube"+config+"_periodique_triangle_"+str(int(round(100*r_per,2)))+str(int(round(100*r_cen,2)))+"sur"+str(res)
- print(mesh_name)
+ #print(mesh_name)
  ## Maillage : condition de résolution et de configuration
  mesh=Mesh(mesh_prefix+mesh_name+".xml")
  V=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
@@ -237,7 +237,7 @@ def snapshot_compl_per(r_cen,r_per,config,res):### ------------------> résoluti
   def inside(self, x, on_boundary):
    return on_boundary and not(near(x[0],xinf,tol) or near(x[0],xsup,tol) or near(x[1],yinf,tol) or near(x[1],ysup,tol))
  Gamma_sf = SolidBoundary()
- print('Gamma sf ne coupe pas les faces du cube')
+ #print('Gamma sf ne coupe pas les faces du cube')
  boundaries.set_all(0)
  Gamma_sf.mark(boundaries, 1)
  #num_ff=1

@@ -19,6 +19,8 @@ r_s_0=0.15
 r_v_0=0.15
 r_c_0=0.15
 
+r_min=0.05
+
 class PeriodicBoundary(SubDomain):
  # Left boundary is "target domain" G
  def inside(self, x, on_boundary):
@@ -46,11 +48,20 @@ elif dom_fixe=="solid":
  elif config=='cylsph':
   ## rayon du cylindre aux arètes ou de la sphère centrale fixés à 0.15 ##
   if geo_p=='ray_sph':
-   mesh_f_name=mesh_dir+str(int(round(100*r_c_0,2)))+"fixe"+"sur"+str(res_gmsh)+".xml"
+   mesh_f_name=mesh_fixe_prefix+str(int(round(100*r_c_0,2)))+"fixe"+"sur"+str(res_gmsh)+".xml"
   elif geo_p=='ray_cyl':
-   mesh_f_name=mesh_dir+"fixe"+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)+".xml"
+   if fixe_comp=='cyl_sph':
+    mesh_f_name=mesh_fixe_prefix+"fixe"+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)+".xml"
+   elif fixe_comp=='sph_un':
+    mesh_f_name=mesh_dir+"cubesphere_periodique_triangle_"+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)+".xml"
+elif dom_fixe=="ray_min":
+ fixe_comp=True#utilisation du domaine fixe avec annulation du rayon du cylindre dans le fichier général
+ if config=='cylsph':
+  if geo_p=='ray_sph':
+   mesh_f_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_c_0,2)))+str(int(round(100*r_min,2)))+"sur"+str(res_gmsh)+".xml"
+  elif geo_p=='ray_cyl':
+   mesh_f_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_min,2)))+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)+".xml"
 
-print("Maillage fixe : ",mesh_f_name)
 mesh_fixe=Mesh(mesh_f_name)
 
 # fonctions test du domaine fixe
@@ -80,6 +91,7 @@ elif config=='cylsph':
   mesh_n_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_nouv,2)))+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)+".xml"
  #elif geo_p=='ray_linked':
 
+print("Maillage fixe : ",mesh_f_name)
 print(mesh_n_name)
 
 mesh_nouv=Mesh(mesh_n_name)
@@ -107,7 +119,7 @@ elif ind_fixe:
 else:
  phi_name='Phi'+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
 
-print(phi_name)
+#print(phi_name)
 
 with sh.open(repertoire_parent+phi_name) as phi_loa:
  Phi_prime_v = phi_loa["maliste"]
@@ -132,6 +144,7 @@ for n in range(0,nb_modes):
  phi_n_nouv=interpolate(phi_fixe,V_nouv)
  # on range le vecteur de POD interpolée dans la matrice Phi_nouv_v
  Phi_nouv_v[:,n]=phi_n_nouv.vector().get_local()
+ #sys.exit('interpolation')
 
 ## Stockage de la matrice du modèle réduit
 
@@ -214,6 +227,7 @@ T_chi=np.zeros((3,3))
 for k in range(0,3):
  for l in range(0,3):
   T_chi[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
+  #print("Intégrale ",assemble(grad(chi_nouv)[k,l]*dx))
 ## Intégrale de l'identité sur le domaine fluide
 ### Calcul de la porosité
 if config=='sph_un':
@@ -262,12 +276,20 @@ elif config=='cylsph':
  if geo_p=='ray_sph':
   chi_nouv=snapshot_compl_per(r_nouv,r_c_0,config,res_gmsh)
  elif geo_p=='ray_cyl':
-  cho_nouv==snapshot_compl_per(r_s_0,r_nouv,config,res_gmsh)
+  chi_nouv=snapshot_compl_per(r_s_0,r_nouv,config,res_gmsh)
 
 ## Exploitation du champ ainsi obtenu
 rho=r_nouv
 r=r_nouv
 
+plot(chi_nouv, linewidth=0.55)
+plt.title("Rho = 0,"+str(int(round(100*r_nouv,2))),fontsize=40)
+if fig_todo=='aff':
+ plt.show()
+elif fig_todo=='save':
+ plt.savefig("Figures3D/sol_rom"+str(int(round(100*r_nouv,2)))+"_sur"+str(Nsnap)+config+'_'+geo_p+"res"+str(res)+".png")
+plt.close()
+#sys.exit()
 # Affichage des valeurs et erreurs de la solution périodique, quelle que soit la configuration
 if config=='sph_un' or config=='cyl_un':
  #err_per_ind_01(chi_n,cen,r,npas_err)
