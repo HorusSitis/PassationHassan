@@ -250,7 +250,7 @@ D=por*np.eye(3)
 ## Calcul et affichage du tenseur Dhom
 Dhom_kMOR=D_k*(D+T_chi.T)
 #print(('Tenseur Dhom_k',Dhom_k))
-print('Coefficient Dhom_k11 '+conf_mess+', '+geo_mess+' variable valeur '+str(rho)+' MOR :',Dhom_kMOR[0,0])
+print('Coefficient Dhom_k11 '+conf_mess+', '+geo_mess+' valeur '+str(rho)+' MOR :',Dhom_kMOR[0,0])
 
 ## On enregistre et imprime le temps d'éxécution de SE3
 
@@ -267,8 +267,10 @@ start=time.time()
 ## On réinitialise le champ chi_nouv pour la méthode des éléments finis
 
 #res=20
-if config=='sph_un' or config=='cyl_un':
+if config=='sph_un':
  chi_nouv=snapshot_sph_per(cen_snap_ray,r_nouv,res)
+elif config=='cyl_un':
+ chi_nouv=snapshot_cyl_per(top_snap_ray,r_nouv,res)
 elif config=='2sph':
  if geo_p=='ray':
   chi_nouv=snapshot_compl_per(r_nouv,r_v_0,config,res_gmsh)
@@ -312,6 +314,7 @@ for k in range(0,3):
 ## Intégrale de l'identité sur le domaine fluide : voir ce qui précède avec lea porosité
 print('Noeuds :',V_nouv.dim())
 print('Porosité :',por)
+#print('tenseur : ',T_chi)
 ## Calcul et affichage du tenseur Dhom
 Dhom_kMEF=D_k*(D+T_chi.T)
 #print(('Tenseur Dhom_k',Dhom_k))
