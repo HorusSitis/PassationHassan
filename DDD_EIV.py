@@ -91,8 +91,8 @@ elif config=='cylsph':
   mesh_n_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_nouv,2)))+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)+".xml"
  #elif geo_p=='ray_linked':
 
-print("Maillage fixe : ",mesh_f_name)
-print(mesh_n_name)
+#print("Maillage fixe : ",mesh_f_name)
+#print(mesh_n_name)
 
 mesh_nouv=Mesh(mesh_n_name)
 

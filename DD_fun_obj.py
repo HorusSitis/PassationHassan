@@ -93,7 +93,7 @@ def snapshot_circ_per(cen,r,res):
   mesh_c_r=creer_maill_circ([c_x,c_y],r,res)
  # On pose et on résoud le problème aux éléments finis
  V=VectorFunctionSpace(mesh_c_r, 'P', VFS_degree, form_degree=0, constrained_domain=PeriodicBoundary())
- print(V.dim(),str(int(round(20*r,2))))
+ #print(V.dim(),str(int(round(20*r,2))))
  ## On définit la bordure du domaine, sur laquelle intégrer le second membre "L" de l'équation en dimension finie
  l_cen=[]
  for i in range(-1,2):
@@ -106,6 +106,8 @@ def snapshot_circ_per(cen,r,res):
  ### Utilisation de la classe définie précédemment
  Gamma_sf = inclusion_periodique()
  boundaries = MeshFunction("size_t", mesh_c_r, mesh_c_r.topology().dim()-1)
+ print('Noeuds :',V.dim())
+ print('Facettes : ',mesh_c_r.num_edges())
  boundaries.set_all(0)
  Gamma_sf.mark(boundaries, 5)
  ds = Measure("ds")(subdomain_data=boundaries)
@@ -141,6 +143,7 @@ def snapshot_compl_per(geo_p,rho,cen,mention,test_snap):#,res):
  print('Noeuds :',V.dim())
  ## On définit la bordure du domaine, sur laquelle intégrer le second membre "L" de l'équation en dimension finie
  boundaries = MeshFunction('size_t', mesh, mesh_name+"_facet_region"+".xml")
+ print('Facettes : ',mesh.num_edges())
  ds = Measure("ds")(subdomain_data=boundaries)
  ## Marquage des bordures pour la condition de Neumann
  if test_snap=='solid_1':
