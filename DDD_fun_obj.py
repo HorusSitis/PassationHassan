@@ -145,6 +145,7 @@ def snapshot_sph_per(cen,r,res):
  ## Utilisation des classes définies précédemment : mesure de la limite du domaine fluide
  Gamma_sf = inclusion_periodique()
  boundaries = MeshFunction("size_t", mesh_s_r, mesh_s_r.topology().dim()-1)
+ print('Facettes : ',mesh_s_r.num_edges())
  # On attribue une valeur par défaut aux frontières du domaine fluide, qui concerne plus particulièrement l'interface fluide-fluide
  boundaries.set_all(1)
  Gamma_sf.mark(boundaries, 7)
@@ -189,6 +190,7 @@ def snapshot_cyl_per(top,r,res):### ------------------> résolution : avec gmsh
  ## Utilisation des classes définies précédemment : mesure de la limite du domaine fluide
  Gamma_sf = inclusion_periodique()
  boundaries = MeshFunction("size_t", mesh_c_r, mesh_c_r.topology().dim()-1)
+ print('Facettes : ',mesh_c_r.num_edges())
  # On attribue une valeur par défaut aux frontières du domaine fluide, qui concerne plus particulièrement l'interface fluide-fluide
  boundaries.set_all(1)
  Gamma_sf.mark(boundaries, 7)
