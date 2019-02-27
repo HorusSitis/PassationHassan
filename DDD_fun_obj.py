@@ -126,7 +126,7 @@ def creer_maill_cyl(top,r,slices_cyl,res):#valable quel que soit la position de 
 def snapshot_sph_per(cen,r,res):
  c_x,c_y,c_z=cen[0],cen[1],cen[2]
  if typ_msh=='gms':
-  print("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml")
+  #print("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml")
   mesh_s_r=Mesh("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml")
  else:
   print('pfrrh')
@@ -175,7 +175,7 @@ def snapshot_sph_per(cen,r,res):
 def snapshot_cyl_per(top,r,res):### ------------------> résolution : avec gmsh
  t_x,t_z=top[0],top[1]
  mesh_name="maillages_per/3D/cubecylindre_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml"
- print(mesh_name)
+ #print(mesh_name)
  mesh_c_r=Mesh(mesh_name)
  # On pose et on résoud le problème aux éléments finis
  V=VectorFunctionSpace(mesh_c_r, 'P', 2, constrained_domain=PeriodicBoundary())
@@ -224,7 +224,7 @@ def snapshot_compl_per(r_cen,r_per,config,res):### ------------------> résoluti
   mesh_name="cube"+config+"_periodique_triangle_"+str(int(round(100*r_cen,2)))+str(int(round(100*r_per,2)))+"sur"+str(res)
  elif config=='cylsph':
   mesh_name="cube"+config+"_periodique_triangle_"+str(int(round(100*r_per,2)))+str(int(round(100*r_cen,2)))+"sur"+str(res)
- #print(mesh_name)
+ print('Maillage pour solution EF : ',mesh_name)
  ## Maillage : condition de résolution et de configuration
  mesh=Mesh(mesh_prefix+mesh_name+".xml")
  V=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
@@ -237,7 +237,7 @@ def snapshot_compl_per(r_cen,r_per,config,res):### ------------------> résoluti
  num_solid_boundary=1
  class SolidBoundary(SubDomain):
   def inside(self, x, on_boundary):
-   return on_boundary and not(near(x[0],xinf,tol) or near(x[0],xsup,tol) or near(x[1],yinf,tol) or near(x[1],ysup,tol))
+   return on_boundary and not(near(x[0],xinf,tol) or near(x[0],xsup,tol) or near(x[1],yinf,tol) or near(x[1],ysup,tol) or near(x[2],zinf,tol) or near(x[2],zsup,tol))
  Gamma_sf = SolidBoundary()
  #print('Gamma sf ne coupe pas les faces du cube')
  boundaries.set_all(0)
