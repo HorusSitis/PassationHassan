@@ -145,13 +145,13 @@ if not snap_done:
    chi_n_v=list_chi_n_v[i][1]
    list_chi_v.append(chi_n_v)
  # Liste des snapshots : sauvegarde, on précise l'identité de la machine qui a effectué le calcul
- l_name=test_snap+'Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
+ l_name='Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
  # sauvegarde de la liste des solutions indexées calculées avec la méthode des éléments finis
  with sh.open(repertoire_parent+l_name) as l_sto:
   l_sto["maliste"] = list_chi_v
  # Matrice des snapshots : plus tard, voir l'étape II
 else :
- l_name=test_snap+'Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
+ l_name='Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
  with sh.open(repertoire_parent+l_name) as l_loa:
   list_chi_v = l_loa["maliste"]
 
