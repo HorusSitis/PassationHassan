@@ -111,11 +111,11 @@ def snap_compl_ray(rho_par):
   chi_compl=snapshot_compl_per(rho,r_v_0,config,res_gmsh)
  ## un cylindre et une sphère ##
  elif geo_p=='ray_sph':
-  rho=0.05#*rho_par
-  chi_compl=snapshot_compl_per(rho,r_c_0,config,res_gmsh)
- elif geo_p=='ray_cyl':
   rho=0.05*rho_par
-  chi_compl=snapshot_compl_per(r_s_0,rho,config,res_gmsh)
+  chi_compl=snapshot_compl_per(r_c_0,rho,config,res_gmsh)
+ elif geo_p=='ray_cyl':
+  rho=max(0.15,0.05*rho_par)
+  chi_compl=snapshot_compl_per(rho,r_s_0,config,res_gmsh)
  elif geo_p=='ray_linked':
   rho=0.15+0.02*(rho_par-1)
   ray_link=link(rho)#((1/3)*(0.35**3-rho**3)+0.25**2)**(0.5)
@@ -235,7 +235,7 @@ for n in range(deb,deb+Nsnap):
   r_v=r_v_0
   mesh_name="cube"+config+"_periodique_triangle_"+str(int(round(100*r_s,2)))+str(int(round(100*r_v_0,2)))+"sur"+str(res)
  elif config=='cylsph':
-  r=n*0.05
+  r=max(0.15,n*0.05)
   if geo_p=='ray_cyl':
    r_c=r
    r_s=r_s_0
