@@ -62,13 +62,10 @@ if dimension==2:
 elif dimension==3:
  if config=='sph_un':
   mesh_prefix="cubesphere_periodique_triangle"
-  list_test=[0.22,0.33,0.44]
- elif config=='sph_un_som':
-  mesh_prefix="cubesphere_periodique_triangle_som"
-  list_test=[0.22,0.33,0.44]
+  list_test=[0.11,0.22,0.33,0.44]
  elif config=='cyl_un':
   mesh_prefix='cubecylindre_periodique_triangle'
-  list_test=[0.22,0.33,0.44]
+  list_test=[0.11,0.22,0.33,0.44]
  elif config=='2sph':
   mesh_prefix='cube'+config+'_periodique_triangle'
   list_test=[0.11,0.22,0.33,0.44]
