@@ -294,4 +294,6 @@ for n in range(deb,deb+Nsnap):
  print("Noeuds",V_n.dim())
  print("Porosité :",por)
  print('Coefficient Dhom_k11EF, snapshot '+str(n)+", "+conf_mess+', '+geo_mess+" :",Dhom_k[0,0])
+ integ=assemble(chi_n[1]*dx)
+ print('Valeur moyenne : ',integ)
 #

@@ -159,7 +159,7 @@ else:
   Usnap = u_loa["maliste"]
 
 
-
+print(Usnap[0:5,0:5])
 #sys.exit("attendons un peu pour les représentations graphiques post-traitement")
 # Représentations graphiques
 
@@ -207,7 +207,26 @@ for n in range(1,1+Nsnap):
   por=1-4/3*pi*r_s**3-pi*r_c**2
   D=por*np.eye(3)
   Dhom_kUsnap=D_k*(D+T_chi.T)
- print('Coefficient D Usnap interpolé rayon variable '+str(int(round(100*r,2)))+' : ',Dhom_kUsnap[0,0])
+  print('Coefficient D Usnap interpolé rayon variable '+str(int(round(100*r,2)))+' : ',Dhom_kUsnap[0,0])
+  integ=assemble(chi_n[1]*dx)
+  print('Valeur moyenne : ',integ)
+ elif config=='cyl_un':
+  mesh_name="cubecylindre_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)
+  mesh=Mesh("maillages_per/3D/"+mesh_name+".xml")
+  ##
+  V_n=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
+  chi_n=Function(V_n)
+  chi_prime_n.set_allow_extrapolation(True)
+  chi_n=interpolate(chi_prime_n,V_n)
+  ##
+  T_chi=np.zeros((3,3))
+  for k in range(0,3):
+   for l in range(0,3):
+    T_chi[k,l]=assemble(grad(chi_n)[k,l]*dx)
+  por=1-pi*r**2
+  D=por*np.eye(3)
+  Dhom_kUsnap=D_k*(D+T_chi.T)
+  print('Coefficient D Usnap interpolé rayon variable '+str(int(round(100*r,2)))+' : ',Dhom_kUsnap[0,0])
  ###
  # Dans ce cas, les faces du cube sont entières
  ##cen=[0.5,0.5,0.5]
