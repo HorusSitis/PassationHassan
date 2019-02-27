@@ -165,13 +165,13 @@ def calc_Ab_3D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,origin,nb_modes,config):
  r=r_nouv
  if config=='sph_un':
   l_cen=[origin]
-  print(l_cen)
+  #print(l_cen)
   class inclusion_periodique(SubDomain):
    def inside(self,x,on_boundary):
     return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[2]-c[2]), (-r-tol, r+tol)) for c in l_cen]))
  elif config=='cyl_un':
   l_axe=[origin]
-  print(l_axe)
+  #print(l_axe)
   class inclusion_periodique(SubDomain):
    def inside(self,x,on_boundary):
     return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_axe]) and any([between((x[2]-c[2]), (-r-tol, r+tol)) for c in l_axe]))
