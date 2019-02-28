@@ -49,7 +49,7 @@ E_=False
 E_lL=False
 
 EI=True
-snap_done=True
+snap_done=False
 EII=False
 exsnap_done=True
 
@@ -93,7 +93,7 @@ res_gmsh=10
 if typ_msh=='gms':
  res=res_gmsh
 
-config='2sph'#'cylsph'#'sph_un'#'cyl_un'#'2sph'#
+config='cyl_un'#'2sph'#'cylsph'#'sph_un'#
 
 ### inclusions simples
 if config=='sph_un':
