@@ -9,17 +9,17 @@ import time
 
 ### Options
 
-dimension=3
-fig_todo='aff'
+dimension=2
+fig_todo=''
 
 # Génération de maillages : apprentissage, fixe et test
 appr=False
-fixe=True
-test=False
+fixe=False
+test=True
 
 
 Nsnap=8
-i_end=1#2 pour une inclusion simple si l'on veur un rayon de 0.45#
+i_end=1#2 pour une inclusion simple si l'on veut un rayon de 0.45#
 
 res_name=True
 res=10
@@ -44,15 +44,17 @@ if dimension==3:
  if config=='2sph':
   geo_p='ray'
  elif config=='cylsph':
-  geo_p='ray_sph'#'ray_cyl'#'ray_linked'#
+  geo_p='ray_cyl'#'ray_sph'#'ray_linked'#
 
 if dimension==2:
  if config=='cer_un':
-  mesh_prefix="maillage_trou2D"#"maillage_trou2d"#
+  mesh_prefix="maillage_trou2D"
   list_test=[0.11,0.22,0.33,0.44]
+  geo_p=='ray'
  elif config=='cer_un_som':
   mesh_prefix="maillage_trou2D_som"
   list_test=[0.11,0.22,0.33,0.44]
+  geo_p=='ray'
  elif config=='compl':
   mesh_prefix="maillage_trous2D_"+geo_p
   if geo_p=='diag':
@@ -174,12 +176,14 @@ elif test:
   print(mesh_name)
   ## Visualisation du fichier .geo
   print("gmsh "+mesh_name+".geo")
-  os.system("gmsh "+mesh_name+".geo")
+  if fig_todo=='aff':
+   os.system("gmsh "+mesh_name+".geo")
   ## Conversion en .msh
   start=time.time()
   os.system("gmsh -"+str(dimension)+" "+mesh_name+".geo")
   end=time.time()
-  print("temps de génération du maillage : "+str(end-start)+" secondes")
+  tps_1=end-start
+  print("temps de génération du maillage : "+str(tps_1)+" secondes")
   ## Affichage du maillage obtenu
   if fig_todo=='aff':
    os.system("gmsh "+mesh_name+".msh")
@@ -187,6 +191,8 @@ elif test:
   start=time.time()
   os.system("dolfin-convert "+mesh_name+".msh "+mesh_name+".xml")
   end=time.time()
-  print("temps de conversion du maillage : "+str(end-start)+" secondes")
+  tps_2=end-start
+  print("temps de conversion du maillage : "+str(tps_2)+" secondes")
+  print("temps total d'éxécution : "+str(tps_1+tps_2)+" secondes")
 
 sys.exit("Création de maillages périodiques terminée")
