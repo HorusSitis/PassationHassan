@@ -114,7 +114,7 @@ if not snap_done:
  elif gen_snap=='seq':
   start=time.time()
   list_chi_n_v=[]
-  for n in range(deb,deb+Nsnap):
+  for n in range(1,1+Nsnap):
    if geo_p=='ray':
     list_chi_n_v.append(snap_circ_ray(n))
    elif geo_p=='cen':
@@ -132,9 +132,7 @@ if not snap_done:
  ## enregistrement des données dans une liste
  # Construction de la liste des snapshots vectorisés : cas d'un paramètre géométrique définissant un ordre - lien avec la porosité ; ou non.
  list_chi_v=[]
- if deb!=1:
-  list_chi_v.append(list_chi_n_v[0][1])
- elif geo_p=='ray' or config=='compl':
+ if geo_p=='ray' or config=='compl':
   for n in range(1,1+Nsnap):
    for i in range(0,Nsnap):
     if list_chi_n_v[i][0]==n:
@@ -275,7 +273,7 @@ for n in range(1,1+Nsnap):#attention le rayon d'un cercle doit être non nul
  print('Coefficient Dhom_k11, snapshot '+str(n)+", "+conf_mess+', '+geo_mess+" :",Dhom_k[0,0])
  ## Anisotropie
  #print(Dhom_k)
- mod_diag=max(abs(Dhom_k[0,0]),abs(Dhom_k[1,1]))
+ mod_diag=min(abs(Dhom_k[0,0]),abs(Dhom_k[1,1]))
  mod_ndiag=0
  for i in range(0,2):
   for j in range(0,i):
@@ -284,4 +282,5 @@ for n in range(1,1+Nsnap):#attention le rayon d'un cercle doit être non nul
   for j in range(i+1,2):
    if abs(Dhom_k[i,j])>mod_ndiag:
     mod_ndiag=abs(Dhom_k[i,j])
- print("Anisotropie : ",mod_ndiag/mod_diag)
+ print("Anisotropie I- : ",max(abs(Dhom_k[0,0]),abs(Dhom_k[1,1]))/mod_diag-1)
+ print("Anisotropie II- : ",mod_ndiag/mod_diag)
