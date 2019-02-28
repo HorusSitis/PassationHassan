@@ -300,22 +300,22 @@ Thus, the function $\chi(\mathbf{x},\rho_j)$ is defined for $\mathbf{x}$ in a $\
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures2D/sol_1_sur8cer_un_ray.png}%
+\subfloat[$D_k^{hom}=0.9845$]{\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures2D/sol_1_sur8cer_un_ray.png}}%
 &%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures2D/sol_2_sur8cer_un_ray.png}%
+\subfloat[$D_k^{hom}=0.9391$]{\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures2D/sol_2_sur8cer_un_ray.png}}%
 &%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures2D/sol_3_sur8cer_un_ray.png}%
+\subfloat[$D_k^{hom}=0.8680$]{\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures2D/sol_3_sur8cer_un_ray.png}}%
 &%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures2D/sol_4_sur8cer_un_ray.png}%
+\subfloat[$D_k^{hom}=0.7767$]{\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures2D/sol_4_sur8cer_un_ray.png}}%
 \\
 \hline
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures2D/sol_5_sur8cer_un_ray.png}%
+\subfloat[$D_k^{hom}=0.6716$]{\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures2D/sol_5_sur8cer_un_ray.png}}%
 &%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures2D/sol_6_sur8cer_un_ray.png}%
+\subfloat[$D_k^{hom}=0.5585$]{\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures2D/sol_6_sur8cer_un_ray.png}}%
 &%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures2D/sol_7_sur8cer_un_ray.png}%
+\subfloat[$D_k^{hom}=0.4415$]{\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures2D/sol_7_sur8cer_un_ray.png}}%
 &%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures2D/sol_8_sur8cer_un_ray.png}%
+\subfloat[$D_k^{hom}=0.3221$]{\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures2D/sol_8_sur8cer_un_ray.png}}%
 \\
 \hline
 \end{tabular}
@@ -323,7 +323,10 @@ Thus, the function $\chi(\mathbf{x},\rho_j)$ is defined for $\mathbf{x}$ in a $\
 \caption{The vector fields $\chi(\mathbf{x},\rho_j )$}
 \end{figure}
 
-%\etoile
+Notice that $D_k^{hom}$ is the same we computed for a centered circular inclusion. %
+These results confirm that periodic microstructures with one circular inclusion, wether it lies at the center or the vertices of the elementary cell, are equivalent.
+
+\etoile
 We begin the construction of our Reduced Order Model by extrapolating the snapshots $\chi(\mathbf{x},\rho_j)_j$, defined on the collection of domains $\Omega_f^j$, %
 on a same functional space $H^0$, namely the space of functions defined on the fluid domain $\Omega_f^0$ which satisfies $\rho=0$, %
 with the norm used for the spaces of the snapshots ; %
