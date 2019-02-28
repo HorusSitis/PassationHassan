@@ -211,6 +211,7 @@ def snapshot_cyl_per(top,r,res):### ------------------> résolution : avec gmsh
  moy_u_x=assemble(u[0]*dx)/(1-pi*r**2)
  moy_u_y=assemble(u[1]*dx)/(1-pi*r**2)
  moy_u_z=assemble(u[2]*dx)/(1-pi*r**2)
+ print("Valeur moyenne de u :",[moy_u_x,moy_u_y,moy_u_z])
  moy=Function(V)
  moy=Constant((moy_u_x,moy_u_y,moy_u_z))
  chi=project(u-moy,V)
@@ -262,6 +263,7 @@ def snapshot_compl_per(r_cen,r_per,config,res):### ------------------> résoluti
  moy_u_x=assemble(u[0]*dx)/porosity
  moy_u_y=assemble(u[1]*dx)/porosity
  moy_u_z=assemble(u[2]*dx)/porosity
+ print("Valeur moyenne de u :",[moy_u_x,moy_u_y,moy_u_z])
  moy=Function(V)
  moy=Constant((moy_u_x,moy_u_y,moy_u_z))
  chi=project(u-moy,V)

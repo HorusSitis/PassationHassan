@@ -285,4 +285,15 @@ for n in range(1,1+Nsnap):
  print('Coefficient Dhom_k11EF, snapshot '+str(n)+", "+conf_mess+', '+geo_mess+" :",Dhom_k[0,0])
  integ=assemble(chi_n[1]*dx)
  print('Valeur moyenne : ',integ)
+ ## Anisotropie
+ mod_diag=max(abs(Dhom_k[0,0]),abs(Dhom_k[1,1]),abs(Dhom_k[2,2]))
+ mod_ndiag=0
+ for i in range(0,3):
+  for j in range(0,i):
+   if abs(Dhom_k[i,j])>mod_ndiag:
+    mod_ndiag=abs(Dhom_k[i,j])
+  for j in range(i+1,3):
+   if abs(Dhom_k[i,j])>mod_ndiag:
+    mod_ndiag=abs(Dhom_k[i,j])
+ print("Anisotropie : ",mod_ndiag/mod_diag)
 #
