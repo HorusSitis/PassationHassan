@@ -86,21 +86,12 @@ r_c_0=0
 r_v_0=0
 
 if config=='2sph':
- if deb==1:
-  r_v_0=0.15
- else:
-  r_v_0=0.2
+ r_v_0=0.15
 elif config=='cylsph':
  if geo_p=='ray_cyl':
-  if deb==1:
-   r_s_0=0.15
-  else:
-   r_s_0=0.35
+  r_s_0=0.15
  elif geo_p=='ray_sph':
-  if deb==1:
-   r_c_0=0.15
-  else:
-   r_c_0=0.25
+  r_c_0=0.15
  elif geo_p=='ray_linked':
   print('aucun rayon fixé')
 
@@ -114,7 +105,7 @@ def snap_compl_ray(rho_par):
   rho=0.05*rho_par
   chi_compl=snapshot_compl_per(r_c_0,rho,config,res_gmsh)
  elif geo_p=='ray_cyl':
-  rho=max(0.15,0.05*rho_par)
+  rho=0.05*rho_par
   chi_compl=snapshot_compl_per(rho,r_s_0,config,res_gmsh)
  elif geo_p=='ray_linked':
   rho=0.15+0.02*(rho_par-1)
@@ -158,7 +149,7 @@ if not snap_done:
  elif gen_snap=='seq':
   start=time.time()
   list_chi_n_v=[]
-  for n in range(deb,deb+Nsnap):
+  for n in range(1,1+Nsnap):
    print(n)
    if config=='sph_un':
     if geo_p=='ray':
@@ -180,9 +171,7 @@ if not snap_done:
  # -------- enregistrement des fonctions vectorisées dans une liste -------- #
  # Construction de la liste des snapshots vectorisés : cas d'un paramètre géométrique définissant un ordre - lien avec la porosité ; ou non.
  list_chi_v=[]
- if deb!=1:
-  list_chi_v.append(list_chi_n_v[0][1])
- elif geo_p=='ray' or config=='compl':
+ if geo_p=='ray' or config=='compl':
   for n in range(1,1+Nsnap):
    for i in range(0,Nsnap):
     if list_chi_n_v[i][0]==n:
@@ -207,9 +196,9 @@ else :
 
 # Exploitation des solution du problème aux éléments finis
 res=res_gmsh
-for n in range(deb,deb+Nsnap):
+for n in range(1,1+Nsnap):
  # Extraction du snapshot de rang n
- chi_n_v=list_chi_v[n-deb]
+ chi_n_v=list_chi_v[n-1]
  # On crée un maillage pour réécrire les snapshots sous la forme de fonctions
  if config=='sph_un':
   if geo_p=='ray':
@@ -235,7 +224,7 @@ for n in range(deb,deb+Nsnap):
   r_v=r_v_0
   mesh_name="cube"+config+"_periodique_triangle_"+str(int(round(100*r_s,2)))+str(int(round(100*r_v_0,2)))+"sur"+str(res)
  elif config=='cylsph':
-  r=max(0.15,n*0.05)
+  r=n*0.05
   if geo_p=='ray_cyl':
    r_c=r
    r_s=r_s_0
@@ -253,8 +242,8 @@ for n in range(deb,deb+Nsnap):
  plot(chi_n, linewidth=0.27)#35)
  plt.tight_layout(pad=0)
  if r<0.1:
-  plt.title("Rho = 0,05", fontsize=40)
- elif deb==1:
+  plt.title("Rho = 0,0"+str(int(round(100*r,2))), fontsize=40)
+ else:
   plt.title("Rho = 0,"+str(int(round(100*r,2))),fontsize=40)
  if fig_todo=='aff':
   plt.show()

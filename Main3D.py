@@ -48,32 +48,29 @@ from matplotlib.patches import Circle, PathPatch
 E_=False
 E_lL=False
 
-EI=False
+EI=True
 snap_done=True
 EII=False
 exsnap_done=True
 
-EIII=True
+EIII=False
 EIV=False
-
-#res_fixe=6
-fixe_aff=False
-#res=6
-#slices_cyl=5
-
-
-
-#r=0.35#pour une réalisation unique
-npas_err=20
-fig_todo='save'
-
-typ_msh='gms'#''
 
 
 
 # nom de l'appareil utilisé pour générer les données enregistrées
 computer='MECALAC_29x8'#'T1700_35x8'#
 
+# paramètres pour l'éxécution des étapes : affichage, tests de périodicité etc
+
+npas_err=20
+fig_todo='aff'
+typ_msh='gms'#''
+D_k=1.0
+Nsnap=8
+npas_err=20
+
+ordo='Ordr'#'Nordr'
 # apprentissage : calcul parallèle ou séquentiel, prise en compte de la résolution
 
 gen_snap='par8'#'seq'#''seq_par'#
@@ -84,12 +81,6 @@ repertoire_parent="Res3D/"
 
 
 ## -------------------- Etape I -------------------- ##
-
-D_k=1.0
-Nsnap=8## 1 pour les tests individuels ##
-deb=1 #par défaut, apprentissage##7# pour les tests individuels avec une sphère ##5 pour tester un cylindre unique"##
-npas_err=20
-ordo='Ordr'#'Nordr'
 
 # Parallélisation du calcul des snapshots
 
@@ -102,7 +93,7 @@ res_gmsh=10
 if typ_msh=='gms':
  res=res_gmsh
 
-config='cylsph'#'2sph'#'cyl_un'#'sph_un'#'cyl_sph'#
+config='2sph'#'cylsph'#'sph_un'#'cyl_un'#'2sph'#
 
 ### inclusions simples
 if config=='sph_un':
@@ -124,22 +115,25 @@ elif config=='cyl_un':
  conf_mess='cylindre unique'
  if geo_p=='ray':
   geo_mess='rayon variable'
+  cen_snap_ray=[0.5,0.,0.5]
+  top_snap_ray=[0.5,0.5]
  elif geo_p=='axe':
   asr_list=[[0.5,0.3+0.05*k] for k in range(1,1+Nsnap)]
 ### inclusions composées
 elif config=='2sph':
  conf_mess='deux sphères'
- dom_fixe="solid"#"axe"#
+ dom_fixe="solid"#"am"#
  geo_p='ray'
  geo_mess='rayon de la sphère centrale variable'
  ##
 elif config=='cylsph':
  conf_mess='un cylindre et une sphère'
- dom_fixe="solid"#"axe"#
+ dom_fixe="ray_min"#"am"#"solid"#
  geo_p='ray_cyl'#'ray_sph'#'ray_linked'###ray_sph pour le test diff_ion##
  ##
  if geo_p=='ray_cyl':
   geo_mess='rayon du cylindre variable'
+  fixe_comp='cyl_sph'##utilisation du domaine fixe avec annulation du rayon du cylindre dans le fichier général##'sph_un'#'ray_min'#
  elif geo_p=='ray_sph':
   geo_mess='rayon de la sphère variable'
  elif geo_p=='ray_linked':
@@ -182,8 +176,8 @@ if EIII :
 
 ## -------------------- Etape IV -------------------- ##
 
-N_mor=5
-r_nouv=0.44#0.22#0.33#
+N_mor=8
+r_nouv=0.22#0.44#0.11#0.33#0.05#
 
 # La mesure du temps d'éxécution doit se faire avec l'option 'save' de fig_todo
 
