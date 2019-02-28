@@ -161,11 +161,11 @@ else :
 #mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2d_am.xml")
 #V_fixe=VectorFunctionSpace(mesh_fixe, 'P', 3, constrained_domain=PeriodicBoundary())
 
-for n in range(deb,deb+Nsnap):#attention le rayon d'un cercle doit être non nul
+for n in range(1,1+Nsnap):#attention le rayon d'un cercle doit être non nul
  # Extraction du snapshot de rang n
- print(len(list_chi_v))
- chi_n_v=list_chi_v[n-deb]
- print(config)
+ #print(len(list_chi_v))
+ chi_n_v=list_chi_v[n-1]
+ #print(config)
  # On crée un maillage pour réécrire les snapshots sous la forme de fonctions
  mesh_directory="maillages_per/2D/"
  if config=='cer_un':
@@ -174,7 +174,7 @@ for n in range(deb,deb+Nsnap):#attention le rayon d'un cercle doit être non nul
    r=n*0.05
    if typ_msh=='gms':
     mesh_name="maillage_trou2D_"+str(int(round(100*r,2)))
-    print(mesh_name)
+    #print(mesh_name)
     mesh=Mesh(mesh_directory+mesh_name+".xml")
     plot(mesh)
     #plt.title("Periodical mesh", fontsize=30)
@@ -183,8 +183,8 @@ for n in range(deb,deb+Nsnap):#attention le rayon d'un cercle doit être non nul
      plt.show()
     elif fig_todo=='save' and r==0.25:
      plt.savefig('Figures2D/maillage_gmsh_per_'+config+geo_p+'_ray'+str(int(round(100*r,2)))+'png')
-    else:
-     print('pfffrrrhhhh !!!')
+    #else:
+    # print('pfffrrrhhhh !!!')
     plt.close()
    else:
     mesh=creer_maill_circ(cen,r,res)
@@ -193,7 +193,7 @@ for n in range(deb,deb+Nsnap):#attention le rayon d'un cercle doit être non nul
   mention="_som"
   if typ_msh=='gms':
    mesh_name="maillage_trou2D"+mention+"_"+str(int(round(100*r,2)))
-   print(mesh_name)
+   #print(mesh_name)
    mesh=Mesh(mesh_directory+mesh_name+".xml")
    plot(mesh)
    #plt.title("Periodical mesh", fontsize=30)
@@ -202,8 +202,8 @@ for n in range(deb,deb+Nsnap):#attention le rayon d'un cercle doit être non nul
     plt.show()
    elif fig_todo=='save' and (r==0.25):
     plt.savefig('Figures2D/maillage_gmsh_per_'+config+geo_p+'_ray'+str(int(round(100*r,2)))+".png")
-   else:
-    print('pfffrrrhhhh !!!')
+   #else:
+   # print('pfffrrrhhhh !!!')
    plt.close()
   else:
    mesh=creer_maill_circ([c_x,c_y],r,res)
@@ -216,7 +216,7 @@ for n in range(deb,deb+Nsnap):#attention le rayon d'un cercle doit être non nul
   r=rho
   r_fixe=0.15
   mesh_name="maillage_trous2D_"+geo_p+"_"+str(int(round(100*rho,2)))
-  print(mesh_name)
+  #print(mesh_name)
   mesh=Mesh(mesh_directory+mesh_name+".xml")
   plot(mesh)
   #plt.title("Periodical mesh", fontsize=30)
@@ -225,8 +225,8 @@ for n in range(deb,deb+Nsnap):#attention le rayon d'un cercle doit être non nul
    plt.show()
   elif fig_todo=='save' and (r==0.25):
    plt.savefig('Figures2D/maillage_gmsh_per_'+config+geo_p+'_ray'+str(int(round(100*r,2)))+".png")
-  else:
-   print('pfffrrrhhhh !!!')
+  #else:
+  # print('pfffrrrhhhh !!!')
   plt.close()
  V_n=VectorFunctionSpace(mesh, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
  # On restitue la forme fonctionnelle du snapshot courant
@@ -273,3 +273,15 @@ for n in range(deb,deb+Nsnap):#attention le rayon d'un cercle doit être non nul
  #print(('Tenseur Dhom_k',Dhom_k))
  print("Porosité :", por)
  print('Coefficient Dhom_k11, snapshot '+str(n)+", "+conf_mess+', '+geo_mess+" :",Dhom_k[0,0])
+ ## Anisotropie
+ #print(Dhom_k)
+ mod_diag=max(abs(Dhom_k[0,0]),abs(Dhom_k[1,1]))
+ mod_ndiag=0
+ for i in range(0,2):
+  for j in range(0,i):
+   if abs(Dhom_k[i,j])>mod_ndiag:
+    mod_ndiag=abs(Dhom_k[i,j])
+  for j in range(i+1,2):
+   if abs(Dhom_k[i,j])>mod_ndiag:
+    mod_ndiag=abs(Dhom_k[i,j])
+ print("Anisotropie : ",mod_ndiag/mod_diag)
