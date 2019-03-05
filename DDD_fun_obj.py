@@ -235,16 +235,8 @@ def snapshot_compl_per(r_cen,r_per,config,res):### ------------------> résoluti
  print('Facettes : ',mesh.num_edges())
  ds = Measure("ds")(subdomain_data=boundaries)
  ## Marquage des bordures pour la condition de Neumann
- num_solid_boundary=1
- class SolidBoundary(SubDomain):
-  def inside(self, x, on_boundary):
-   return on_boundary and not(near(x[0],xinf,tol) or near(x[0],xsup,tol) or near(x[1],yinf,tol) or near(x[1],ysup,tol) or near(x[2],zinf,tol) or near(x[2],zsup,tol))
- Gamma_sf = SolidBoundary()
- #print('Gamma sf ne coupe pas les faces du cube')
- boundaries.set_all(0)
- Gamma_sf.mark(boundaries, 1)
- #num_ff=1
- num_solid_boundary=1
+ num_solid_boundary=1700
+ print("Numéro de la frontière physique sf :",num_solid_boundary)
  ## On résoud le problème faible, avec une condition de type Neumann au bord de l'obstacle
  normale = FacetNormal(mesh)
  nb_noeuds=V.dim()
