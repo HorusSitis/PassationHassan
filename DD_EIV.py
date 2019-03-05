@@ -203,9 +203,9 @@ start=time.time()
 
 #res=20
 if test_snap=='i_per':
- chi_nouv=snapshot_circ_per(cen_snap_ray,r_nouv,res)
+ chi_nouv=snapshot_circ_per(cen_snap_ray,r_nouv,res,moy_null)
 else:
- chi_nouv=snapshot_compl_per(geo_p,r_nouv,cen_snap_ray,mention,test_snap)
+ chi_nouv=snapshot_compl_per(geo_p,r_nouv,cen_snap_ray,mention,test_snap,moy_null)
 
 ## Exploitation du champ ainsi obtenu
 rho=r_nouv

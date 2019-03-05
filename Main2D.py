@@ -69,7 +69,7 @@ EIV=False
 res_gmsh=100
 
 fixe_aff=False
-fig_todo='save'
+fig_todo='aff'
 
 ### ------------ Etape 0 : Génération de microstructures périodiques aléatoires ------------ ###
 
@@ -84,7 +84,10 @@ if E_ :
 VFS_degree=2#3#
 ## degré 2 : comme en dimension 3, permet d'éviter les erreurs de périodicité pour des pas qui nen sont pas de la forme 2"n, où n est un diviseur de 100 ##
 
-config='cer_un'#'compl'#
+## condition sur la valeur moyenne de chi : annulationmoy_null=True
+
+
+config='compl'#'cer_un'#
 
 if config=='cer_un':
  test_snap='i_per'#'solid_1'#''#
@@ -157,8 +160,8 @@ repertoire_parent="Res2D/"
 from LEc import *
 
 D_k=1.0
-Nsnap=1
-deb=5# pour les tests cer_un et diag##6# pour hor##1# par défaut##
+Nsnap=8
+deb=1# par défaut##5# pour les tests cer_un et diag##6# pour hor##
 npas_err=50
 ordo='Ordr'#'Nordr'
 

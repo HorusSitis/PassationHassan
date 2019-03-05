@@ -123,7 +123,7 @@ def creer_maill_cyl(top,r,slices_cyl,res):#valable quel que soit la position de 
 
 ############################# Pour créer des snapshots, inclusion circulaire périodique unique #############################
 
-def snapshot_sph_per(cen,r,res):
+def snapshot_sph_per(cen,r,res,moy_null):
  c_x,c_y,c_z=cen[0],cen[1],cen[2]
  if typ_msh=='gms':
   #print("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml")
@@ -163,16 +163,19 @@ def snapshot_sph_per(cen,r,res):
  u=Function(V)
  solve(a==L,u)
  ## Annulation de la valeur moyenne
- moy_u_x=assemble(u[0]*dx)/(1-4/3*pi*r**3)
- moy_u_y=assemble(u[1]*dx)/(1-4/3*pi*r**3)
- moy_u_z=assemble(u[2]*dx)/(1-4/3*pi*r**3)
- moy=Function(V)
- moy=Constant((moy_u_x,moy_u_y,moy_u_z))
- chi=project(u-moy,V)
+ if moy_null:
+  moy_u_x=assemble(u[0]*dx)/(1-4/3*pi*r**3)
+  moy_u_y=assemble(u[1]*dx)/(1-4/3*pi*r**3)
+  moy_u_z=assemble(u[2]*dx)/(1-4/3*pi*r**3)
+  moy=Function(V)
+  moy=Constant((moy_u_x,moy_u_y,moy_u_z))
+  chi=project(u-moy,V)
+ else:
+  chi=u
  # Résultat : snapshot
  return(chi)
 
-def snapshot_cyl_per(top,r,res):### ------------------> résolution : avec gmsh
+def snapshot_cyl_per(top,r,res,moy_null):### ------------------> résolution : avec gmsh
  t_x,t_z=top[0],top[1]
  mesh_name="maillages_per/3D/cubecylindre_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml"
  #print(mesh_name)
@@ -207,18 +210,21 @@ def snapshot_cyl_per(top,r,res):### ------------------> résolution : avec gmsh
  ### Résolution
  u=Function(V)
  solve(a==L,u)
- ## Annulation de la valeur moyenne
- moy_u_x=assemble(u[0]*dx)/(1-pi*r**2)
- moy_u_y=assemble(u[1]*dx)/(1-pi*r**2)
- moy_u_z=assemble(u[2]*dx)/(1-pi*r**2)
- print("Valeur moyenne de u :",[moy_u_x,moy_u_y,moy_u_z])
- moy=Function(V)
- moy=Constant((moy_u_x,moy_u_y,moy_u_z))
- chi=project(u-moy,V)
+ if moy_null:
+  ## Annulation de la valeur moyenne
+  moy_u_x=assemble(u[0]*dx)/(1-pi*r**2)
+  moy_u_y=assemble(u[1]*dx)/(1-pi*r**2)
+  moy_u_z=assemble(u[2]*dx)/(1-pi*r**2)
+  #print("Valeur moyenne de u :",[moy_u_x,moy_u_y,moy_u_z])
+  moy=Function(V)
+  moy=Constant((moy_u_x,moy_u_y,moy_u_z))
+  chi=project(u-moy,V)
+ else:
+  chi=u
  # Résultat : snapshot
  return(chi)
 
-def snapshot_compl_per(r_cen,r_per,config,res):### ------------------> résolution : avec gmsh
+def snapshot_compl_per(r_cen,r_per,config,res,moy_null):### ------------------> résolution : avec gmsh
  ##
  mesh_prefix="maillages_per/3D/"
  if config=='2sph':
@@ -248,17 +254,22 @@ def snapshot_compl_per(r_cen,r_per,config,res):### ------------------> résoluti
  u=Function(V)
  solve(a==L,u)
  ## Annulation de la valeur moyenne
- if config=='2sph':
-  porosity=1-(4/3)*pi*(r_cen**3+r_per**3)
- elif config=='cylsph':
-  porosity=1-(4/3)*pi*r_cen**3-pi*r_per**2
- moy_u_x=assemble(u[0]*dx)/porosity
- moy_u_y=assemble(u[1]*dx)/porosity
- moy_u_z=assemble(u[2]*dx)/porosity
- print("Valeur moyenne de u :",[moy_u_x,moy_u_y,moy_u_z])
- moy=Function(V)
- moy=Constant((moy_u_x,moy_u_y,moy_u_z))
- chi=project(u-moy,V)
+ if moy_null:
+  print("Annulation de la moyenne")
+  if config=='2sph':
+   porosity=1-(4/3)*pi*(r_cen**3+r_per**3)
+  elif config=='cylsph':
+   porosity=1-(4/3)*pi*r_cen**3-pi*r_per**2
+  moy_u_x=assemble(u[0]*dx)/porosity
+  moy_u_y=assemble(u[1]*dx)/porosity
+  moy_u_z=assemble(u[2]*dx)/porosity
+  #print("Valeur moyenne de u :",[moy_u_x,moy_u_y,moy_u_z])
+  moy=Function(V)
+  moy=Constant((moy_u_x,moy_u_y,moy_u_z))
+  chi=project(u-moy,V)
+ else:
+  print("Valeur moyenne inchangée")
+  chi=u
  # Résultat : snapshot
  return(chi)
 

@@ -99,18 +99,18 @@ def snap_compl_ray(rho_par):
  ## deux sphères ##
  if geo_p=='ray':
   rho=0.05*rho_par
-  chi_compl=snapshot_compl_per(rho,r_v_0,config,res_gmsh)
+  chi_compl=snapshot_compl_per(rho,r_v_0,config,res_gmsh,moy_null)
  ## un cylindre et une sphère ##
  elif geo_p=='ray_sph':
   rho=0.05*rho_par
-  chi_compl=snapshot_compl_per(rho,r_c_0,config,res_gmsh)
+  chi_compl=snapshot_compl_per(rho,r_c_0,config,res_gmsh,moy_null)
  elif geo_p=='ray_cyl':
   rho=0.05*rho_par
-  chi_compl=snapshot_compl_per(r_s_0,rho,config,res_gmsh)
+  chi_compl=snapshot_compl_per(r_s_0,rho,config,res_gmsh,moy_null)
  elif geo_p=='ray_linked':
   rho=0.15+0.02*(rho_par-1)
   ray_link=link(rho)#((1/3)*(0.35**3-rho**3)+0.25**2)**(0.5)
-  chi_compl=snapshot_compl_per(rho,ray_link,config,res_gmsh)
+  chi_compl=snapshot_compl_per(rho,ray_link,config,res_gmsh,moy_null)
  ## on vectorise la fonction calculée par MEF ##
  chi_compl_v=chi_compl.vector().get_local()
  ## on renvoie un vecteur étiqueté, utilisable avec l'option 'par8' ##

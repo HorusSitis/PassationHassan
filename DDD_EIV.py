@@ -79,22 +79,22 @@ nb_modes=N_mor
 
 #mesh_dir="maillages_per/3D/"
 if config=='sph_un':
- mesh_n_name=mesh_dir+"cubesphere_periodique_triangle_"+str(int(round(100*r_nouv,2)))+"sur"+str(res_gmsh)+".xml"
+ mesh_n_name=mesh_dir+"cubesphere_periodique_triangle_"+str(int(round(100*r_nouv,2)))+"sur"+str(res_gmsh)
 elif config=='cyl_un':
- mesh_n_name=mesh_dir+"cubecylindre_periodique_triangle_"+str(int(round(100*r_nouv,2)))+"sur"+str(res_gmsh)+".xml"
+ mesh_n_name=mesh_dir+"cubecylindre_periodique_triangle_"+str(int(round(100*r_nouv,2)))+"sur"+str(res_gmsh)
 if config=='2sph':
- mesh_n_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_nouv,2)))+str(int(round(100*r_v_0,2)))+"sur"+str(res_gmsh)+".xml"
+ mesh_n_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_nouv,2)))+str(int(round(100*r_v_0,2)))+"sur"+str(res_gmsh)
 elif config=='cylsph':
  if geo_p=='ray_sph':
-  mesh_n_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_c_0,2)))+str(int(round(100*r_nouv,2)))+"sur"+str(res_gmsh)+".xml"
+  mesh_n_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_c_0,2)))+str(int(round(100*r_nouv,2)))+"sur"+str(res_gmsh)
  elif geo_p=='ray_cyl':
-  mesh_n_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_nouv,2)))+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)+".xml"
+  mesh_n_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_nouv,2)))+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)
  #elif geo_p=='ray_linked':
 
 #print("Maillage fixe : ",mesh_f_name)
 #print(mesh_n_name)
 
-mesh_nouv=Mesh(mesh_n_name)
+mesh_nouv=Mesh(mesh_n_name+".xml")
 
 V_nouv=VectorFunctionSpace(mesh_nouv, "P", 2, constrained_domain=PeriodicBoundary())
 
@@ -168,7 +168,7 @@ start=time.time()
 if config=='sph_un' or config=='cyl_un':
  Coeff=calc_Ab_3D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,cen_snap_ray,nb_modes,config)
 else:
- Coeff=calc_Ab_compl_3D(V_nouv,mesh_nouv,Phi_nouv_v,nb_modes)
+ Coeff=calc_Ab_compl_3D(mesh_n_name,Phi_nouv_v,nb_modes)
 #sys.exit("solveur ROM éxécuté pour des inclusions multiples")
 A=Coeff[0]
 b=Coeff[1]
@@ -268,17 +268,17 @@ start=time.time()
 
 #res=20
 if config=='sph_un':
- chi_nouv=snapshot_sph_per(cen_snap_ray,r_nouv,res)
+ chi_nouv=snapshot_sph_per(cen_snap_ray,r_nouv,res,moy_null)
 elif config=='cyl_un':
- chi_nouv=snapshot_cyl_per(top_snap_ray,r_nouv,res)
+ chi_nouv=snapshot_cyl_per(top_snap_ray,r_nouv,res,moy_null)
 elif config=='2sph':
  if geo_p=='ray':
-  chi_nouv=snapshot_compl_per(r_nouv,r_v_0,config,res_gmsh)
+  chi_nouv=snapshot_compl_per(r_nouv,r_v_0,config,res_gmsh,moy_null)
 elif config=='cylsph':
  if geo_p=='ray_sph':
-  chi_nouv=snapshot_compl_per(r_nouv,r_c_0,config,res_gmsh)
+  chi_nouv=snapshot_compl_per(r_nouv,r_c_0,config,res_gmsh,moy_null)
  elif geo_p=='ray_cyl':
-  chi_nouv=snapshot_compl_per(r_s_0,r_nouv,config,res_gmsh)
+  chi_nouv=snapshot_compl_per(r_s_0,r_nouv,config,res_gmsh,moy_null)
 
 ## Exploitation du champ ainsi obtenu
 rho=r_nouv
