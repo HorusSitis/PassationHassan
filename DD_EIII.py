@@ -29,7 +29,7 @@ nb_noeuds = V_fixe.dim()
 
 ## Chargement de la marice des snapshots
 
-u_name=test_snap+'Usnap_'+dom_fixe+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
+u_name='Usnap_'+dom_fixe+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
 print(repertoire_parent+u_name)
 
 with sh.open(repertoire_parent+u_name) as u_loa:
