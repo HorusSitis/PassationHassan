@@ -19,6 +19,20 @@ xsup=1.0
 ysup=1.0
 zsup=1.0
 
+dimension=3
+
+class PeriodicBoundary(SubDomain):
+ # Left boundary is "target domain" G
+ def inside(self, x, on_boundary):
+  return on_boundary and not(near(x[0],xsup,tol) or near(x[1],ysup,tol) or near(x[2],zsup,tol))
+ # Map right boundary (H) to left boundary (G)
+ def map(self, x, y):
+  for i in range(dimension):
+   if near(x[i],1.0,tol):
+    y[i]=0.0
+   else:
+    y[i]=x[i]
+
 #########################################
 ####Matrice de Corrélation temporelle####
 #########################################
@@ -189,7 +203,7 @@ def calc_Ab_3D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,origin,nb_modes,config):
   b[i]=assemble(dot(normale,phi_nouv_i)*ds(num_front_inc))
  return([A,b])
 
-### Valable en toutes dimensions ###
+### Valable en dimension 2 ###
 
 def calc_Ab_compl(V_nouv,mesh_nouv,Phi_nouv_v,nb_modes,test_snap):
  A=np.zeros((nb_modes,nb_modes))
@@ -233,7 +247,11 @@ def calc_Ab_compl(V_nouv,mesh_nouv,Phi_nouv_v,nb_modes,test_snap):
 
 ## Dimension 3 : même algorithme ##
 
-def calc_Ab_compl_3D(V_nouv,mesh_nouv,Phi_nouv_v,nb_modes):#,test_snap):
+def calc_Ab_compl_3D(mesh_n_name,Phi_nouv_v,nb_modes):
+ ## Maillage et espace de fonctions test, depuis le répertoire PassationHassan
+ mesh_nouv=Mesh(mesh_n_name+".xml")
+ V_nouv=VectorFunctionSpace(mesh_nouv, "P", 2, constrained_domain=PeriodicBoundary())
+ ## Matrice de résultats, initialisées à 0
  A=np.zeros((nb_modes,nb_modes))
  b=np.zeros(nb_modes)
  ## Fonctions à définir pour calculer les coefficients des deux tenseurs, qui dépendent de la métrique de l'espace des fonctions test
@@ -247,18 +265,18 @@ def calc_Ab_compl_3D(V_nouv,mesh_nouv,Phi_nouv_v,nb_modes):#,test_snap):
    # On calcule le coefficient Aki
    A[k,i]=assemble(tr(dot((grad(phi_nouv_k)).T, grad(phi_nouv_i)))*dx)
  ## On définit la bordure du domaine, sur laquelle intégrer le second membre "L" de l'équation en dimension finie
- boundaries = MeshFunction("size_t", mesh_nouv, mesh_nouv.topology().dim()-1)
- #boundaries = MeshFunction('size_t', mesh, mesh_name+"_facet_region"+".xml")
+ #boundaries = MeshFunction("size_t", mesh_nouv, mesh_nouv.topology().dim()-1)
+ boundaries = MeshFunction('size_t', mesh_nouv, mesh_n_name+"_facet_region"+".xml")
  ds = Measure("ds")(subdomain_data=boundaries)
  ## Marquage des bordures pour la condition de Neumann
- num_front_inc=1
- class SolidBoundary(SubDomain):
-  def inside(self, x, on_boundary):
-   return on_boundary and not(near(x[0],xinf,tol) or near(x[0],xsup,tol) or near(x[1],yinf,tol) or near(x[1],ysup,tol) or near(x[2],zinf,tol) or near(x[2],zsup,tol))
- Gamma_sf = SolidBoundary()
+ num_front_inc=1700#1 avec SolidBoundary
+ #class SolidBoundary(SubDomain):
+ # def inside(self, x, on_boundary):
+ #  return on_boundary and not(near(x[0],xinf,tol) or near(x[0],xsup,tol) or near(x[1],yinf,tol) or near(x[1],ysup,tol) or near(x[2],zinf,tol) or near(x[2],zsup,tol))
+ #Gamma_sf = SolidBoundary()
  #print('Gamma sf ne coupe pas le bord du cube')
- boundaries.set_all(0)
- Gamma_sf.mark(boundaries, 1)
+ #boundaries.set_all(0)
+ #Gamma_sf.mark(boundaries, 1)
  ## On intègre les vecteurs POD pour obtenir les coefficients du modèle réduit
  normale=FacetNormal(mesh_nouv)
  # boucle pour le calcul du second membre du problème linéaire MOR
