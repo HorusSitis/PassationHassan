@@ -106,7 +106,7 @@ def extra_snap(n):
     r_c=r
     mesh_name=mesh_prefix+str(int(round(100*r_c,2)))+str(int(round(100*r_s,2)))+"sur"+str(res)+".xml"
  # quelle que soit la configuration
- print(mesh_name)
+ #print(mesh_name)
  mesh=Mesh(mesh_name)
  V_n=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
  chi_n=Function(V_n)
@@ -115,17 +115,6 @@ def extra_snap(n):
  chi_n.set_allow_extrapolation(True)
  chi_n_prime=interpolate(chi_n,V_fixe)
  # vérification sur chi_n
- plot(chi_n_prime, linewidth=0.2)#_prime)
- plt.title("Snapshot "+str(n),fontsize=40)
- if fig_todo=='aff':
-  plt.show()
- plt.close()
- ###
- T_chi=np.zeros((3,3))
- for k in range(0,3):
-  for l in range(0,3):
-   T_chi[k,l]=assemble(grad(chi_n_prime)[k,l]*dx)
- #print('Tchi :',T_chi)
  ###
  ## on range le snapshot dans une liste
  #list_snap.append(chi_n_prime)
@@ -159,7 +148,7 @@ else:
   Usnap = u_loa["maliste"]
 
 
-print(Usnap[0:5,0:5])
+#print(Usnap[0:5,0:5])
 #sys.exit("attendons un peu pour les représentations graphiques post-traitement")
 # Représentations graphiques
 

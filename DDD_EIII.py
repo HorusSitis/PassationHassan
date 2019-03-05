@@ -85,11 +85,11 @@ with sh.open(repertoire_parent+u_name) as u_loa:
 
 #
 ## matrice de corrélation
-print(Usnap[0:5,0:5])
+#print(Usnap[0:5,0:5])
 C=mat_corr_temp(V_fixe,Nsnap,Usnap)
 B=C-C.T
-print(B[0:10,0:10])
-print(C[0:5,0:5])
+#print(B[0:10,0:10])
+#print(C[0:5,0:5])
 #
 ## Calcul des coefficients aléatoires et la base POD
 vp_A_phi=mat_a_mat_phi(Nsnap,Usnap,C,V_fixe,'L2')
@@ -101,7 +101,7 @@ Phi_prime_v=vp_A_phi[2]
 #
 ## Sortie du spectre de la matrice des snapshots, qui doit servir à choisir la taille du modèle réduit
 #
-print(val_propres)
+print("Valeurs propres POD :",val_propres)
 #res, res_fixe=20 : énergie [71%, 24%, 5%, 0.37%, 0.058%, 0%, 0%, 0%]
 
 #plot()
