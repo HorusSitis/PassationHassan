@@ -48,34 +48,35 @@ from matplotlib.patches import Circle, PathPatch
 E_=False
 E_lL=False
 
-EI=False
-snap_done=True
+EI=True
+snap_done=False
 EII=False
-exsnap_done=True
+exsnap_done=False
 
 EIII=False
-EIV=True
+EIV=False
 
 
 
 # nom de l'appareil utilisé pour générer les données enregistrées
-computer='MECALAC_29x8'#'T1700_35x8'#
+computer='T1700_35x8'#'MECALAC_29x8'#
 
 # paramètres pour l'éxécution des étapes : affichage, tests de périodicité etc
 
-npas_err=20
+
 fig_todo='save'
 typ_msh='gms'#''
 D_k=1.0
 Nsnap=8
 npas_err=20
 
-moy_null=True
+typ_sol="bic_cyr"#"default"#seulement si res=10##
+#moy_null=True
 
 ordo='Ordr'#'Nordr'
 # apprentissage : calcul parallèle ou séquentiel, prise en compte de la résolution
 
-gen_snap='par8'#'seq'#''seq_par'#
+gen_snap='seq'#'par8'#''seq_par'#
 
 # répertoire pour les résultats
 
@@ -90,12 +91,12 @@ parallelize=True
 
 # Choix de la résolution du maillage : nombre de noeuds par côté du cube
 
-res_gmsh=10
+res_gmsh=50
 
 if typ_msh=='gms':
  res=res_gmsh
 
-config='cylsph'#'2sph'#'cyl_un'#'sph_un'#
+config='sph_un'#'cylsph'#'2sph'#'cyl_un'#
 
 ### inclusions simples
 if config=='sph_un':

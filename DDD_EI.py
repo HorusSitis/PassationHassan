@@ -43,7 +43,7 @@ class PeriodicBoundary(SubDomain):
 #if geo_p=='ray':
 cen_snap_ray=[0.5,0.5,0.5]
 def snap_sph_ray(r_par):
- chi_r=snapshot_sph_per(cen_snap_ray,0.05*r_par,res_gmsh)
+ chi_r=snapshot_sph_per(cen_snap_ray,0.05*r_par,res_gmsh,typ_sol)
  chi_r_v=chi_r.vector().get_local()
  return([r_par,chi_r_v])
 
@@ -62,7 +62,7 @@ def snap_sph_cen(c_par):
 #if geo_p=='ray':
 axe_snap_ray=[0.5,0.5]
 def snap_cyl_ray(r_par):
- chi_r=snapshot_cyl_per(axe_snap_ray,0.05*r_par,res_gmsh)
+ chi_r=snapshot_cyl_per(axe_snap_ray,0.05*r_par,res_gmsh,typ_sol)
  chi_r_v=chi_r.vector().get_local()
  return([r_par,chi_r_v])
 
@@ -295,5 +295,5 @@ for n in range(1,1+Nsnap):
   for j in range(i+1,3):
    if abs(Dhom_k[i,j])>mod_ndiag:
     mod_ndiag=abs(Dhom_k[i,j])
- print("Anisotropie : ",mod_ndiag/mod_diag)
+ #print("Anisotropie : ",mod_ndiag/mod_diag)
 #
