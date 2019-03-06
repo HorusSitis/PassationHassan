@@ -123,7 +123,7 @@ def creer_maill_cyl(top,r,slices_cyl,res):#valable quel que soit la position de 
 
 ############################# Pour créer des snapshots, inclusion circulaire périodique unique #############################
 
-def snapshot_sph_per(cen,r,res,moy_null):
+def snapshot_sph_per(cen,r,res,typ_sol):
  c_x,c_y,c_z=cen[0],cen[1],cen[2]
  if typ_msh=='gms':
   #print("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml")
@@ -160,22 +160,39 @@ def snapshot_sph_per(cen,r,res,moy_null):
  a=tr(dot((grad(u)).T, grad(v)))*dx
  L=-dot(normale,v)*ds(num_sphere)
  ### Résolution
- u=Function(V)
- solve(a==L,u)
+ if typ_sol=='default':
+  solve(a==L,u)
+ elif typ_sol=='bic_cyr':
+  u=Function(V)
+  solver_correction = KrylovSolver("bicgstab", "amg")
+  solver_correction.parameters["absolute_tolerance"] = 1e-6
+  solver_correction.parameters["relative_tolerance"] = 1e-6
+  solver_correction.parameters["maximum_iterations"] = 5000
+  solver_correction.parameters["error_on_nonconvergence"]= True
+  solver_correction.parameters["monitor_convergence"] = True
+  solver_correction.parameters["report"] = True
+  AA=assemble(a)
+  LL=assemble(L)
+  solver_correction.solve(AA,u.vector(),LL)
  ## Annulation de la valeur moyenne
- if moy_null:
-  moy_u_x=assemble(u[0]*dx)/(1-4/3*pi*r**3)
-  moy_u_y=assemble(u[1]*dx)/(1-4/3*pi*r**3)
-  moy_u_z=assemble(u[2]*dx)/(1-4/3*pi*r**3)
-  moy=Function(V)
-  moy=Constant((moy_u_x,moy_u_y,moy_u_z))
-  chi=project(u-moy,V)
- else:
-  chi=u
+ porosity=1-(4/3)*pi*r**3
+ moy_u_x=assemble(u[0]*dx)/porosity
+ moy_u_y=assemble(u[1]*dx)/porosity
+ moy_u_z=assemble(u[2]*dx)/porosity
+ moy=Function(V)
+ moy=Constant((moy_u_x,moy_u_y,moy_u_z))
+ print("Valeur moyenne de u :",[moy_u_x,moy_u_y,moy_u_z])
+ moy_V=interpolate(moy,V)
+ moy_Vv=moy_V.vector().get_local()
+ u_v=u.vector().get_local()
+ chi_v=u_v-moy_Vv
+ chi=Function(V)
+ chi.vector().set_local(chi_v)
+ chi=u
  # Résultat : snapshot
  return(chi)
 
-def snapshot_cyl_per(top,r,res,moy_null):### ------------------> résolution : avec gmsh
+def snapshot_cyl_per(top,r,res,typ_sol):### ------------------> résolution : avec gmsh
  t_x,t_z=top[0],top[1]
  mesh_name="maillages_per/3D/cubecylindre_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml"
  #print(mesh_name)
@@ -208,19 +225,35 @@ def snapshot_cyl_per(top,r,res,moy_null):### ------------------> résolution : a
  a=tr(dot((grad(u)).T, grad(v)))*dx
  L=-dot(normale,v)*ds(num_cyl)
  ### Résolution
- u=Function(V)
- solve(a==L,u)
- if moy_null:
-  ## Annulation de la valeur moyenne
-  moy_u_x=assemble(u[0]*dx)/(1-pi*r**2)
-  moy_u_y=assemble(u[1]*dx)/(1-pi*r**2)
-  moy_u_z=assemble(u[2]*dx)/(1-pi*r**2)
-  #print("Valeur moyenne de u :",[moy_u_x,moy_u_y,moy_u_z])
-  moy=Function(V)
-  moy=Constant((moy_u_x,moy_u_y,moy_u_z))
-  chi=project(u-moy,V)
- else:
-  chi=u
+ if typ_sol=='default':
+  solve(a==L,u)
+ elif typ_sol=='bic_cyr':
+  u=Function(V)
+  solver_correction = KrylovSolver("bicgstab", "amg")
+  solver_correction.parameters["absolute_tolerance"] = 1e-6
+  solver_correction.parameters["relative_tolerance"] = 1e-6
+  solver_correction.parameters["maximum_iterations"] = 5000
+  solver_correction.parameters["error_on_nonconvergence"]= True
+  solver_correction.parameters["monitor_convergence"] = True
+  solver_correction.parameters["report"] = True
+  AA=assemble(a)
+  LL=assemble(L)
+  solver_correction.solve(AA,u.vector(),LL)
+ ## Annulation de la valeur moyenne
+ porosity=1-pi*r**2
+ moy_u_x=assemble(u[0]*dx)/porosity
+ moy_u_y=assemble(u[1]*dx)/porosity
+ moy_u_z=assemble(u[2]*dx)/porosity
+ moy=Function(V)
+ moy=Constant((moy_u_x,moy_u_y,moy_u_z))
+ print("Valeur moyenne de u :",[moy_u_x,moy_u_y,moy_u_z])
+ moy_V=interpolate(moy,V)
+ moy_Vv=moy_V.vector().get_local()
+ u_v=u.vector().get_local()
+ chi_v=u_v-moy_Vv
+ chi=Function(V)
+ chi.vector().set_local(chi_v)
+ chi=u
  # Résultat : snapshot
  return(chi)
 
@@ -254,22 +287,19 @@ def snapshot_compl_per(r_cen,r_per,config,res,moy_null):### ------------------> 
  u=Function(V)
  solve(a==L,u)
  ## Annulation de la valeur moyenne
- if moy_null:
-  print("Annulation de la moyenne")
-  if config=='2sph':
-   porosity=1-(4/3)*pi*(r_cen**3+r_per**3)
-  elif config=='cylsph':
-   porosity=1-(4/3)*pi*r_cen**3-pi*r_per**2
-  moy_u_x=assemble(u[0]*dx)/porosity
-  moy_u_y=assemble(u[1]*dx)/porosity
-  moy_u_z=assemble(u[2]*dx)/porosity
-  #print("Valeur moyenne de u :",[moy_u_x,moy_u_y,moy_u_z])
-  moy=Function(V)
-  moy=Constant((moy_u_x,moy_u_y,moy_u_z))
-  chi=project(u-moy,V)
- else:
-  print("Valeur moyenne inchangée")
-  chi=u
+ moy_u_x=assemble(u[0]*dx)/porosity
+ moy_u_y=assemble(u[1]*dx)/porosity
+ moy_u_z=assemble(u[2]*dx)/porosity
+ moy=Function(V)
+ moy=Constant((moy_u_x,moy_u_y,moy_u_z))
+ print("Valeur moyenne de u :",[moy_u_x,moy_u_y,moy_u_z])
+ moy_V=interpolate(moy,V)
+ moy_Vv=moy_V.vector().get_local()
+ u_v=u.vector().get_local()
+ chi_v=u_v-moy_Vv
+ chi=Function(V)
+ chi.vector().set_local(chi_v)
+ chi=u
  # Résultat : snapshot
  return(chi)
 
