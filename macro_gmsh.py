@@ -9,22 +9,22 @@ import time
 
 ### Options
 
-dimension=2
+dimension=3
 fig_todo=''
 
 # Génération de maillages : apprentissage, fixe et test
-appr=False
+appr=True
 fixe=False
-test=True
+test=False
 
 
 Nsnap=8
 i_end=1#2 pour une inclusion simple si l'on veut un rayon de 0.45#
 
 res_name=True
-res=10
+#res=10
 #res=20
-#res=50
+res=50
 #res=100
 
 ## configurations en dimension 2
@@ -38,9 +38,9 @@ if dimension==2:
 ## configurations en dimension 3
 if dimension==3:
  #config='sph_un'
- #config='cyl_un'
+ config='cyl_un'
  #config='2sph'
- config='cylsph'
+ #config='cylsph'
  if config=='2sph':
   geo_p='ray'
  elif config=='cylsph':
@@ -75,7 +75,7 @@ elif dimension==3:
   list_test=[0.11,0.22,0.33,0.44]
   mesh_prefix='cube'+config+'_periodique_triangle'
 
-dom_fixe="solid"#"am"#
+dom_fixe="am"#"solid"#
 
 ### On choisit un répertoire
 
@@ -116,7 +116,8 @@ if appr:
   print(mesh_name)
   ## Visualisation du fichier .geo
   print("gmsh "+mesh_name+".geo")
-  os.system("gmsh "+mesh_name+".geo")
+  if fig_todo=='aff':
+   os.system("gmsh "+mesh_name+".geo")
   ## Conversion en .msh
   os.system("gmsh -"+str(dimension)+" "+mesh_name+".geo")
   ## Affichage du maillage obtenu
