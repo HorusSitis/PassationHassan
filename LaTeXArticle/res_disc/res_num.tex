@@ -514,5 +514,110 @@ $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err
 \subsubsection{One sphere and one cylinder : $\rho$ is the radius of the cylinder}
 
 
+\subsubsection{Refining mesh resolution : a single spherical inclusion}
+
+\begin{figure}[H]%[!p]
+%
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_1_sur8sph_un_rayres20.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_2_sur8sph_un_rayres20.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_3_sur8sph_un_rayres20.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_4_sur8sph_un_rayres20.png}%
+\\
+\hline
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_5_sur8sph_un_rayres20.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_6_sur8sph_un_rayres20.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_7_sur8sph_un_rayres20.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_8_sur8sph_un_rayres20.png}%
+\\
+\hline
+\end{tabular}
+\end{center}
+\caption{$8$ training solutions}
+%
+\end{figure}
+
+\begin{figure}[H]%{Results}
+%
+\begin{center}
+\begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
+\hline
+$\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
+\hline
+0,11&0,&0,&0,&2,28s&0,\%&s&s&s&136002\\
+\hline
+0,22&0,&0,&0,&1,83s&0,\%&s&s&s&126192\\
+\hline
+0,33&0,&0,&0,&1,95s&0,\%&s&s&s&120318\\
+\hline
+0,44&0,&0,&0,&1,95s&0,\%&s&s&s&96503\\
+\hline
+\end{tabular}
+\end{center}
+\caption{$N_{rom}=4$}
+%
+\end{figure}
+
+\begin{figure}[H]%[!p]
+%
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_1_sur8sph_un_rayres50.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_2_sur8sph_un_rayres50.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_3_sur8sph_un_rayres50.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_4_sur8sph_un_rayres50.png}%
+\\
+\hline
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_5_sur8sph_un_rayres50.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_6_sur8sph_un_rayres50.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_7_sur8sph_un_rayres50.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_8_sur8sph_un_rayres50.png}%
+\\
+\hline
+\end{tabular}
+\end{center}
+\caption{$8$ training solutions}
+%
+\end{figure}
+
+\begin{figure}[H]%{Results}
+%
+\begin{center}
+\begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
+\hline
+$\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
+\hline
+0,11&0,&0,&0,&s&0,\%&s&s&s&1 \ 910 \ 451\\
+\hline
+0,22&0,&0,&0,&s&0,\%&s&s&s&1 \ 784 \ 610\\
+\hline
+0,33&0,&0,&0,&s&0,\%&s&s&s&1 \ 705 \ 461\\
+\hline
+0,44&0,&0,&0,&s&0,\%&s&s&s&1 \ 311 \ 225\\
+\hline
+\end{tabular}
+\end{center}
+\caption{$N_{rom}=3$}
+%
+\end{figure}
+
+
+
+
 
 
