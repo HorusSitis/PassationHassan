@@ -10,11 +10,11 @@ import time
 ### Options
 
 dimension=3
-fig_todo=''
+fig_todo='aff'
 
 # Génération de maillages : apprentissage, fixe et test
-appr=True
-fixe=False
+appr=False
+fixe=True
 test=False
 
 
@@ -37,8 +37,8 @@ if dimension==2:
 
 ## configurations en dimension 3
 if dimension==3:
- #config='sph_un'
- config='cyl_un'
+ config='sph_un'
+ #config='cyl_un'
  #config='2sph'
  #config='cylsph'
  if config=='2sph':
@@ -128,7 +128,8 @@ if appr:
 elif fixe:
  if dimension==3:
   if dom_fixe=="am":
-   mesh_name=mesh_prefix+"_"+dom_fixe+"_sur"+str(res)+"_fixe"
+   mesh_name="cube_periodique_triangle"+"_"+dom_fixe+"_sur"+str(res)+"_fixe"
+   #mesh_name=mesh_prefix+"_"+dom_fixe+"_sur"+str(res)+"_fixe"
   elif dom_fixe=="0001":
    mesh_name=mesh_prefix+"_sur"+str(res)+"_"+dom_fixe+"fixe"
   elif dom_fixe=="solid":
