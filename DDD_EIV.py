@@ -268,9 +268,9 @@ start=time.time()
 
 #res=20
 if config=='sph_un':
- chi_nouv=snapshot_sph_per(cen_snap_ray,r_nouv,res,moy_null)
+ chi_nouv=snapshot_sph_per(cen_snap_ray,r_nouv,res,typ_sol)
 elif config=='cyl_un':
- chi_nouv=snapshot_cyl_per(top_snap_ray,r_nouv,res,moy_null)
+ chi_nouv=snapshot_cyl_per(top_snap_ray,r_nouv,res,typ_sol)
 elif config=='2sph':
  if geo_p=='ray':
   chi_nouv=snapshot_compl_per(r_nouv,r_v_0,config,res_gmsh,moy_null)
