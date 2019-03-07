@@ -196,6 +196,14 @@ else :
 
 # Exploitation des solution du problème aux éléments finis
 res=res_gmsh
+
+if res==10:
+ lw=0.27
+elif res==20:
+ lw=0.15
+elif res==50:
+ lw=0.01
+
 for n in range(1,1+Nsnap):
  # Extraction du snapshot de rang n
  chi_n_v=list_chi_v[n-1]
@@ -239,7 +247,7 @@ for n in range(1,1+Nsnap):
  chi_n=Function(V_n)
  chi_n.vector().set_local(chi_n_v)
  # Représentation graphique
- plot(chi_n, linewidth=0.27)#35)
+ plot(chi_n, linewidth=lw)
  plt.tight_layout(pad=0)
  if r<0.1:
   plt.title("Rho = 0,0"+str(int(round(100*r,2))), fontsize=40)
