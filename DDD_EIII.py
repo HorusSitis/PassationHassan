@@ -209,6 +209,6 @@ while ener_pour_cumul[i]<seuil_ener or i==0:
 Nseuil=i
 
 
-print(str(seuil_ener)+':')
+print('Energie '+str(seuil_ener)+' pourcent, '+conf_mess+', '+geo_mess+' , résolution '+str(res_gmsh)+' :')
 print(Nseuil)
  
