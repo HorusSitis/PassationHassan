@@ -15,6 +15,13 @@ zsup=1.0
 
 dimension=3
 
+if res_gmsh==10:
+ lw=0.27
+elif res_gmsh==20:
+ lw=0.15
+elif res_gmsh==50:
+ lw=0.01
+
 r_s_0=0.15
 r_v_0=0.15
 r_c_0=0.15
@@ -194,7 +201,7 @@ chi_nouv_v=np.dot(Phi_nouv_v,a_nouv)
 chi_nouv=Function(V_nouv)
 chi_nouv.vector().set_local(chi_nouv_v)
 
-plot(chi_nouv, linewidth=0.55)
+plot(chi_nouv, linewidth=lw)
 plt.title("Rho = 0,"+str(int(round(100*r_nouv,2))),fontsize=40)
 if fig_todo=='aff':
  plt.show()
@@ -273,18 +280,18 @@ elif config=='cyl_un':
  chi_nouv=snapshot_cyl_per(top_snap_ray,r_nouv,res,typ_sol)
 elif config=='2sph':
  if geo_p=='ray':
-  chi_nouv=snapshot_compl_per(r_nouv,r_v_0,config,res_gmsh,moy_null)
+  chi_nouv=snapshot_compl_per(r_nouv,r_v_0,config,res_gmsh,typ_sol)
 elif config=='cylsph':
  if geo_p=='ray_sph':
-  chi_nouv=snapshot_compl_per(r_nouv,r_c_0,config,res_gmsh,moy_null)
+  chi_nouv=snapshot_compl_per(r_nouv,r_c_0,config,res_gmsh,typ_sol)
  elif geo_p=='ray_cyl':
-  chi_nouv=snapshot_compl_per(r_s_0,r_nouv,config,res_gmsh,moy_null)
+  chi_nouv=snapshot_compl_per(r_s_0,r_nouv,config,res_gmsh,typ_sol)
 
 ## Exploitation du champ ainsi obtenu
 rho=r_nouv
 r=r_nouv
 
-plot(chi_nouv, linewidth=0.55)
+plot(chi_nouv, linewidth=lw)
 plt.title("Rho = 0,"+str(int(round(100*r_nouv,2))),fontsize=40)
 if fig_todo=='aff':
  plt.show()
