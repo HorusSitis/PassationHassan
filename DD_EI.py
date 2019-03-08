@@ -284,3 +284,6 @@ for n in range(1,1+Nsnap):#attention le rayon d'un cercle doit être non nul
     mod_ndiag=abs(Dhom_k[i,j])
  print("Anisotropie I- : ",max(abs(Dhom_k[0,0]),abs(Dhom_k[1,1]))/mod_diag-1)
  print("Anisotropie II- : ",mod_ndiag/mod_diag)
+ # Affichage des composantes scalaires : solution
+ if config=='cer_un' and geo_p=='ray':
+  fig_chi(cen_snap_ray,r,chi_n,fig_todo)

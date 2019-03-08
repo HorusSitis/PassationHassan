@@ -140,5 +140,8 @@ for n in range(1,1+Nsnap):
  # Affichage des valeurs et erreurs de la solution périodique, quelle que soit la configuration
  #err_per_ind_01(chi_prime_n,cen,r,npas_err)
  #err_per_gr(cen,r,chi_prime_n,npas_err,fig_todo)
+ # Affichage des composantes scalaires : interpolée
+ if config=='cer_un' and geo_p=='ray':
+  fig_chi(cen_snap_ray,r,chi_prime_n,fig_todo)
 
 
