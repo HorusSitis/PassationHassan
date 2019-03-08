@@ -257,7 +257,7 @@ def snapshot_cyl_per(top,r,res,typ_sol):### ------------------> résolution : av
  # Résultat : snapshot
  return(chi)
 
-def snapshot_compl_per(r_cen,r_per,config,res,moy_null):### ------------------> résolution : avec gmsh
+def snapshot_compl_per(r_cen,r_per,config,res,typ_sol):### ------------------> résolution : avec gmsh
  ##
  mesh_prefix="maillages_per/3D/"
  if config=='2sph':
@@ -284,9 +284,25 @@ def snapshot_compl_per(r_cen,r_per,config,res,moy_null):### ------------------> 
  a=tr(dot((grad(u)).T, grad(v)))*dx
  L=-dot(normale,v)*ds(num_solid_boundary)
  ### Résolution
- u=Function(V)
- solve(a==L,u)
+ if typ_sol=='default':
+  solve(a==L,u)
+ elif typ_sol=='bic_cyr':
+  u=Function(V)
+  solver_correction = KrylovSolver("bicgstab", "amg")
+  solver_correction.parameters["absolute_tolerance"] = 1e-6
+  solver_correction.parameters["relative_tolerance"] = 1e-6
+  solver_correction.parameters["maximum_iterations"] = 5000
+  solver_correction.parameters["error_on_nonconvergence"]= True
+  solver_correction.parameters["monitor_convergence"] = True
+  solver_correction.parameters["report"] = True
+  AA=assemble(a)
+  LL=assemble(L)
+  solver_correction.solve(AA,u.vector(),LL)
  ## Annulation de la valeur moyenne
+ if config=='2sph':
+  porosity=1-(4/3)*pi*(r_cen**3+r_per**3)
+ elif config=='cylsph':
+  porosity=1-(4/3)*pi*r_cen**3-pi*r_per**2
  moy_u_x=assemble(u[0]*dx)/porosity
  moy_u_y=assemble(u[1]*dx)/porosity
  moy_u_z=assemble(u[2]*dx)/porosity
