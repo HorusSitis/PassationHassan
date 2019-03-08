@@ -21,6 +21,13 @@ r_min=0.05
 
 dimension=3
 
+if res_gmsh==10:
+ lw=0.27
+elif res_gmsh==20:
+ lw=0.15
+elif res_gmsh==50:
+ lw=0.01
+
 class PeriodicBoundary(SubDomain):
  # Left boundary is "target domain" G
  def inside(self, x, on_boundary):
@@ -62,7 +69,7 @@ elif dom_fixe=="ray_min":
   elif geo_p=='ray_cyl':
    mesh_f_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_min,2)))+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)+".xml"
 
-print(mesh_f_name)
+print("Maillage fixe :",mesh_f_name)
 mesh_fixe=Mesh(mesh_f_name)
 
 # fonctions test du domaine fixe
@@ -163,8 +170,8 @@ for n in range(1,1+Nsnap):
 for n in range(1,1+Nsnap):
  chi_prime_n=list_snap[n-1]
  # Affichage des valeurs de la solution interpolée
- plot(chi_prime_n, linewidth=0.2)
- plt.title("Snapshot "+str(n),fontsize=40)
+ plot(chi_prime_n, linewidth=lw)
+ plt.title("Snapshot "+str(n),fontsize=30)
  if fig_todo=='aff':
   plt.show()
  else:
@@ -174,14 +181,28 @@ for n in range(1,1+Nsnap):
  #err_per_ind_01(chi_prime_n,cen,r,npas_err)
  r=n*0.05
  ### Débuggage : cylindre et sphère ###
- if config=='cylsph':
-  if geo_p=='ray_sph':
+ if config=='cylsph' or config=='2sph':
+  if geo_p=='ray':
+   r_cen=r
+   r_per=r_v_0
+   por=1-4/3*pi*(r_cen**3+r_per**3)
+   por_prime=4/3*pi*r_per**3
+   mesh_postfixe=str(int(round(100*r_cen,2)))+str(int(round(100*r_per,2)))+"sur"+str(res)
+  elif geo_p=='ray_sph':
    r_s=r
    r_c=r_c_0
+   por=1-4/3*pi*r_s**3-pi*r_c**2
+   por_prime=1-4/3*pi*0.05**3-pi*r_c**2
+   mesh_postfixe=str(int(round(100*r_c,2)))+str(int(round(100*r_s,2)))+"sur"+str(res)
   elif geo_p=='ray_cyl':
    r_s=r_s_0
    r_c=r
-  mesh_name="cube"+config+"_periodique_triangle_"+str(int(round(100*r_c,2)))+str(int(round(100*r_s,2)))+"sur"+str(res)
+   por=1-4/3*pi*r_s**3-pi*r_c**2
+   por_prime=1-4/3*pi*r_s**3-pi*0.05**2
+   mesh_postfixe=str(int(round(100*r_c,2)))+str(int(round(100*r_s,2)))+"sur"+str(res)
+  ##
+  mesh_name="cube"+config+"_periodique_triangle_"+mesh_postfixe
+  print("Vérification : maillage courant",mesh_name)
   mesh=Mesh("maillages_per/3D/"+mesh_name+".xml")
   ##
   V_n=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
@@ -193,12 +214,21 @@ for n in range(1,1+Nsnap):
   for k in range(0,3):
    for l in range(0,3):
     T_chi[k,l]=assemble(grad(chi_n)[k,l]*dx)
-  por=1-4/3*pi*r_s**3-pi*r_c**2
+  ##
+  T_chi_prime=np.zeros((3,3))
+  for k in range(0,3):
+   for l in range(0,3):
+    T_chi_prime[k,l]=assemble(grad(chi_prime_n)[k,l]*dx)
+  ## les deux coefficients à comparer
+  ###
   D=por*np.eye(3)
-  Dhom_kUsnap=D_k*(D+T_chi.T)
-  print('Coefficient D Usnap interpolé rayon variable '+str(int(round(100*r,2)))+' : ',Dhom_kUsnap[0,0])
-  integ=assemble(chi_n[1]*dx)
-  print('Valeur moyenne : ',integ)
+  Dhom_k_postprime=D_k*(D+T_chi.T)
+  ###
+  D_prime=por_prime*np.eye(3)
+  Dhom_k_prime=D_k*(D_prime+T_chi_prime.T)
+  ##
+  #integ=assemble(chi_n[1]*dx)
+  #print('Valeur moyenne : ',integ)
  elif config=='cyl_un':
   mesh_name="cubecylindre_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)
   mesh=Mesh("maillages_per/3D/"+mesh_name+".xml")
@@ -214,8 +244,10 @@ for n in range(1,1+Nsnap):
     T_chi[k,l]=assemble(grad(chi_n)[k,l]*dx)
   por=1-pi*r**2
   D=por*np.eye(3)
-  Dhom_kUsnap=D_k*(D+T_chi.T)
-  print('Coefficient D Usnap interpolé rayon variable '+str(int(round(100*r,2)))+' : ',Dhom_kUsnap[0,0])
+  Dhom_k_postprime=D_k*(D+T_chi.T)
+ ## pour toute configuration
+ print('Coefficient D Usnap avant interpolation '+conf_mess+', '+geo_mess+', '+str(int(round(100*r,2)))+' : ',Dhom_k_prime[0,0])
+ print('Coefficient D Usnap après interpolation '+conf_mess+', '+geo_mess+', '+str(int(round(100*r,2)))+' : ',Dhom_k_postprime[0,0])
  ###
  # Dans ce cas, les faces du cube sont entières
  ##cen=[0.5,0.5,0.5]
