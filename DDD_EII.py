@@ -181,12 +181,12 @@ for n in range(1,1+Nsnap):
  #err_per_ind_01(chi_prime_n,cen,r,npas_err)
  r=n*0.05
  ### Débuggage : cylindre et sphère ###
- if config=='cylsph' or config=='2sph':
+ if test_Dhom and (config=='cylsph' or config=='2sph'):
   if geo_p=='ray':
    r_cen=r
    r_per=r_v_0
    por=1-4/3*pi*(r_cen**3+r_per**3)
-   por_prime=4/3*pi*r_per**3
+   por_prime=1-4/3*pi*r_per**3
    mesh_postfixe=str(int(round(100*r_cen,2)))+str(int(round(100*r_per,2)))+"sur"+str(res)
   elif geo_p=='ray_sph':
    r_s=r
@@ -229,7 +229,7 @@ for n in range(1,1+Nsnap):
   ##
   #integ=assemble(chi_n[1]*dx)
   #print('Valeur moyenne : ',integ)
- elif config=='cyl_un':
+ elif test_Dhom and config=='cyl_un':
   mesh_name="cubecylindre_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)
   mesh=Mesh("maillages_per/3D/"+mesh_name+".xml")
   ##

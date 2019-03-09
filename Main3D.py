@@ -48,10 +48,11 @@ from matplotlib.patches import Circle, PathPatch
 E_=False
 E_lL=False
 
-EI=True
-snap_done=False
-EII=False
-exsnap_done=False
+EI=False
+snap_done=True
+EII=True
+exsnap_done=True
+test_Dhom=True
 
 EIII=False
 EIV=False
@@ -59,12 +60,12 @@ EIV=False
 
 
 # nom de l'appareil utilisé pour générer les données enregistrées
-computer='T1700_35x8'#'MECALAC_29x8'#
+computer='MECALAC_29x8'#'T1700_35x8'#
 
 # paramètres pour l'éxécution des étapes : affichage, tests de périodicité etc
 
 
-fig_todo='save'
+fig_todo='aff'
 typ_msh='gms'#''
 D_k=1.0
 Nsnap=8
@@ -91,12 +92,12 @@ parallelize=True
 
 # Choix de la résolution du maillage : nombre de noeuds par côté du cube
 
-res_gmsh=50
+res_gmsh=20
 
 if typ_msh=='gms':
  res=res_gmsh
 
-config='sph_un'#'cylsph'#'2sph'#'cyl_un'#
+config='2sph'#'cyl_un'#'sph_un'#'cylsph'#
 
 ### inclusions simples
 if config=='sph_un':
@@ -181,7 +182,7 @@ if EIII :
 
 N_mor=3
 moy_null=False
-r_nouv=0.44#0.33#0.22#0.11#
+r_nouv=0.11#0.44#0.33#0.22#
 
 # La mesure du temps d'éxécution doit se faire avec l'option 'save' de fig_todo
 
