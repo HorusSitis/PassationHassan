@@ -287,7 +287,7 @@ def calc_Ab_compl_3D(mesh_n_name,Phi_nouv_v,nb_modes):
 
 ## Sans interpolation : directement sur le domaine fixe
 
-
+tol_sol=0.0001
 def calc_Ab_simpl_3D_ninterpol(mesh_f_name,config,geo_p,r_nouv,Phi_prime_v,nb_modes):
  r=r_nouv
  ## Maillage et espace de fonctions test, depuis le répertoire PassationHassan
@@ -314,25 +314,23 @@ def calc_Ab_simpl_3D_ninterpol(mesh_f_name,config,geo_p,r_nouv,Phi_prime_v,nb_mo
   dxf=Measure("dx", domain=mesh_fixe, subdomain_data=subdomains)
  ## Création de l'interface solide-fluide
  if config=='sph_un':
-  origin=[0.5,0.5,0.5]
-  l_cen=[origin]
-  class inclusion_periodique(SubDomain):
+  cen=[0.5,0.5,0.5]
+  class frontiere_physique(SubDomain):
    def inside(self,x,on_boundary):
-    return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[2]-c[2]), (-r-tol, r+tol)) for c in l_cen]))
+    return between((x[0]-cen[0])**2+(x[1]-cen[1])**2+(x[2]-cen[2])**2,(r**2-tol_sol,r**2+tol_sol))
  elif config=='cyl_un':
-  origin=[0.5,0.,0.5]
-  l_axe=[origin]
+  top=[0.5,0.,0.5]
   #print(l_axe)
-  class inclusion_periodique(SubDomain):
+  class frontiere_physique(SubDomain):
    def inside(self,x,on_boundary):
-    return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_axe]) and any([between((x[2]-c[2]), (-r-tol, r+tol)) for c in l_axe]))
- Gamma_sf=inclusion_periodique()
+    return between((x[0]-top[0])**2+(x[2]-top[2])**2,(r**2-tol_sol,r**2+tol_sol))
+ Gamma_sf=frontiere_physique()
  boundaries = MeshFunction("size_t", mesh_fixe, mesh_fixe.topology().dim()-1)
  boundaries.set_all(1)
- Gamma_sf.mark(boundaries, 7)
+ Gamma_sf.mark(boundaries,1)# 7)
  ds = Measure("ds")(subdomain_data=boundaries)
  num_ff=1
- num_front_inc=7
+ num_front_inc=1#7
  normale=FacetNormal(mesh_fixe)
  ## Matrice de résultats, initialisées à 0
  A=np.zeros((nb_modes,nb_modes))
