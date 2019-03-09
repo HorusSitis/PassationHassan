@@ -247,8 +247,6 @@ for n in range(1,1+Nsnap):
   integr_k_prime=D_k*(D_prime+T_chi_prime.T)
   Dhom_k_prime=integr_k_prime*(1/por_prime)
   ##
-  #integ=assemble(chi_n[1]*dx)
-  #print('Valeur moyenne : ',integ)
  elif test_Dhom and config=='cyl_un':
   mesh_name="cubecylindre_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)
   mesh=Mesh("maillages_per/3D/"+mesh_name+".xml")
@@ -266,10 +264,62 @@ for n in range(1,1+Nsnap):
   D=por*np.eye(3)
   integr_k_postprime=D_k*(D+T_chi.T)
   Dhom_k_postprime=integr_k_postprime*(1/por_prime)#por en dimensionnel
- if test_Dhom and config!='sph_un':
-  print('Coefficient D Usnap domaine fixe '+conf_mess+', '+geo_mess+', '+str(int(round(100*r,2)))+' : ',Dhom_k_prime[0,0])
-  print('Coefficient D Usnap fixe restreint au domaine courant '+conf_mess+', '+geo_mess+', '+str(int(round(100*r,2)))+' : ',Dhom_k_restr_prime[0,0])
-  print('Coefficient D Usnap après interpolation '+conf_mess+', '+geo_mess+', '+str(int(round(100*r,2)))+' : ',Dhom_k_postprime[0,0])
+ ## ------------------------ Sphère unique, test ------------------------ ##
+ elif test_Dhom and config=='sph_un':
+  if geo_p=='ray':
+   r_cen=r
+   por=1-4/3*pi*r_cen**3
+   por_prime=1
+  ##
+  mesh_name="cubesphere_periodique_triangle_"+str(int(round(100*r_cen,2)))+"sur"+str(res)
+  print("Vérification : maillage courant",mesh_name)
+  mesh=Mesh("maillages_per/3D/"+mesh_name+".xml")
+  ##
+  V_n=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
+  chi_n=Function(V_n)
+  chi_prime_n.set_allow_extrapolation(True)
+  chi_n=interpolate(chi_prime_n,V_n)
+  ##
+  T_chi=np.zeros((3,3))
+  for k in range(0,3):
+   for l in range(0,3):
+    T_chi[k,l]=assemble(grad(chi_n)[k,l]*dx)
+  ##
+  class DomPhysFluide(SubDomain):
+   def inside(self, x, on_boundary):
+    return True if (x[0]**2+x[1]**2+x[2]**2>=r_cen**2) else False
+  dom_courant=DomPhysFluide()
+  subdomains=MeshFunction('size_t',mesh_fixe,mesh_fixe.topology().dim())
+  subdomains.set_all(1)
+  dom_courant.mark(subdomains,12829)
+  dxf=Measure("dx", domain=mesh_fixe, subdomain_data=subdomains)
+  T_chi_restr_prime=np.zeros((3,3))
+  for k in range(0,3):
+   for l in range(0,3):
+    T_chi_restr_prime[k,l]=assemble(grad(chi_prime_n)[k,l]*dxf(12829))
+  ##
+  T_chi_prime=np.zeros((3,3))
+  for k in range(0,3):
+   for l in range(0,3):
+    T_chi_prime[k,l]=assemble(grad(chi_prime_n)[k,l]*dxf)
+  ## les trois coefficients à comparer
+  ###
+  D=por*np.eye(3)
+  integr_k_postprime=D_k*(D+T_chi.T)
+  Dhom_k_postprime=integr_k_postprime*(1/por_prime)#por en dimensionnel
+  ###
+  D=por*np.eye(3)
+  integr_k_restr_prime=D_k*(D+T_chi_restr_prime.T)
+  Dhom_k_restr_prime=integr_k_restr_prime*(1/por_prime)
+  ###
+  D_prime=por_prime*np.eye(3)
+  integr_k_prime=D_k*(D_prime+T_chi_prime.T)
+  Dhom_k_prime=integr_k_prime*(1/por_prime)
+  ##
+ if test_Dhom:
+  print('Coefficient D Usnap domaine fixe '+conf_mess+', '+geo_mess+', '+str(int(round(100*r,2)))+' : ',Dhom_k_prime[0,0],'porosité',por_prime)
+  print('Coefficient D Usnap fixe restreint au domaine courant '+conf_mess+', '+geo_mess+', '+str(int(round(100*r,2)))+' : ',Dhom_k_restr_prime[0,0],'porosité',por)
+  print('Coefficient D Usnap après interpolation '+conf_mess+', '+geo_mess+', '+str(int(round(100*r,2)))+' : ',Dhom_k_postprime[0,0],'porosité',por)
  ###
  # Dans ce cas, les faces du cube sont entières
  ##cen=[0.5,0.5,0.5]
