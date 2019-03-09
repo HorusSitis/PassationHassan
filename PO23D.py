@@ -288,7 +288,8 @@ def calc_Ab_compl_3D(mesh_n_name,Phi_nouv_v,nb_modes):
 ## Sans interpolation : directement sur le domaine fixe
 
 
-def calc_Ab_simpl_3D_ninterpol(mesh_f_name,config,geo_p,r,Phi_prime_v,nb.modes):
+def calc_Ab_simpl_3D_ninterpol(mesh_f_name,config,geo_p,r_nouv,Phi_prime_v,nb_modes):
+ r=r_nouv
  ## Maillage et espace de fonctions test, depuis le répertoire PassationHassan
  mesh_fixe=Mesh(mesh_f_name)#+".xml")
  V_fixe=VectorFunctionSpace(mesh_fixe, "P", 2, constrained_domain=PeriodicBoundary())
@@ -312,13 +313,14 @@ def calc_Ab_simpl_3D_ninterpol(mesh_f_name,config,geo_p,r,Phi_prime_v,nb.modes):
   dom_courant.mark(subdomains,12829)
   dxf=Measure("dx", domain=mesh_fixe, subdomain_data=subdomains)
  ## Création de l'interface solide-fluide
- r=r_nouv
  if config=='sph_un':
+  origin=[0.5,0.5,0.5]
   l_cen=[origin]
   class inclusion_periodique(SubDomain):
    def inside(self,x,on_boundary):
     return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[2]-c[2]), (-r-tol, r+tol)) for c in l_cen]))
  elif config=='cyl_un':
+  origin=[0.5,0.,0.5]
   l_axe=[origin]
   #print(l_axe)
   class inclusion_periodique(SubDomain):
@@ -374,7 +376,7 @@ def calc_Ab_compl_3D_ninterpol(mesh_f_name,config,geo_p,r_cen,r_per,Phi_prime_v,
  elif config=='cylsph':
   class DomPhysFluide(SubDomain):
    def inside(self, x, on_boundary):
-    return True if (geo_p=='ray_sph' and (x[0]**2+x[1]**2+x[2]**2>=r_cen**2)) or (geo_p=='ray_cyl' and (x[0]**2+x[2]**2>=r_per**2 and (1-x[0])**2+x[2]**2>=r_per**2 or x[0]**2+(1-x[2])**2>=r_per**2 and (1-x[0])**2+(1-x[2])**2>=r_per**2))) else False
+    return True if ((geo_p=='ray_sph' and (x[0]**2+x[1]**2+x[2]**2>=r_cen**2)) or (geo_p=='ray_cyl' and x[0]**2+x[2]**2>=r_per**2 and (1-x[0])**2+x[2]**2>=r_per**2 and x[0]**2+(1-x[2])**2>=r_per**2 and (1-x[0])**2+(1-x[2])**2>=r_per**2)) else False
   dom_courant=DomPhysFluide()
   subdomains=MeshFunction('size_t',mesh_fixe,mesh_fixe.topology().dim())
   subdomains.set_all(1)

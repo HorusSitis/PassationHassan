@@ -115,6 +115,25 @@ V_nouv=VectorFunctionSpace(mesh_nouv, "P", 2, constrained_domain=PeriodicBoundar
 
 start=time.time()
 
+## Chargement de la base POD complète
+
+if ind_res:
+ phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+"res"+str(res)+'_'+ordo+'_'+computer
+elif ind_fixe:
+ phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+else:
+ phi_name='Phi'+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+
+#print(phi_name)
+
+with sh.open(repertoire_parent+phi_name) as phi_loa:
+ Phi_prime_v = phi_loa["maliste"]
+
+## Création de la base POD tronquée, sous forme vectorielle
+
+Phi_mor=Phi_prime_v[:,range(0,nb_modes)]
+Phi_prime_v=Phi_mor
+
 ## On écrit les deux tenseurs qui comportent les coefficients de l'équation du modèle réduit : ceux-ci dépendent des vecteurs de la base POD projetée
 
 #from PO23D import *
@@ -138,6 +157,7 @@ else:
 A=Coeff[0]
 b=Coeff[1]
 
+print('A :',A,'b :',b)
 ## On résoud le modèle réduit
 
 a_nouv=np.linalg.solve(A.T,-b)
@@ -176,14 +196,14 @@ rho=r_nouv
 
 if config=='sph_un' or config=='cyl_un':
  #err_per_ind_01(chi_n,cen,r,npas_err)
- err_per_gr(cen_snap_ray,0.05,chi_nouv,npas_err,fig_todo)
+ err_per_gr(cen_snap_ray,0.05,chi_prime_nouv,npas_err,fig_todo)
 elif config=='2sph':
- err_per_gr_compl(config,r_v_0,chi_nouv,npas_err,fig_todo)
+ err_per_gr_compl(config,r_v_0,chi_prime_nouv,npas_err,fig_todo)
 elif config=='cylsph':
  if geo_p=='ray_sph':
-  err_per_gr_compl(config,r_c_0,chi_nouv,npas_err,fig_todo)
+  err_per_gr_compl(config,r_c_0,chi_prime_nouv,npas_err,fig_todo)
  elif geo_p=='ray_cyl':
-  err_per_gr_compl(config,r_nouv,chi_nouv,npas_err,fig_todo)
+  err_per_gr_compl(config,r_nouv,chi_prime_nouv,npas_err,fig_todo)
  #elif geo_p=='ray_linked':
 
 
@@ -205,7 +225,7 @@ elif config=='2sph':
 elif config=='cylsph':
  class DomPhysFluide(SubDomain):
   def inside(self, x, on_boundary):
-   return True if (geo_p=='ray_sph' and (x[0]**2+x[1]**2+x[2]**2>=r_cen**2)) or (geo_p=='ray_cyl' and (x[0]**2+x[2]**2>=r_per**2 and (1-x[0])**2+x[2]**2>=r_per**2 or x[0]**2+(1-x[2])**2>=r_per**2 and (1-x[0])**2+(1-x[2])**2>=r_per**2))) else False
+   return True if ((geo_p=='ray_sph' and (x[0]**2+x[1]**2+x[2]**2>=r_cen**2)) or (geo_p=='ray_cyl' and x[0]**2+x[2]**2>=r_per**2 and (1-x[0])**2+x[2]**2>=r_per**2 and x[0]**2+(1-x[2])**2>=r_per**2 and (1-x[0])**2+(1-x[2])**2>=r_per**2)) else False
 dom_courant=DomPhysFluide()
 subdomains=MeshFunction('size_t',mesh_fixe,mesh_fixe.topology().dim())
 subdomains.set_all(1)
@@ -215,7 +235,7 @@ dxf=Measure("dx", domain=mesh_fixe, subdomain_data=subdomains)
 T_chi=np.zeros((3,3))
 for k in range(0,3):
  for l in range(0,3):
-  T_chi[k,l]=assemble(grad(chi_nouv)[k,l]*dxf(12829))
+  T_chi[k,l]=assemble(grad(chi_prime_nouv)[k,l]*dxf(12829))
 ## Intégrale de l'identité sur le domaine fluide
 ### Calcul de la porosité
 if config=='sph_un':

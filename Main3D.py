@@ -50,12 +50,13 @@ E_lL=False
 
 EI=False
 snap_done=True
-EII=True
+EII=False
 exsnap_done=True
 test_Dhom=True
 
 EIII=False
-EIV=False
+EIV=True
+Interpolation=True
 
 
 
@@ -92,12 +93,12 @@ parallelize=True
 
 # Choix de la résolution du maillage : nombre de noeuds par côté du cube
 
-res_gmsh=20
+res_gmsh=10
 
 if typ_msh=='gms':
  res=res_gmsh
 
-config='2sph'#'cyl_un'#'sph_un'#'cylsph'#
+config='sph_un'#'2sph'#'cyl_un'#'cylsph'#
 
 ### inclusions simples
 if config=='sph_un':
@@ -180,7 +181,7 @@ if EIII :
 
 ## -------------------- Etape IV -------------------- ##
 
-N_mor=3
+N_mor=5
 moy_null=False
 r_nouv=0.11#0.44#0.33#0.22#
 
@@ -193,7 +194,10 @@ ind_res=True#False###----------> on précise la résolution du maillage, qui app
 #0.33 : 0.012% d'erreur, tps d'éxécution ~ 1''/60''
 
 if EIV :
- exec(open("DDD_EIV.py").read())
+ if Interpolation:
+  exec(open("DDD_EIV.py").read())
+ else:
+  exec(open("DDD_EIV_fixe.py").read())
 
 
 
