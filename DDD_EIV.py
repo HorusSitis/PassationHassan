@@ -180,6 +180,7 @@ else:
 A=Coeff[0]
 b=Coeff[1]
 
+print('A :',A,'b :',b)
 ## On résoud le modèle réduit
 
 a_nouv=np.linalg.solve(A.T,-b)
