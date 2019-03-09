@@ -49,24 +49,24 @@ E_=False
 E_lL=False
 
 EI=False
-snap_done=True
-EII=False
+snap_done=False
+EII=True
 exsnap_done=True
 test_Dhom=True
 
 EIII=False
-EIV=True
-Interpolation=True
+EIV=False
+Interpolation=False
 
 
 
 # nom de l'appareil utilisé pour générer les données enregistrées
-computer='MECALAC_29x8'#'T1700_35x8'#
+computer='T1700_35x8'#'MECALAC_29x8'#
 
 # paramètres pour l'éxécution des étapes : affichage, tests de périodicité etc
 
 
-fig_todo='aff'
+fig_todo='save'
 typ_msh='gms'#''
 D_k=1.0
 Nsnap=8
@@ -78,7 +78,7 @@ typ_sol="bic_cyr"#"default"#seulement si res=10##
 ordo='Ordr'#'Nordr'
 # apprentissage : calcul parallèle ou séquentiel, prise en compte de la résolution
 
-gen_snap='seq'#'par8'#''seq_par'#
+gen_snap='par4'#'par8'#'seq'#''#'seq_par'#
 
 # répertoire pour les résultats
 
@@ -93,12 +93,12 @@ parallelize=True
 
 # Choix de la résolution du maillage : nombre de noeuds par côté du cube
 
-res_gmsh=10
+res_gmsh=20
 
 if typ_msh=='gms':
  res=res_gmsh
 
-config='sph_un'#'2sph'#'cyl_un'#'cylsph'#
+config='cylsph'#'2sph'#'cyl_un'#'sph_un'#
 
 ### inclusions simples
 if config=='sph_un':
@@ -134,7 +134,7 @@ elif config=='2sph':
 elif config=='cylsph':
  conf_mess='un cylindre et une sphère'
  dom_fixe="ray_min"#"am"#"solid"#
- geo_p='ray_sph'#'ray_cyl'#'ray_linked'###ray_sph pour le test diff_ion##
+ geo_p='ray_cyl'#'ray_sph'#'ray_linked'###ray_sph pour le test diff_ion##
  ##
  if geo_p=='ray_cyl':
   geo_mess='rayon du cylindre variable'
@@ -181,7 +181,7 @@ if EIII :
 
 ## -------------------- Etape IV -------------------- ##
 
-N_mor=5
+N_mor=4
 moy_null=False
 r_nouv=0.11#0.44#0.33#0.22#
 

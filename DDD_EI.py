@@ -126,8 +126,12 @@ def snap_compl_ray(rho_par):
 if not snap_done:
  # -------- Calcul des snapshots, sous forme vectorielle, avec des étiquettes -------- #
  ### Génération parallèle des snapshots ###
- if gen_snap=='par8':
-  pool=multiprocessing.Pool(processes=8)
+ if gen_snap=='par8' or gen_snap=='par4':
+  if gen_snap=='par8':
+   nproc=8
+  else:
+   nproc=4
+  pool=multiprocessing.Pool(processes=nproc)
   if config=='sph_un':
    if geo_p=='ray':
     list_chi_n_v=pool.map(snap_sph_ray,(n for n in range(1,1+Nsnap)))
