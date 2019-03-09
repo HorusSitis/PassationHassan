@@ -266,10 +266,10 @@ for n in range(1,1+Nsnap):
   D=por*np.eye(3)
   integr_k_postprime=D_k*(D+T_chi.T)
   Dhom_k_postprime=integr_k_postprime*(1/por_prime)#por en dimensionnel
- ## pour toute configuration
- print('Coefficient D Usnap domaine fixe '+conf_mess+', '+geo_mess+', '+str(int(round(100*r,2)))+' : ',Dhom_k_prime[0,0])
- print('Coefficient D Usnap fixe restreint au domaine courant '+conf_mess+', '+geo_mess+', '+str(int(round(100*r,2)))+' : ',Dhom_k_restr_prime[0,0])
- print('Coefficient D Usnap après interpolation '+conf_mess+', '+geo_mess+', '+str(int(round(100*r,2)))+' : ',Dhom_k_postprime[0,0])
+ if test_Dhom and config!='sph_un':
+  print('Coefficient D Usnap domaine fixe '+conf_mess+', '+geo_mess+', '+str(int(round(100*r,2)))+' : ',Dhom_k_prime[0,0])
+  print('Coefficient D Usnap fixe restreint au domaine courant '+conf_mess+', '+geo_mess+', '+str(int(round(100*r,2)))+' : ',Dhom_k_restr_prime[0,0])
+  print('Coefficient D Usnap après interpolation '+conf_mess+', '+geo_mess+', '+str(int(round(100*r,2)))+' : ',Dhom_k_postprime[0,0])
  ###
  # Dans ce cas, les faces du cube sont entières
  ##cen=[0.5,0.5,0.5]
