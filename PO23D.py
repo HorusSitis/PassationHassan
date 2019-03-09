@@ -285,3 +285,147 @@ def calc_Ab_compl_3D(mesh_n_name,Phi_nouv_v,nb_modes):
   b[i]=assemble(dot(normale,phi_nouv_i)*ds(num_front_inc))
  return([A,b])
 
+## Sans interpolation : directement sur le domaine fixe
+
+
+def calc_Ab_simpl_3D_ninterpol(mesh_f_name,config,geo_p,r,Phi_prime_v,nb.modes):
+ ## Maillage et espace de fonctions test, depuis le répertoire PassationHassan
+ mesh_fixe=Mesh(mesh_f_name)#+".xml")
+ V_fixe=VectorFunctionSpace(mesh_fixe, "P", 2, constrained_domain=PeriodicBoundary())
+ ## Domaine d'intégration pour les coefficients de A
+ if config=='sph_un' and geo_p=='ray':
+  class DomPhysFluide(SubDomain):
+   def inside(self, x, on_boundary):
+    return True if (x[0]**2+x[1]**2+x[2]**2>=r**2) else False
+  dom_courant=DomPhysFluide()
+  subdomains=MeshFunction('size_t',mesh_fixe,mesh_fixe.topology().dim())
+  subdomains.set_all(1)
+  dom_courant.mark(subdomains,12829)
+  dxf=Measure("dx", domain=mesh_fixe, subdomain_data=subdomains)
+ elif config=='cyl_un' and geo_p=='ray':
+  class DomPhysFluide(SubDomain):
+   def inside(self, x, on_boundary):
+    return True if (x[0]**2+x[2]**2>=r**2) else False
+  dom_courant=DomPhysFluide()
+  subdomains=MeshFunction('size_t',mesh_fixe,mesh_fixe.topology().dim())
+  subdomains.set_all(1)
+  dom_courant.mark(subdomains,12829)
+  dxf=Measure("dx", domain=mesh_fixe, subdomain_data=subdomains)
+ ## Création de l'interface solide-fluide
+ r=r_nouv
+ if config=='sph_un':
+  l_cen=[origin]
+  class inclusion_periodique(SubDomain):
+   def inside(self,x,on_boundary):
+    return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[2]-c[2]), (-r-tol, r+tol)) for c in l_cen]))
+ elif config=='cyl_un':
+  l_axe=[origin]
+  #print(l_axe)
+  class inclusion_periodique(SubDomain):
+   def inside(self,x,on_boundary):
+    return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_axe]) and any([between((x[2]-c[2]), (-r-tol, r+tol)) for c in l_axe]))
+ Gamma_sf=inclusion_periodique()
+ boundaries = MeshFunction("size_t", mesh_fixe, mesh_fixe.topology().dim()-1)
+ boundaries.set_all(1)
+ Gamma_sf.mark(boundaries, 7)
+ ds = Measure("ds")(subdomain_data=boundaries)
+ num_ff=1
+ num_front_inc=7
+ normale=FacetNormal(mesh_fixe)
+ ## Matrice de résultats, initialisées à 0
+ A=np.zeros((nb_modes,nb_modes))
+ b=np.zeros(nb_modes)
+ ## Fonctions à définir pour calculer les coefficients des deux tenseurs, qui dépendent de la métrique de l'espace des fonctions test
+ phi_prime_k=Function(V_fixe)
+ phi_prime_i=Function(V_fixe)
+ ## Boucle pour le calcul de la matrice de coefficients
+ for k in range(nb_modes):
+  phi_prime_k.vector().set_local(Phi_prime_v[:,k])
+  for i in range(nb_modes):
+   phi_prime_i.vector().set_local(Phi_prime_v[:,i])
+   # On calcule le coefficient Aki
+   A[k,i]=assemble(tr(dot((grad(phi_prime_k)).T, grad(phi_prime_i)))*dxf(12829))
+ ## Boucle pour le calcul du second membre du problème linéaire MOR
+ for i in range(nb_modes):
+  phi_prime_i.vector().set_local(Phi_prime_v[:,i])
+  b[i]=assemble(dot(normale,phi_prime_i)*ds(num_front_inc))
+ return([A,b])
+
+
+
+
+
+
+
+def calc_Ab_compl_3D_ninterpol(mesh_f_name,config,geo_p,r_cen,r_per,Phi_prime_v,nb_modes):
+ ## Maillage et espace de fonctions test, depuis le répertoire PassationHassan
+ mesh_fixe=Mesh(mesh_f_name)#+".xml")
+ V_fixe=VectorFunctionSpace(mesh_fixe, "P", 2, constrained_domain=PeriodicBoundary())
+ ## Domaine d'intégration pour les coefficients de A
+ if config=='2sph':
+  class DomPhysFluide(SubDomain):
+   def inside(self, x, on_boundary):
+    return True if (x[0]**2+x[1]**2+x[2]**2>=r_cen**2) else False
+  dom_courant=DomPhysFluide()
+  subdomains=MeshFunction('size_t',mesh_fixe,mesh_fixe.topology().dim())
+  subdomains.set_all(1)
+  dom_courant.mark(subdomains,12829)
+  dxf=Measure("dx", domain=mesh_fixe, subdomain_data=subdomains)
+ elif config=='cylsph':
+  class DomPhysFluide(SubDomain):
+   def inside(self, x, on_boundary):
+    return True if (geo_p=='ray_sph' and (x[0]**2+x[1]**2+x[2]**2>=r_cen**2)) or (geo_p=='ray_cyl' and (x[0]**2+x[2]**2>=r_per**2 and (1-x[0])**2+x[2]**2>=r_per**2 or x[0]**2+(1-x[2])**2>=r_per**2 and (1-x[0])**2+(1-x[2])**2>=r_per**2))) else False
+  dom_courant=DomPhysFluide()
+  subdomains=MeshFunction('size_t',mesh_fixe,mesh_fixe.topology().dim())
+  subdomains.set_all(1)
+  dom_courant.mark(subdomains,12829)
+  dxf=Measure("dx", domain=mesh_fixe, subdomain_data=subdomains)
+ ## Domaine d'intégration pour les coefficients de b : condition de Neumann
+ boundaries = MeshFunction('size_t', mesh_fixe, mesh_n_name+"_facet_region"+".xml")
+ ds = Measure("ds")(subdomain_data=boundaries)
+ # Marquage des bordures pour la condition de Neumann
+ num_front_inc=1700
+ # On intègre les vecteurs POD pour obtenir les coefficients du modèle réduit
+ normale=FacetNormal(mesh_fixe)
+ ## Matrice de résultats, initialisées à 0
+ A=np.zeros((nb_modes,nb_modes))
+ b=np.zeros(nb_modes)
+ ## Fonctions à définir pour calculer les coefficients des deux tenseurs, qui dépendent de la métrique de l'espace des fonctions test
+ phi_prime_k=Function(V_fixe)
+ phi_prime_i=Function(V_fixe)
+ ## Boucle pour le calcul de la matrice de coefficients
+ for k in range(nb_modes):
+  phi_prime_k.vector().set_local(Phi_prime_v[:,k])
+  for i in range(nb_modes):
+   phi_prime_i.vector().set_local(Phi_prime_v[:,i])
+   # On calcule le coefficient Aki
+   A[k,i]=assemble(tr(dot((grad(phi_prime_k)).T, grad(phi_prime_i)))*dxf(12829))
+ ## Boucle pour le calcul du second membre du problème linéaire MOR
+ for i in range(nb_modes):
+  phi_prime_i.vector().set_local(Phi_prime_v[:,i])
+  b[i]=assemble(dot(normale,phi_prime_i)*ds(num_front_inc))
+ return([A,b])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
