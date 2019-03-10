@@ -215,9 +215,18 @@ for n in range(1,1+Nsnap):
    for l in range(0,3):
     T_chi[k,l]=assemble(grad(chi_n)[k,l]*dx)
   ##
-  class DomPhysFluide(SubDomain):
-   def inside(self, x, on_boundary):
-    return True if (x[0]**2+x[1]**2+x[2]**2>=r_cen**2) else False
+  if geo_p=='ray':
+   class DomPhysFluide(SubDomain):
+    def inside(self, x, on_boundary):
+     return True if (x[0]**2+x[1]**2+x[2]**2>=r_cen**2) else False
+  elif geo_p=='ray_sph':
+   class DomPhysFluide(SubDomain):
+    def inside(self, x, on_boundary):
+     return True if (x[0]**2+x[1]**2+x[2]**2>=r_s**2) else False
+  elif geo_p=='ray_cyl':
+   class DomPhysFluide(SubDomain):
+    def inside(self, x, on_boundary):
+     return True if (x[0]**2+x[2]**2>=r_c**2 and (1-x[0])**2+x[2]**2>=r_c**2 and x[0]**2+(1-x[2])**2>=r_c**2 and (1-x[0])**2+(1-x[2])**2>=r_c**2) else False
   dom_courant=DomPhysFluide()
   subdomains=MeshFunction('size_t',mesh_fixe,mesh_fixe.topology().dim())
   subdomains.set_all(1)
@@ -317,9 +326,11 @@ for n in range(1,1+Nsnap):
   Dhom_k_prime=integr_k_prime*(1/por_prime)
   ##
  if test_Dhom:
-  print('Coefficient D Usnap domaine fixe '+conf_mess+', '+geo_mess+', '+str(int(round(100*r,2)))+' : ',Dhom_k_prime[0,0],'porosité',por_prime)
-  print('Coefficient D Usnap fixe restreint au domaine courant '+conf_mess+', '+geo_mess+', '+str(int(round(100*r,2)))+' : ',Dhom_k_restr_prime[0,0],'porosité',por)
-  print('Coefficient D Usnap après interpolation '+conf_mess+', '+geo_mess+', '+str(int(round(100*r,2)))+' : ',Dhom_k_postprime[0,0],'porosité',por)
+  print('Géométrie : '+conf_mess+', '+geo_mess+', '+str(int(round(100*r,2))))
+  print('DUsnap fixe :',Dhom_k_prime[0,0],'porosité fixe',por_prime)
+  print('DUsnap fixe restreint au domaine courant :',Dhom_k_restr_prime[0,0],'porosité',por)
+  print('DUsnap physique :',Dhom_k_postprime[0,0],'porosité',por)
+  print()
  ###
  # Dans ce cas, les faces du cube sont entières
  ##cen=[0.5,0.5,0.5]
