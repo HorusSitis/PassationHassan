@@ -38,10 +38,9 @@ from matplotlib.patches import Circle, PathPatch
 ### ------------ Code à lire : conditions ------------ ###
 ##########################################################
 
-res_gmsh=20
-config='cylsph'#'cyl_un'#'2sph'#'sph_un'#
+res_gmsh=50
+config='2sph'#'cyl_un'#'sph_un'#'cylsph'#
 un_snap_done=True
-
 mesh_todo=True
 
 
@@ -49,7 +48,7 @@ mesh_todo=True
 computer='MECALAC_29x8'#'T1700_35x8'#
 
 # paramètres pour l'éxécution : affichage, tests de périodicité etc
-fig_todo='aff'
+fig_todo='save'
 typ_msh='gms'
 D_k=1.0
 npas_err=20
@@ -243,9 +242,9 @@ D=por*np.eye(3)
 ## Calcul et affichage du tenseur Dhom
 Dhom_k=D_k*(D+T_chi.T)
 #print(('Tenseur Dhom_k',Dhom_k))
-print("Noeuds",V_un.dim())
-print("Porosité :",por)
-print('Coefficient Dhom_k11EF, snapshot unique '+", "+conf_mess+" :",Dhom_k[0,0])
+#print("Noeuds",V_un.dim())
+#print("Porosité :",por)
+#print('Coefficient Dhom_k11EF, snapshot unique '+", "+conf_mess+" :",Dhom_k[0,0])
 integ=assemble(chi_un[1]*dx)
 print('Valeur moyenne : ',integ)
 
