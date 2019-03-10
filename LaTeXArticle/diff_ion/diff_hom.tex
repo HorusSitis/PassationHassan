@@ -377,7 +377,7 @@ Horizontal alignement&$0,732964624$&4,22${}^{''}$&$0.636400060$&78256 \\
 \subsubsection{The three-dimensional case}
 
 Algorithms are the same as in the two-dimensional case, but we will see that CPU time for computation is much bigger. %
-We compare elapsed time and results from two different resolutions : $10$ or $20$ nodes for one side of the cube.
+We compare elapsed time and results from two different resolutions : $10$, $20$ or $50$ nodes for one side of the cube.
 
 \begin{figure}[H]
 \begin{center}
@@ -407,60 +407,62 @@ We compare elapsed time and results from two different resolutions : $10$ or $20
 \label{mesh_sol_3d}
 \end{figure}
 
-\begin{center}
-\begin{tabular}{|c|c|c|c|c|}
-\hline
-\rowcolor{gray} Configuration :&Porosity :&Time elapsed : 1CPU$\times$2.9GHz&$D_k^{hom, \ 11}$ :&Nodes :\\
-\hline
-Single sphere&$0,820405620$&36,62${}^{''}$&$0.753883175$&18870 \\
-\hline
-Single cylinder&$0,615154900$&13,16${}^{''}$&$0.44198359$&14172 \\
-\hline
-Two spheres&$0,786895298$&72,09${}^{''}$&$0.718009229$&22896 \\
-\hline
-One sphere and one cylinder&$0,624056079$&27,27${}^{''}$&$0.512191706$&17199 \\
-\hline
-\end{tabular}
-\end{center}
-
-
-%%% --------------------------- res=20 --------------------------- %%%
-\begin{comment}
 \begin{figure}[H]
 \begin{center}
-\begin{tabular}{|c|c|c|c|}
+\begin{tabular}{|c|c|c|c|c|c|}
 \hline
-\subfloat[Mesh for a single sphere]{\includegraphics[width=0.2\linewidth,height=3cm]{../Figures3D/maillage_per3D_sphsur20.png}}
-&
-\subfloat[Single cylinder]{\includegraphics[width=0.2\linewidth,height=3cm]{../Figures3D/maillage_per3D_cylsur20.png}}
-&
-\subfloat[Two spheres]{\includegraphics[width=0.2\linewidth,height=3cm]{../Figures3D/maillage_per3D_2sphsur20.png}}
-&
-\subfloat[One sphere and one cylinder]{\includegraphics[width=0.2\linewidth,height=3cm]{../Figures3D/maillage_per3D_cylsphsur20.png}}
-\\
+\rowcolor{gray} Configuration :&Porosity&Mesh generation&Solution of EF problem&$D_k^{hom, \ 11}$&Nodes\\%1CPU$\times$2.9GHz
 \hline
-\subfloat[Vector $\chi$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures3D/sol_7_sur1sph_un_rayres20.png}}
-&
-\subfloat[Vector $\chi$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures3D/sol_7_sur1cyl_un_rayres20.png}}
-&
-\subfloat[Vector $\chi$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures3D/sol_7_sur12sph_rayres20.png}}
-&
-\subfloat[Vector $\chi$]{\includegraphics[width=0.2\linewidth,height=2.5cm]{../Figures3D/sol_7_sur1cylsph_ray_sphres20.png}}
-\\
+Single sphere&$0,82040562$&0,71${}^{''}$&2,11${}^{''}$&$0.\mathbf{75}388318$&18\ 870 \\
+\hline
+Single cylinder&$0,80365045$&0,60${}^{''}$&1,66${}^{''}$&$0.\mathbf{67}375863$&15\ 951 \\
+\hline
+Two spheres&$0,78689530$&0,77${}^{''}$&2,40${}^{''}$&$0.\mathbf{775}70116$&22\ 896 \\
+\hline
+One sphere and one cylinder&$0,62405608$&0,68${}^{''}$&1,48${}^{''}$&$0.\mathbf{52}342700$&17\ 199 \\
 \hline
 \end{tabular}
 \end{center}
-\caption{Periodical meshes and vector $\chi$ with Finite Element Method}
-\label{mesh_sol_3d}
+\caption{Performances : $10$ nodes per side}
 \end{figure}
-\end{comment}
-%%% --------------------------- FEM solutions not computed yet --------------------------- %%%
 
+\begin{figure}[H]
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+\rowcolor{gray} Configuration :&Porosity&Mesh generation&Solution of EF problem&$D_k^{hom, \ 11}$&Nodes\\%1CPU$\times$2.9GHz
+\hline
+Single sphere&$0,82040562$&1,86${}^{''}$&14,86${}^{''}$&$0.\mathbf{752}83825$&122\ 803 \\
+\hline
+Single cylinder&$0,80365045$&1,65${}^{''}$&14,24${}^{''}$&$0.\mathbf{671}03186$&109\ 299 \\
+\hline
+Two spheres&$0,78689530$&2,15${}^{''}$&13,89${}^{''}$&$0.\mathbf{775}26027$&120\ 000 \\
+\hline
+One sphere and one cylinder&$0,62405608$&1,72${}^{''}$&10,97${}^{''}$&$0.\mathbf{522}54311$&92\ 931 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Performances : $20$ nodes per side}
+\end{figure}
 
-
-%%%Inclusion au centre
-%%%r de 0.05 à 0.40
-%%%Dhom_k : 0.93455015305 ; 0.93455015305 ; 0.93455015305 ; 0.937713361944 ; 0.942352510417 ; 0.94383619236 ; 0.941721377617
+\begin{figure}[H]
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+\rowcolor{gray} Configuration :&Porosity&Mesh generation&Solution of EF problem&$D_k^{hom, \ 11}$&Nodes\\%1CPU$\times$2.9GHz
+\hline
+Single sphere&$0,82040562$&19,45${}^{''}$&770,75${}^{''}$&$0.75250491$&1\ 621\ 476 \\
+\hline
+Single cylinder&$0,80365045$&18,31${}^{''}$&970,08${}^{''}$&$0.67169553$&1\ 616\ 349 \\
+\hline
+Two spheres&$0,78689530$&18,92${}^{''}$&1385,54${}^{''}$&$0.77510602$&1\ 588\ 758 \\
+\hline
+One sphere and one cylinder&$0,62405608$&16,44${}^{''}$&203,57${}^{''}$&$0.52235208$&1\ 288\ 312 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Performances : $50$ nodes per side}
+\end{figure}
 
 %\subsection{Performances with Finite Element Method}
 
