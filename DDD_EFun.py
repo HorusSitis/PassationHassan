@@ -38,13 +38,15 @@ from matplotlib.patches import Circle, PathPatch
 ### ------------ Code à lire : conditions ------------ ###
 ##########################################################
 
-res_gmsh=50
-config='cyl_un'#'sph_un'#'2sph'#'cylsph'#
-un_snap_done=False
+res_gmsh=20
+config='cylsph'#'cyl_un'#'2sph'#'sph_un'#
+un_snap_done=True
+
 mesh_todo=True
 
+
 # nom de l'appareil utilisé pour générer les données enregistrées
-computer='T1700_35x8'#'MECALAC_29x8'#
+computer='MECALAC_29x8'#'T1700_35x8'#
 
 # paramètres pour l'éxécution : affichage, tests de périodicité etc
 fig_todo='aff'
@@ -149,13 +151,14 @@ if mesh_todo:
  ## Affichage du maillage obtenu
  if fig_todo=='aff':
   os.system("gmsh "+mesh_name+".msh")
- ## Conversion en .xml avec dolfin pour FEniCS
- start=time()
- os.system("dolfin-convert "+mesh_name+".msh "+mesh_name+".xml")
- end=time()
- tps_2=end-start
- print("temps de conversion du maillage : "+str(tps_2)+" secondes")
- print("temps total d'éxécution : "+str(tps_1+tps_2)+" secondes")
+ if not un_snap_done:
+  ## Conversion en .xml avec dolfin pour FEniCS : pas si on veut charger une solution EF calculée auparavant
+  start=time()
+  os.system("dolfin-convert "+mesh_name+".msh "+mesh_name+".xml")
+  end=time()
+  tps_2=end-start
+  print("temps de conversion du maillage : "+str(tps_2)+" secondes")
+  print("temps total d'éxécution : "+str(tps_1+tps_2)+" secondes")
  ## retour au répertoire PassationHassan
  os.chdir("../../")
 
@@ -193,12 +196,13 @@ else :
   chi_un_v = v_loa["maliste"]
 
 # --------------------------------------------------------------------------------- #
-
+print('Taille de la solution EF :',len(chi_un_v))
 # Exploitation des solution du problème aux éléments finis
-res=res_gmsh
+
 
 mesh=Mesh("maillages_per/"+str(dimension)+"D/"+mesh_name+".xml")
 V_un=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
+print('Taille du maillage importé :',V_un.dim())
 # On restitue la forme fonctionnelle de la solution
 chi_un=Function(V_un)
 chi_un.vector().set_local(chi_un_v)
@@ -230,7 +234,7 @@ for k in range(0,3):
 if config=='sph_un':
  por=1-4/3*pi*r_s_0**3
 elif config=='cyl_un':
- por=1-pi*rçcç0**2
+ por=1-pi*r_c_0**2
 elif config=='2sph':
  por=1-4/3*pi*(r_s_0**3+r_v_0**3)
 elif config=='cylsph' :
