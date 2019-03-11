@@ -26,7 +26,7 @@ See section \ \ref{rom} for figures and choice of $N_{rom}$.
 \begin{center}
 \begin{tabular}{|c|c||c|c||c|c||c||c|c||c||c|}
 \hline
-\rowcolor{gray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
+\rowcolor{lightgray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
 \hline
 0,11&0,9620&0,9284&0,9268&1.84s&0,1753\%&2.25s&0.34s&10.64s&103090\\
 \hline
@@ -116,7 +116,7 @@ Cumulated energy :
 \begin{center}
 \begin{tabular}{|c|c||c|c||c||c|c||c|c||c||c|}
 \hline
-\rowcolor{gray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
+\rowcolor{lightgray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
 \hline
 0,11&0,9620&0,9285&0,9268&1.84s&0,03670.1852\%&2.13s&0.33s&11.71s&101902\\
 \hline
@@ -201,7 +201,7 @@ The difference of time ratio FEM/ROM will depend from the number of nodes, as we
 \begin{center}
 \begin{tabular}{|c|c||c|c||c||c|c||c|c||c||c|}
 \hline
-\rowcolor{gray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
+\rowcolor{lightgray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
 \hline
 0,11&0,8913&0,8090&0,8087&1.80s&0,0367\%&3.71s&1.09s&7.86s&96184\\
 \hline
@@ -284,7 +284,7 @@ The difference of time ratio FEM/ROM will depend from the number of nodes, as we
 \begin{center}
 \begin{tabular}{|c|c||c|c||c||c|c||c|c||c||c|}
 \hline
-\rowcolor{gray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
+\rowcolor{lightgray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
 \hline
 0,04&0,9243&0,8683&0,8618&1.98s&0,7592\%&4.03s&0.47s&9.52s&99\ 784\\
 \hline
@@ -333,7 +333,7 @@ as far as it emerges from a numerical problem about a Finite Element space.
 *{2}{>{\centering \arraybackslash}X|}}
 %
 \hline
-%
+\rowcolor{lightgray} %
 Res.%\backslashbox{Res.}{Config.}%
 &Single sphere&Single cylinder&Two spheres&%
 One sphere, one cylinder, $\rho=$ sphere radius&One sphere, one cylinder, $\rho=$ cylinder radius\\
@@ -440,22 +440,22 @@ Cumulated energy :
 %
 \end{multicols}
 
-\ligneinter
+\etoile%\ligneinter
 
 \begin{figure}[H]%{Results}
 %
 \begin{center}
 \begin{tabular}{|c|c||c|c||c||c|c||c|c||c||c|}
 \hline
-\rowcolor{gray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
+\rowcolor{lightgray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
 \hline
-0,11&0,&0,&0,&,s&0,\%&s&s&s&\\
+0,11&0,9944&0,9944&0,9943&1.44s&0,013\%&11.37s&1.10s&3.43s&23\ 031\\
 \hline
-0,22&0,9554&0,&0,&s&0,\%&.s&.s&.s&19\ 578\\
+0,22&0,9554&0,9360&0,9358&0.63s&0,029\%&9.22s&1.06s&3.12s&19\ 578\\
 \hline
-0,33&0,8495&0,&0,&s&0,\%&.s&.s&.s&20\ 043\\
+0,33&0,8495&0,7913&0,7911&0.66s&0,026\%&9.16s&1.08s&3.21.s&19\ 953\\
 \hline
-0,44&0,6432&0,&0,&s&0,\%&.s&.s&.s&16\ 941\\
+0,44&0,6432&0,5413&0,5408&0.67s&0,084\%&7.20s&1.05s&2.55s&16\ 941\\
 \hline
 \end{tabular}
 \end{center}
@@ -464,7 +464,7 @@ Cumulated energy :
 \end{figure}
 %%
 
-\etoile
+\ligneinter
 
 \begin{figure}[H]%[!p]
 %
@@ -491,7 +491,7 @@ Cumulated energy :
 \hline
 \end{tabular}
 \end{center}
-\caption{$8$ training solutions}
+\caption{Resolution : $20$\ ; $8$ training solutions}
 %
 \end{figure}
 
@@ -501,15 +501,15 @@ Cumulated energy :
 \begin{center}
 \begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
 \hline
-\rowcolor{gray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
+\rowcolor{lightgray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
 \hline
-0,11&0,&0,&0,&,s&0,\%&s&s&s&136\ 002\\
+0,11&0,&0,&0,&2.24s&0,\%&s&s&s&136\ 002\\
 \hline
-0,22&0,&0,&0,&,s&0,\%&s&s&s&126\ 192\\
+0,22&0,&0,&0,&,1.77s&0,\%&s&s&s&126\ 192\\
 \hline
-0,33&0,&0,&0,&,s&0,\%&s&s&s&120\ 318\\
+0,33&0,&0,&0,&1.87s&0,\%&s&s&s&120\ 318\\
 \hline
-0,44&0,&0,&0,&,s&0,\%&s&s&s&96\ 503\\
+0,44&0,&0,&0,&1.88s&0,\%&s&s&s&96\ 503\\
 \hline
 \end{tabular}
 \end{center}
@@ -517,6 +517,7 @@ Cumulated energy :
 %
 \end{figure}
 
+\ligneinter
 \begin{figure}[H]%[!p]
 %
 \begin{center}
@@ -551,15 +552,15 @@ Cumulated energy :
 \begin{center}
 \begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
 \hline
-\rowcolor{gray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
+\rowcolor{lightgray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
 \hline
-0,11&0,&0,&0,&s&0,\%&s&s&s&1\ 910\ 451\\
+0,11&0,&0,&0,&20.89s&0,\%&s&s&s&1\ 910\ 451\\
 \hline
-0,22&0,&0,&0,&s&0,\%&s&s&s&1\ 784\ 610\\
+0,22&0,&0,&0,&20.30s&0,\%&s&s&s&1\ 784\ 610\\
 \hline
-0,33&0,&0,&0,&s&0,\%&s&s&s&1\ 705\ 461\\
+0,33&0,&0,&0,&20.41s&0,\%&s&s&s&1\ 705\ 461\\
 \hline
-0,44&0,&0,&0,&s&0,\%&s&s&s&1\ 311\ 225\\
+0,44&0,&0,&0,&18.03s&0,\%&s&s&s&1\ 311\ 225\\
 \hline
 \end{tabular}
 \end{center}
@@ -597,12 +598,13 @@ Cumulated energy :
 \ligneinter
 \end{comment}
 
+\begin{comment}
 \begin{figure}[H]%{Results}
 %
 \begin{center}
 \begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
 \hline
-\rowcolor{gray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
+\rowcolor{lightgray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
 \hline
 0,11&0,&0,&0,&,s&0,\%&s&s&s&\\
 \hline
@@ -618,21 +620,22 @@ Cumulated energy :
 %
 \end{figure}
 %%
+\end{comment}
 
 \begin{figure}[H]%{Results}
 %
 \begin{center}
 \begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
 \hline
-\rowcolor{gray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
+\rowcolor{lightgray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
 \hline
-0,11&0,&0,&0,&,s&0,\%&s&s&s&\\
+0,11&0,&0,&0,&2.24s&0,\%&s&s&s&\\
 \hline
-0,22&0,8479&0,&0,&s&0,\%&.s&.s&.s&\\
+0,22&0,8479&0,&0,&1.68s&0,\%&s&.s&.s&\\
 \hline
-0,33&0,6579&0,&0,&s&0,\%&.s&.s&.s&\\
+0,33&0,6579&0,&0,&1.60s&0,\%&s&.s&.s&\\
 \hline
-0,44&0,3918&0,&0,&s&0,\%&.s&.s&.s&\\
+0,44&0,3918&0,&0,&1.38s&0,\%&s&.s&.s&\\
 \hline
 \end{tabular}
 \end{center}
@@ -645,15 +648,15 @@ Cumulated energy :
 \begin{center}
 \begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
 \hline
-\rowcolor{gray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
+\rowcolor{lightgray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
 \hline
-0,11&0,&0,&0,&,s&0,\%&s&s&s&\\
+0,11&0,&0,&0,&20.51s&0,\%&s&s&s&\\
 \hline
-0,22&0,8479&0,&0,&s&0,\%&.s&.s&.s&\\
+0,22&0,8479&0,&0,&18.80s&0,\%&.s&.s&.s&\\
 \hline
-0,33&0,6579&0,&0,&s&0,\%&.s&.s&.s&\\
+0,33&0,6579&0,&0,&15.96s&0,\%&.s&.s&.s&\\
 \hline
-0,44&0,3918&0,&0,&s&0,\%&.s&.s&.s&\\
+0,44&0,3918&0,&0,&11.73s&0,\%&.s&.s&.s&\\
 \hline
 \end{tabular}
 \end{center}
@@ -679,12 +682,13 @@ Cumulated energy :
 \end{figure}
 \end{comment}
 
+\begin{comment}
 \begin{figure}[H]%{Results}
 %
 \begin{center}
 \begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
 \hline
-\rowcolor{gray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
+\rowcolor{lightgray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
 \hline
 0,11&0,&0,&0,&s&0,\%&s&s&s&\\
 \hline
@@ -699,21 +703,22 @@ Cumulated energy :
 \caption{Resolution : $10$\ ; $N_{rom}=4$}
 %
 \end{figure}
+\end{comment}
 
 \begin{figure}[H]%{Results}
 %
 \begin{center}
 \begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
 \hline
-\rowcolor{gray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
+\rowcolor{lightgray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
 \hline
-0,11&0,&0,&0,&s&0,\%&s&s&s&\\
+0,11&0,&0,&0,&2.36s&0,\%&s&s&s&\\
 \hline
-0,22&0,&0,&0,&s&0,\%&s&s&s&\\
+0,22&0,&0,&0,&1.88s&0,\%&s&s&s&\\
 \hline
-0,33&0,&0,&0,&s&0,\%&s&s&s&\\
+0,33&0,&0,&0,&1.94s&0,\%&s&s&s&\\
 \hline
-0,44&0,&0,&0,&s&0,\%&s&s&s&\\
+0,44&0,&0,&0,&1.95s&0,\%&s&s&s&\\
 \hline
 \end{tabular}
 \end{center}
@@ -726,15 +731,15 @@ Cumulated energy :
 \begin{center}
 \begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
 \hline
-\rowcolor{gray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
+\rowcolor{lightgray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
 \hline
-0,11&0,&0,&0,&s&0,\%&s&s&s&\\
+0,11&0,&0,&0,&20.40s&0,\%&s&s&s&\\
 \hline
-0,22&0,&0,&0,&s&0,\%&s&s&s&\\
+0,22&0,&0,&0,&20.88s&0,\%&s&s&s&\\
 \hline
-0,33&0,&0,&0,&s&0,\%&s&s&s&\\
+0,33&0,&0,&0,&20.40s&0,\%&s&s&s&\\
 \hline
-0,44&0,&0,&0,&s&0,\%&s&s&s&\\
+0,44&0,&0,&0,&17.73s&0,\%&s&s&s&\\
 \hline
 \end{tabular}
 \end{center}
@@ -744,12 +749,13 @@ Cumulated energy :
 
 \subsubsection{One sphere and one cylinder : $\rho$ is the radius of the sphere}
 
+\begin{comment}
 \begin{figure}[H]%{Results}
 %
 \begin{center}
 \begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
 \hline
-\rowcolor{gray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
+\rowcolor{lightgray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
 \hline
 0,11&0,&0,&0,&s&0,\%&s&s&s&\\
 \hline
@@ -764,21 +770,22 @@ Cumulated energy :
 \caption{Resolution : $10$\ ; $N_{rom}=4$}
 %
 \end{figure}
+\end{comment}
 
 \begin{figure}[H]%{Results}
 %
 \begin{center}
 \begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
 \hline
-\rowcolor{gray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
+\rowcolor{lightgray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
 \hline
-0,11&0,&0,&0,&s&0,\%&s&s&s&\\
+0,11&0,&0,&0,&2.28s&0,\%&s&s&s&\\
 \hline
-0,22&0,&0,&0,&s&0,\%&s&s&s&\\
+0,22&0,&0,&0,&1.79s&0,\%&s&s&s&\\
 \hline
-0,33&0,&0,&0,&s&0,\%&s&s&s&\\
+0,33&0,&0,&0,&1.95s&0,\%&s&s&s&\\
 \hline
-0,44&0,&0,&0,&s&0,\%&s&s&s&\\
+0,44&0,&0,&0,&1.89s&0,\%&s&s&s&\\
 \hline
 \end{tabular}
 \end{center}
@@ -791,15 +798,15 @@ Cumulated energy :
 \begin{center}
 \begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
 \hline
-\rowcolor{gray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
+\rowcolor{lightgray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
 \hline
-0,11&0,&0,&0,&s&0,\%&s&s&s&\\
+0,11&0,&0,&0,&18.54s&0,\%&s&s&s&\\
 \hline
-0,22&0,&0,&0,&s&0,\%&s&s&s&\\
+0,22&0,&0,&0,&18.79s&0,\%&s&s&s&\\
 \hline
-0,33&0,&0,&0,&s&0,\%&s&s&s&\\
+0,33&0,&0,&0,&18.47s&0,\%&s&s&s&\\
 \hline
-0,44&0,&0,&0,&s&0,\%&s&s&s&\\
+0,44&0,&0,&0,&16.60s&0,\%&s&s&s&\\
 \hline
 \end{tabular}
 \end{center}
@@ -809,13 +816,13 @@ Cumulated energy :
 
 \subsubsection{One sphere and one cylinder : $\rho$ is the radius of the cylinder}
 
-
+\begin{comment}
 \begin{figure}[H]%{Results}
 %
 \begin{center}
 \begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
 \hline
-\rowcolor{gray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
+\rowcolor{lightgray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
 \hline
 0,11&0,&0,&0,&s&0,\%&s&s&s&\\
 \hline
@@ -830,21 +837,22 @@ Cumulated energy :
 \caption{Resolution : $10$\ ; $N_{rom}=5$}
 %
 \end{figure}
+\end{comment}
 
 \begin{figure}[H]%{Results}
 %
 \begin{center}
 \begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
 \hline
-\rowcolor{gray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
+\rowcolor{lightgray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
 \hline
-0,11&0,&0,&0,&s&0,\%&s&s&s&\\
+0,11&0,&0,&0,&2.78s&0,\%&s&s&s&\\
 \hline
-0,22&0,&0,&0,&s&0,\%&s&s&s&\\
+0,22&0,&0,&0,&1.74s&0,\%&s&s&s&\\
 \hline
-0,33&0,&0,&0,&s&0,\%&s&s&s&\\
+0,33&0,&0,&0,&1.58s&0,\%&s&s&s&\\
 \hline
-0,44&0,&0,&0,&s&0,\%&s&s&s&\\
+0,44&0,&0,&0,&1.35s&0,\%&s&s&s&\\
 \hline
 \end{tabular}
 \end{center}
@@ -857,15 +865,15 @@ Cumulated energy :
 \begin{center}
 \begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
 \hline
-\rowcolor{gray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
+\rowcolor{lightgray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
 \hline
-0,11&0,&0,&0,&s&0,\%&s&s&s&\\
+0,11&0,&0,&0,&19.78s&0,\%&s&s&s&\\
 \hline
-0,22&0,&0,&0,&s&0,\%&s&s&s&\\
+0,22&0,&0,&0,&18.08s&0,\%&s&s&s&\\
 \hline
-0,33&0,&0,&0,&s&0,\%&s&s&s&\\
+0,33&0,&0,&0,&14.16s&0,\%&s&s&s&\\
 \hline
-0,44&0,&0,&0,&s&0,\%&s&s&s&\\
+0,44&0,&0,&0,&9.86s&0,\%&s&s&s&\\
 \hline
 \end{tabular}
 \end{center}
