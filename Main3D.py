@@ -49,22 +49,21 @@ E_=False
 E_lL=False
 
 EI=False
-snap_done=False
-EII=True
+snap_done=True
+EII=False
 exsnap_done=True
 test_Dhom=True
 
 EIII=False
-EIV=False
-Interpolation=False
+EIV=True
+Interpolation=True
 
 
 
 # nom de l'appareil utilisé pour générer les données enregistrées
-computer='T1700_35x8'#'MECALAC_29x8'#
+computer='MECALAC_29x8'#'T1700_35x8'#
 
 # paramètres pour l'éxécution des étapes : affichage, tests de périodicité etc
-
 
 fig_todo='save'
 typ_msh='gms'#''
@@ -73,32 +72,24 @@ Nsnap=8
 npas_err=20
 
 typ_sol="bic_cyr"#"default"#seulement si res=10##
-#moy_null=True
 
 ordo='Ordr'#'Nordr'
 # apprentissage : calcul parallèle ou séquentiel, prise en compte de la résolution
 
-gen_snap='par4'#'par8'#'seq'#''#'seq_par'#
+gen_snap='par4'#'par8'#'seq'#'seq_par'#
 
 # répertoire pour les résultats
-
 repertoire_parent="Res3D/"
-
-
-## -------------------- Etape I -------------------- ##
-
-# Parallélisation du calcul des snapshots
-
-parallelize=True
 
 # Choix de la résolution du maillage : nombre de noeuds par côté du cube
 
-res_gmsh=20
-
+res_gmsh=10
 if typ_msh=='gms':
  res=res_gmsh
 
-config='cylsph'#'2sph'#'cyl_un'#'sph_un'#
+# -------------------- Géométrie du problème -------------------- #
+
+config='sph_un'#'cylsph'#'2sph'#'cyl_un'#
 
 ### inclusions simples
 if config=='sph_un':
@@ -143,6 +134,8 @@ elif config=='cylsph':
   geo_mess='rayon de la sphère variable'
  elif geo_p=='ray_linked':
   geo_mess='rayons liés'
+
+## -------------------- Etape I -------------------- ##
 
 ## ------------ Etape lL 1demi : Affichage de microstructures périodiques ------------ ##
 
