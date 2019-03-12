@@ -347,7 +347,6 @@ t_fem=end-start
 
 print('se4 faite ',t_fem,' secondes')
 
-#sys.exit()--------------------------------------------------------------------------------------------------------------
 ##############################################################################
 ########################## Evaluation de la méthode ##########################
 ##############################################################################
@@ -364,7 +363,7 @@ if Report :
  ## Dhom, erreur, et temps d'éxécution ##
  print('Coefficient Dhom_k11 '+' MOR :',Dhom_kMOR[0,0])
  print('Coefficient Dhom_k11 '+' MEF :',Dhom_kMEF[0,0])
- print('Maillage :',t_meshing)
+ print('Maillage :',t_meshing,'secondes')
  print('Erreur relative MEF-MOR :',err_rel,'pourcent')
  ## Temps de calcul à évaluer ##
  print('T_phi_nouv',t_phi_nouv,'secondes')
