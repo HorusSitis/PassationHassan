@@ -57,7 +57,7 @@ test_Dhom=True
 EIII=False
 EIV=True
 Interpolation=True
-
+Report=True
 
 
 # nom de l'appareil utilisé pour générer les données enregistrées
@@ -83,13 +83,13 @@ repertoire_parent="Res3D/"
 
 # Choix de la résolution du maillage : nombre de noeuds par côté du cube
 
-res_gmsh=10
+res_gmsh=20
 if typ_msh=='gms':
  res=res_gmsh
 
 # -------------------- Géométrie du problème -------------------- #
 
-config='sph_un'#'cylsph'#'2sph'#'cyl_un'#
+config='cylsph'#'2sph'#'cyl_un'#'sph_un'#
 
 ### inclusions simples
 if config=='sph_un':
@@ -125,7 +125,7 @@ elif config=='2sph':
 elif config=='cylsph':
  conf_mess='un cylindre et une sphère'
  dom_fixe="ray_min"#"am"#"solid"#
- geo_p='ray_cyl'#'ray_sph'#'ray_linked'###ray_sph pour le test diff_ion##
+ geo_p='ray_sph'#'ray_cyl'#'ray_linked'###ray_sph pour le test diff_ion##
  ##
  if geo_p=='ray_cyl':
   geo_mess='rayon du cylindre variable'
@@ -174,9 +174,9 @@ if EIII :
 
 ## -------------------- Etape IV -------------------- ##
 
-N_mor=4
-moy_null=False
-r_nouv=0.11#0.44#0.33#0.22#
+N_mor=3
+t_meshing=1.89
+r_nouv=0.44#0.33#0.22#0.11#
 
 # La mesure du temps d'éxécution doit se faire avec l'option 'save' de fig_todo
 

@@ -159,7 +159,9 @@ for n in range(0,nb_modes):
 
 end=time.time()
 
-print('se1 faite ',end-start,' secondes')
+t_phi_nouv=end-start
+
+print('se1 faite ',t_phi_nouv,' secondes')
 #sys.exit()#-------------------------------------
 # --------------------- SE2 : résolution du modèle réduit --------------------- #
 
@@ -189,7 +191,9 @@ a_nouv=np.linalg.solve(A.T,-b)
 
 end=time.time()
 
-print('se2 faite ',end-start,' secondes')
+t_rom_linear=end-start
+
+print('se2 faite ',t_rom_linear,' secondes')
 # --------------------- SE3 : calcul du nouveau champ de vecteurs, affichage --------------------- #
 
 ## On réinitialise le temps de calcul ##
@@ -264,7 +268,9 @@ print('Coefficient Dhom_k11 '+conf_mess+', '+geo_mess+' valeur '+str(rho)+' MOR 
 
 end=time.time()
 
-print('se3 faite ',end-start,' secondes')
+t_rom_Dhom=end-start
+
+print('se3 faite ',t_rom_Dhom,' secondes')
 #sys.exit()#-------------------------------------
 # --------------------- SE4 : comparaison avec la méthode des éléments finis --------------------- #
 
@@ -337,4 +343,44 @@ print('Erreur relative MEF-MOR :', err_rel , ' pourcent')
 
 end=time.time()
 
-print('se4 faite ',end-start,' secondes')
+t_fem=end-start
+
+print('se4 faite ',t_fem,' secondes')
+
+#sys.exit()--------------------------------------------------------------------------------------------------------------
+##############################################################################
+########################## Evaluation de la méthode ##########################
+##############################################################################
+
+if Report :
+ print('##############################################################################')
+ print('########################## Evaluation de la méthode ##########################')
+ print('##############################################################################')
+ print('Résultats '+conf_mess+', '+geo_mess+' valeur '+str(r_nouv)+' :')
+ print('##############################################################################')
+ #
+ ## Porosité ##
+ print('Porosité :',por)
+ ## Dhom, erreur, et temps d'éxécution ##
+ print('Coefficient Dhom_k11 '+' MOR :',Dhom_kMOR[0,0])
+ print('Coefficient Dhom_k11 '+' MEF :',Dhom_kMEF[0,0])
+ print('Maillage :',t_meshing)
+ print('Erreur relative MEF-MOR :',err_rel,'pourcent')
+ ## Temps de calcul à évaluer ##
+ print('T_phi_nouv',t_phi_nouv,'secondes')
+ print('T_ROM',t_rom_linear+t_rom_Dhom,'secondes')
+ print('T_FEM',t_fem,'secondes')
+ ## Nombre de noeuds ##
+ print('Noeuds :',V_nouv.dim())
+ ## Rapports de temps de calcul, sans unité ##
+ R_rom=(t_phi_nouv+t_rom_linear+t_rom_Dhom+t_meshing)/(t_fem+t_meshing)
+ R_interpolation=t_phi_nouv/(t_fem+t_meshing)
+ print('Gain de temps de la méthode :',R_rom)#,'sans unité')
+ print('Contribution de l interpolation :',R_interpolation)#,'sans unité')
+ print('Différence :',R_rom-R_interpolation)#,'sans unité')
+ #
+ print('##############################################################################')
+ print('##############################################################################')
+
+##############################################################################
+##############################################################################
