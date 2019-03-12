@@ -371,7 +371,7 @@ if Report :
 
 ##############################################################################
 
-nom_fichier='Perf3D/'+computer+config+geo_p+str(int(round(100*r_nouv,2)))+'.txt'
+nom_fichier='Perf3D/'+computer+config+geo_p+str(int(round(100*r_nouv,2)))+'Nmor'+str(N_mor)+'.txt'
 registre=open(nom_fichier,'w')
 #registre.write('Resultats '+conf_mess+str(r_nouv)+'\n')
 #sys.exit()
