@@ -51,7 +51,7 @@ E_lL=False
 EI=False
 snap_done=True
 EII=False
-exsnap_done=True
+exsnap_done=False
 test_Dhom=True
 
 EIII=False
@@ -61,7 +61,7 @@ Report=True
 
 
 # nom de l'appareil utilisé pour générer les données enregistrées
-computer='MECALAC_29x8'#'T1700_35x8'#
+computer='T1700_35x8'#'MECALAC_29x8'#
 
 # paramètres pour l'éxécution des étapes : affichage, tests de périodicité etc
 
@@ -70,10 +70,9 @@ typ_msh='gms'#''
 D_k=1.0
 Nsnap=8
 npas_err=20
-
 typ_sol="bic_cyr"#"default"#seulement si res=10##
-
 ordo='Ordr'#'Nordr'
+
 # apprentissage : calcul parallèle ou séquentiel, prise en compte de la résolution
 
 gen_snap='par4'#'par8'#'seq'#'seq_par'#
@@ -83,20 +82,20 @@ repertoire_parent="Res3D/"
 
 # Choix de la résolution du maillage : nombre de noeuds par côté du cube
 
-res_gmsh=20
+res_gmsh=10
 if typ_msh=='gms':
  res=res_gmsh
 
 # -------------------- Géométrie du problème -------------------- #
 
-config='cylsph'#'2sph'#'cyl_un'#'sph_un'#
+config='sph_un'#'cyl_un'#'cylsph'#'2sph'#
 
 ### inclusions simples
 if config=='sph_un':
  dom_fixe="am"
  geo_p='ray'#'cen'#
  ##
- conf_mess='sphère unique'
+ conf_mess='sphere unique'
  if geo_p=='ray':
   geo_mess='rayon variable'
   cen_snap_ray=[0.5,0.5,0.5]
@@ -117,13 +116,13 @@ elif config=='cyl_un':
   asr_list=[[0.5,0.3+0.05*k] for k in range(1,1+Nsnap)]
 ### inclusions composées
 elif config=='2sph':
- conf_mess='deux sphères'
+ conf_mess='deux spheres'
  dom_fixe="solid"#"am"#
  geo_p='ray'
- geo_mess='rayon de la sphère centrale variable'
+ geo_mess='rayon de la sphere centrale variable'
  ##
 elif config=='cylsph':
- conf_mess='un cylindre et une sphère'
+ conf_mess='un cylindre et une sphere'
  dom_fixe="ray_min"#"am"#"solid"#
  geo_p='ray_sph'#'ray_cyl'#'ray_linked'###ray_sph pour le test diff_ion##
  ##
@@ -131,16 +130,16 @@ elif config=='cylsph':
   geo_mess='rayon du cylindre variable'
   fixe_comp='cyl_sph'##utilisation du domaine fixe avec annulation du rayon du cylindre dans le fichier général##'sph_un'#'ray_min'#
  elif geo_p=='ray_sph':
-  geo_mess='rayon de la sphère variable'
+  geo_mess='rayon de la sphere variable'
  elif geo_p=='ray_linked':
-  geo_mess='rayons liés'
+  geo_mess='rayons lies'
 
 ## -------------------- Etape I -------------------- ##
 
 ## ------------ Etape lL 1demi : Affichage de microstructures périodiques ------------ ##
 
 nb_lcells=5
-cem_color='grey'#'r'
+cem_color='grey'
 sand_color='orange'
 fluid_color='cyan'
 
@@ -168,10 +167,6 @@ from PO23D import *
 if EIII :
  exec(open("DDD_EIII.py").read())
 
-## Sphère ou cylindre unique
-#N_mor=4#99,9%
-#N_mor=5#99,99%
-
 ## -------------------- Etape IV -------------------- ##
 
 N_mor=3
@@ -183,31 +178,28 @@ r_nouv=0.44#0.33#0.22#0.11#
 ind_fixe=True##-----------> dom_fixe devant le 'Phi'
 ind_res=True#False###----------> on précise la résolution du maillage, qui apparaît ou non dans le fichier contenant Phi
 
-#0.22 : 0.011% d'erreur, tps d'éxécution ~ 1''/70''
-#0.33 : 0.012% d'erreur, tps d'éxécution ~ 1''/60''
-
-if EIV :
+if EIV and res_gmsh!=50:
  if Interpolation:
   exec(open("DDD_EIV.py").read())
  else:
   exec(open("DDD_EIV_fixe.py").read())
 
+# -------------- res = 50 : conditions pour l'éxécution du modèle réduit -------------- #
 
+l_rho=[0.22,0.33,0.44]
+l_conf_g=[('2sph','ray'),('cylsph','ray_sph'),('cylsph','ray_cyl')]
 
+t_maill={}
+t_maill[('2sph','ray')]=[20.40,20.88,20.40,17.73]
+t_maill[('cylsph','ray_sph')]=[18.54,18.79,18.47,16.60]
+t_maill[('cylsph','ray_cyl')]=[19.78,18.08,14.16,9.86]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+if EIV and res_gmsh==50:
+ for conf_g in l_conf_g:
+  l_tm=t_maill[conf_g]
+  for i in rage(1,4):
+    r_nouv=l_rho[i]
+    t_meshing=l_tm[i]
+    with open("DDD_EIV.py",'r') as op:
+     exec(op.read())
 
