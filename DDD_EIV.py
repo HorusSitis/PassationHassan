@@ -370,4 +370,37 @@ if Report :
  print('##############################################################################')
 
 ##############################################################################
+
+nom_fichier='Perf3D/'+computer+config+geo_p+str(int(round(100*r_nouv,2)))+'.txt'
+registre=open(nom_fichier,'w')
+#registre.write('Resultats '+conf_mess+str(r_nouv)+'\n')
+#sys.exit()
+registre.write('Resultats '+conf_mess+', '+geo_mess+' valeur '+str(r_nouv)+' :\n')
+registre.write('##############################################################################\n')
+registre.write('Porosite :'+str(por)+'\n')
+
+registre.write('Coefficient Dhom_k11 '+' MOR :'+str(Dhom_kMOR[0,0])+'\n')
+registre.write('Coefficient Dhom_k11 '+' MEF :'+str(Dhom_kMEF[0,0])+'\n')
+registre.write('Maillage :'+str(t_meshing)+'secondes\n')
+registre.write('Erreur relative MEF-MOR :'+str(err_rel)+'pourcent\n')
+
+registre.write('T_phi_nouv'+str(t_phi_nouv)+'secondes\n')
+registre.write('T_ROM'+str(t_rom_linear+t_rom_Dhom)+'secondes\n')
+registre.write('T_FEM'+str(t_fem)+'secondes\n')
+
+registre.write('Noeuds :'+str(V_nouv.dim())+'\n')
+
+## Rapports de temps de calcul, sans unite ##
+registre.write('Gain de temps de la methode :'+str(R_rom)+'\n')
+registre.write('Contribution de l interpolation :'+str(R_interpolation)+'\n')
+registre.write('Difference :'+str(R_rom-R_interpolation)+'\n')
+#
+registre.write('##############################################################################\n')
+
+registre.close()
+
+
+
+
+##############################################################################
 ##############################################################################
