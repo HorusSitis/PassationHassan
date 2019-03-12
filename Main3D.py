@@ -190,9 +190,9 @@ l_rho=[0.11,0.22,0.33,0.44]
 l_conf_g=[('2sph','ray'),('cylsph','ray_sph'),('cylsph','ray_cyl')]
 
 t_maill={}
-t_maill[('2sph','ray')]=[20.40,20.88,20.40,17.73]
-t_maill[('cylsph','ray_sph')]=[18.54,18.79,18.47,16.60]
-t_maill[('cylsph','ray_cyl')]=[19.78,18.08,14.16,9.86]
+t_maill[('2sph','ray')]=([20.40,20.88,20.40,17.73],2)
+t_maill[('cylsph','ray_sph')]=([18.54,18.79,18.47,16.60],2)
+t_maill[('cylsph','ray_cyl')]=([19.78,18.08,14.16,9.86],4)
 
 if EIV and res_gmsh==10:
  for conf_g in l_conf_g:
@@ -215,7 +215,8 @@ if EIV and res_gmsh==10:
    elif geo_p=='ray_sph':
     geo_mess='rayon de la sphere variable'
   ###
-  l_tm=t_maill[conf_g]
+  l_tm=t_maill[conf_g][0]
+  N_mor=t_maill[conf_g][1]
   #
   for i in range(0,4):
     r_nouv=l_rho[i]
