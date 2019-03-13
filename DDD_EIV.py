@@ -371,33 +371,50 @@ if Report :
 
 ##############################################################################
 
-nom_fichier='Perf3D/'+computer+config+geo_p+str(int(round(100*r_nouv,2)))+'Nmor'+str(N_mor)+'.txt'
-registre=open(nom_fichier,'w')
-#registre.write('Resultats '+conf_mess+str(r_nouv)+'\n')
-#sys.exit()
-registre.write('Resultats '+conf_mess+', '+geo_mess+' valeur '+str(r_nouv)+' :\n')
-registre.write('##############################################################################\n')
-registre.write('Porosite :'+str(por)+'\n')
+#nom_fichier='Perf3D/'+'res'+str(res_gmsh)+computer+config+geo_p+str(int(round(100*r_nouv,2)))+'Nmor'+str(N_mor)+'.txt'
+#registre=open(nom_fichier,'w')
+#registre.write('Resultats '+conf_mess+', '+geo_mess+' valeur '+str(r_nouv)+' :\n')
+#registre.write('##############################################################################\n')
+#registre.write('Porosite :'+str(por)+'\n')
 
-registre.write('Coefficient Dhom_k11 '+' MOR :'+str(Dhom_kMOR[0,0])+'\n')
-registre.write('Coefficient Dhom_k11 '+' MEF :'+str(Dhom_kMEF[0,0])+'\n')
-registre.write('Maillage :'+str(t_meshing)+'secondes\n')
-registre.write('Erreur relative MEF-MOR :'+str(err_rel)+'pourcent\n')
+#registre.write('Coefficient Dhom_k11 '+' MOR :'+str(Dhom_kMOR[0,0])+'\n')
+#registre.write('Coefficient Dhom_k11 '+' MEF :'+str(Dhom_kMEF[0,0])+'\n')
+#registre.write('Maillage :'+str(t_meshing)+'secondes\n')
+#registre.write('Erreur relative MEF-MOR :'+str(err_rel)+'pourcent\n')#
 
-registre.write('T_phi_nouv'+str(t_phi_nouv)+'secondes\n')
-registre.write('T_ROM'+str(t_rom_linear+t_rom_Dhom)+'secondes\n')
-registre.write('T_FEM'+str(t_fem)+'secondes\n')
+#registre.write('T_phi_nouv'+str(t_phi_nouv)+'secondes\n')
+#registre.write('T_ROM'+str(t_rom_linear+t_rom_Dhom)+'secondes\n')
+#registre.write('T_FEM'+str(t_fem)+'secondes\n')
 
-registre.write('Noeuds :'+str(V_nouv.dim())+'\n')
+#registre.write('Noeuds :'+str(V_nouv.dim())+'\n')
 
 ## Rapports de temps de calcul, sans unite ##
-registre.write('Gain de temps de la methode :'+str(R_rom)+'\n')
-registre.write('Contribution de l interpolation :'+str(R_interpolation)+'\n')
-registre.write('Difference :'+str(R_rom-R_interpolation)+'\n')
+#registre.write('Gain de temps de la methode :'+str(R_rom)+'\n')
+#registre.write('Contribution de l interpolation :'+str(R_interpolation)+'\n')
+#registre.write('Difference :'+str(R_rom-R_interpolation)+'\n')
 #
-registre.write('##############################################################################\n')
+#registre.write('##############################################################################\n')
 
-registre.close()
+#registre.close()
+
+##############################################################################
+##############################################################################
+##############################################################################
+
+#registre=open(nom_fichier,'w')
+
+registre.write('rayon : '+str(r_nouv)+'\n')
+registre.write('tableau 1\n')
+registre.write('0,'+str(int(round(100*r_nouv,2)))+'&0,'+str(round(por,6))+'&0,'+str(round(Dhom_kMOR[0,0],7))+'&0,'+str(round(Dhom_kMEF[0,0],6))+'&'+str(t_meshing)+'s&0,'+str(round(err_rel,4))+'\%&'+str(round(t_phi_nouv,2))+'s&'+str(round(t_rom_linear+t_rom_Dhom,2))+'s&'+str(round(t_fem,2))+'s&'+str(V_nouv.dim())+'\\'+'\\'+'\n')
+registre.write('\n')
+
+registre.write('tableau 2\n')
+registre.write('0,'+str(int(round(100*r_nouv,2)))+'&'+str(round(R_rom,2))+'&'+str(round(R_interpolation,2))+'&'+str(round(R_rom-R_interpolation,2))+'&'+str(V_nouv.dim())+'\\'+'\\')
+registre.write('\n')
+
+registre.write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n')
+
+#registre.close()
 
 
 
