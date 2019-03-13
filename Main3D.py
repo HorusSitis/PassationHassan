@@ -180,7 +180,12 @@ ind_res=True#False###----------> on précise la résolution du maillage, qui app
 
 if EIV and res_gmsh!=50:
  if Interpolation:
-  exec(open("DDD_EIV.py").read())
+  nom_fichier='Perf3D/'+computer+'res'+str(res_gmsh)+config+geo_p+'Nmor'+str(N_mor)+'.txt'
+  registre=open(nom_fichier,'w')
+  for rho in [0.11,0.22]:
+   r_nouv=rho
+   exec(open("DDD_EIV.py").read())
+  registre.close()
  else:
   exec(open("DDD_EIV_fixe.py").read())
 
@@ -219,6 +224,9 @@ if EIV and res_gmsh==50:
   N_mor=dico_conf_g[conf_g][1]
   l_rho=dico_conf_g[conf_g][2]
   deb=dico_conf_g[conf_g][3]
+  ##
+  nom_fichier='Perf3D/'+computer+'_res'+str(res_gmsh)+config+geo_p+'Nmor'+str(N_mor)+'.txt'
+  registre=open(nom_fichier,'w')
   #
   for i in range(deb,len(l_rho)):
     print('rayon',str(l_rho[i]),'maillage :',l_tm[i],'secondes')
@@ -228,4 +236,5 @@ if EIV and res_gmsh==50:
     t_meshing=l_tm[i]
     with open("DDD_EIV.py",'r') as op:
      exec(op.read())
+  registre.close()
 
