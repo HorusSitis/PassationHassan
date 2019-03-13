@@ -82,7 +82,7 @@ repertoire_parent="Res3D/"
 
 # Choix de la résolution du maillage : nombre de noeuds par côté du cube
 
-res_gmsh=10
+res_gmsh=50
 if typ_msh=='gms':
  res=res_gmsh
 
@@ -178,7 +178,7 @@ r_nouv=0.44#0.33#0.22#0.11#
 ind_fixe=True##-----------> dom_fixe devant le 'Phi'
 ind_res=True#False###----------> on précise la résolution du maillage, qui apparaît ou non dans le fichier contenant Phi
 
-if EIV and res_gmsh!=10:
+if EIV and res_gmsh!=50:
  if Interpolation:
   exec(open("DDD_EIV.py").read())
  else:
@@ -186,15 +186,17 @@ if EIV and res_gmsh!=10:
 
 # -------------- res = 50 : conditions pour l'éxécution du modèle réduit -------------- #
 
-l_rho=[0.11,0.22,0.33,0.44]
-l_conf_g=[('2sph','ray'),('cylsph','ray_sph'),('cylsph','ray_cyl')]
 
-t_maill={}
-t_maill[('2sph','ray')]=([20.40,20.88,20.40,17.73],2)
-t_maill[('cylsph','ray_sph')]=([18.54,18.79,18.47,16.60],2)
-t_maill[('cylsph','ray_cyl')]=([19.78,18.08,14.16,9.86],4)
+l_conf_g=[#('2sph','ray'),
+#('cylsph','ray_sph'),
+('cylsph','ray_cyl')]
 
-if EIV and res_gmsh==10:
+dico_conf_g={}
+dico_conf_g[('2sph','ray')]=([20.40,20.88,20.40,17.73],2,[0.11,0.22,0.33,0.44])#fait
+dico_conf_g[('cylsph','ray_sph')]=([18.54,18.79,18.47,16.60],2,[0.33,0.44])#0.11 et 0.22 faits
+dico_conf_g[('cylsph','ray_cyl')]=([19.78,18.08,14.16,9.86],4,[0.11,0.22,0.33,0.44])
+
+if EIV and res_gmsh==50:
  for conf_g in l_conf_g:
   config=conf_g[0]
   geo_p=conf_g[1]
@@ -215,10 +217,11 @@ if EIV and res_gmsh==10:
    elif geo_p=='ray_sph':
     geo_mess='rayon de la sphere variable'
   ###
-  l_tm=t_maill[conf_g][0]
-  N_mor=t_maill[conf_g][1]
+  l_tm=dico_conf_g[conf_g][0]
+  N_mor=dico_conf_g[conf_g][1]
+  l_rho=dico_conf_g[conf_g][2]
   #
-  for i in range(0,4):
+  for i in range(0,len(l_rho)):
     r_nouv=l_rho[i]
     t_meshing=l_tm[i]
     with open("DDD_EIV.py",'r') as op:
