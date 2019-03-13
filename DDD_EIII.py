@@ -19,6 +19,13 @@ r_c_0=0.15
 
 r_min=0.05
 
+if res_gmsh==10:
+ lw=0.27
+elif res_gmsh==20:
+ lw=0.15
+elif res_gmsh==50:
+ lw=0.01
+
 dimension=3
 
 class PeriodicBoundary(SubDomain):
@@ -157,7 +164,7 @@ for i in range(Nsnap):
 phi=Function(V_fixe)
 for i in range(Nsnap):
  phi.vector().set_local(Phi_prime_v[:,i])
- plot(phi, linewidth=0.3)
+ plot(phi, linewidth=lw)
  r=0.05*(i+1)
  plt.title("Mode "+str(i+1),fontsize=40)
  if fig_todo=='':#aff':
