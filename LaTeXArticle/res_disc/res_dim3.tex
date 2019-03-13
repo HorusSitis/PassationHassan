@@ -1,63 +1,5 @@
 %\subsection{Three-dimensional case}
 
-Thr following geometries, especially when the number of nodes in the mesh where Finite Element vector space is defined, fully justify the use of a Reduced Order Model, %
-sice time of execution of the Finite Element Method becomes significant.
-
-\par
-Like in section \ref{hom_d}, we have chosen three different resolutions of the meshes used for each problem to solve with a ROM. %
-These are defined by the number of nodes : $10$, $20$ or $50$, we find on a side of the unit cube.
-
-\par
-The following table gives the values of $N_{rom}$ with a threshold of $99,99\%$. We can see that, for a same problem in $\chi (\rho ,\mathbf{y})$, %
-$N_{rom}$ depends on the size of the mesh : %
-this can be understood mathematically since it has been defined, and calculated, from a Finite Element space. %
-The latter is nothing more than an approximation of $L^2$ or $H^1$ we use for our physical problem.
-
-\par
-Therefore the physically relevant $N_{rom}$, which might be equal to the mathematical $N_{rom}$ for $L^2$ or $H^1$ functional space, %
-is likely to be different of the values we find in the following table, %
-and we can reasonably thik it will be lesser than its value for the biggest mesh.
-
-\par
-For example, $N_{rom}$ for a physical, spherical inclusion will be lesser than $3$, and lesser than $2$ for two spheres per unit cell.
-
-\par
-We should consider this issue since $N_{rom}$ may not be too small, if we want ROM to be relevant. %
-Indeed, the trivial case when $N_{rom}$ equals $1$ leads us to choose, according to POD's definition, %
-the mean value the interpolated $\chi '(,\rho_j)$ for the single POD vector.
-
-\par
-Hence resolution of the optimisation problem, directly or with method of snapshots, would be no longer useful.
-
-{\renewcommand{\tabularxcolumn}[1]{%
->{\centering\arraybackslash}m{#1}}
-
-\begin{figure}[H]
-%
-\begin{center}
-%\begin{tabular}{|l||*{5}{c|}}
-\begin{tabularx}{0.9\linewidth}%
-{|>{\bfseries}c||%
-*{3}{c|}%
-*{2}{>{\centering \arraybackslash}X|}}
-%
-\hline
-\rowcolor{lightgray} %
-Res.%\backslashbox{Res.}{Config.}%
-&Single sphere&Single cylinder&Two spheres&%
-One sphere, one cylinder, $\rho=$ sphere radius&One sphere, one cylinder, $\rho=$ cylinder radius\\
-%
-\hline
-\hline
-10&5&5&4&4&5\\ \hline
-20&4&5&3&3&4\\ \hline
-50&3&5&2&2&4\\ \hline
-\end{tabularx}
-\end{center}
-%
-\caption{Values of $N_{rom}^{99,99\%}$, against the numer of nodes per unit segment}
-\end{figure}
-
 \subsubsection{A single spherical inclusion}
 
 \begin{figure}[H]%[!p]
@@ -65,37 +7,31 @@ One sphere, one cylinder, $\rho=$ sphere radius&One sphere, one cylinder, $\rho=
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_1_sur8sph_un_rayres10.png}%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_1_sur8sph_un_rayres20.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_2_sur8sph_un_rayres10.png}%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_2_sur8sph_un_rayres20.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_3_sur8sph_un_rayres10.png}%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_3_sur8sph_un_rayres20.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_4_sur8sph_un_rayres10.png}%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_4_sur8sph_un_rayres20.png}%
 \\
 \hline
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_5_sur8sph_un_rayres10.png}%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_5_sur8sph_un_rayres20.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_6_sur8sph_un_rayres10.png}%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_6_sur8sph_un_rayres20.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_7_sur8sph_un_rayres10.png}%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_7_sur8sph_un_rayres20.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_8_sur8sph_un_rayres10.png}%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_8_sur8sph_un_rayres20.png}%
 \\
 \hline
 \end{tabular}
 \end{center}
-\caption{$8$ solutions of the physical problem}
+\caption{Resolution : $20$\ ; $8$ training solutions}
 %
 \end{figure}
 
-%\begin{itemize}
-%\item $\rho^j$ is the radius of a sphere at the center of the cell.
-%\item We interpolate the $\chi(\mathbf{y},\rho^j)$ on the unit cube minus $\mathcal{S}(\mathbf{0},0,0001)$.
-%\end{itemize}
-
-%\etoile
-
+\begin{comment}
 \begin{figure}[H]%<+->
 %
 \begin{center}
@@ -124,6 +60,7 @@ One sphere, one cylinder, $\rho=$ sphere radius&One sphere, one cylinder, $\rho=
 %
 \caption{The POD basis on $\Omega_{fluid}^0$ : the unit cube}
 \end{figure}
+\end{comment}
 
 \begin{figure}[H]
 \begin{center}
@@ -148,7 +85,7 @@ In purpose of evaluating the ROM method, we derive from above results the ratio 
 \mathcal{R}_{ROM}^{99,99\%}=\dfrac{t_{\phi^{new}}+t_{ROM}+t_{\text{Meshing}}}{t_{FEM}+t_{\text{Meshing}}}
 \end{equation}
 
-Sice we can see that the main contribution to $\mathcal{R}_{ROM}^{99,99\%}$ will be the time of interpolation $t_{\phi^{new}}$, %
+Since we can see that the main contribution to $\mathcal{R}_{ROM}^{99,99\%}$ will be the time of interpolation $t_{\phi^{new}}$, %
 we also evaluate the folowing contribution to $\mathcal{R}_{ROM}^{99,99\%}$ :
 
 \begin{equation}
@@ -192,34 +129,7 @@ there must exist a formalism in which our problem fully lies.
 In the following, we use the POD-interpolation method for FE spaces with a higher number of nodes, %
 then we discuss its efficiency.
 
-\begin{figure}[H]%[!p]
-%
-\begin{center}
-\begin{tabular}{|c|c|c|c|}
-\hline
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_1_sur8sph_un_rayres20.png}%
-&%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_2_sur8sph_un_rayres20.png}%
-&%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_3_sur8sph_un_rayres20.png}%
-&%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_4_sur8sph_un_rayres20.png}%
-\\
-\hline
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_5_sur8sph_un_rayres20.png}%
-&%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_6_sur8sph_un_rayres20.png}%
-&%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_7_sur8sph_un_rayres20.png}%
-&%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_8_sur8sph_un_rayres20.png}%
-\\
-\hline
-\end{tabular}
-\end{center}
-\caption{Resolution : $20$\ ; $8$ training solutions}
-%
-\end{figure}
+
 
 \begin{figure}[H]%{Results}
 %
