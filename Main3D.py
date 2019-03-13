@@ -187,14 +187,12 @@ if EIV and res_gmsh!=50:
 # -------------- res = 50 : conditions pour l'éxécution du modèle réduit -------------- #
 
 
-l_conf_g=[#('2sph','ray'),
-#('cylsph','ray_sph'),
-('cylsph','ray_cyl')]
+l_conf_g=[('2sph','ray'),('cylsph','ray_sph'),('cylsph','ray_cyl')]
 
 dico_conf_g={}
-dico_conf_g[('2sph','ray')]=([20.40,20.88,20.40,17.73],2,[0.11,0.22,0.33,0.44])#fait
-dico_conf_g[('cylsph','ray_sph')]=([18.54,18.79,18.47,16.60],2,[0.33,0.44])#0.11 et 0.22 faits
-dico_conf_g[('cylsph','ray_cyl')]=([19.78,18.08,14.16,9.86],4,[0.11,0.22,0.33,0.44])
+dico_conf_g[('2sph','ray')]=([20.40,20.88,20.40,17.73],2,[0.11,0.22,0.33,0.44],4)# dernier paramètre : nombre de calculs déjà faits
+dico_conf_g[('cylsph','ray_sph')]=([18.54,18.79,18.47,16.60],2,[0.11,0.22,0.33,0.44],2)
+dico_conf_g[('cylsph','ray_cyl')]=([19.78,18.08,14.16,9.86],4,[0.11,0.22,0.33,0.44],4)
 
 if EIV and res_gmsh==50:
  for conf_g in l_conf_g:
@@ -220,8 +218,12 @@ if EIV and res_gmsh==50:
   l_tm=dico_conf_g[conf_g][0]
   N_mor=dico_conf_g[conf_g][1]
   l_rho=dico_conf_g[conf_g][2]
+  deb=dico_conf_g[conf_g][3]
   #
-  for i in range(0,len(l_rho)):
+  for i in range(deb,len(l_rho)):
+    print('rayon',str(l_rho[i]),'maillage :',l_tm[i],'secondes')
+    print('##############################################################################')
+    #
     r_nouv=l_rho[i]
     t_meshing=l_tm[i]
     with open("DDD_EIV.py",'r') as op:
