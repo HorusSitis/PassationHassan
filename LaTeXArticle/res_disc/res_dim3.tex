@@ -441,6 +441,8 @@ In the following, we give the same results for the geometries seen in section \r
 \begin{figure}[H]%<+->
 %
 \begin{center}
+\subfloat[Solution with reduced order model on $\Omega_{fluid}^{new}$]{%
+%\begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
 \includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_rom11_sur8cyl_un_rayres20.png}%
@@ -453,14 +455,13 @@ In the following, we give the same results for the geometries seen in section \r
 \\
 \hline
 \end{tabular}
-\end{center}
+%\end{center}
+}%
 %
-\caption{Solution with reduced order model on $\Omega_{fluid}^{new}$ : $50$ nodes per unit segment}
-\end{figure}
 
-\begin{figure}[H]%{Results}
 %
-\begin{center}
+\subfloat[Resolution : $20$\ ; $N_{rom}=5$]{%
+%\begin{center}
 \begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
 \hline
 \rowcolor{lightgray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
@@ -474,14 +475,19 @@ In the following, we give the same results for the geometries seen in section \r
 0,44&0,39179&0,22272&0,22260&1.38s&0,0523\%&30.74s&1.58s&8.62s&69\ 612\\
 \hline
 \end{tabular}
-\end{center}
-\caption{Resolution : $20$\ ; $N_{rom}=5$}
+%\end{center}
+%\caption{Resolution : $20$\ ; $N_{rom}=5$}
 %
+}
+\end{center}
+\caption{Results of ROM with interpolation}
 \end{figure}
 
 \begin{figure}[H]%<+->
 %
 \begin{center}
+%
+\subfloat[Solution with reduced order model on $\Omega_{fluid}^{new}$]{%
 \begin{tabular}{|c|c|c|c|}
 \hline
 \includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_rom11_sur8cyl_un_rayres50.png}%
@@ -494,14 +500,12 @@ In the following, we give the same results for the geometries seen in section \r
 \\
 \hline
 \end{tabular}
-\end{center}
 %
-\caption{Solution with reduced order model on $\Omega_{fluid}^{new}$ : $50$ nodes per unit segment}
-\end{figure}
+%\caption{Solution with reduced order model on $\Omega_{fluid}^{new}$ : $50$ nodes per unit segment}
+}%
+%
 
-\begin{figure}[H]%{Results}
-%
-\begin{center}
+\subfloat[Resolution : $50$\ ; $N_{rom}=5$]{%
 \begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
 \hline
 \rowcolor{lightgray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
@@ -515,8 +519,10 @@ In the following, we give the same results for the geometries seen in section \r
 0,44&0,39179&0,22267&0,22265&11.73s&0,0091\%&396.81s&9.23s&0.13s&833\ 502\\
 \hline
 \end{tabular}
+}
+%
 \end{center}
-\caption{Resolution : $50$\ ; $N_{rom}=5$}
+\caption{Results of ROM with interpolation}
 %
 \end{figure}
 
@@ -568,9 +574,26 @@ In the following, we give the same results for the geometries seen in section \r
 %\Floatbarrier
 \subsubsection{Two spheres}
 
-\begin{figure}[H]%{Results}
+\begin{figure}[H]%<+->
 %
 \begin{center}
+%
+\subfloat[Solution with reduced order model on $\Omega_{fluid}^{new}$]{%
+\begin{tabular}{|c|c|c|c|}
+\hline
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_rom11_sur82sph_rayres20.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_rom22_sur82sph_rayres20.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_rom33_sur82sph_rayres20.png}%
+&%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_rom44_sur82sph_rayres20.png}%
+\\
+\hline
+\end{tabular}
+}
+
+\subfloat[Resolution : $20$\ ; $N_{rom}=3$]{%
 \begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
 \hline
 \rowcolor{lightgray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
@@ -584,34 +607,36 @@ In the following, we give the same results for the geometries seen in section \r
 0,44&0,62904&0,62589&0,62591&1.95s&0,0036\%&28.85s&1.84s&15.55s&100\ 767\\
 \hline
 \end{tabular}
-\end{center}
-\caption{Resolution : $20$\ ; $N_{rom}=3$}
+}
 %
+%\caption{Resolution : $20$\ ; $N_{rom}=3$}
+%
+\end{center}
+%
+\caption{Results of ROM with interpolation}
 \end{figure}
 
-\begin{figure}[H]%<+->
+\begin{figure}[H]
 %
 \begin{center}
+%
+\subfloat[Solution with reduced order model on $\Omega_{fluid}^{new}$]{%
 \begin{tabular}{|c|c|c|c|}
 \hline
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_rom11_sur82sph_rayres20.png}%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_rom11_sur82sph_rayres50.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_rom22_sur82sph_rayres20.png}%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_rom22_sur82sph_rayres50.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_rom33_sur82sph_rayres20.png}%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_rom33_sur82sph_rayres50.png}%
 &%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_rom44_sur82sph_rayres20.png}%
+\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_rom44_sur82sph_rayres50.png}%
 \\
 \hline
 \end{tabular}
-\end{center}
+}
 %
-\caption{Solution with reduced order model on $\Omega_{fluid}^{new}$ : $20$ nodes per unit segment}
-\end{figure}
 
-\begin{figure}[H]%{Results}
-%
-\begin{center}
+\subfloat[Resolution : $50$\ ; $N_{rom}=2$]{%
 \begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
 \hline
 \rowcolor{lightgray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
@@ -625,29 +650,11 @@ In the following, we give the same results for the geometries seen in section \r
 0,44&0,62904&0,62574&0,62582&17.73s&0,0131\%&256.65s&14.12s&224.55s&1\ 294\ 941\\
 \hline
 \end{tabular}
+}
+%
 \end{center}
-\caption{Resolution : $50$\ ; $N_{rom}=2$}
+\caption{Results of ROM with interpolation}
 %
-\end{figure}
-
-\begin{figure}[H]%<+->
-%
-\begin{center}
-\begin{tabular}{|c|c|c|c|}
-\hline
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_rom11_sur82sph_rayres50.png}%
-&%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_rom22_sur82sph_rayres50.png}%
-&%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_rom33_sur82sph_rayres50.png}%
-&%
-\includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_rom44_sur82sph_rayres50.png}%
-\\
-\hline
-\end{tabular}
-\end{center}
-%
-\caption{Solution with reduced order model on $\Omega_{fluid}^{new}$ : $50$ nodes per unit segment}
 \end{figure}
 
 \ligneinter
@@ -699,6 +706,8 @@ In the following, we give the same results for the geometries seen in section \r
 \begin{figure}[H]%<+->
 %
 \begin{center}
+%
+\subfloat[Solution with reduced order model on $\Omega_{fluid}^{new}$]{%
 \begin{tabular}{|c|c|c|c|}
 \hline
 \includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_rom11_sur8cylsph_ray_sphres20.png}%
@@ -711,14 +720,11 @@ In the following, we give the same results for the geometries seen in section \r
 \\
 \hline
 \end{tabular}
-\end{center}
+}
 %
-\caption{Solution with reduced order model on $\Omega_{fluid}^{new}$ : $20$ nodes per unit segment}
-\end{figure}
 
-\begin{figure}[H]%{Results}
 %
-\begin{center}
+\subfloat[Resolution : $20$\ ; $N_{rom}=3$]{%
 \begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
 \hline
 \rowcolor{lightgray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
@@ -732,14 +738,18 @@ In the following, we give the same results for the geometries seen in section \r
 0,44&0,57250&0,54089&0,540046&1.89s&0,1554\%&25.41s&1.77s&13.28s&92\ 058\\
 \hline
 \end{tabular}
-\end{center}
-\caption{Resolution : $20$\ ; $N_{rom}=3$}
+}
 %
+\end{center}
+%
+\caption{Results of ROM with interpolation}
 \end{figure}
 
 \begin{figure}[H]%<+->
 %
 \begin{center}
+%
+\subfloat[Solution with reduced order model on $\Omega_{fluid}^{new}$]{%
 \begin{tabular}{|c|c|c|c|}
 \hline
 \includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_rom11_sur8cylsph_ray_sphres50.png}%
@@ -752,14 +762,10 @@ In the following, we give the same results for the geometries seen in section \r
 \\
 \hline
 \end{tabular}
-\end{center}
+}
 %
-\caption{Solution with reduced order model on $\Omega_{fluid}^{new}$ : $50$ nodes per unit segment}
-\end{figure}
 
-\begin{figure}[H]%{Results}
-%
-\begin{center}
+\subfloat[Resolution : $50$\ ; $N_{rom}=2$]{%
 \begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
 \hline
 \rowcolor{lightgray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
@@ -773,9 +779,11 @@ In the following, we give the same results for the geometries seen in section \r
 0,44&0,57250&0,542528&0,539777&16.6s&0,5096\%&229.21s&12.2s&143.36s&1\ 167\ 783\\
 \hline
 \end{tabular}
-\end{center}
-\caption{Resolution : $50$\ ; $N_{rom}=2$}
+}
 %
+\end{center}
+%
+\caption{Results of ROM with interpolation}
 \end{figure}
 
 \ligneinter
@@ -828,6 +836,8 @@ In the following, we give the same results for the geometries seen in section \r
 \begin{figure}[H]%<+->
 %
 \begin{center}
+%
+\subfloat[Solution with reduced order model on $\Omega_{fluid}^{new}$]{%
 \begin{tabular}{|c|c|c|c|}
 \hline
 \includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_rom11_sur8cylsph_ray_cylres20.png}%
@@ -840,14 +850,10 @@ In the following, we give the same results for the geometries seen in section \r
 \\
 \hline
 \end{tabular}
-\end{center}
+}
 %
-\caption{Solution with reduced order model on $\Omega_{fluid}^{new}$ : $20$ nodes per unit segment}
-\end{figure}
 
-\begin{figure}[H]%{Results}
-%
-\begin{center}
+\subfloat[Resolution : $20$\ ; $N_{rom}=4$]{%
 \begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
 \hline
 \rowcolor{lightgray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
@@ -861,14 +867,18 @@ In the following, we give the same results for the geometries seen in section \r
 0,44&0,37765&0,21372&0,21368&1.35s&0,0193\%&21.90s&1.48s&6.84s&62\ 127\\
 \hline
 \end{tabular}
-\end{center}
-\caption{Resolution : $20$\ ; $N_{rom}=4$}
+}
 %
+\end{center}
+%
+\caption{Results of ROM with interpolation}%
 \end{figure}
 
 \begin{figure}[H]%<+->
 %
 \begin{center}
+%
+\subfloat[Solution with reduced order model on $\Omega_{fluid}^{new}$]{%
 \begin{tabular}{|c|c|c|c|}
 \hline
 \includegraphics[width=0.2\linewidth, height=2.2cm]{../Figures3D/sol_rom11_sur8cylsph_ray_cylres50.png}%
@@ -881,14 +891,11 @@ In the following, we give the same results for the geometries seen in section \r
 \\
 \hline
 \end{tabular}
-\end{center}
+}
 %
-\caption{Solution with reduced order model on $\Omega_{fluid}^{new}$ : $50$ nodes per unit segment}
-\end{figure}
 
-\begin{figure}[H]%{Results}
 %
-\begin{center}
+\subfloat[Resolution : $50$\ ; $N_{rom}=4$]{%
 \begin{tabular}{|c|c||c|c||c|c||c|c||c||c|}
 \hline
 \rowcolor{lightgray} $\rho^{new}$&Porosity&${D_k^{hom,ROM}}_{11}$&${D_k^{hom,FEM}}_{11}$&Meshing&$Err$&$\phi_i^{new}$&ROM&FEM&Nodes\\
@@ -902,9 +909,11 @@ In the following, we give the same results for the geometries seen in section \r
 0,44&0,37765&0,21391&0,21388&9.86s&0,0128\%&293.35s&9.21s&132.92s&754\ 662\\
 \hline
 \end{tabular}
-\end{center}
-\caption{Resolution : $50$\ ; $N_{rom}=4$}
+}
 %
+\end{center}
+%
+\caption{Results of ROM with interpolation}
 \end{figure}
 
 \ligneinter
