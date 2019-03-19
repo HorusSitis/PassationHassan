@@ -58,7 +58,7 @@ EI=False
 snap_done=True
 EII=True
 exsnap_done=True
-test_Dhom=True
+test_Dhom=False
 
 
 EIII=False
