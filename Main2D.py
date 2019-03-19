@@ -54,10 +54,12 @@ from DD_fun_obj import *
 E_=False
 E_lL=False
 
-EI=True
+EI=False
 snap_done=True
-EII=False
-exsnap_done=False
+EII=True
+exsnap_done=True
+test_Dhom=True
+
 
 EIII=False
 EIV=False
@@ -69,7 +71,7 @@ EIV=False
 res_gmsh=100
 
 fixe_aff=False
-fig_todo='aff'
+fig_todo=''
 
 ### ------------ Etape 0 : Génération de microstructures périodiques aléatoires ------------ ###
 
@@ -87,7 +89,7 @@ VFS_degree=2#3#
 ## condition sur la valeur moyenne de chi : annulationmoy_null=True
 
 
-config='compl'#'cer_un'#
+config='cer_un'#'compl'#
 
 if config=='cer_un':
  test_snap='i_per'#'solid_1'#''#
