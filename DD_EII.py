@@ -40,6 +40,9 @@ if dom_fixe=="am":
  mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2D_am.xml")
 elif config=='compl':
  mesh_fixe=Mesh("maillages_per/2D/maillage_trous2D_"+geo_p+"_fixe.xml")
+elif dom_fixe=="ray_min":
+ if config=='cer_un':
+  mesh_fixe=Mesh('maillages_per/2D/maillage_trou2D_5.xml')
 
 V_fixe=VectorFunctionSpace(mesh_fixe, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
 #sys.exit()
@@ -166,6 +169,9 @@ def f_testDhom(n):
   mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2D_am.xml")
  elif config=='compl':
   mesh_fixe=Mesh("maillages_per/2D/maillage_trous2D_"+geo_p+"_fixe.xml")
+ elif dom_fixe=="ray_min":
+  if config=='cer_un':
+   mesh_fixe=Mesh('maillages_per/2D/maillage_trou2D_5.xml')
  V_fixe=VectorFunctionSpace(mesh_fixe, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
  ## Interpolation post-snapshot sur le maillage physique
  mesh_name="maillages_per/2D/maillage_trou2D"+mention+"_"+str(int(round(100*r,2)))+".xml"
@@ -207,7 +213,7 @@ def f_testDhom(n):
   tps_interp=end-start
   #print('Interpolation sur le maillage raffiné :',end-start,'secondes')
  plot(mesh_fixe)
- plt.title('Maillage raffiné rayon '+str(int(round(100*r,2)))+'x10e2')
+ plt.title('Maillage raffiné '+str(Nrefine)+' fois rayon '+str(int(round(100*r,2)))+'x10e-2')
  plt.show()
  plt.close()
  # Création du domaine d'intégration sur le maillage fixe
@@ -230,7 +236,7 @@ def f_testDhom(n):
 pool=multiprocessing.Pool(processes=n_mp_refi)
 list_refi_interp=pool.map(f_testDhom,(n for n in range(1,1+Nsnap)))
 
-nom_fichier='Res2D/'+'testDhom'+config+geo_p+'_crown10'+str(lg_crow)+'_Nrefi'+str(Nrefine)+'.txt'
+nom_fichier='Res2D/'+'testDhom'+config+geo_p+'_'+dom_fixe+'_crown10'+str(lg_crow)+'_Nrefi'+str(Nrefine)+'.txt'
 registre=open(nom_fichier,'w')
 
 for n in range(1,1+Nsnap):
@@ -276,6 +282,7 @@ for n in range(1,1+Nsnap):
  ##
  print('##################################################################')
  print('Géométrie : '+conf_mess+', '+geo_mess+', '+str(int(round(100*r,2))))
+ print('Domaine fixe : '+dom_fixe)
  print('------------------------------------------------------------------')
  print('Couronne :',crow)
  print('Nombre de tours de raffinement :',Nrefine)
@@ -290,11 +297,13 @@ for n in range(1,1+Nsnap):
  print('DUsnap fixe restreint au domaine courant :',Dhom_k_restr_prime[0,0])#,'porosité',por)
  print('DUsnap physique :',Dhom_k_postprime[0,0])#,'porosité',por)
  print('DUsnap domaine fixe moyenné :',D_moy[0,0])
+ print('------------------------------------------------------------------')
  print('Erreur relative :',100*(Dhom_k_restr_prime[0,0]-Dhom_k_postprime[0,0])/Dhom_k_postprime[0,0],'pourcent')
  print('##################################################################')
  #
  registre.write('##################################################################'+'\n')
  registre.write('Rho : '+str(int(round(100*r,2)))+'\n')
+ registre.write('Domaine fixe : '+dom_fixe+'\n')
  registre.write('------------------------------------------------------------------'+'\n')
  registre.write('Couronne : '+str(crow)+'\n')
  registre.write('Nombre de tours de raffinement : '+str(Nrefine)+'\n')
@@ -306,6 +315,7 @@ for n in range(1,1+Nsnap):
  registre.write('DUsnap fixe restreint au domaine courant : '+str(Dhom_k_restr_prime[0,0])+'\n')
  registre.write('DUsnap physique : '+str(Dhom_k_postprime[0,0])+'\n')
  registre.write('DUsnap domaine fixe moyenne : '+str(D_moy[0,0])+'\n')
+ registre.write('------------------------------------------------------------------'+'\n')
  registre.write('Erreur relative : '+str(100*(Dhom_k_restr_prime[0,0]-Dhom_k_postprime[0,0])/Dhom_k_postprime[0,0])+' pourcent'+'\n')
  registre.write('##################################################################'+'\n')
 
