@@ -147,7 +147,7 @@ for n in range(1,1+Nsnap):
 if not test_Dhom:
  sys.exit('fin de l étape II, sans tests d intégration sur des sousdomaines')#-------------------------------------------------------------------------------------------------------------------------------------------
 
-lg_crow=-2
+lg_crow=-1
 crow=10**(lg_crow)
 Nrefine=4
 n_mp_refi=8
@@ -187,10 +187,10 @@ def f_testDhom(n):
   markers.set_all(False)
   for c in cells(mesh_fixe):
    for f in facets(c):
-    if ((f.midpoint()[0]-cen_snap_ray[0])**2+(f.midpoint()[1]-cen_snap_ray[1])**2<=(r+crow)**2) and ((f.midpoint()[0]-cen_snap_ray[0])**2+(f.midpoint()[1]-cen_snap_ray[1])**2>=(r-crow)**2):
+    if ((f.midpoint()[0]-cen_snap_ray[0])**2+(f.midpoint()[1]-cen_snap_ray[1])**2<=(r*(1+crow))**2) and ((f.midpoint()[0]-cen_snap_ray[0])**2+(f.midpoint()[1]-cen_snap_ray[1])**2>=(r*(1-crow))**2):
      markers[c]=True
    for v in vertices(c):
-    if (v.point().x()-cen_snap_ray[0])**2+(v.point().y()-cen_snap_ray[1])**2>=(r-crow)**2 and (v.point().x()-cen_snap_ray[0])**2+(v.point().y()-cen_snap_ray[1])**2<=(r+crow)**2:
+    if (v.point().x()-cen_snap_ray[0])**2+(v.point().y()-cen_snap_ray[1])**2>=(r*(1-crow))**2 and (v.point().x()-cen_snap_ray[0])**2+(v.point().y()-cen_snap_ray[1])**2<=(r*(1+crow))**2:
      markers[c]=True
   mesh_fixe=refine(mesh_fixe, markers, redistribute=True)
  end=time.time()
