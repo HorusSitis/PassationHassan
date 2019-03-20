@@ -152,8 +152,9 @@ if not test_Dhom:
 
 lg_crow=-1
 crow=10**(lg_crow)
-Nrefine=4
+Nrefine=7
 n_mp_refi=8
+fig_mesh=False
 
 def f_testDhom(n):
  if geo_p=='hor':
@@ -187,16 +188,16 @@ def f_testDhom(n):
  ## Intégration sur le domaine fluide avec le maillage fixe
  # Raffinement du maillage
  start=time.time()
- for i in range(Nrefine):
+ for i in range(1,1+Nrefine):
   print('raffinement',i)
   markers = MeshFunction("bool", mesh_fixe, mesh_fixe.topology().dim())
   markers.set_all(False)
   for c in cells(mesh_fixe):
    for f in facets(c):
-    if ((f.midpoint()[0]-cen_snap_ray[0])**2+(f.midpoint()[1]-cen_snap_ray[1])**2<=(r*(1+crow))**2) and ((f.midpoint()[0]-cen_snap_ray[0])**2+(f.midpoint()[1]-cen_snap_ray[1])**2>=(r*(1-crow))**2):
+    if ((f.midpoint()[0]-cen_snap_ray[0])**2+(f.midpoint()[1]-cen_snap_ray[1])**2<=(r*(1+crow/i))**2) and ((f.midpoint()[0]-cen_snap_ray[0])**2+(f.midpoint()[1]-cen_snap_ray[1])**2>=(r*(1-crow/i))**2):
      markers[c]=True
    for v in vertices(c):
-    if (v.point().x()-cen_snap_ray[0])**2+(v.point().y()-cen_snap_ray[1])**2>=(r*(1-crow))**2 and (v.point().x()-cen_snap_ray[0])**2+(v.point().y()-cen_snap_ray[1])**2<=(r*(1+crow))**2:
+    if (v.point().x()-cen_snap_ray[0])**2+(v.point().y()-cen_snap_ray[1])**2>=(r*(1-crow/i))**2 and (v.point().x()-cen_snap_ray[0])**2+(v.point().y()-cen_snap_ray[1])**2<=(r*(1+crow/i))**2:
      markers[c]=True
   mesh_fixe=refine(mesh_fixe, markers, redistribute=True)
  end=time.time()
@@ -212,10 +213,11 @@ def f_testDhom(n):
   end=time.time()
   tps_interp=end-start
   #print('Interpolation sur le maillage raffiné :',end-start,'secondes')
- plot(mesh_fixe)
- plt.title('Maillage raffiné '+str(Nrefine)+' fois rayon '+str(int(round(100*r,2)))+'x10e-2')
- plt.show()
- plt.close()
+ if fig_mesh:
+  plot(mesh_fixe)
+  plt.title('Maillage raffiné '+str(Nrefine)+' fois rayon '+str(int(round(100*r,2)))+'x10e-2')
+  plt.show()
+  plt.close()
  # Création du domaine d'intégration sur le maillage fixe
  class DomPhysFluide(SubDomain):
   def inside(self, x, on_boundary):
