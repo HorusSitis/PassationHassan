@@ -38,6 +38,8 @@ with sh.open(repertoire_parent+l_name) as l_loa:
 # Extrapolation au domaine Omega_fixe :
 if dom_fixe=="am":
  mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2D_am.xml")
+elif dom_fixe=="multiray":
+ mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2d_"+dom_fixe+".xml")
 elif config=='compl':
  mesh_fixe=Mesh("maillages_per/2D/maillage_trous2D_"+geo_p+"_fixe.xml")
 elif dom_fixe=="ray_min":
@@ -46,6 +48,10 @@ elif dom_fixe=="ray_min":
 
 V_fixe=VectorFunctionSpace(mesh_fixe, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
 #sys.exit()
+plot(mesh_fixe)
+if fig_todo=='aff':
+ plt.show()
+plt.close()
 # Extrapolation des solutions du problème physique
 
 def extra_snap(n):
@@ -150,9 +156,9 @@ for n in range(1,1+Nsnap):
 if not test_Dhom:
  sys.exit('fin de l étape II, sans tests d intégration sur des sousdomaines')#-------------------------------------------------------------------------------------------------------------------------------------------
 
-lg_crow=-1
+lg_crow=-6
 crow=10**(lg_crow)
-Nrefine=7
+Nrefine=5
 n_mp_refi=8
 fig_mesh=False
 
@@ -173,6 +179,8 @@ def f_testDhom(n):
  elif dom_fixe=="ray_min":
   if config=='cer_un':
    mesh_fixe=Mesh('maillages_per/2D/maillage_trou2D_5.xml')
+ elif dom_fixe=="multiray":
+  mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2d_"+dom_fixe+".xml")
  V_fixe=VectorFunctionSpace(mesh_fixe, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
  ## Interpolation post-snapshot sur le maillage physique
  mesh_name="maillages_per/2D/maillage_trou2D"+mention+"_"+str(int(round(100*r,2)))+".xml"
@@ -186,6 +194,7 @@ def f_testDhom(n):
   for l in range(0,2):
    T_chi_postprime[k,l]=assemble(grad(chi_postprime_n)[k,l]*dx)
  ## Intégration sur le domaine fluide avec le maillage fixe
+ print("Avec le maillage fixe")
  # Raffinement du maillage
  start=time.time()
  for i in range(1,1+Nrefine):
@@ -204,16 +213,16 @@ def f_testDhom(n):
  #print('Raffinemenent du maillage :',end-start,'secondes')
  tps_refi=end-start 
  # Interpolation sur le maillage raffiné
+ start=time.time()
  if Nrefine>0:
   print('interpolation rayon',str(int(round(100*r,2))))
   V_fixe=VectorFunctionSpace(mesh_fixe, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
-  start=time.time()
   chi_prime_n.set_allow_extrapolation(True)
   chi_prime_n=interpolate(chi_prime_n,V_fixe)
-  end=time.time()
-  tps_interp=end-start
-  #print('Interpolation sur le maillage raffiné :',end-start,'secondes')
- if fig_mesh:
+ end=time.time()
+ tps_interp=end-start
+ #print('Interpolation sur le maillage raffiné :',end-start,'secondes')
+ if Nrefine>0 and fig_mesh:
   plot(mesh_fixe)
   plt.title('Maillage raffiné '+str(Nrefine)+' fois rayon '+str(int(round(100*r,2)))+'x10e-2')
   plt.show()
@@ -234,6 +243,8 @@ def f_testDhom(n):
    T_chi_restr_prime[k,l]=assemble(grad(chi_prime_n)[k,l]*dxf(12829))
    co_T_chi_restr_prime[k,l]=assemble(grad(chi_prime_n)[k,l]*dxf(1))
  return([tps_refi,tps_interp,T_chi_restr_prime,co_T_chi_restr_prime,T_chi_postprime])
+
+print('Liste des snapshots :',u_name)
 
 pool=multiprocessing.Pool(processes=n_mp_refi)
 list_refi_interp=pool.map(f_testDhom,(n for n in range(1,1+Nsnap)))
