@@ -123,20 +123,23 @@ def snapshot_circ_per(cen,r,res):
  u=Function(V)
  solve(a==L,u)#,bc)
  ## Annulation de la valeur moyenne
- if moy_null:
-  print("Annulation de la moyenne")
-  moy_u_x=assemble(u[0]*dx)/(1-pi*r**2)
-  moy_u_y=assemble(u[1]*dx)/(1-pi*r**2)
-  moy=Function(V)
-  moy=Constant((moy_u_x,moy_u_y))
-  chi=project(u-moy,V)
- else:
-  print("Valeur moyenne inchangée")
-  chi=u
+ porosity=1-pi*r**2
+ moy_u_x=assemble(u[0]*dx)/porosity
+ moy_u_y=assemble(u[1]*dx)/porosity
+ moy=Function(V)
+ moy=Constant((moy_u_x,moy_u_y))
+ print("Valeur moyenne de u :",[moy_u_x,moy_u_y])
+ moy_V=interpolate(moy,V)
+ moy_Vv=moy_V.vector().get_local()
+ u_v=u.vector().get_local()
+ chi_v=u_v-moy_Vv
+ chi=Function(V)
+ chi.vector().set_local(chi_v)
+ chi=u
  # Résultat : snapshot
  return(chi)
 
-def snapshot_compl_per(geo_p,rho,cen,mention,test_snap,moy_null):#,res):
+def snapshot_compl_per(geo_p,rho,cen,mention,test_snap):#,res):
  ##
  mesh_name="maillages_per/2D/maillage_trous2D_"+geo_p+"_"+str(int(round(100*rho,2)))
  if geo_p!='diag' and geo_p!='hor':
@@ -177,14 +180,19 @@ def snapshot_compl_per(geo_p,rho,cen,mention,test_snap,moy_null):#,res):
  u=Function(V)
  solve(a==L,u)
  ## Annulation de la valeur moyenne
- if moy_null:
-  moy_u_x=assemble(u[0]*dx)/(1-pi*(rho**2+0.15**2))
-  moy_u_y=assemble(u[1]*dx)/(1-pi*(rho**2+0.15**2))
-  moy=Function(V)
-  moy=Constant((moy_u_x,moy_u_y))
-  chi=project(u-moy,V)
- else:
-  chi=u
+ porosity=1-pi*rho**2-pi*0.15**2
+ moy_u_x=assemble(u[0]*dx)/porosity
+ moy_u_y=assemble(u[1]*dx)/porosity
+ moy=Function(V)
+ moy=Constant((moy_u_x,moy_u_y))
+ print("Valeur moyenne de u :",[moy_u_x,moy_u_y])
+ moy_V=interpolate(moy,V)
+ moy_Vv=moy_V.vector().get_local()
+ u_v=u.vector().get_local()
+ chi_v=u_v-moy_Vv
+ chi=Function(V)
+ chi.vector().set_local(chi_v)
+ chi=u
  # Résultat : snapshot
  return(chi)
 

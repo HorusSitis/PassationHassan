@@ -54,9 +54,9 @@ from DD_fun_obj import *
 E_=False
 E_lL=False
 
-EI=False
-snap_done=True
-EII=True
+EI=True
+snap_done=False
+EII=False
 exsnap_done=True
 test_Dhom=True
 
@@ -86,9 +86,6 @@ if E_ :
 VFS_degree=2#3#
 ## degré 2 : comme en dimension 3, permet d'éviter les erreurs de périodicité pour des pas qui nen sont pas de la forme 2"n, où n est un diviseur de 100 ##
 
-## condition sur la valeur moyenne de chi : annulationmoy_null=True
-
-
 config='cer_un'#'compl'#
 
 if config=='cer_un':
@@ -97,7 +94,7 @@ if config=='cer_un':
  dom_fixe="ray_min"#"am"#"multiray"#
  ##
  geo_p='ray'#'cen'#
- cen_snap_ray=[0.5,0.5]#[0.,0.]#
+ cen_snap_ray=[0.,0.]#[0.5,0.5]#
  ##
  conf_mess='disque unique'
  ##
@@ -121,7 +118,7 @@ elif config=='compl':
  ##
  dom_fixe="solid"#"am"#
  ##
- geo_p='diag'#'hor'#
+ geo_p='hor'#'diag'#
  ##
  if geo_p=='diag':
   cen_snap_ray=[0.,0.]
@@ -139,8 +136,8 @@ elif config=='compl':
 
 # choix du type de maillage
 
-typ_msh='gms'#''
-print(typ_msh)
+typ_msh='gms'#''#
+#print(typ_msh)
 if typ_msh=='gms':
  res=res_gmsh
  res_fixe=res_gmsh
@@ -150,7 +147,7 @@ computer='MECALAC_29x8'##'T1700_35x8'##
 
 # apprentissage : calcul parallèle ou séquentiel, prise en compte de la résolution
 
-gen_snap='seq'#'par8'#'seq_par'#
+gen_snap='par8'#'seq'#'seq_par'#
 
 # répertoire pour les résultats
 

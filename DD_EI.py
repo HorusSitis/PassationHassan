@@ -13,8 +13,6 @@ ysup=1.0
 
 import time
 
-#determiner le domaine fixe pour interpoler la solution
-
 dimension=2
 
 class PeriodicBoundary(SubDomain):
@@ -29,10 +27,6 @@ class PeriodicBoundary(SubDomain):
    else:
     y[i]=x[i]
 
-## Domaine fixe sans gmsh
-#res_fixe=30#résolution du maillage sans obstacle
-#domaine_fixe=Rectangle(Point(xinf,yinf),Point(xsup,ysup))
-#mesh_fixe=generate_mesh(domaine_fixe,res_fixe)
 
 if typ_msh=='gms':
  res_fixe=res_gmsh
@@ -40,25 +34,6 @@ if typ_msh=='gms':
   mesh_f_name="maillages_per/2D/maillage_fixe2D_am.xml"
  elif config=='compl':
   mesh_f_name="maillages_per/2D/maillage_trous2D_"+geo_p+"_fixe.xml"
-
-#mesh_fixe=Mesh(mesh_f_name)
-
-#V_fixe=VectorFunctionSpace(mesh_fixe, "P", VFS_degree, form_degree=1, constrained_domain=PeriodicBoundary())
-#plot(mesh_fixe)
-
-#if fig_todo=='aff':
-# #représentation graphique du maillage
-# plt.show()
-#elif fig_todo=='save':
-# #sauvegarde de la figure
-# plt.tight_layout()
-# plt.savefig("Figures2D/mesh_fixe.png")
-#else:
-# print('pfffrrrhhh !!')
-
-#plt.close()
-
-
 
 ## Boucle pour la création des snapshots, avec un paramètre pouvant être le rayon d'une inclusion circulaire, ou l'emplacement de son centre ##
 # Calcule aussi le tenseur de diffusion homogénéisé #
@@ -70,9 +45,9 @@ if typ_msh=='gms':
 #cen_snap_ray=[0.5,0.5]
 def snap_circ_ray(r_par):
  if test_snap=='i_per':
-  chi_r=snapshot_circ_per(cen_snap_ray,0.05*r_par,res,moy_null)
+  chi_r=snapshot_circ_per(cen_snap_ray,0.05*r_par,res)
  else:
-  chi_r=snapshot_compl_per(geo_p,0.05*r_par,cen_snap_ray,mention,test_snap,moy_null)
+  chi_r=snapshot_compl_per(geo_p,0.05*r_par,cen_snap_ray,mention,test_snap)
  chi_r_v=chi_r.vector().get_local()
  return([r_par,chi_r_v])
 
@@ -82,7 +57,7 @@ def snap_circ_ray(r_par):
 #c_par : paramètre scalaire pour la position du centre
 def snap_circ_cen(c_par):
  cen_snap_ray=csr_list[c_par-1]
- chi_c=snapshot_circ_per(cen_snap_ray,ray_snap_cen,res,moy_null)
+ chi_c=snapshot_circ_per(cen_snap_ray,ray_snap_cen,res)
  chi_c_v=chi_c.vector().get_local()
  return([c_par,chi_c_v])
 
@@ -91,7 +66,7 @@ def snap_compl_ray(r_par):
   rho=0.05*r_par
  elif geo_p=='hor':
   rho=0.01+0.04*r_par
- chi_compl=snapshot_compl_per(geo_p,rho,cen_snap_ray,mention,test_snap,moy_null)
+ chi_compl=snapshot_compl_per(geo_p,rho,cen_snap_ray,mention,test_snap)
  chi_compl_v=chi_compl.vector().get_local()
  return([r_par,chi_compl_v])
 
