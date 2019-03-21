@@ -18,8 +18,13 @@ class PeriodicBoundary(SubDomain):
 
 if dom_fixe=="am":
  mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2D_am.xml")
+elif dom_fixe=="multiray":
+ mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2d_"+dom_fixe+".xml")
 elif config=='compl':
  mesh_fixe=Mesh("maillages_per/2D/maillage_trous2D_"+geo_p+"_fixe.xml")
+elif dom_fixe=="ray_min":
+ if config=='cer_un':
+  mesh_fixe=Mesh('maillages_per/2D/maillage_trou2D_5.xml')
 
 print("maillages_per/2D/maillage_trous2D_"+geo_p+"_fixe.xml")
 

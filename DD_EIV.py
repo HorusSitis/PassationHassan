@@ -29,11 +29,15 @@ class PeriodicBoundary(SubDomain):
 
 # maillage et fonctions tests du domaine fixe
 
-
 if dom_fixe=="am":
  mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2D_am.xml")
+elif dom_fixe=="multiray":
+ mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2d_"+dom_fixe+".xml")
 elif config=='compl':
  mesh_fixe=Mesh("maillages_per/2D/maillage_trous2D_"+geo_p+"_fixe.xml")
+elif dom_fixe=="ray_min":
+ if config=='cer_un':
+  mesh_fixe=Mesh('maillages_per/2D/maillage_trou2D_5.xml')
 
 
 V_fixe=VectorFunctionSpace(mesh_fixe, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
@@ -203,9 +207,9 @@ start=time.time()
 
 #res=20
 if test_snap=='i_per':
- chi_nouv=snapshot_circ_per(cen_snap_ray,r_nouv,res,moy_null)
+ chi_nouv=snapshot_circ_per(cen_snap_ray,r_nouv,res)
 else:
- chi_nouv=snapshot_compl_per(geo_p,r_nouv,cen_snap_ray,mention,test_snap,moy_null)
+ chi_nouv=snapshot_compl_per(geo_p,r_nouv,cen_snap_ray,mention,test_snap)
 
 ## Exploitation du champ ainsi obtenu
 rho=r_nouv
