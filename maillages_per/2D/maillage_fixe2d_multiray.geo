@@ -146,7 +146,7 @@ Plane Surface(nSpl+nlo+nlcer+nptcer+6)={nlo+nlcer+npt_cer6+1, nlo+nlcer+npt_cer5
 Plane Surface(nSpl+nlo+nlcer+nptcer+7)={nlo+nlcer+npt_cer7+1, nlo+nlcer+npt_cer6+1};
 Plane Surface(nSpl+nlo+nlcer+nptcer+8)={nlo+nlcer+npt_cer8+1, nlo+nlcer+npt_cer7+1};
 //Plane Surface(nSpl+nlo+nlcer+nptcer+8)
-Plane Surface(nSpl+nlo+nlcer+nptcer+10)={nlo+nlext+1, nlo+nlcer+npt_cer7+1};
+Plane Surface(nSpl+nlo+nlcer+nptcer+10)={nlo+nlext+1, nlo+nlcer+npt_cer8+1};
 
 
 // Creation des lignes  physiques : nécessaire ? Pas de condition aux limites.
