@@ -9,7 +9,7 @@ import time
 
 ### Options
 
-dimension=3
+dimension=2
 fig_todo='aff'
 
 # Génération de maillages : apprentissage, fixe et test
@@ -29,11 +29,12 @@ res=50
 
 ## configurations en dimension 2
 if dimension==2:
- #config='cer_un'
+ config='cer_un'
+ geo_p='ray'
  #config='cer_un_som'
- config='compl'
+ #config='compl'
  #geo_p='diag'
- geo_p='hor'
+ #geo_p='hor'
 
 ## configurations en dimension 3
 if dimension==3:
@@ -75,7 +76,7 @@ elif dimension==3:
   list_test=[0.11,0.22,0.33,0.44]
   mesh_prefix='cube'+config+'_periodique_triangle'
 
-dom_fixe="am"#"solid"#
+dom_fixe="multiray"#"am"#"solid"#
 
 ### On choisit un répertoire
 
@@ -144,7 +145,7 @@ elif fixe:
    #elif geo_p=='ray_linked':
  elif dimension==2:
   if config!='compl':
-   mesh_name="maillage_fixe2D_am"
+   mesh_name="maillage_fixe2d_"+dom_fixe
   else:
    mesh_name=mesh_prefix+"_fixe"
    print(mesh_name)

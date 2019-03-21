@@ -94,7 +94,7 @@ config='cer_un'#'compl'#
 if config=='cer_un':
  test_snap='i_per'#'solid_1'#''#
  ### on exclut 'solid_2' ###
- dom_fixe="ray_min"#"am"#
+ dom_fixe="ray_min"#"am"#"multiray"#
  ##
  geo_p='ray'#'cen'#
  cen_snap_ray=[0.5,0.5]#[0.,0.]#
