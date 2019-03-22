@@ -156,9 +156,9 @@ for n in range(1,1+Nsnap):
 if not test_Dhom:
  sys.exit('fin de l étape II, sans tests d intégration sur des sousdomaines')#-------------------------------------------------------------------------------------------------------------------------------------------
 
-lg_crow=-6
-crow=10**(lg_crow)
-Nrefine=5
+lg_crow=-1
+crow=2*10**(lg_crow)
+Nrefine=1
 n_mp_refi=8
 fig_mesh=False
 
@@ -230,7 +230,7 @@ def f_testDhom(n):
  # Création du domaine d'intégration sur le maillage fixe
  class DomPhysFluide(SubDomain):
   def inside(self, x, on_boundary):
-   return True if (x[0]**2+x[1]**2>=r**2) else False
+   return True if ((x[0]-0.5)**2+(x[1]-0.5)**2>=r**2) else False
  dom_courant=DomPhysFluide()
  subdomains=MeshFunction('size_t',mesh_fixe,mesh_fixe.topology().dim())
  subdomains.set_all(1)
