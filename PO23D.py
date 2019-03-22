@@ -392,7 +392,7 @@ def calc_Ab_compl_3D_ninterpol(mesh_f_name,config,geo_p,r_cen,r_per,Phi_prime_v,
  if config=='2sph':
   class DomPhysFluide(SubDomain):
    def inside(self, x, on_boundary):
-    return True if (x[0]**2+x[1]**2+x[2]**2>=r_cen**2) else False
+    return True if ((x[0]-0.5)**2+(x[1]-0.5)**2+(x[2]-0.5)**2>=r_cen**2) else False
   dom_courant=DomPhysFluide()
   subdomains=MeshFunction('size_t',mesh_fixe,mesh_fixe.topology().dim())
   subdomains.set_all(1)
@@ -401,7 +401,7 @@ def calc_Ab_compl_3D_ninterpol(mesh_f_name,config,geo_p,r_cen,r_per,Phi_prime_v,
  elif config=='cylsph':
   class DomPhysFluide(SubDomain):
    def inside(self, x, on_boundary):
-    return True if ((geo_p=='ray_sph' and (x[0]**2+x[1]**2+x[2]**2>=r_cen**2)) or (geo_p=='ray_cyl' and x[0]**2+x[2]**2>=r_per**2 and (1-x[0])**2+x[2]**2>=r_per**2 and x[0]**2+(1-x[2])**2>=r_per**2 and (1-x[0])**2+(1-x[2])**2>=r_per**2)) else False
+    return True if ((geo_p=='ray_sph' and ((x[0]-05)**2+(x[1]-0.5)**2+(x[2-0.5)]**2>=r_cen**2)) or (geo_p=='ray_cyl' and x[0]**2+x[2]**2>=r_per**2 and (1-x[0])**2+x[2]**2>=r_per**2 and x[0]**2+(1-x[2])**2>=r_per**2 and (1-x[0])**2+(1-x[2])**2>=r_per**2)) else False
   dom_courant=DomPhysFluide()
   subdomains=MeshFunction('size_t',mesh_fixe,mesh_fixe.topology().dim())
   subdomains.set_all(1)
