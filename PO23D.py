@@ -285,7 +285,36 @@ def calc_Ab_compl_3D(mesh_n_name,Phi_nouv_v,nb_modes):
   b[i]=assemble(dot(normale,phi_nouv_i)*ds(num_front_inc))
  return([A,b])
 
-## Sans interpolation : directement sur le domaine fixe
+################################################################################################################################################################################################
+## ------------------------------------------------------------------ Sans interpolation : directement sur le domaine fixe ------------------------------------------------------------------ ##
+################################################################################################################################################################################################
+
+def calc_Ab_simpl_2D_ninterpol():
+ return()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 tol_sol=0.0001
 def calc_Ab_simpl_3D_ninterpol(mesh_f_name,config,geo_p,r_nouv,Phi_prime_v,nb_modes):
@@ -297,7 +326,7 @@ def calc_Ab_simpl_3D_ninterpol(mesh_f_name,config,geo_p,r_nouv,Phi_prime_v,nb_mo
  if config=='sph_un' and geo_p=='ray':
   class DomPhysFluide(SubDomain):
    def inside(self, x, on_boundary):
-    return True if (x[0]**2+x[1]**2+x[2]**2>=r**2) else False
+    return True if ((x[0]-0.5)**2+(x[1]-0.5)**2+(x[2]-0.5)**2>=r**2) else False
   dom_courant=DomPhysFluide()
   subdomains=MeshFunction('size_t',mesh_fixe,mesh_fixe.topology().dim())
   subdomains.set_all(1)
@@ -306,7 +335,7 @@ def calc_Ab_simpl_3D_ninterpol(mesh_f_name,config,geo_p,r_nouv,Phi_prime_v,nb_mo
  elif config=='cyl_un' and geo_p=='ray':
   class DomPhysFluide(SubDomain):
    def inside(self, x, on_boundary):
-    return True if (x[0]**2+x[2]**2>=r**2) else False
+    return True if ((x[0]-0.5)**2+(x[2]-0.5)**2>=r**2) else False
   dom_courant=DomPhysFluide()
   subdomains=MeshFunction('size_t',mesh_fixe,mesh_fixe.topology().dim())
   subdomains.set_all(1)
@@ -350,8 +379,6 @@ def calc_Ab_simpl_3D_ninterpol(mesh_f_name,config,geo_p,r_nouv,Phi_prime_v,nb_mo
   phi_prime_i.vector().set_local(Phi_prime_v[:,i])
   b[i]=assemble(dot(normale,phi_prime_i)*ds(num_front_inc))
  return([A,b])
-
-
 
 
 
