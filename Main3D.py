@@ -56,12 +56,18 @@ test_Dhom=True
 
 EIII=False
 EIV=True
-Interpolation=True
+Interpolation=False
 Report=True
 
 
 # nom de l'appareil utilisé pour générer les données enregistrées
 computer='MECALAC_29x8'#'T1700_35x8'#
+
+# Choix de la résolution du maillage : nombre de noeuds par côté du cube
+
+res_gmsh=10
+if typ_msh=='gms':
+ res=res_gmsh
 
 # paramètres pour l'éxécution des étapes : affichage, tests de périodicité etc
 
@@ -72,6 +78,8 @@ Nsnap=8
 npas_err=20
 typ_sol="bic_cyr"#"default"#seulement si res=10##
 ordo='Ordr'#'Nordr'
+Nrefine=1
+crow=(1/res_gmsh)*1e-6
 
 # apprentissage : calcul parallèle ou séquentiel, prise en compte de la résolution
 
@@ -79,12 +87,6 @@ gen_snap='par4'#'par8'#'seq'#'seq_par'#
 
 # répertoire pour les résultats
 repertoire_parent="Res3D/"
-
-# Choix de la résolution du maillage : nombre de noeuds par côté du cube
-
-res_gmsh=50
-if typ_msh=='gms':
- res=res_gmsh
 
 # -------------------- Géométrie du problème -------------------- #
 
@@ -171,7 +173,7 @@ if EIII :
 
 N_mor=3
 t_meshing=1.89
-r_nouv=0.44#0.33#0.22#0.11#
+r_nouv=0.33#0.44#0.22#0.11#
 
 # La mesure du temps d'éxécution doit se faire avec l'option 'save' de fig_todo
 

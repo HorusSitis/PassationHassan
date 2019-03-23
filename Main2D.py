@@ -54,15 +54,16 @@ from DD_fun_obj import *
 E_=False
 E_lL=False
 
-EI=True
-snap_done=False
-EII=False
+EI=False
+snap_done=True
+EII=True
 exsnap_done=True
 test_Dhom=True
 
 
 EIII=False
 EIV=False
+EIVfixe=False
 
 
 
@@ -72,6 +73,8 @@ res_gmsh=100
 
 fixe_aff=False
 fig_todo=''
+Nrefine=1
+crow=0.05
 
 ### ------------ Etape 0 : Génération de microstructures périodiques aléatoires ------------ ###
 
@@ -91,10 +94,10 @@ config='cer_un'#'compl'#
 if config=='cer_un':
  test_snap='i_per'#'solid_1'#''#
  ### on exclut 'solid_2' ###
- dom_fixe="ray_min"#"am"#"multiray"#
+ dom_fixe="am"#"multiray"#"ray_min"#
  ##
  geo_p='ray'#'cen'#
- cen_snap_ray=[0.,0.]#[0.5,0.5]#
+ cen_snap_ray=[0.5,0.5]#[0.,0.]#
  ##
  conf_mess='disque unique'
  ##
@@ -203,11 +206,14 @@ if EIII :
 
 ## ---------- Etape IV ---------- ##
 
-N_mor=5
-r_nouv=0.22#0.11#0.44#0.33#0.10#
+N_mor=2
+r_nouv=0.33#0.44#0.22#0.11#0.10#
 
 # La mesure du temps d'éxécution doit se faire avec l'option 'save' de fig_todo
 
 if EIV :
  exec(open("DD_EIV.py").read())
+
+if EIVfixe:
+ exec(open("DD_EIV_fixe.py").read())
 
