@@ -289,8 +289,46 @@ def calc_Ab_compl_3D(mesh_n_name,Phi_nouv_v,nb_modes):
 ## ------------------------------------------------------------------ Sans interpolation : directement sur le domaine fixe ------------------------------------------------------------------ ##
 ################################################################################################################################################################################################
 
-def calc_Ab_simpl_2D_ninterpol():
- return()
+def calc_Ab_simpl_2D_ninterpol(V_r_fixe,mesh_r_fixe,Phi_r_fixe_v,rho_nouv,cen,nb_modes):
+ A=np.zeros((nb_modes,nb_modes))
+ b=np.zeros(nb_modes)
+ ### Intégration des coefficients ROM sur le volume fluide : premier terme du problème faible
+ ## Sous-domaine de l'espace fixe correspondant au domaine fluide courant
+ r=rho_nouv
+
+ ## Fonctions à définir pour calculer les coefficients des deux tenseurs, qui dépendent de la métrique de l'espace des fonctions test
+ phi_r_fixe_k=Function(V_r_fixe)
+ phi_r_fixe_i=Function(V_r_fixe)
+ # boucle pour le calcul de la matrice de coefficients
+ for k in range(nb_modes):
+  phi_r_fixe_k.vector().set_local(Phi_r_fixe_v[:,k])
+  for i in range(nb_modes):
+   phi_r_fixe_i.vector().set_local(Phi_r_fixe_v[:,i])
+   # On calcule le coefficient Aki
+   A[k,i]=assemble(tr(dot((grad(phi_nouv_k)).T, grad(phi_nouv_i)))*dx)
+ ### Intégration des coefficients ROM sur l'interface solide-fluide : condition de Neumann pour le problème faible
+ ## Création de l'interface solide-fluide
+ l_cen=[]
+ for i in range(-1,2):
+  for j in range(-1,2):
+   l_cen.append([cen[0]+i,cen[1]+j])
+ r=r_nouv
+ class inclusion_periodique(SubDomain):
+  def inside(self,x,on_boundary):
+   return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]))
+ Gamma_sf=inclusion_periodique()
+ boundaries = MeshFunction("size_t", mesh_nouv, mesh_nouv.topology().dim()-1)
+ boundaries.set_all(1)
+ Gamma_sf.mark(boundaries, 7)
+ ds = Measure("ds")(subdomain_data=boundaries)
+ num_ff=1
+ num_front_inc=7
+ normale=FacetNormal(mesh_nouv)
+ # boucle pour le calcul du second membre du problème linéaire MOR
+ for i in range(nb_modes):
+  phi_nouv_i.vector().set_local(Phi_nouv_v[:,i])
+  b[i]=assemble(dot(normale,phi_nouv_i)*ds(num_front_inc))
+ return([A,b])
 
 
 
@@ -401,7 +439,7 @@ def calc_Ab_compl_3D_ninterpol(mesh_f_name,config,geo_p,r_cen,r_per,Phi_prime_v,
  elif config=='cylsph':
   class DomPhysFluide(SubDomain):
    def inside(self, x, on_boundary):
-    return True if ((geo_p=='ray_sph' and ((x[0]-05)**2+(x[1]-0.5)**2+(x[2-0.5)]**2>=r_cen**2)) or (geo_p=='ray_cyl' and x[0]**2+x[2]**2>=r_per**2 and (1-x[0])**2+x[2]**2>=r_per**2 and x[0]**2+(1-x[2])**2>=r_per**2 and (1-x[0])**2+(1-x[2])**2>=r_per**2)) else False
+    return True if ((geo_p=='ray_sph' and ((x[0]-0.5)**2+(x[1]-0.5)**2+(x[2]-0.5)**2>=r_cen**2)) or (geo_p=='ray_cyl' and x[0]**2+x[2]**2>=r_per**2 and (1-x[0])**2+x[2]**2>=r_per**2 and x[0]**2+(1-x[2])**2>=r_per**2 and (1-x[0])**2+(1-x[2])**2>=r_per**2)) else False
   dom_courant=DomPhysFluide()
   subdomains=MeshFunction('size_t',mesh_fixe,mesh_fixe.topology().dim())
   subdomains.set_all(1)
