@@ -149,7 +149,7 @@ if Nrefine>0:
   if fig_todo=='aff':
    plt.show()
   elif fig_todo=='save':
-   plt.savefig("Figures2D/phi_nouv_"+str(n+1)+"_"+config+'_'+geo_p+".png")
+   plt.savefig("Figures2D/phi_fixe_r_"+str(n+1)+"_"+config+'_'+geo_p+".png")
   plt.close()
   # on range le vecteur de POD interpolée dans la matrice Phi_nouv_v
   Phi_r_fixe_v[:,n]=phi_r_fixe.vector().get_local()
@@ -161,7 +161,9 @@ if Nrefine>0:
 
 end=time.time()
 
-print('se1 faite ',end-start_se1,' secondes')
+print('raffinement fait',tps_refi,'secondes')
+print('interpolation faite',tps_interp,'secondes')
+print('se1 faite',end-start_se1,'secondes')
 sys.exit()#-------------------------------------
 # --------------------- SE2 : chargement de a base POD et résolution du modèle réduit --------------------- #
 
