@@ -98,33 +98,31 @@ elif config=='cylsph':
   mesh_n_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_nouv,2)))+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)
  #elif geo_p=='ray_linked':
 
-#print("Maillage fixe : ",mesh_f_name)
-#print(mesh_n_name)
+### ------------ Etapes spécifiques à la construction du modèle réduit ------------ ###
 
-mesh_nouv=Mesh(mesh_n_name+".xml")
+nb_modes=N_mor
 
-V_nouv=VectorFunctionSpace(mesh_nouv, "P", 2, constrained_domain=PeriodicBoundary())
+r=r_nouv
+# Création du domaine d'intégration sur le maillage fixe : pour le calcul de Dhom
+class DomPhysFluide(SubDomain):
+ def inside(self, x, on_boundary):
+  return True if ((x[0]-0.5)**2+(x[1]-0.5)**2+(x[2]-0.5)**2>=r**2) else False
+# marquage du domaine
+dom_courant=DomPhysFluide()
+subdomains=MeshFunction('size_t',mesh_fixe,mesh_fixe.topology().dim())
+subdomains.set_all(1)
+dom_courant.mark(subdomains,12829)
+dxf=Measure("dx", domain=mesh_fixe, subdomain_data=subdomains)
 
+## Taille du maillage du domaine fixe ##
 
-
-# --------------------- SE1 : projection de la base POD sur le nouveau domaine --------------------- #
-#sys.exit()#-------------------------------------
-# --------------------- SE2 : résolution du modèle réduit --------------------- #
-
-## On réinitialise le temps de calcul ##
-
-start=time.time()
+nb_noeuds_fixe=V_fixe.dim()
 
 ## Chargement de la base POD complète
 
-if ind_res:
- phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+"res"+str(res)+'_'+ordo+'_'+computer
-elif ind_fixe:
- phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
-else:
- phi_name='Phi'+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+"res"+str(res)+'_'+ordo+'_'+computer
 
-#print(phi_name)
+print(phi_name)
 
 with sh.open(repertoire_parent+phi_name) as phi_loa:
  Phi_prime_v = phi_loa["maliste"]
@@ -132,11 +130,98 @@ with sh.open(repertoire_parent+phi_name) as phi_loa:
 ## Création de la base POD tronquée, sous forme vectorielle
 
 Phi_mor=Phi_prime_v[:,range(0,nb_modes)]
-Phi_prime_v=Phi_mor
 
-## On écrit les deux tenseurs qui comportent les coefficients de l'équation du modèle réduit : ceux-ci dépendent des vecteurs de la base POD projetée
+### ------------ Fin ------------ ###
 
-#from PO23D import *
+#print("Maillage fixe : ",mesh_f_name)
+#print(mesh_n_name)
+
+mesh_nouv=Mesh(mesh_n_name+".xml")
+V_nouv=VectorFunctionSpace(mesh_nouv, "P", 2, constrained_domain=PeriodicBoundary())
+
+
+
+
+# --------------------- SE1 : projection de la base POD sur le nouveau domaine --------------------- #
+
+## On initialise le temps de calcul ##
+
+start_se1=time.time()
+
+# Initialisation des fonctions POD
+
+phi_fixe=Function(V_fixe)
+
+# Raffinement du maillage : pour le moment, cas d'une inclusion unique centrée
+start_refi=time.time()
+mesh_r_fixe=mesh_fixe
+r=r_nouv
+for i in range(1,1+Nrefine):
+ print('raffinement',i)
+ markers = MeshFunction("bool", mesh_fixe, mesh_fixe.topology().dim())
+ markers.set_all(False)
+ for c in cells(mesh_fixe):
+  for f in facets(c):
+   if ((f.midpoint()[0]-cen_snap_ray[0])**2+(f.midpoint()[1]-cen_snap_ray[1])**2+(f.midpoint()[2]-cen_snap_ray[2])**2<=(r*(1+crow/i))**2) and ((f.midpoint()[0]-cen_snap_ray[0])**2+(f.midpoint()[1]-cen_snap_ray[1])**2+(f.midpoint()[2]-cen_snap_ray[2])**2>=(r*(1-crow/i))**2):
+    markers[c]=True
+  for v in vertices(c):
+   if ((v.point().x()-cen_snap_ray[0])**2+(v.point().y()-cen_snap_ray[1])**2+(v.point().z()-cen_snap_ray[2])**2>=(r*(1-crow/i))**2) and ((v.point().x()-cen_snap_ray[0])**2+(v.point().y()-cen_snap_ray[1])**2+(v.point().z()-cen_snap_ray[2])**2<=(r*(1+crow/i))**2):
+    markers[c]=True
+ mesh_r_fixe=refine(mesh_r_fixe, markers, redistribute=True)
+end=time.time()
+#print('Raffinemenent du maillage :',end-start,'secondes')
+tps_refi=end-start_refi
+
+if fig_todo=='aff':
+ plot(mesh_r_fixe)
+ plt.title("Maillage raffiné autour de la frontière physique, rayon "+str(int(round(100*r_nouv,2))))
+ plt.show()
+ plt.close()
+
+V_r_fixe=VectorFunctionSpace(mesh_r_fixe, "P", 2, constrained_domain=PeriodicBoundary())
+
+nb_noeuds_r_fixe=V_r_fixe.dim()
+Phi_r_fixe_v=np.zeros((nb_noeuds_r_fixe,nb_modes))
+
+# Interpolation sur le maillage raffiné
+start_interp=time.time()
+if Nrefine>0:
+ for n in range(0,nb_modes):
+  phi_fixe.vector().set_local(Phi_mor[:,n])
+  # extrapolation du snapshot au domaine fixe
+  phi_fixe.set_allow_extrapolation(True)
+  phi_r_fixe=interpolate(phi_fixe,V_r_fixe)
+  # affichage des modes extrapolés
+  plot(phi_r_fixe)
+  plt.title("Phi "+str(n+1)+" sur le maillage raffiné",fontsize=30)
+  if fig_todo=='aff':
+   plt.show()
+  elif fig_todo=='save':
+   plt.savefig("Figures2D/phi_nouv_"+str(n+1)+"_"+config+'_'+geo_p+".png")
+  plt.close()
+  # on range le vecteur de POD interpolée dans la matrice Phi_nouv_v
+  Phi_r_fixe_v[:,n]=phi_r_fixe.vector().get_local()
+ # on mesure le temps d'interpolation
+ end=time.time()
+ tps_interp=end-start_interp
+
+## On enregistre et imprime le temps d'éxécution de SE1
+
+end=time.time()
+
+print('raffinement fait',tps_refi,'secondes')
+print('interpolation faite',tps_interp,'secondes')
+print('se1 faite',end-start_se1,'secondes')
+sys.exit('plus de bug')#-------------------------------------
+
+
+# --------------------- SE2 : résolution du modèle réduit --------------------- #
+
+## On réinitialise le temps de calcul ##
+
+start=time.time()
+
+
 
 
 if config=='sph_un' or config=='cyl_un':
