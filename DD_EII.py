@@ -1,8 +1,8 @@
 #####################################################################################################################################
-######################################### Etape II : extrapolation des clichés, domaine_fixe ########################################
+######################################### Etape II : extrapolation des cliches, domaine_fixe ########################################
 #####################################################################################################################################
 
-### ------------ Reproduire éventuellement pour des étapes ultérieures. Laisser seulement dans DD_fun_obj ? ------------ ###
+### ------------ Reproduire eventuellement pour des etapes ulterieures. Laisser seulement dans DD_fun_obj ? ------------ ###
 
 import time
 
@@ -20,7 +20,7 @@ dimension=2
 class PeriodicBoundary(SubDomain):
  # Left boundary is "target domain" G
  def inside(self, x, on_boundary):
-  return on_boundary and not(near(x[0],xsup,tol) or near(x[1],ysup,tol))## merci à Arnold Douglas
+  return on_boundary and not(near(x[0],xsup,tol) or near(x[1],ysup,tol))## merci a Arnold Douglas
  # Map right boundary (H) to left boundary (G)
  def map(self, x, y):
   for i in range(dimension):
@@ -52,7 +52,7 @@ plot(mesh_fixe)
 if fig_todo=='aff':
  plt.show()
 plt.close()
-# Extrapolation des solutions du problème physique
+# Extrapolation des solutions du probleme physique
 
 def extra_snap(n):
  if geo_p=='hor':
@@ -119,7 +119,7 @@ else:
 
 
 
-# Représentations graphiques
+# Representations graphiques
 
 list_snap=[]
 for n in range(1,1+Nsnap):
@@ -136,7 +136,7 @@ for n in range(1,1+Nsnap):
   r=0.05*n
  chi_prime_n=list_snap[n-1]
  if fig_todo=='aff' or fig_todo=='save':
-  # Affichage des valeurs de la solution interpolée
+  # Affichage des valeurs de la solution interpolee
   plot(chi_prime_n)
   plt.title("Snapshot "+str(n),fontsize=40)
   if fig_todo=='aff':
@@ -146,15 +146,17 @@ for n in range(1,1+Nsnap):
   plt.close()
  else:
   print('pffrrh !')
- # Affichage des valeurs et erreurs de la solution périodique, quelle que soit la configuration
+ # Affichage des valeurs et erreurs de la solution periodique, quelle que soit la configuration
  #err_per_ind_01(chi_prime_n,cen,r,npas_err)
  #err_per_gr(cen,r,chi_prime_n,npas_err,fig_todo)
- # Affichage des composantes scalaires : interpolée
+ # Affichage des composantes scalaires : interpolee
  if config=='cer_un' and geo_p=='ray' and fig_todo!='':
   fig_chi(cen_snap_ray,r,chi_prime_n,fig_todo)
 
 if not test_Dhom:
- sys.exit('fin de l étape II, sans tests d intégration sur des sousdomaines')#-------------------------------------------------------------------------------------------------------------------------------------------
+ sys.exit('fin de l etape II, sans tests d integration sur des sousdomaines')#-------------------------------------------------------------------------------------------------------------------------------------------
+
+nb_noeuds_dom_fixe=V_fixe.dim()
 
 lg_crow=-1
 crow=2*10**(lg_crow)
@@ -171,7 +173,7 @@ def f_testDhom(n):
  if geo_p=='ray':
   por=1-pi*r**2
  por_prime=1
- ## Création du maillage fixe local
+ ## Creation du maillage fixe local
  if dom_fixe=="am":
   mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2D_am.xml")
  elif config=='compl':
@@ -193,7 +195,7 @@ def f_testDhom(n):
  for k in range(0,2):
   for l in range(0,2):
    T_chi_postprime[k,l]=assemble(grad(chi_postprime_n)[k,l]*dx)
- ## Intégration sur le domaine fluide avec le maillage fixe
+ ## Integration sur le domaine fluide avec le maillage fixe
  print("Avec le maillage fixe")
  # Raffinement du maillage
  start=time.time()
@@ -216,7 +218,7 @@ def f_testDhom(n):
      list_sgn.append(0)
     else:
      list_sgn.append(-1)
-   # on marque les cellules qui coupent la frontière du domaine fluide virtuel
+   # on marque les cellules qui coupent la frontiere du domaine fluide virtuel
    if list_sgn==[1,1,1] or list_sgn==[-1,-1,-1]:
     markers[c]=False
    else:
@@ -226,22 +228,24 @@ def f_testDhom(n):
  print(list_sgn)
  #print('Raffinemenent du maillage :',end-start,'secondes')
  tps_refi=end-start 
- # Interpolation sur le maillage raffiné
+ # Interpolation sur le maillage raffine
  start=time.time()
  if Nrefine>0:
   print('interpolation rayon',str(int(round(100*r,2))))
   V_fixe=VectorFunctionSpace(mesh_fixe, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
   chi_prime_n.set_allow_extrapolation(True)
   chi_prime_n=interpolate(chi_prime_n,V_fixe)
+ #
+ nb_noeuds_refi=V_fixe.dim()
  end=time.time()
  tps_interp=end-start
- #print('Interpolation sur le maillage raffiné :',end-start,'secondes')
+ #print('Interpolation sur le maillage raffine :',end-start,'secondes')
  if Nrefine>0 and fig_mesh and n==3:
   plot(mesh_fixe)
-  plt.title('Maillage raffiné '+str(Nrefine)+' fois rayon '+str(int(round(100*r,2)))+'x10e-2')
+  plt.title('Maillage raffine '+str(Nrefine)+' fois rayon '+str(int(round(100*r,2)))+'x10e-2')
   plt.show()
   plt.close()
- # Création du domaine d'intégration sur le maillage fixe
+ # Creation du domaine d'integration sur le maillage fixe
  class DomPhysFluide(SubDomain):
   def inside(self, x, on_boundary):
    return True if ((x[0]-0.5)**2+(x[1]-0.5)**2>=r**2) else False
@@ -256,7 +260,7 @@ def f_testDhom(n):
   for l in range(0,2):
    T_chi_restr_prime[k,l]=assemble(grad(chi_prime_n)[k,l]*dxf(12829))
    co_T_chi_restr_prime[k,l]=assemble(grad(chi_prime_n)[k,l]*dxf(1))
- return([tps_refi,tps_interp,T_chi_restr_prime,co_T_chi_restr_prime,T_chi_postprime])
+ return([tps_refi,tps_interp,T_chi_restr_prime,co_T_chi_restr_prime,T_chi_postprime,nb_noeuds_refi])
 
 print('Liste des snapshots :',u_name)
 
@@ -285,14 +289,14 @@ for n in range(1,1+Nsnap):
  for k in range(0,2):
   for l in range(0,2):
    T_chi_postprime[k,l]=assemble(grad(chi_postprime_n)[k,l]*dx)
- ## Chargement des résultats d'intégration des tenseurs d'homogénéisation sur les différents maillages
- [tps_refi,tps_interp,T_chi_restr_prime,co_T_chi_restr_prime,T_chi_postprime]=list_refi_interp[n-1]
- ## Intégration sur le domaine virtuel : carré unité éventuellement privé d'un point
+ ## Chargement des resultats d'integration des tenseurs d'homogeneisation sur les differents maillages
+ [tps_refi,tps_interp,T_chi_restr_prime,co_T_chi_restr_prime,T_chi_postprime,nb_noeuds_refi]=list_refi_interp[n-1]
+ ## Integration sur le domaine virtuel : carre unite eventuellement prive d'un point
  T_chi_prime=np.zeros((2,2))
  for k in range(0,2):
   for l in range(0,2):
    T_chi_prime[k,l]=assemble(grad(chi_prime_n)[k,l]*dx)
- ## les trois coefficients à comparer
+ ## les trois coefficients a comparer
  ###
  D=por*np.eye(2)
  integr_k_postprime=D_k*(D+T_chi_postprime.T)
@@ -308,22 +312,24 @@ for n in range(1,1+Nsnap):
  Dhom_k_prime=integr_k_prime*(1/por_prime)
  ##
  print('##################################################################')
- print('Géométrie : '+conf_mess+', '+geo_mess+', '+str(int(round(100*r,2))))
+ print('Geometrie : '+conf_mess+', '+geo_mess+', '+str(int(round(100*r,2))))
  print('Domaine fixe : '+dom_fixe)
+ print('Noeuds du maillage fixe :',nb_noeuds_dom_fixe)
  print('------------------------------------------------------------------')
  print('Couronne :',crow)
  print('Nombre de tours de raffinement :',Nrefine)
+ print('Noeuds du maillage raffine :',nb_noeuds_refi)
  print('Raffinemenent du maillage :',tps_refi,'secondes')
- print('Interpolation sur le maillage raffiné :',tps_interp,'secondes')
+ print('Interpolation sur le maillage raffine :',tps_interp,'secondes')
  print('------------------------------------------------------------------')
- #print('DUsnap fixe :',Dhom_k_prime[0,0],'porosité fixe',por_prime)
+ #print('DUsnap fixe :',Dhom_k_prime[0,0],'porosite fixe',por_prime)
  #print('Tenseur virtuel :',T_chi_prime)
  #print('Tenseur sur le domaine fluide :',T_chi_restr_prime)
- #print('Complémentaire :',co_T_chi_restr_prime)
+ #print('Complementaire :',co_T_chi_restr_prime)
  print()
- print('DUsnap fixe restreint au domaine courant :',Dhom_k_restr_prime[0,0])#,'porosité',por)
- print('DUsnap physique :',Dhom_k_postprime[0,0])#,'porosité',por)
- print('DUsnap domaine fixe moyenné :',D_moy[0,0])
+ print('DUsnap fixe restreint au domaine courant :',Dhom_k_restr_prime[0,0])#,'porosite',por)
+ print('DUsnap physique :',Dhom_k_postprime[0,0])#,'porosite',por)
+ print('DUsnap domaine fixe moyenne :',D_moy[0,0])
  print('------------------------------------------------------------------')
  print('Erreur relative :',100*(Dhom_k_restr_prime[0,0]-Dhom_k_postprime[0,0])/Dhom_k_postprime[0,0],'pourcent')
  print('##################################################################')
@@ -331,13 +337,15 @@ for n in range(1,1+Nsnap):
  registre.write('##################################################################'+'\n')
  registre.write('Rho : '+str(int(round(100*r,2)))+'\n')
  registre.write('Domaine fixe : '+dom_fixe+'\n')
+ registre.write('Noeuds du maillage fixe : '+str(nb_noeuds_dom_fixe)+'\n')
  registre.write('------------------------------------------------------------------'+'\n')
  registre.write('Couronne : '+str(crow)+'\n')
  registre.write('Nombre de tours de raffinement : '+str(Nrefine)+'\n')
+ registre.write('Noeuds du maillage raffine : '+str(nb_noeuds_refi)+'\n')
  registre.write('Raffinemenent du maillage : '+str(tps_refi)+' secondes'+'\n')
  registre.write('Interpolation sur le maillage raffine : '+str(tps_interp)+' secondes'+'\n')
  registre.write('------------------------------------------------------------------'+'\n')
- #registre.write('DUsnap fixe : '+str(Dhom_k_prime[0,0],'porosité fixe'+str(por_prime)+'\n')
+ #registre.write('DUsnap fixe : '+str(Dhom_k_prime[0,0],'porosite fixe'+str(por_prime)+'\n')
  registre.write('Tenseur virtuel : '+str(T_chi_prime)+'\n')
  registre.write('DUsnap fixe restreint au domaine courant : '+str(Dhom_k_restr_prime[0,0])+'\n')
  registre.write('DUsnap physique : '+str(Dhom_k_postprime[0,0])+'\n')
