@@ -153,6 +153,9 @@ start_se1=time.time()
 phi_fixe=Function(V_fixe)
 
 # Raffinement du maillage : pour le moment, cas d'une inclusion unique centrée
+def width(i):
+ return crow/i**3
+
 start_refi=time.time()
 mesh_r_fixe=mesh_fixe
 r=r_nouv
@@ -162,15 +165,17 @@ for i in range(1,1+Nrefine):
  markers.set_all(False)
  for c in cells(mesh_fixe):
   for f in facets(c):
-   if ((f.midpoint()[0]-cen_snap_ray[0])**2+(f.midpoint()[1]-cen_snap_ray[1])**2+(f.midpoint()[2]-cen_snap_ray[2])**2<=(r*(1+crow/i))**2) and ((f.midpoint()[0]-cen_snap_ray[0])**2+(f.midpoint()[1]-cen_snap_ray[1])**2+(f.midpoint()[2]-cen_snap_ray[2])**2>=(r*(1-crow/i))**2):
+   if ((f.midpoint()[0]-cen_snap_ray[0])**2+(f.midpoint()[1]-cen_snap_ray[1])**2+(f.midpoint()[2]-cen_snap_ray[2])**2<=(r*(1+width(i)))**2) and ((f.midpoint()[0]-cen_snap_ray[0])**2+(f.midpoint()[1]-cen_snap_ray[1])**2+(f.midpoint()[2]-cen_snap_ray[2])**2>=(r*(1-width(i)))**2):
     markers[c]=True
   for v in vertices(c):
-   if ((v.point().x()-cen_snap_ray[0])**2+(v.point().y()-cen_snap_ray[1])**2+(v.point().z()-cen_snap_ray[2])**2>=(r*(1-crow/i))**2) and ((v.point().x()-cen_snap_ray[0])**2+(v.point().y()-cen_snap_ray[1])**2+(v.point().z()-cen_snap_ray[2])**2<=(r*(1+crow/i))**2):
+   if ((v.point().x()-cen_snap_ray[0])**2+(v.point().y()-cen_snap_ray[1])**2+(v.point().z()-cen_snap_ray[2])**2>=(r*(1-width(i)))**2) and ((v.point().x()-cen_snap_ray[0])**2+(v.point().y()-cen_snap_ray[1])**2+(v.point().z()-cen_snap_ray[2])**2<=(r*(1+width(i)))**2):
     markers[c]=True
  mesh_r_fixe=refine(mesh_r_fixe, markers, redistribute=True)
 end=time.time()
 #print('Raffinemenent du maillage :',end-start,'secondes')
 tps_refi=end-start_refi
+
+print('raffinement fait',tps_refi,'secondes')
 
 if fig_todo=='aff':
  plot(mesh_r_fixe)
@@ -182,6 +187,10 @@ V_r_fixe=VectorFunctionSpace(mesh_r_fixe, "P", 2, constrained_domain=PeriodicBou
 
 nb_noeuds_r_fixe=V_r_fixe.dim()
 Phi_r_fixe_v=np.zeros((nb_noeuds_r_fixe,nb_modes))
+
+print('Noeuds du domaine fixe :',nb_noeuds_fixe)
+print('rho :',r_nouv)
+print('Noeuds du maillage raffiné :',nb_noeuds_r_fixe)
 
 # Interpolation sur le maillage raffiné
 start_interp=time.time()
@@ -205,12 +214,11 @@ if Nrefine>0:
  end=time.time()
  tps_interp=end-start_interp
 
+print('interpolation faite',tps_interp,'secondes')
 ## On enregistre et imprime le temps d'éxécution de SE1
 
 end=time.time()
 
-print('raffinement fait',tps_refi,'secondes')
-print('interpolation faite',tps_interp,'secondes')
 print('se1 faite',end-start_se1,'secondes')
 sys.exit('plus de bug')#-------------------------------------
 
