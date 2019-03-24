@@ -56,14 +56,14 @@ E_lL=False
 
 EI=False
 snap_done=True
-EII=True
+EII=False
 exsnap_done=True
 test_Dhom=True
 
 
 EIII=False
 EIV=False
-EIVfixe=False
+EIVfixe=True
 
 
 
@@ -71,10 +71,6 @@ res_gmsh=100
 
 fixe_aff=False
 fig_todo=''
-
-Nrefine=1
-#crow=(1/res_gmsh)*1e-1
-typ_refi='front'#'vol'#
 
 ### ------------ Etape 0 : Génération de microstructures périodiques aléatoires ------------ ###
 
@@ -144,6 +140,19 @@ typ_msh='gms'#''#
 if typ_msh=='gms':
  res=res_gmsh
  res_fixe=res_gmsh
+
+# raffinement de maillages
+
+Nrefine=1
+#crow=(1/res_gmsh)*1e-1
+typ_refi='front'#'vol'#
+lg_crow=-1
+crow=2*10**(lg_crow)
+
+if typ_refi=='vol':
+ refi_mess='Couronne : '+str(crow)
+elif typ_refi=='front':
+ refi_mess='Surface'
 
 # nom de l'appareil utilisé pour générer les données enregistrées
 computer='MECALAC_29x8'##'T1700_35x8'##
