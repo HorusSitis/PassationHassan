@@ -183,7 +183,7 @@ end=time.time()
 print('raffinement fait',tps_refi,'secondes')
 print('interpolation faite',tps_interp,'secondes')
 print('se1 faite',end-start_se1,'secondes')
-sys.exit()#-------------------------------------
+
 # --------------------- SE2 : chargement de a base POD et résolution du modèle réduit --------------------- #
 
 ## On réinitialise le temps de calcul ##
@@ -203,27 +203,11 @@ phi_fixe=Function(V_fixe)
 ## -------------------------------------------------------------------------------------- ##
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## On écrit les deux tenseurs qui comportent les coefficients de l'équation du modèle réduit : ceux-ci dépendent des vecteurs de la base POD fixe resreinte au domaine fluide virtuel
 
-if test_snap=='i_per':
- Coeff=calc_Ab_2D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,cen_snap_ray,nb_modes)
-else:
- Coeff=calc_Ab_compl(V_nouv,mesh_nouv,Phi_nouv_v,nb_modes,test_snap)
- print('modèle réduit complexe utilisé')
+if config=='cer_un':
+ cen=[0.5,0.5]
+ Coeff=calc_Ab_simpl_2D_ninterpol(V_r_fixe,mesh_r_fixe,Phi_r_fixe_v,r_nouv,cen,N_mor)
 
 A=Coeff[0]
 b=Coeff[1]
@@ -237,6 +221,8 @@ a_nouv=np.linalg.solve(A.T,-b)
 end=time.time()
 
 print('se2 faite ',end-start,' secondes')
+print(A,b,a_nouv)
+sys.exit('débuggage')#-------------------------------------
 # --------------------- SE3 : calcul du tenseur homogénéisé sur le domaine fixe, affichage de chi_nouv_fixe restreint au domaine fluide virtuel --------------------- #
 
 ## On réinitialise le temps de calcul ##
