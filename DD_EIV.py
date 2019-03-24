@@ -146,6 +146,8 @@ a_nouv=np.linalg.solve(A.T,-b)
 end=time.time()
 
 print('se2 faite ',end-start,' secondes')
+print(A,b,a_nouv)
+sys.exit('débuggage')#-------------------------------------
 # --------------------- SE3 : calcul du nouveau champ de vecteurs, affichage --------------------- #
 
 ## On réinitialise le temps de calcul ##
