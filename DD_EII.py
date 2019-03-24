@@ -158,11 +158,11 @@ if not test_Dhom:
 
 nb_noeuds_dom_fixe=V_fixe.dim()
 
-lg_crow=-1
-crow=2*10**(lg_crow)
-Nrefine=2
 n_mp_refi=8
 fig_mesh=True
+
+def width(i):
+ return crow/i**2
 
 def f_testDhom(n):
  if geo_p=='hor':
@@ -318,7 +318,7 @@ for n in range(1,1+Nsnap):
  print('Domaine fixe : '+dom_fixe)
  print('Noeuds du maillage fixe :',nb_noeuds_dom_fixe)
  print('------------------------------------------------------------------')
- print('Couronne :',crow)
+ print(refi_mess)
  print('Nombre de tours de raffinement :',Nrefine)
  print('Noeuds du maillage raffine :',nb_noeuds_refi)
  print('Raffinemenent du maillage :',tps_refi,'secondes')
@@ -341,7 +341,7 @@ for n in range(1,1+Nsnap):
  registre.write('Domaine fixe : '+dom_fixe+'\n')
  registre.write('Noeuds du maillage fixe : '+str(nb_noeuds_dom_fixe)+'\n')
  registre.write('------------------------------------------------------------------'+'\n')
- registre.write('Couronne : '+str(crow)+'\n')
+ registre.write(refi_mess+'\n')
  registre.write('Nombre de tours de raffinement : '+str(Nrefine)+'\n')
  registre.write('Noeuds du maillage raffine : '+str(nb_noeuds_refi)+'\n')
  registre.write('Raffinemenent du maillage : '+str(tps_refi)+' secondes'+'\n')
