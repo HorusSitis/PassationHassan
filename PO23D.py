@@ -292,12 +292,12 @@ def calc_Ab_compl_3D(mesh_n_name,Phi_nouv_v,nb_modes):
 def calc_Ab_simpl_2D_ninterpol(V_r_fixe,mesh_r_fixe,Phi_r_fixe_v,r_nouv,cen,nb_modes):
  A=np.zeros((nb_modes,nb_modes))
  b=np.zeros(nb_modes)
+ r=r_nouv
  ### Intégration des coefficients ROM sur le volume fluide : premier terme du problème faible
  ## Sous-domaine de l'espace fixe correspondant au domaine fluide courant
- r=r_nouv
  class DomPhysFluide(SubDomain):
   def inside(self, x, on_boundary):
-   return True if ((x[0]-cen[0])**2+(cen[1]-0.5)**2>=r**2) else False
+   return True if ((x[0]-cen[0])**2+(x[1]-cen[1])**2) else False
  # marquage du domaine
  dom_courant=DomPhysFluide()
  subdomains=MeshFunction('size_t',mesh_r_fixe,mesh_r_fixe.topology().dim())
@@ -316,20 +316,14 @@ def calc_Ab_simpl_2D_ninterpol(V_r_fixe,mesh_r_fixe,Phi_r_fixe_v,r_nouv,cen,nb_m
    A[k,i]=assemble(tr(dot((grad(phi_r_fixe_k)).T, grad(phi_r_fixe_i)))*dxf(12829))
  ### Intégration des coefficients ROM sur l'interface solide-fluide : condition de Neumann pour le problème faible
  ## Création de l'interface solide-fluide
- l_cen=[]
- for i in range(-1,2):
-  for j in range(-1,2):
-   l_cen.append([cen[0]+i,cen[1]+j])
- r=r_nouv
- class inclusion_periodique(SubDomain):
+ class Front(SubDomain):
   def inside(self,x,on_boundary):
-   return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]))
- Gamma_sf=inclusion_periodique()
+   return True if between((x[0]-cen[0])**2+(x[1]-cen[1])**2,(r**2+tol,r**2-tol)) else False
+ Gamma_sf=Front()
  boundaries = MeshFunction("size_t", mesh_r_fixe, mesh_r_fixe.topology().dim()-1)
  boundaries.set_all(1)
  Gamma_sf.mark(boundaries, 7)
  ds = Measure("ds")(subdomain_data=boundaries)
- num_ff=1
  num_front_inc=7
  normale=FacetNormal(mesh_r_fixe)
  # boucle pour le calcul du second membre du problème linéaire MOR
@@ -357,6 +351,8 @@ def calc_Ab_simpl_2D_ninterpol(V_r_fixe,mesh_r_fixe,Phi_r_fixe_v,r_nouv,cen,nb_m
 
 
 
+################################################################################################################################################################################################
+################################################################################################################################################################################################
 
 
 
