@@ -67,14 +67,14 @@ EIVfixe=False
 
 
 
-#res_fixe=20
-#res=100#pour les sommets#20
 res_gmsh=100
 
 fixe_aff=False
 fig_todo=''
+
 Nrefine=1
-crow=0.05
+#crow=(1/res_gmsh)*1e-1
+typ_refi='front'#'vol'#
 
 ### ------------ Etape 0 : Génération de microstructures périodiques aléatoires ------------ ###
 

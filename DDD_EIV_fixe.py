@@ -165,25 +165,27 @@ for i in range(1,1+Nrefine):
  markers = MeshFunction("bool", mesh_fixe, mesh_fixe.topology().dim())
  markers.set_all(False)
  for c in cells(mesh_fixe):
-  #for f in facets(c):
-  # if ((f.midpoint()[0]-cen_snap_ray[0])**2+(f.midpoint()[1]-cen_snap_ray[1])**2+(f.midpoint()[2]-cen_snap_ray[2])**2<=(r*(1+width(i)))**2) and ((f.midpoint()[0]-cen_snap_ray[0])**2+(f.midpoint()[1]-cen_snap_ray[1])**2+(f.midpoint()[2]-cen_snap_ray[2])**2>=(r*(1-width(i)))**2):
-  #  markers[c]=True
-  #for v in vertices(c):
-  # if ((v.point().x()-cen_snap_ray[0])**2+(v.point().y()-cen_snap_ray[1])**2+(v.point().z()-cen_snap_ray[2])**2>=(r*(1-width(i)))**2) and ((v.point().x()-cen_snap_ray[0])**2+(v.point().y()-cen_snap_ray[1])**2+(v.point().z()-cen_snap_ray[2])**2<=(r*(1+width(i)))**2):
-  #  markers[c]=True
-  list_sgn=[]
-  for v in vertices(c):
-   if (v.point().x()-cen_snap_ray[0])**2+(v.point().y()-cen_snap_ray[1])**2+(v.point().z()-cen_snap_ray[2])**2>r**2:
-    list_sgn.append(1)
-   elif (v.point().x()-cen_snap_ray[0])**2+(v.point().y()-cen_snap_ray[1])**2+(v.point().z()-cen_snap_ray[2])**2==r**2:
-    list_sgn.append(0)
+  if typ_refi=='vol':
+   for f in facets(c):
+    if ((f.midpoint()[0]-cen_snap_ray[0])**2+(f.midpoint()[1]-cen_snap_ray[1])**2+(f.midpoint()[2]-cen_snap_ray[2])**2<=(r*(1+width(i)))**2) and ((f.midpoint()[0]-cen_snap_ray[0])**2+(f.midpoint()[1]-cen_snap_ray[1])**2+(f.midpoint()[2]-cen_snap_ray[2])**2>=(r*(1-width(i)))**2):
+     markers[c]=True
+   for v in vertices(c):
+    if ((v.point().x()-cen_snap_ray[0])**2+(v.point().y()-cen_snap_ray[1])**2+(v.point().z()-cen_snap_ray[2])**2>=(r*(1-width(i)))**2) and ((v.point().x()-cen_snap_ray[0])**2+(v.point().y()-cen_snap_ray[1])**2+(v.point().z()-cen_snap_ray[2])**2<=(r*(1+width(i)))**2):
+     markers[c]=True
+  elif typ_refi=='front':
+   list_sgn=[]
+   for v in vertices(c):
+    if (v.point().x()-cen_snap_ray[0])**2+(v.point().y()-cen_snap_ray[1])**2+(v.point().z()-cen_snap_ray[2])**2>r**2:
+     list_sgn.append(1)
+    elif (v.point().x()-cen_snap_ray[0])**2+(v.point().y()-cen_snap_ray[1])**2+(v.point().z()-cen_snap_ray[2])**2==r**2:
+     list_sgn.append(0)
+    else:
+     list_sgn.append(-1)
+   # on marque les cellules qui coupent la frontière du domaine fluide virtuel
+   if list_sgn==[1,1,1,1] or list_sgn==[-1,-1,-1,-1]:
+    markers[c]=False
    else:
-    list_sgn.append(-1)
-  # on marque les cellules qui coupent la frontière du domaine fluide virtuel
-  if list_sgn==[1,1,1,1] or list_sgn==[-1,-1,-1,-1]:
-   markers[c]=False
-  else:
-   markers[c]=True
+    markers[c]=True
  mesh_r_fixe=refine(mesh_r_fixe, markers, redistribute=True)
 print(list_sgn)
 end=time.time()

@@ -105,6 +105,9 @@ start_se1=time.time()
 phi_fixe=Function(V_fixe)
 
 # Raffinement du maillage : pour le moment, cas d'une inclusion unique centrée
+def width(i):
+ return crow/i**2
+
 start_refi=time.time()
 mesh_r_fixe=mesh_fixe
 r=r_nouv
@@ -113,12 +116,28 @@ for i in range(1,1+Nrefine):
  markers = MeshFunction("bool", mesh_fixe, mesh_fixe.topology().dim())
  markers.set_all(False)
  for c in cells(mesh_fixe):
-  for f in facets(c):
-   if ((f.midpoint()[0]-cen_snap_ray[0])**2+(f.midpoint()[1]-cen_snap_ray[1])**2<=(r*(1+crow/i))**2) and ((f.midpoint()[0]-cen_snap_ray[0])**2+(f.midpoint()[1]-cen_snap_ray[1])**2>=(r*(1-crow/i))**2):
+  if typ_refi=='vol':
+   for f in facets(c):
+    if ((f.midpoint()[0]-cen_snap_ray[0])**2+(f.midpoint()[1]-cen_snap_ray[1])**2<=(r*(1+width(i)))**2) and ((f.midpoint()[0]-cen_snap_ray[0])**2+(f.midpoint()[1]-cen_snap_ray[1])**2>=(r*(1-width(i)))**2):
+     markers[c]=True
+   for v in vertices(c):
+    if (v.point().x()-cen_snap_ray[0])**2+(v.point().y()-cen_snap_ray[1])**2>=(r*(1-width(i)))**2 and (v.point().x()-cen_snap_ray[0])**2+(v.point().y()-cen_snap_ray[1])**2<=(r*(1+width(i)))**2:
+     markers[c]=True
+  elif typ_refi=='front':
+   list_sgn=[]
+   for v in vertices(c):
+    if (v.point().x()-cen_snap_ray[0])**2+(v.point().y()-cen_snap_ray[1])**2>r**2:
+     list_sgn.append(1)
+    elif (v.point().x()-cen_snap_ray[0])**2+(v.point().y()-cen_snap_ray[1])**2==r**2:
+     list_sgn.append(0)
+    else:
+     list_sgn.append(-1)
+   # on marque les cellules qui coupent la frontière du domaine fluide virtuel
+   if list_sgn==[1,1,1] or list_sgn==[-1,-1,-1]:
+    markers[c]=False
+   else:
     markers[c]=True
-  for v in vertices(c):
-   if (v.point().x()-cen_snap_ray[0])**2+(v.point().y()-cen_snap_ray[1])**2>=(r*(1-crow/i))**2 and (v.point().x()-cen_snap_ray[0])**2+(v.point().y()-cen_snap_ray[1])**2<=(r*(1+crow/i))**2:
-    markers[c]=True
+ # raffinement
  mesh_r_fixe=refine(mesh_r_fixe, markers, redistribute=True)
 end=time.time()
 #print('Raffinemenent du maillage :',end-start,'secondes')

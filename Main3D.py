@@ -78,8 +78,10 @@ Nsnap=8
 npas_err=20
 typ_sol="bic_cyr"#"default"#seulement si res=10##
 ordo='Ordr'#'Nordr'
+
 Nrefine=1
-crow=(1/res_gmsh)*1e-6
+crow=(1/res_gmsh)*1e-1
+typ_refi='vol'#'front'#
 
 # apprentissage : calcul parallèle ou séquentiel, prise en compte de la résolution
 
