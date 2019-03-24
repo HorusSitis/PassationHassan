@@ -289,13 +289,21 @@ def calc_Ab_compl_3D(mesh_n_name,Phi_nouv_v,nb_modes):
 ## ------------------------------------------------------------------ Sans interpolation : directement sur le domaine fixe ------------------------------------------------------------------ ##
 ################################################################################################################################################################################################
 
-def calc_Ab_simpl_2D_ninterpol(V_r_fixe,mesh_r_fixe,Phi_r_fixe_v,rho_nouv,cen,nb_modes):
+def calc_Ab_simpl_2D_ninterpol(V_r_fixe,mesh_r_fixe,Phi_r_fixe_v,r_nouv,cen,nb_modes):
  A=np.zeros((nb_modes,nb_modes))
  b=np.zeros(nb_modes)
  ### Intégration des coefficients ROM sur le volume fluide : premier terme du problème faible
  ## Sous-domaine de l'espace fixe correspondant au domaine fluide courant
- r=rho_nouv
-
+ r=r_nouv
+ class DomPhysFluide(SubDomain):
+  def inside(self, x, on_boundary):
+   return True if ((x[0]-cen[0])**2+(cen[1]-0.5)**2>=r**2) else False
+ # marquage du domaine
+ dom_courant=DomPhysFluide()
+ subdomains=MeshFunction('size_t',mesh_r_fixe,mesh_r_fixe.topology().dim())
+ subdomains.set_all(1)
+ dom_courant.mark(subdomains,12829)
+ dxf=Measure("dx", domain=mesh_r_fixe, subdomain_data=subdomains)
  ## Fonctions à définir pour calculer les coefficients des deux tenseurs, qui dépendent de la métrique de l'espace des fonctions test
  phi_r_fixe_k=Function(V_r_fixe)
  phi_r_fixe_i=Function(V_r_fixe)
@@ -305,7 +313,7 @@ def calc_Ab_simpl_2D_ninterpol(V_r_fixe,mesh_r_fixe,Phi_r_fixe_v,rho_nouv,cen,nb
   for i in range(nb_modes):
    phi_r_fixe_i.vector().set_local(Phi_r_fixe_v[:,i])
    # On calcule le coefficient Aki
-   A[k,i]=assemble(tr(dot((grad(phi_nouv_k)).T, grad(phi_nouv_i)))*dx)
+   A[k,i]=assemble(tr(dot((grad(phi_r_fixe_k)).T, grad(phi_r_fixe_i)))*dxf(12829))
  ### Intégration des coefficients ROM sur l'interface solide-fluide : condition de Neumann pour le problème faible
  ## Création de l'interface solide-fluide
  l_cen=[]
@@ -317,17 +325,17 @@ def calc_Ab_simpl_2D_ninterpol(V_r_fixe,mesh_r_fixe,Phi_r_fixe_v,rho_nouv,cen,nb
   def inside(self,x,on_boundary):
    return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]))
  Gamma_sf=inclusion_periodique()
- boundaries = MeshFunction("size_t", mesh_nouv, mesh_nouv.topology().dim()-1)
+ boundaries = MeshFunction("size_t", mesh_r_fixe, mesh_r_fixe.topology().dim()-1)
  boundaries.set_all(1)
  Gamma_sf.mark(boundaries, 7)
  ds = Measure("ds")(subdomain_data=boundaries)
  num_ff=1
  num_front_inc=7
- normale=FacetNormal(mesh_nouv)
+ normale=FacetNormal(mesh_r_fixe)
  # boucle pour le calcul du second membre du problème linéaire MOR
  for i in range(nb_modes):
-  phi_nouv_i.vector().set_local(Phi_nouv_v[:,i])
-  b[i]=assemble(dot(normale,phi_nouv_i)*ds(num_front_inc))
+  phi_r_fixe_i.vector().set_local(Phi_r_fixe_v[:,i])
+  b[i]=assemble(dot(normale,phi_r_fixe_i)*ds(num_front_inc))
  return([A,b])
 
 
