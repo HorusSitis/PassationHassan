@@ -211,6 +211,7 @@ if config=='cer_un':
 
 A=Coeff[0]
 b=Coeff[1]
+c=Coeff[2]
 
 ## On résoud le modèle réduit
 
@@ -221,7 +222,7 @@ a_nouv=np.linalg.solve(A.T,-b)
 end=time.time()
 
 print('se2 faite ',end-start,' secondes')
-print(A,b,a_nouv)
+print(A,b,a_nouv,c)
 sys.exit('débuggage')#-------------------------------------
 # --------------------- SE3 : calcul du tenseur homogénéisé sur le domaine fixe, affichage de chi_nouv_fixe restreint au domaine fluide virtuel --------------------- #
 
