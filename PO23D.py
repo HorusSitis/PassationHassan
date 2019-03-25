@@ -297,7 +297,7 @@ def calc_Ab_simpl_2D_ninterpol(V_r_fixe,mesh_r_fixe,Phi_r_fixe_v,r_nouv,cen,nb_m
  ## Sous-domaine de l'espace fixe correspondant au domaine fluide courant
  class DomPhysFluide(SubDomain):
   def inside(self, x, on_boundary):
-   return True if ((x[0]-cen[0])**2+(x[1]-cen[1])**2) else False
+   return True if ((x[0]-cen[0])**2+(x[1]-cen[1])**2>=r**2) else False
  # marquage du domaine
  dom_courant=DomPhysFluide()
  subdomains=MeshFunction('size_t',mesh_r_fixe,mesh_r_fixe.topology().dim())
@@ -322,20 +322,21 @@ def calc_Ab_simpl_2D_ninterpol(V_r_fixe,mesh_r_fixe,Phi_r_fixe_v,r_nouv,cen,nb_m
  Gamma_sf=Front()
  boundaries = MeshFunction("size_t", mesh_r_fixe, mesh_r_fixe.topology().dim()-1)
  boundaries.set_all(1)
- Gamma_sf.mark(boundaries, 7)
- ds = Measure("ds")(subdomain_data=boundaries)
  num_front_inc=7
+ Gamma_sf.mark(boundaries,num_front_inc)
+ ds = Measure("ds")(subdomain_data=boundaries)
  normale=FacetNormal(mesh_r_fixe)
  # boucle pour le calcul du second membre du problème linéaire MOR
  for i in range(nb_modes):
   phi_r_fixe_i.vector().set_local(Phi_r_fixe_v[:,i])
   b[i]=assemble(dot(normale,phi_r_fixe_i)*ds(num_front_inc))
- return([A,b])
+ c=assemble( dot( normale,normale )*ds(num_front_inc))
+ return([A,b,c])
 
 
 
 
-
+#Constant((1.,1.)),Constant((1.,1.))
 
 
 
