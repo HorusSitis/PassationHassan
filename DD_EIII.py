@@ -149,3 +149,27 @@ Nseuil=i
 
 print(str(seuil_ener)+':')
 print(Nseuil)
+
+
+
+
+
+## Tests sur les fonctions POD et leurs valeurs propres associeess
+
+print('Valeurs propres :',val_propres)
+
+list_DPhi=[]
+ui=Function(V_fixe)
+
+for i in range(Nseuil):
+ ui.vector().set_local(Phi_prime_v[:,i])
+ #
+ int_grad=assemble(grad(ui)[0,0]*dx)
+ list_DPhi.append(1+int_grad)
+
+print('Dhom POD-ROM :',list_DPhi)
+
+
+
+
+
