@@ -42,12 +42,12 @@ def vol2D(r):return(max(1,np.pi*r**2))#cas discret : une boule de rayon nul, qui
 ##Tient compte seulement de la distance choisie
 
 def vol2D_remp(cen,ray,dim,dist):
- v=0
- for i in range(0,dim[0]):
-  for j in range(0,dim[1]):
-   if dist([i,j],cen)<=ray:
-    v=v+1
- return v
+    v=0
+    for i in range(0,dim[0]):
+            for j in range(0,dim[1]):
+                    if dist([i,j],cen)<=ray:
+                        v=v+1
+    return v
 
 ###Dès que delta est non-négatif : l'algorithme ne s'arrête pas en pratique, même pour un petit domaine cf ci-dessus.
 ###Solution : interrompre la recherche ?
@@ -68,180 +68,180 @@ def vol2D_remp(cen,ray,dim,dist):
 ##Une autre : périodicité, chaîne de caractères
 
 def RSAA_ph_dist2D(geom,delta,l_ray,par,frac_vol,dim,temps,C_per):
- #volume initial occupé par les phases 1, 2 ... : pour le cas d'une boucle unique ? Pas d'utilité sinon.
- vol_inc= np.zeros(len(frac_vol))
- #sortie : liste unique, dont on peut extraire la liste des centres et rayons concernant une seule phase, en utilisant une liste définie en compréhension.
- liste_ph=[]
- #temps écoulé
- tps=0
- #nombre total de phases
- n_phi=len(l_ray)
- #contitions d'arrêt de remplissage : fraction volumique par phase
- C_vol=[True]*n_phi
- #arrêt de la boucle principale :
- Cont_ph=True
- #remplissage
- while Cont_ph:
-  for phi in range(0,n_phi):
-   l=l_ray[phi]
-   #position du centre de la sphère
-   cen=np.array([rd.randint(0,dim[0]),rd.randint(0,dim[1])])
-   ray=max(0,l(par[phi]))
-   #condition : par d'entrecoupement des boules
-   C_ent=True
-   #test pour toutes les inclusions déjà réalisées : on tient compte des phases délà incluses et on parcourt list_ph
-   i=0
-   while(C_ent and i<len(liste_ph)):
-    if geom[0](np.array(liste_ph[i][0]),np.array(cen))<=delta+liste_ph[i][1]+ray:#une syntaxe avec des tableaux à la place de cen permet d'additionner terme à terme [dim[0],0] et liste_ph[i][0]
-     C_ent=False
-    #on ajoute la condition qui correspond à la périodicité : boules traversant les quatre faces du rectangle ambiant
-    if C_per=='per' :
-     #print(np.array(liste_ph[i][0])+np.array([dim[0],0]))
-     #print(cen)
-     #print(geom[0](np.array(liste_ph[i][0])+np.array([dim[0],0]),cen))#np.array(cen)
-     #print(delta+liste_ph[i][1]+ray)
-     if geom[0](np.array(liste_ph[i][0])+np.array([dim[0],0]),cen)<=delta+liste_ph[i][1]+ray:
-      #print(np.array(liste_ph[i][0])+np.array([dim[0],0]))
-      C_ent=False
-      #print(C_ent,'per')
-     if geom[0](np.array(liste_ph[i][0])+np.array([-dim[0],0]),cen)<=delta+liste_ph[i][1]+ray:
-      C_ent=False
-     if geom[0](np.array(liste_ph[i][0])+np.array([0,dim[1]]),cen)<=delta+liste_ph[i][1]+ray:
-      C_ent=False
-     if geom[0](np.array(liste_ph[i][0])+np.array([0,-dim[1]]),cen)<=delta+liste_ph[i][1]+ray:
-      C_ent=False
-    i=i+1
-   #On ajoute la nouvelle inclusion, si cela est possible ; on calcule aussi le nouveau volume occupé par les boules
-   if C_ent:
-    liste_ph.append([cen,ray,phi+1])#décalage entre le numéro de phase et phi, choisi pur parcourir des tableaux
-    if C_per=='per':
-     vol_inc[phi]=vol_inc[phi]+geom[1](ray)
-    else:
-     vol_inc[phi]=vol_inc[phi]+vol3D_remp(cen,ray,dim,geom[0])
-    ##cas non périodique : volume à calculer avec une autre méthode que geom[1]
-   if vol_inc[phi]>frac_vol[phi]*dim[0]*dim[1]:
-    C_vol[phi]=False
-   tps=tps+1
-   #fin de la boucle en phi
-  #sortie de la boucle principale
-  Cont_ph=any(C_vol) and tps<temps
- return(liste_ph,vol_inc)
+    #volume initial occupé par les phases 1, 2 ... : pour le cas d'une boucle unique ? Pas d'utilité sinon.
+    vol_inc= np.zeros(len(frac_vol))
+    #sortie : liste unique, dont on peut extraire la liste des centres et rayons concernant une seule phase, en utilisant une liste définie en compréhension.
+    liste_ph=[]
+    #temps écoulé
+    tps=0
+    #nombre total de phases
+    n_phi=len(l_ray)
+    #contitions d'arrêt de remplissage : fraction volumique par phase
+    C_vol=[True]*n_phi
+    #arrêt de la boucle principale :
+    Cont_ph=True
+    #remplissage
+    while Cont_ph:
+        for phi in range(0,n_phi):
+            l=l_ray[phi]
+            #position du centre de la sphère
+            cen=np.array([rd.randint(0,dim[0]),rd.randint(0,dim[1])])
+            ray=max(0,l(par[phi]))
+            #condition : par d'entrecoupement des boules
+            C_ent=True
+            #test pour toutes les inclusions déjà réalisées : on tient compte des phases délà incluses et on parcourt list_ph
+            i=0
+            while(C_ent and i<len(liste_ph)):
+                if geom[0](np.array(liste_ph[i][0]),np.array(cen))<=delta+liste_ph[i][1]+ray:#une syntaxe avec des tableaux à la place de cen permet d'additionner terme à terme [dim[0],0] et liste_ph[i][0]
+                    C_ent=False
+                #on ajoute la condition qui correspond à la périodicité : boules traversant les quatre faces du rectangle ambiant
+                if C_per=='per' :
+                    #print(np.array(liste_ph[i][0])+np.array([dim[0],0]))
+                    #print(cen)
+                    #print(geom[0](np.array(liste_ph[i][0])+np.array([dim[0],0]),cen))#np.array(cen)
+                    #print(delta+liste_ph[i][1]+ray)
+                    if geom[0](np.array(liste_ph[i][0])+np.array([dim[0],0]),cen)<=delta+liste_ph[i][1]+ray:
+                        #print(np.array(liste_ph[i][0])+np.array([dim[0],0]))
+                        C_ent=False
+                        #print(C_ent,'per')
+                    if geom[0](np.array(liste_ph[i][0])+np.array([-dim[0],0]),cen)<=delta+liste_ph[i][1]+ray:
+                        C_ent=False
+                    if geom[0](np.array(liste_ph[i][0])+np.array([0,dim[1]]),cen)<=delta+liste_ph[i][1]+ray:
+                        C_ent=False
+                    if geom[0](np.array(liste_ph[i][0])+np.array([0,-dim[1]]),cen)<=delta+liste_ph[i][1]+ray:
+                        C_ent=False
+                i=i+1
+            #On ajoute la nouvelle inclusion, si cela est possible ; on calcule aussi le nouveau volume occupé par les boules
+            if C_ent:
+                liste_ph.append([cen,ray,phi+1])#décalage entre le numéro de phase et phi, choisi pur parcourir des tableaux
+                if C_per=='per':
+                    vol_inc[phi]=vol_inc[phi]+geom[1](ray)
+                else:
+                    vol_inc[phi]=vol_inc[phi]+vol3D_remp(cen,ray,dim,geom[0])
+                ##cas non périodique : volume à calculer avec une autre méthode que geom[1]
+            if vol_inc[phi]>frac_vol[phi]*dim[0]*dim[1]:
+                C_vol[phi]=False
+            tps=tps+1
+            #fin de la boucle en phi
+        #sortie de la boucle principale
+        Cont_ph=any(C_vol) and tps<temps
+    return(liste_ph,vol_inc)
 
 ##Remplissage d'un rectangle avec les inclusions, d'après une sortie de RSAA_ph_dist2D
 
 def remp2D(ex_rseq,dist,dim,C_per):
- ex=ex_rseq[0]
- #z=0
- A=np.zeros(dim[0]*dim[1])
- A=np.reshape(A,(dim[0],dim[1]))
- #remplissage : attribution d'une phase, point par point du domaine A
- for i in range(0,dim[0]):
-  for j in range(0,dim[1]):
-   for k in range(0,len(ex)):
-    if dist([i,j],ex[k][0])<=ex[k][1]:
-     A[i,j]=ex[k][2]
-    if C_per=='per':
-     #z=z+1
-     #print(dist([i,j],ex[k][0]+[dim[0],0]),ex[k][1])
-     if dist(np.array([i,j]),ex[k][0]+np.array([dim[0],0]))<=ex[k][1]:
-      A[i,j]=ex[k][2]
-     if dist(np.array([i,j]),ex[k][0]+np.array([-dim[0],0]))<=ex[k][1]:
-      A[i,j]=ex[k][2]
-     if dist(np.array([i,j]),ex[k][0]+np.array([0,dim[1]]))<=ex[k][1]:
-      A[i,j]=ex[k][2]
-     if dist(np.array([i,j]),ex[k][0]+np.array([0,-dim[1]]))<=ex[k][1]:
-      A[i,j]=ex[k][2]
- return(A)#[A,z])
+    ex=ex_rseq[0]
+    #z=0
+    A=np.zeros(dim[0]*dim[1])
+    A=np.reshape(A,(dim[0],dim[1]))
+    #remplissage : attribution d'une phase, point par point du domaine A
+    for i in range(0,dim[0]):
+        for j in range(0,dim[1]):
+            for k in range(0,len(ex)):
+                if dist([i,j],ex[k][0])<=ex[k][1]:
+                    A[i,j]=ex[k][2]
+                if C_per=='per':
+                    #z=z+1
+                    #print(dist([i,j],ex[k][0]+[dim[0],0]),ex[k][1])
+                    if dist(np.array([i,j]),ex[k][0]+np.array([dim[0],0]))<=ex[k][1]:
+                        A[i,j]=ex[k][2]
+                    if dist(np.array([i,j]),ex[k][0]+np.array([-dim[0],0]))<=ex[k][1]:
+                        A[i,j]=ex[k][2]
+                    if dist(np.array([i,j]),ex[k][0]+np.array([0,dim[1]]))<=ex[k][1]:
+                        A[i,j]=ex[k][2]
+                    if dist(np.array([i,j]),ex[k][0]+np.array([0,-dim[1]]))<=ex[k][1]:
+                        A[i,j]=ex[k][2]
+    return(A)#[A,z])
 
 #Optimisation : une fonction vectorisée, peu d'intérêt pour de grandes dimensions
 
 #Une fonction intermédiaire : phase au pixel I [i,j]
 
 def phase_pt(I,liste_ph,n_phi,dist,dim,C_per):
- phase=0
- C_ont=True
- phi=1
- i=I[0]
- j=I[1]
- while C_ont and phi<=n_phi:
-  L=[x for x in liste_ph if x[2]==phi]
-  l=len(L)
-  A=np.array(L)
-  #on extrait les vecteurs correspondant aux rayons et aux centres
-  cen=A[:,0]
-  ray=A[:,1]
-  #fonction distance vectorisée
-  def dist_pt(pt):
-   return(dist([i,j],pt))
-  v_dist_ij_pt=np.vectorize(dist_pt)
-  #calcul des distances aux centres :
-  dist_cen=v_dist_ij_pt(cen)
-  if any(dist_cen<=ray):
-   phase=phi
-   C_ont=False
-  #cas périodique
-  if C_per=='per':
-   ##------------------------- on translate les boules de [dim[],] etc puis on vérifie l'appartenance du point courant I à leurs images
-   if C_ont:
-    B=A+[[dim[0],0],0,0]
-    cen=B[:,0]
-    ray=B[:,1]
-    #print(cen)
-    #print(ray)
-    dist_cen=v_dist_ij_pt(cen)
-    #print(dist_cen)
-    if any(dist_cen<=ray):
-     phase=phi
-     C_ont=False
-   if C_ont:
-    B=A+[[-dim[0],0],0,0]
-    cen=B[:,0]
-    ray=B[:,1]
-    dist_cen=v_dist_ij_pt(cen)
-    if any(dist_cen<=ray):
-     phase=phi
-     C_ont=False
-   if C_ont:
-    B=A+[[0,dim[1]],0,0]
-    cen=B[:,0]
-    ray=B[:,1]
-    dist_cen=v_dist_ij_pt(cen)
-    if any(dist_cen<=ray):
-     phase=phi
-     C_ont=False
-   if C_ont:
-    B=A+[[0,-dim[1]],0,0]
-    cen=B[:,0]
-    ray=B[:,1]
-    dist_cen=v_dist_ij_pt(cen)
-    if any(dist_cen<=ray):
-     phase=phi
-     C_ont=False
-   ##------------------------- fin pour la périodicité ----------------------------##
-  phi=phi+1
- return(phase)
+    phase=0
+    C_ont=True
+    phi=1
+    i=I[0]
+    j=I[1]
+    while C_ont and phi<=n_phi:
+        L=[x for x in liste_ph if x[2]==phi]
+        l=len(L)
+        A=np.array(L)
+        #on extrait les vecteurs correspondant aux rayons et aux centres
+        cen=A[:,0]
+        ray=A[:,1]
+        #fonction distance vectorisée
+        def dist_pt(pt):
+            return(dist([i,j],pt))
+        v_dist_ij_pt=np.vectorize(dist_pt)
+        #calcul des distances aux centres :
+        dist_cen=v_dist_ij_pt(cen)
+        if any(dist_cen<=ray):
+            phase=phi
+            C_ont=False
+        #cas périodique
+        if C_per=='per':
+            ##------------------------- on translate les boules de [dim[],] etc puis on vérifie l'appartenance du point courant I à leurs images
+            if C_ont:
+                B=A+[[dim[0],0],0,0]
+                cen=B[:,0]
+                ray=B[:,1]
+                #print(cen)
+                #print(ray)
+                dist_cen=v_dist_ij_pt(cen)
+                #print(dist_cen)
+            if any(dist_cen<=ray):
+                phase=phi
+                C_ont=False
+            if C_ont:
+                B=A+[[-dim[0],0],0,0]
+                cen=B[:,0]
+                ray=B[:,1]
+                dist_cen=v_dist_ij_pt(cen)
+            if any(dist_cen<=ray):
+                phase=phi
+                C_ont=False
+            if C_ont:
+                B=A+[[0,dim[1]],0,0]
+                cen=B[:,0]
+                ray=B[:,1]
+                dist_cen=v_dist_ij_pt(cen)
+            if any(dist_cen<=ray):
+                phase=phi
+                C_ont=False
+            if C_ont:
+                B=A+[[0,-dim[1]],0,0]
+                cen=B[:,0]
+                ray=B[:,1]
+                dist_cen=v_dist_ij_pt(cen)
+            if any(dist_cen<=ray):
+                phase=phi
+                C_ont=False
+        ##------------------------- fin pour la périodicité ----------------------------##
+        phi=phi+1
+    return(phase)
 
 #Reformulation : indice k unique pour le parcours de la matrice spatiale dans l'ordre lexicographique, éventuellement à lancer sur des treads indépendants
 
 def parc_liste(k_lex,L,n_phi,dist,dim,C_per):
- i=k_lex//dim[1]
- j=k_lex-i*dim[1]
- a_ph=phase_pt([i,j],L,n_phi,dist,dim,C_per)
- return(a_ph)
+    i=k_lex//dim[1]
+    j=k_lex-i*dim[1]
+    a_ph=phase_pt([i,j],L,n_phi,dist,dim,C_per)
+    return(a_ph)
 
 #Remplissage, boucle avec des instructions vectorisées, un seul thread
 
 def Vremp2D(ex_rseq,dist,dim,C_per):
- A=np.arange(dim[0]*dim[1])
- L=ex_rseq[0]#liste des centre-rayon-phase ; on oublie les saturations respectives des phases
- M=np.array(L)
- n_phi=max(M[:,2])
- #boucle principale
- for k in range(0,len(A)):
-  A[k]=parc_liste(k,L,n_phi,dist,dim,C_per)
- #sortie sous la forme d'une matrice : pixels 
- A=np.reshape(A,(dim[0],dim[1]))
- return(A)
+    A=np.arange(dim[0]*dim[1])
+    L=ex_rseq[0]#liste des centre-rayon-phase ; on oublie les saturations respectives des phases
+    M=np.array(L)
+    n_phi=max(M[:,2])
+    #boucle principale
+    for k in range(0,len(A)):
+        A[k]=parc_liste(k,L,n_phi,dist,dim,C_per)
+        #sortie sous la forme d'une matrice : pixels
+    A=np.reshape(A,(dim[0],dim[1]))
+    return(A)
 
 
 
@@ -254,29 +254,17 @@ from joblib import Parallel, delayed
 
 
 def ParVremp2D(ex_rseq,dist,dim,C_per):
- A=np.arange(dim[0]*dim[1])
- L=ex_rseq[0]#liste des centre-rayon-phase ; on oublie les saturations respectives des phases
- M=np.array(L)
- n_phi=max(M[:,2])
- #définition et éxécution des threads : huit, pour MECALAC
- ##
- num_cores=multiprocessing.cpu_count()
- ##
- #boucle principale, parallélisée
- ##
- A=Parallel(n_jobs=num_cores)(delayed(parc_liste)(k,L,n_phi,dist,dim,C_per)for k in range(0,len(A)))
- ##
- A=np.reshape(A,(dim[0],dim[1]))
- return(A)
-
-
-
-
-
-
-
-
-
-
-
-
+    A=np.arange(dim[0]*dim[1])
+    L=ex_rseq[0]#liste des centre-rayon-phase ; on oublie les saturations respectives des phases
+    M=np.array(L)
+    n_phi=max(M[:,2])
+    #définition et éxécution des threads : huit, pour MECALAC
+    ##
+    num_cores=multiprocessing.cpu_count()
+    ##
+    #boucle principale, parallélisée
+    ##
+    A=Parallel(n_jobs=num_cores)(delayed(parc_liste)(k,L,n_phi,dist,dim,C_per)for k in range(0,len(A)))
+    ##
+    A=np.reshape(A,(dim[0],dim[1]))
+    return(A)
