@@ -27,6 +27,14 @@ import multiprocessing
 import pylab as pl
 #from pylab import *
 
+# cmap_conv = 'night'
+cmap_conv = 'cement'
+
+if cmap_conv == 'night':
+    cmap = matplotlib.colors.ListedColormap(['blue','grey','yellow'])
+elif cmap_conv == 'cement':
+    cmap = matplotlib.colors.ListedColormap(['cyan','grey','orange'])
+
 import time
 
 
@@ -38,7 +46,7 @@ from RSAA_2d_ray import *
 
 # task = 'nothing'
 task = 'listS'
-task = 'Ainc'
+# task = 'Ainc'
 # task = 'graph'
 
 ## Generation d'inclusions dans un reseau carre, stockage ##
@@ -49,14 +57,14 @@ task = 'Ainc'
 # cote=150
 # Tps=20000
 
-cote=300
-Tps=25000
+# cote=300
+# Tps=25000
 
 # cote=500
 # Tps=30000
 
-# cote=750
-# Tps=45000
+cote=750
+Tps=45000
 
 # cote=1000
 # Tps=1000000
@@ -175,7 +183,7 @@ elif task == 'graph':
 
     # Couleurs : bleu pour le fluide, gris pour une premiere inclusion, jaune pour une deuxieme
     ##avec pylab
-    cmap = matplotlib.colors.ListedColormap(['blue','grey','yellow'])
+    # cmap = matplotlib.colors.ListedColormap(['blue','grey','yellow'])
     bounds = [0,1,2,3]
     norm = matplotlib.colors.BoundaryNorm(bounds, cmap.N)
     #
@@ -183,9 +191,9 @@ elif task == 'graph':
     pl.imshow(A_loa,interpolation='none',cmap=cmap,norm=norm)
     pl.axis('off')
 
-    figname=str(cote)+'f'+str(cote)+'Tps'+str(Tps)+'.png'
-    rep='Figures2D'
-    save_name=rep+'/'+figname
+    figname = cmap_conv + '_' + str(cote) + 'f' + str(cote) + 'Tps' + str(Tps) + '.png'
+    rep = 'Figures2D'
+    save_name = rep+'/'+figname
 
     pl.savefig(save_name)
 
