@@ -65,21 +65,31 @@ task = 'listS'
 # task = 'Ainc'
 # task = 'graph'
 
+# caracteristiques de la cellule
+
+xinf = -1.
+yinf = -1.
+zinf = -1.
+
+size = 2.
+
+xsup = xinf + size
+ysup = yinf + size
+zsup = zinf + size
+
+# # geometrie euclidienne
 #
-
-# geometrie euclidienne
-
-geo = [rsa.eucl3D, rsa.vol3D]
-
-# lois normales pour la taille des inclusions ; parametres #
-
-lois_rayons = [rsa.g_norm, rsa.g_norm]
-par_rayons = [(0.5,3), (1.5,2)]
-
-# fractions volumiques pour les differentes phases ; marges
-
-frac_vol = [0.15, 0.12]
-delta_inc = 0.05
+# geo = [rsa.eucl3D, rsa.vol3D]
+#
+# # lois normales pour la taille des inclusions ; parametres #
+#
+# lois_rayons = [rsa.g_norm, rsa.g_norm]
+# par_rayons = [(0.5,3), (1.5,2)]
+#
+# # fractions volumiques pour les differentes phases ; marges
+#
+# frac_vol = [0.15, 0.12]
+# delta_inc = 0.05
 
 # nombre maximal d'iterations
 
@@ -91,20 +101,46 @@ rep_inc = 'IncAlea3D'
 
 ## Fabrication de la liste des inclusions etiquetees ##
 
-list_vol_inc = rsa.RSAA_ph_dist3D(geo, 2, lois_rayons, par_rayons, frac_vol, [10, 10, 10], tps_remp, 'per')
-
-list_inc = list_vol_inc[0]
-length = len(list_inc)
-array_inc = np.zeros((length, 3))
-
-
-print(list_inc)
+# list_vol_inc = rsa.RSAA_ph_dist3D(geo, 2, lois_rayons, par_rayons, frac_vol, [10, 10, 10], tps_remp, 'per')
+#
+# list_inc = list_vol_inc[0]
+# length = len(list_inc)
+# array_inc = np.zeros((length, 3))
+#
+#
+# print(list_inc)
 
 # for i in range(length):
 #     for k in range(3):
 #         array_inc[i, k] = list_inc[i][k]
 
 
+## Pour generer les inclusions dans une cellule elementaire
 
-# RSAA_ph_dist3D([eucl3D,vol3D],2,[g_norm,g_norm],[(5,5),(10,1)],[0.15,0.25],[100,100,100],10000,False)
-#
+# lois normales pour la taille des inclusions ; parametres #
+
+lois_rayons = [rsa.g_norm, rsa.g_norm]
+par_rayons = [(0.05,0.05), (0.1,0.02)]
+
+# fractions volumiques pour les differentes phases ; marges
+
+frac_vol = [0.15, 0.12]
+delta_inc = 0.05
+
+list_vol_cell_inc = rsa.RSAA_ph_eucl_cell(delta_inc, lois_rayons, par_rayons, frac_vol, [xinf, yinf, zinf], size, tps_remp, 'per')
+
+print(list_vol_cell_inc)
+
+list_cell_inc = list_vol_cell_inc[0]
+
+# Affichage de la cellule elementaire
+
+
+
+
+
+
+
+
+
+# Affichage d'une microstructure periodique avec la cellule generee aleatoirement
