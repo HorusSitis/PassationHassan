@@ -109,7 +109,7 @@ def vol3D_remp(cen,ray,dim,dist):
 ##On ajoute une entree : duree d'execution pour l'algorithme
 ##Une autre : periodicite, chaîne de caracteres
 
-def RSAA_ph_dist3D(geom,delta,l_ray,par,frac_vol,dim,temps,C_per):
+def RSAA_ph_dist3D(geom, delta, l_ray, par, frac_vol, dim, temps, C_per):
     # volume initial occupe par les phases 1, 2 ... : pour le cas d'une boucle unique ? Pas d'utilite sinon.
     vol_inc= np.zeros(len(frac_vol))
     # sortie : liste unique, dont on peut extraire la liste des centres et rayons concernant une seule phase, en utilisant une liste definie en comprehension.
@@ -125,12 +125,13 @@ def RSAA_ph_dist3D(geom,delta,l_ray,par,frac_vol,dim,temps,C_per):
     # remplissage
     while Cont_ph:
 
-        #
+        # pour chaque phase solide : on tente de placer une inclusion
         for phi in range(0,n_phi):
-            l=l_ray[phi]
+            # loi  de probabilite pour le rayon a venir et tirage de ce rayon
+            l = l_ray[phi]
+            ray = max(0,l(par[phi]))
             # position du centre de la sphere
-            cen=np.array([rd.randint(0,dim[0]),rd.randint(0,dim[1])])
-            ray=max(0,l(par[phi]))
+            cen = np.array([rd.randint(0,dim[0]), rd.randint(0,dim[1]), rd.randint(0,dim[2])])
             # condition : par d'entrecoupement des boules
             C_ent=True
             # test pour toutes les inclusions deja realisees : on tient compte des phases dela incluses et on parcourt list_ph
@@ -151,7 +152,7 @@ def RSAA_ph_dist3D(geom,delta,l_ray,par,frac_vol,dim,temps,C_per):
                         C_ent=False
                     if geom[0](liste_ph[i][0]+[0,0,dim[2]],cen)<=delta+liste_ph[i][1]+ray:
                         C_ent=False
-                    if geom[0](liste_ph[i][0]+[0,0-dim[2]],cen)<=delta+liste_ph[i][1]+ray:
+                    if geom[0](liste_ph[i][0]+[0,0,-dim[2]],cen)<=delta+liste_ph[i][1]+ray:
                         C_ent=False
                 i=i+1
 
@@ -170,9 +171,9 @@ def RSAA_ph_dist3D(geom,delta,l_ray,par,frac_vol,dim,temps,C_per):
                 C_vol[phi]=False
 
             tps=tps+1
-            # fin de la boucle en phi
+            # fin de la boucle en phi : temps incremente de toute maniere
 
-        # sortie de la boucle principale
+        # sortie de la boucle principale : on regarde tous les types d'inclusions
         Cont_ph=any(C_vol) and tps<temps
 
     return(liste_ph,vol_inc)
@@ -193,3 +194,5 @@ def RSAA_ph_dist3D(geom,delta,l_ray,par,frac_vol,dim,temps,C_per):
 # RSAA_ph_dist3D([eucl3D,vol3D],2,[g_norm,g_norm],[(1,0.5),(2,0.1)],[0.15,0.25],[10,10,10],100,'per')
 #
 # RSAA_ph_dist3D([eucl3D,vol3D],4,[g_norm,g_norm,g_norm],[(3,0.5),(8,0.2),(2,0.1)],[0.15,0.25,0.1],[30,50,10],10000,'per')
+
+# Une fonction pour affficher la cellule et ses inclusions

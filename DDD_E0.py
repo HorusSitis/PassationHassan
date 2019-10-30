@@ -13,7 +13,7 @@ import random as rd
 from math import sqrt
 from math import exp
 
-# affichage etc
+# Affichage avec matplotlib
 
 import matplotlib
 
@@ -21,16 +21,29 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.gridspec as gridspec
 
+from mpl_toolkits.mplot3d.axes3d import get_test_data
+# This import registers the 3D projection, but is otherwise unused.
+from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
+import mpl_toolkits.mplot3d.art3d as art3d
+from matplotlib.patches import Circle, PathPatch
+
+from matplotlib.text import TextPath
+from matplotlib.transforms import Affine2D
+
+# Affichage avec pylab
+
+import pylab as pl
+
+# systeme dont calcul parallelle
+
 import sys, os
 import shelve as sh
 
 import multiprocessing
 
-import pylab as pl
-
 # import des fonctions utiles a RSAA
 
-import RSAA_3d_ray as rsaa
+import RSAA_3d_ray as rsa
 
 # parametres graphiques
 
@@ -42,7 +55,7 @@ if cmap_conv == 'night':
 elif cmap_conv == 'cement':
     cmap = matplotlib.colors.ListedColormap(['cyan','grey','orange'])
 
-import time
+# import time
 
 
 ## Tache a accomplir : creer lise RSAA, matrice d'appartenance, representation graphique ##
@@ -52,22 +65,46 @@ task = 'listS'
 # task = 'Ainc'
 # task = 'graph'
 
+#
+
 # geometrie euclidienne
 
-geo=[eucl2D,vol2D]
+geo = [rsa.eucl3D, rsa.vol3D]
 
 # lois normales pour la taille des inclusions ; parametres #
 
-Lois=[g_norm,g_norm]
-Par=[(3,1),(1.5,5)]#[(5,0.5),(8,0.1)] pour 1000
+lois_rayons = [rsa.g_norm, rsa.g_norm]
+par_rayons = [(0.5,3), (1.5,2)]
 
-# fractions volumiAincques pour les differentes phases ; marges
+# fractions volumiques pour les differentes phases ; marges
 
-frac=[0.15,0.12]
-delta_inc=2
+frac_vol = [0.15, 0.12]
+delta_inc = 0.05
+
+# nombre maximal d'iterations
+
+tps_remp = 20
 
 # repertoire pour les listes d'inclustions
 
-rep_inc='IncAlea3D'
+rep_inc = 'IncAlea3D'
 
 ## Fabrication de la liste des inclusions etiquetees ##
+
+list_vol_inc = rsa.RSAA_ph_dist3D(geo, 2, lois_rayons, par_rayons, frac_vol, [10, 10, 10], tps_remp, 'per')
+
+list_inc = list_vol_inc[0]
+length = len(list_inc)
+array_inc = np.zeros((length, 3))
+
+
+print(list_inc)
+
+# for i in range(length):
+#     for k in range(3):
+#         array_inc[i, k] = list_inc[i][k]
+
+
+
+# RSAA_ph_dist3D([eucl3D,vol3D],2,[g_norm,g_norm],[(5,5),(10,1)],[0.15,0.25],[100,100,100],10000,False)
+#
