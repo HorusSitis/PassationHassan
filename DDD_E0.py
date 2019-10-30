@@ -74,7 +74,7 @@ zsup = zinf + size
 
 # nombre maximal d'iterations
 
-tps_remp = 150
+tps_remp = 50
 
 # repertoire pour les listes d'inclustions
 
@@ -87,7 +87,7 @@ rep_inc = 'IncAlea3D'
 # lois normales pour la taille des inclusions ; parametres #
 
 lois_rayons = [rsa.g_norm, rsa.g_norm]
-par_rayons = [(0.05,0.05), (0.1,0.02)]
+par_rayons = [(0.1,0.07), (0.25,0.02)]
 
 # fractions volumiques pour les differentes phases ; marges
 
@@ -102,14 +102,20 @@ list_cell_inc = list_vol_cell_inc[0]
 
 # Affichage de la cellule elementaire'grey','orange'
 
-nb_lcells = 1
+nb_lcells = 3
+
+gr_res = 100
+
+
+
+
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 # taille du graphique'grey','orange'
-ax.set_xlim((xinf, xsup))
-ax.set_ylim((yinf, ysup))
-ax.set_zlim((zinf, zsup))
+ax.set_xlim((xinf, xinf + nb_lcells*size))
+ax.set_ylim((yinf, yinf + nb_lcells*size))
+ax.set_zlim((zinf, zinf + nb_lcells*size))
 # A modifier selon la geometrie de la cellule
 
 
@@ -117,24 +123,36 @@ ax.set_zlim((zinf, zsup))
 ax.set_axis_bgcolor(fluid_color)
 
 # pour un parametrage des surfaces
-u = np.linspace(0, 2 * np.pi, 100)
-v = np.linspace(0, np.pi, 100)
+u = np.linspace(0, 2 * np.pi, gr_res)
+v = np.linspace(0, np.pi, gr_res)
 
-# inclusions, une par periode et par cellule
-for i in range(len(list_cell_inc)):
 
-    # restitution des informations sur l'inclusion courante
-    cen = list_cell_inc[i][0]
-    r_sph = list_cell_inc[i][1]
-    phase_index = list_cell_inc[i][2] - 1
 
-    # coordonnees parametrees de la sphere
-    x = 0.+cen[0]+r_sph*np.outer(np.cos(u), np.sin(v))## outer : produit terme à terme
-    y = 0.+cen[1]+r_sph*np.outer(np.sin(u), np.sin(v))
-    z = 0.+cen[2]+r_sph*np.outer(np.ones(np.size(u)), np.cos(v))
+# boucle sur les cellules
+for a in range(0,nb_lcells):
+    for b in range(0,nb_lcells):
+        for c in range(0,nb_lcells):
 
-    # trace de la surface parametree x, y, z : ...
-    ax.plot_surface(x, y, z, linewidth=0, antialiased=False, color=colors_ph[phase_index])
+            # inclusions, une par periode et par cellule
+            for i in range(len(list_cell_inc)):
+
+                # restitution des informations sur l'inclusion courante
+                cen = list_cell_inc[i][0]
+                r_sph = list_cell_inc[i][1]
+                phase_index = list_cell_inc[i][2] - 1
+
+                # coordonnees parametrees de la sphere
+                x = size*a+cen[0]+r_sph*np.outer(np.cos(u), np.sin(v))## outer : produit terme à terme
+                y = size*b+cen[1]+r_sph*np.outer(np.sin(u), np.sin(v))
+                z = size*c+cen[2]+r_sph*np.outer(np.ones(np.size(u)), np.cos(v))
+
+                # trace de la surface parametree x, y, z : ...
+                ax.plot_surface(x, y, z, linewidth=0, antialiased=False, color=colors_ph[phase_index])
+
+
+
+
+
 
 # grille
 ax.xaxis.set_major_locator(plt.MultipleLocator(1.0))
@@ -149,7 +167,7 @@ ax.set_zticklabels([])
 
 # instruction pour la sortie
 # if fig_todo=='aff':
-plt.title('Inclusions pour une cellule unique, '+str(len(lois_rayons))+' phases solides, '+str(tps_remp)+' iterations RSAA')
+plt.title('Inclusions pour '+str(nb_lcells**3)+' periodes, '+str(len(lois_rayons))+' phases solides, '+str(tps_remp)+' iterations RSAA')
 plt.show()
 plt.close()
 
