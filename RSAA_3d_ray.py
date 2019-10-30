@@ -36,7 +36,7 @@ def eucl3D(a,b):
     return(np.sqrt((a[0]-b[0])**2+(a[1]-b[1])**2+(a[2]-b[2])**2))
 
 def vol3D(r):
-    return(max(1,4/3*np.pi*r**3))#cas discret : une boule de rayon nul, qui contient son centre, est de volume 1.
+    return(4/3*np.pi*r**3)#cas discret : une boule de rayon nul, qui contient son centre, est de volume 1.
 
 # Fonction de calcul du volume, pour le cas non periodique
 ## Tient compte seulement de la distance choisie
@@ -59,74 +59,74 @@ def vol3D_remp(cen,ray,dim,dist):
 ## On ajoute une septieme entree : duree d'execution pour l'algorithme
 ## Une huitieme : periodicite, chaine de caracteres
 
-def RSAA_ph_dist3D(geom, delta, l_ray, par, frac_vol, dim, temps, C_per):
-    # volume initial occupe par les phases 1, 2 ... : pour le cas d'une boucle unique ? Pas d'utilite sinon.
-    vol_inc= np.zeros(len(frac_vol))
-    # sortie : liste unique, dont on peut extraire la liste des centres et rayons concernant une seule phase, en utilisant une liste definie en comprehension.
-    liste_ph=[]
-    # temps ecoule
-    tps=0
-    # nombre total de phases
-    n_phi=len(l_ray)
-    # contitions d'arret de remplissage : fraction volumique par phase
-    C_vol=[True]*n_phi
-    # arret de la boucle principale :
-    Cont_ph=True
-    # remplissage
-    while Cont_ph:
-
-        # pour chaque phase solide : on tente de placer une inclusion
-        for phi in range(0,n_phi):
-            # loi  de probabilite pour le rayon a venir et tirage de ce rayon
-            l = l_ray[phi]
-            ray = max(0,l(par[phi]))
-            # position du centre de la sphere
-            cen = np.array([rd.randint(0,dim[0]), rd.randint(0,dim[1]), rd.randint(0,dim[2])])
-            # condition : par d'entrecoupement des boules
-            C_ent=True
-            # test pour toutes les inclusions deja realisees : on tient compte des phases dela incluses et on parcourt list_ph
-            i=0
-            while(C_ent and i<len(liste_ph)):
-                # une syntaxe avec des tableaux a la place de cen permet d'additionner terme a terme [dim[0],0] et liste_ph[i][0]
-                if geom[0](liste_ph[i][0],cen)<=delta+liste_ph[i][1]+ray:
-                    C_ent=False
-                # on ajoute la condition qui correspond a la periodicite : boules traversant les quatre faces du rectangle ambiant
-                if C_per=='per' :
-                    if geom[0](liste_ph[i][0]+[dim[0],0,0],cen)<=delta+liste_ph[i][1]+ray:
-                        C_ent=False
-                    if geom[0](liste_ph[i][0]+[-dim[0],0,0],cen)<=delta+liste_ph[i][1]+ray:
-                        C_ent=False
-                    if geom[0](liste_ph[i][0]+[0,dim[1],0],cen)<=delta+liste_ph[i][1]+ray:
-                        C_ent=False
-                    if geom[0](liste_ph[i][0]+[0,-dim[1],0],cen)<=delta+liste_ph[i][1]+ray:
-                        C_ent=False
-                    if geom[0](liste_ph[i][0]+[0,0,dim[2]],cen)<=delta+liste_ph[i][1]+ray:
-                        C_ent=False
-                    if geom[0](liste_ph[i][0]+[0,0,-dim[2]],cen)<=delta+liste_ph[i][1]+ray:
-                        C_ent=False
-                i=i+1
-
-            # On ajoute la nouvelle inclusion, si cela est possible ; on calcule aussi le nouveau volume occupe par les boules
-            if C_ent:
-                # ajout de l'inclusion, decalage entre le numero de phase et phi, choisi pur parcourir des tableaux
-                liste_ph.append([cen,ray,phi+1])
-                # calcul du nouveau volume occupe par la pĥase phi
-                if C_per=='per':
-                    vol_inc[phi]=vol_inc[phi]+geom[1](ray)
-                else:
-                    ## cas non periodique : volume a calculer avec une autre methode que geom[1]
-                    vol_inc[phi]=vol_inc[phi]+vol3D_remp(cen,ray,dim,geom[0])
-            # continuation du remplissage : condition sur la fraction volumique
-            if vol_inc[phi]>frac_vol[phi]*dim[0]*dim[1]*dim[2]:
-                C_vol[phi]=False
-
-            tps=tps+1
-            # fin de la boucle en phi : temps incremente de toute maniere
-
-        # sortie de la boucle principale : on regarde tous les types d'inclusions
-        Cont_ph=any(C_vol) and tps<temps
-
-    return(liste_ph,vol_inc)
+# def RSAA_ph_dist3D(geom, delta, l_ray, par, frac_vol, dim, temps, C_per):
+#     # volume initial occupe par les phases 1, 2 ... : pour le cas d'une boucle unique ? Pas d'utilite sinon.
+#     vol_inc= np.zeros(len(frac_vol))
+#     # sortie : liste unique, dont on peut extraire la liste des centres et rayons concernant une seule phase, en utilisant une liste definie en comprehension.
+#     liste_ph=[]
+#     # temps ecoule
+#     tps=0
+#     # nombre total de phases
+#     n_phi=len(l_ray)
+#     # contitions d'arret de remplissage : fraction volumique par phase
+#     C_vol=[True]*n_phi
+#     # arret de la boucle principale :
+#     Cont_ph=True
+#     # remplissage
+#     while Cont_ph:
+#
+#         # pour chaque phase solide : on tente de placer une inclusion
+#         for phi in range(0,n_phi):
+#             # loi  de probabilite pour le rayon a venir et tirage de ce rayon
+#             l = l_ray[phi]
+#             ray = max(0,l(par[phi]))
+#             # position du centre de la sphere
+#             cen = np.array([rd.randint(0,dim[0]), rd.randint(0,dim[1]), rd.randint(0,dim[2])])
+#             # condition : par d'entrecoupement des boules
+#             C_ent=True
+#             # test pour toutes les inclusions deja realisees : on tient compte des phases dela incluses et on parcourt list_ph
+#             i=0
+#             while(C_ent and i<len(liste_ph)):
+#                 # une syntaxe avec des tableaux a la place de cen permet d'additionner terme a terme [dim[0],0] et liste_ph[i][0]
+#                 if geom[0](liste_ph[i][0],cen)<=delta+liste_ph[i][1]+ray:
+#                     C_ent=False
+#                 # on ajoute la condition qui correspond a la periodicite : boules traversant les quatre faces du rectangle ambiant
+#                 if C_per=='per' :
+#                     if geom[0](liste_ph[i][0]+[dim[0],0,0],cen)<=delta+liste_ph[i][1]+ray:
+#                         C_ent=False
+#                     if geom[0](liste_ph[i][0]+[-dim[0],0,0],cen)<=delta+liste_ph[i][1]+ray:
+#                         C_ent=False
+#                     if geom[0](liste_ph[i][0]+[0,dim[1],0],cen)<=delta+liste_ph[i][1]+ray:
+#                         C_ent=False
+#                     if geom[0](liste_ph[i][0]+[0,-dim[1],0],cen)<=delta+liste_ph[i][1]+ray:
+#                         C_ent=False
+#                     if geom[0](liste_ph[i][0]+[0,0,dim[2]],cen)<=delta+liste_ph[i][1]+ray:
+#                         C_ent=False
+#                     if geom[0](liste_ph[i][0]+[0,0,-dim[2]],cen)<=delta+liste_ph[i][1]+ray:
+#                         C_ent=False
+#                 i=i+1
+#
+#             # On ajoute la nouvelle inclusion, si cela est possible ; on calcule aussi le nouveau volume occupe par les boules
+#             if C_ent:
+#                 # ajout de l'inclusion, decalage entre le numero de phase et phi, choisi pur parcourir des tableaux
+#                 liste_ph.append([cen,ray,phi+1])
+#                 # calcul du nouveau volume occupe par la pĥase phi
+#                 if C_per=='per':
+#                     vol_inc[phi]=vol_inc[phi]+geom[1](ray)
+#                 else:
+#                     ## cas non periodique : volume a calculer avec une autre methode que geom[1]
+#                     vol_inc[phi]=vol_inc[phi]+vol3D_remp(cen,ray,dim,geom[0])
+#             # continuation du remplissage : condition sur la fraction volumique
+#             if vol_inc[phi]>frac_vol[phi]*dim[0]*dim[1]*dim[2]:
+#                 C_vol[phi]=False
+#
+#             tps=tps+1
+#             # fin de la boucle en phi : temps incremente de toute maniere
+#
+#         # sortie de la boucle principale : on regarde tous les types d'inclusions
+#         Cont_ph=any(C_vol) and tps<temps
+#
+#     return(liste_ph,vol_inc)
 
 # Une autre fonction, adaptee au choix d'une cellule elementaire
 
@@ -197,10 +197,10 @@ def RSAA_ph_eucl_cell(delta, l_ray, par, frac_vol, xyzinf, size, temps, C_per):
                 liste_ph.append([cen,ray,phi+1])
                 # calcul du nouveau volume occupe par la pĥase phi
                 if C_per == 'per':
-                    vol_inc[phi]=vol_inc[phi] + vol3D(ray)
+                    vol_inc[phi] = vol_inc[phi] + vol3D(ray)
                 else:
                     ## cas non periodique : volume a calculer avec une autre methode que geom[1]
-                    vol_inc[phi]=vol_inc[phi] + vol3D_remp(cen, ray, dim, eucl3D)
+                    vol_inc[phi] = vol_inc[phi] + vol3D_remp(cen, ray, dim, eucl3D)
 
             # continuation du remplissage : condition sur la fraction volumique
             if vol_inc[phi] > frac_vol[phi]*size**3:
