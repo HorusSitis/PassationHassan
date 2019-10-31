@@ -45,12 +45,12 @@ import RSAA_3d_ray as rsa
 
 # localisations
 
-fig_dir = 'Figures3D'
-# fig_dir = 'IncAlea3D'
+fig_dir = 'Figures3D/'
+# fig_dir = 'IncAlea3D/'
 
 # parametres graphiques
 
-fig_todo = 'aff'
+# fig_todo = 'aff'
 fig_todo = 'save'
 
 # cmap_conv = 'night'
@@ -78,7 +78,7 @@ zsup = zinf + size
 
 # nombre maximal d'iterations
 
-tps_remp = 150
+tps_remp = 350
 
 # lois normales pour la taille des inclusions ; parametres #
 

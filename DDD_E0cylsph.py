@@ -78,7 +78,7 @@ zsup = zinf + size
 
 # nombre maximal d'iterations
 
-tps_remp = 50
+tps_remp = 350
 
 # lois normales pour la taille des inclusions ; parametres #
 
