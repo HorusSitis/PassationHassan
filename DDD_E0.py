@@ -43,7 +43,15 @@ import multiprocessing
 
 import RSAA_3d_ray as rsa
 
+# localisations
+
+fig_dir = 'Figures3D'
+# fig_dir = 'IncAlea3D'
+
 # parametres graphiques
+
+fig_todo = 'aff'
+fig_todo = 'save'
 
 # cmap_conv = 'night'
 cmap_conv = 'cement'
@@ -70,17 +78,20 @@ zsup = zinf + size
 
 # nombre maximal d'iterations
 
-tps_remp = 100
+tps_remp = 150
 
 # lois normales pour la taille des inclusions ; parametres #
 
-lois_rayons = [rsa.g_norm, rsa.g_norm]
-par_rayons = [(0.08, 0.07), (0.18, 0.02)]
+# lois_rayons = [rsa.g_norm, rsa.g_norm]
+
+lois_rayons = [rsa.unif, rsa.g_norm]
+
+par_rayons = [(0.01, 0.14), (0.18, 0.02)]
 
 # fractions volumiques pour les differentes phases ; marges
 
 frac_vol = [0.15, 0.16]
-delta_inc = 0.05
+delta_inc = 0.01
 
 # Affichage de la cellule elementaire
 
@@ -101,6 +112,8 @@ array_vol = list_vol_cell_inc[1]
 
 nb_inc = len(list_cell_inc)
 
+print('='*60)
+print('Premieres inclusions :', list_cell_inc[0:10])
 print('='*60)
 print('Fractions volumiques des phases solides :', array_vol)
 print('Nombre d inclusions solides :', nb_inc)
@@ -156,8 +169,12 @@ ax_cell.set_yticklabels([])
 ax_cell.set_zticklabels([])
 
 # instruction pour la sortie
-plt.title('Inclusions pour une cellule, '+str(len(lois_rayons))+' phases solides, '+str(tps_remp)+' iterations RSAA')
-plt.show()
+if fig_todo == 'aff':
+    plt.title('Inclusions pour une cellule, '+ str(len(lois_rayons)) + ' phases solides, ' + str(tps_remp) + ' iterations RSAA')
+    plt.show()
+elif fig_todo == 'save':
+    plt.savefig(fig_dir + 'inc_cell' + '_solph'+ str(len(lois_rayons)) + '_tps' + str(tps_remp) + '.png')
+
 plt.close()
 
 ### ------------ Affichage d'une microstructure periodique avec la cellule generee aleatoirement ------------ ###
@@ -216,6 +233,10 @@ ax_per.set_yticklabels([])
 ax_per.set_zticklabels([])
 
 # instruction pour la sortie
-plt.title('Inclusions pour '+str(nb_lcells**3)+' periodes, '+str(len(lois_rayons))+' phases solides, '+str(tps_remp)+' iterations RSAA')
-plt.show()
+if fig_todo == 'aff':
+    plt.title('Inclusions pour ' + str(nb_lcells**3) + ' periodes, ' + str(len(lois_rayons)) + ' phases solides, ' + str(tps_remp) + ' iterations RSAA')
+    plt.show()
+elif fig_todo == 'save':
+    plt.savefig(fig_dir + 'inc_per3d' + str(nb_lcells) + '_solph'+ str(len(lois_rayons)) + '_tps' + str(tps_remp) + '.png')
+
 plt.close()
