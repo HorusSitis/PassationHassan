@@ -28,6 +28,11 @@ import os
 def g_norm(par):
     return(rd.gauss(par[0],par[1]))
 
+def unif(par):
+    # return(rd.uniform(par[0],par[1]))
+
+    return(par[0] + rd.random()*(par[1] - par[0]))
+
 # Geometrie choisie avec la premiere variable : formules pour la distance et le volume
 
 ## Exemple : geom=[eucl3D,volB] liste de deux fonctions a appeler dans l'algorithme
@@ -90,7 +95,9 @@ def RSAA_ph_eucl_cell(delta, l_ray, par, frac_vol, xyzinf, size, temps, C_per):
 
                 # loi  de probabilite pour le rayon a venir et tirage de ce rayon
                 l = l_ray[phi]
-                ray = max(0,l(par[phi]))
+                # ray = max(0,l(par[phi]))
+                ray = abs(l(par[phi]))
+
                 # position du centre de la sphere tiree uniformement
                 cen = np.array([rd.uniform(xinf, xsup), rd.uniform(yinf, ysup), rd.uniform(zinf, zsup)])
 
