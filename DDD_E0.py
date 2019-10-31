@@ -97,20 +97,85 @@ list_vol_cell_inc = rsa.RSAA_ph_eucl_cell(delta_inc, lois_rayons, par_rayons, fr
 # print(list_vol_cell_inc)
 
 list_cell_inc = list_vol_cell_inc[0]
+array_vol = list_vol_cell_inc[1]
 
-### ------------ Affichage d'une microstructure periodique avec la cellule generee aleatoirement ------------ ###
+nb_inc = len(list_cell_inc)
 
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
+print('='*60)
+print('Fractions volumiques des phases solides :', array_vol)
+print('Nombre d inclusions solides :', nb_inc)
+print('='*60)
+
+### ------------ Affichage de la la cellule generee aleatoirement ------------ ###
+
+# fig = plt.figure()
+fig_cell = plt.figure()
+# ax_cell = fig.add_subplot(111, projection='3d')
+ax_cell = fig_cell.add_subplot(111, projection='3d')
 # taille du graphique
-ax.set_xlim((xinf, xinf + nb_lcells*size))
-ax.set_ylim((yinf, yinf + nb_lcells*size))
-ax.set_zlim((zinf, zinf + nb_lcells*size))
+ax_cell.set_xlim((xinf, xsup))
+ax_cell.set_ylim((yinf, ysup))
+ax_cell.set_zlim((zinf, zsup))
 # A modifier selon la geometrie de la cellule
 
 
 # couleur de fond
-ax.set_axis_bgcolor(fluid_color)
+ax_cell.set_axis_bgcolor(fluid_color)
+
+# pour un parametrage des surfaces
+u = np.linspace(0, 2 * np.pi, u_res)
+v = np.linspace(0, np.pi, v_res)
+
+
+# inclusions dans la cellule elementaire
+for i in range(len(list_cell_inc)):
+
+    # restitution des informations sur l'inclusion courante
+    cen = list_cell_inc[i][0]
+    r_sph = list_cell_inc[i][1]
+    phase_index = list_cell_inc[i][2] - 1
+
+    # coordonnees parametrees de la sphere
+    x = cen[0]+r_sph*np.outer(np.cos(u), np.sin(v))## outer : produit terme à terme
+    y = cen[1]+r_sph*np.outer(np.sin(u), np.sin(v))
+    z = cen[2]+r_sph*np.outer(np.ones(np.size(u)), np.cos(v))
+
+    # trace de la surface parametree x, y, z : ...
+    ax_cell.plot_surface(x, y, z, linewidth=0, antialiased=False, color=colors_ph[phase_index])
+
+
+# grille
+ax_cell.xaxis.set_major_locator(plt.MultipleLocator(1.0))
+ax_cell.yaxis.set_major_locator(plt.MultipleLocator(1.0))
+ax_cell.zaxis.set_major_locator(plt.MultipleLocator(1.0))
+ax_cell.grid(which='major', axis='x', linewidth=0.85, linestyle='-', color='0.45')
+ax_cell.grid(which='major', axis='y', linewidth=0.85, linestyle='-', color='0.45')
+ax_cell.grid(which='major', axis='z', linewidth=0.85, linestyle='-', color='0.45')
+ax_cell.set_xticklabels([])
+ax_cell.set_yticklabels([])
+ax_cell.set_zticklabels([])
+
+# instruction pour la sortie
+plt.title('Inclusions pour une cellule, '+str(len(lois_rayons))+' phases solides, '+str(tps_remp)+' iterations RSAA')
+plt.show()
+plt.close()
+
+### ------------ Affichage d'une microstructure periodique avec la cellule generee aleatoirement ------------ ###
+
+# remplacer la deuxieme figure par un subplot ?
+fig_per = plt.figure()
+ax_per = fig_per.add_subplot(111, projection='3d')
+# ax_per = fig.add_subplot(112, projection='3d')
+
+# taille du graphique
+ax_per.set_xlim((xinf, xinf + nb_lcells*size))
+ax_per.set_ylim((yinf, yinf + nb_lcells*size))
+ax_per.set_zlim((zinf, zinf + nb_lcells*size))
+# A modifier selon la geometrie de la cellule
+
+
+# couleur de fond
+ax_per.set_axis_bgcolor(fluid_color)
 
 # pour un parametrage des surfaces
 u = np.linspace(0, 2 * np.pi, u_res)
@@ -136,19 +201,19 @@ for a in range(0,nb_lcells):
                 z = size*c+cen[2]+r_sph*np.outer(np.ones(np.size(u)), np.cos(v))
 
                 # trace de la surface parametree x, y, z : ...
-                ax.plot_surface(x, y, z, linewidth=0, antialiased=False, color=colors_ph[phase_index])
+                ax_per.plot_surface(x, y, z, linewidth=0, antialiased=False, color=colors_ph[phase_index])
 
 
 # grille
-ax.xaxis.set_major_locator(plt.MultipleLocator(1.0))
-ax.yaxis.set_major_locator(plt.MultipleLocator(1.0))
-ax.zaxis.set_major_locator(plt.MultipleLocator(1.0))
-ax.grid(which='major', axis='x', linewidth=0.85, linestyle='-', color='0.45')
-ax.grid(which='major', axis='y', linewidth=0.85, linestyle='-', color='0.45')
-ax.grid(which='major', axis='z', linewidth=0.85, linestyle='-', color='0.45')
-ax.set_xticklabels([])
-ax.set_yticklabels([])
-ax.set_zticklabels([])
+ax_per.xaxis.set_major_locator(plt.MultipleLocator(1.0))
+ax_per.yaxis.set_major_locator(plt.MultipleLocator(1.0))
+ax_per.zaxis.set_major_locator(plt.MultipleLocator(1.0))
+ax_per.grid(which='major', axis='x', linewidth=0.85, linestyle='-', color='0.45')
+ax_per.grid(which='major', axis='y', linewidth=0.85, linestyle='-', color='0.45')
+ax_per.grid(which='major', axis='z', linewidth=0.85, linestyle='-', color='0.45')
+ax_per.set_xticklabels([])
+ax_per.set_yticklabels([])
+ax_per.set_zticklabels([])
 
 # instruction pour la sortie
 plt.title('Inclusions pour '+str(nb_lcells**3)+' periodes, '+str(len(lois_rayons))+' phases solides, '+str(tps_remp)+' iterations RSAA')
