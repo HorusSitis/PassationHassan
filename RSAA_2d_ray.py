@@ -305,6 +305,8 @@ def RSAA_ph_ell_cell(delta, l_ray, par, frac_vol, xyinf, size, temps):
                     # composantes a extraire, pour translater vers les cellules voisines et evaluer des distances
                     cen_test = ell_test[0]
                     gax_test = ell_test[1][0]
+                    dil_test = ell_test[1][1]
+                    theta_test = ell_test[2]
 
                     # distance entre l'inclusion courante et l'inclusion testee
                     if dist2D_ellell(ell_test, ell) <= delta + gax_test + gax:
@@ -319,10 +321,7 @@ def RSAA_ph_ell_cell(delta, l_ray, par, frac_vol, xyinf, size, temps):
 
                             # on deplace le centre de l'ellipse testee
                             cen_test_per = cen_test + vect
-                            # cen_test_per[a] = cen_test[a] + vect
-
-                            ell_test_per = ell_test
-                            ell_test_per[0] = cen_test_per
+                            ell_test_per = [cen_test_per, [gax_test, dil_test], theta_test]
 
                             if dist2D_ellell(ell_test_per, ell) <= delta + gax_test + gax:
                                 C_ent=False
@@ -335,18 +334,21 @@ def RSAA_ph_ell_cell(delta, l_ray, par, frac_vol, xyinf, size, temps):
                 if C_ent:
                     # ajout de l'inclusion, decalage entre le numero de phase et phi, choisi pur parcourir des tableaux
                     liste_ph.append([ell, phi+1])
-                    if tps <= 10:
-                        print('%'*60)
-                        print(ell)
+                    # if tps <= 5:
+                    #     print('%'*60)
+                    #     print('ellipse courante :', ell)
+                    #     print('-'*60)
+                    #     print('derniere inclusion :', liste_ph[len(liste_ph)-1])
                     # calcul du nouveau volume occupe par la pĥase phi
                     vol_inc[phi] = vol_inc[phi] + vol2D_ellell(ell)
 
+                    # if tps <= 5:
+                    #     print('-'*60)
+                    #     print('premiere inclusion apres vol2D :', liste_ph[0])
+                    #     print('%'*60)
+
         # fraction volumique occupee par les phases solides
         total_frac_vol = vol_inc/size**2
-
-    # impression du debut de la liste
-    print('#'*60)
-    print('debut de la liste', liste_ph[0:10])
 
     return(liste_ph, total_frac_vol)
 
