@@ -25,15 +25,27 @@ import random as rd
 
 #Etape preliminaire : fonctions pour generer des nombres aleatoires dans des boucles. Lois eventuellement tronquees pour obtenir des valeurs positives, on cherche a simuler des rayons
 
-def g_norm(par):return(rd.gauss(par[0],par[1]))
+def g_norm(par):
+
+    return(rd.gauss(par[0],par[1]))
+
+def unif(par):
+
+    return(par[0] + rd.random()*(par[1] - par[0]))
 
 #Geometrie choisie avec la premiere variable : formules pour la distance et le volume
 
 ##Exemple : geom=[eucl2D,volB] liste de deux fonctions a appeler dans l'algorithme
 
-def eucl2D(a,b):return(np.sqrt((a[0]-b[0])**2+(a[1]-b[1])**2))
+def eucl2D(a,b):
+    return(np.sqrt((a[0]-b[0])**2+(a[1]-b[1])**2))
 
-def vol2D(r):return(max(1,np.pi*r**2))#cas discret : une boule de rayon nul, qui contient son centre, est de volume 1.
+def vol2D(r):
+    return(max(1,np.pi*r**2))#cas discret : une boule de rayon nul, qui contient son centre, est de volume 1.
+
+def vol2D_size(r):
+    return(np.pi*r**2)#cas discret : une boule de rayon nul, qui contient son centre, est de volume 1.
+
 
 #Fonction pour le remplissage d'une boule : on suppoe que la norme d'un vecteur de coordonnees est egale a sa norme euclidienne, comme pour les normes 1 et infini
 
@@ -137,8 +149,8 @@ def RSAA_ph_eucl_cell(delta, l_ray, par, frac_vol, xyinf, size, temps):
     vol_inc= np.zeros(len(frac_vol))
 
     # bornes de la cellule
-    xinf = xyzinf[0]
-    yinf = xyzinf[1]
+    xinf = xyinf[0]
+    yinf = xyinf[1]
     #
     xsup = xinf + size
     ysup = yinf + size
@@ -200,11 +212,10 @@ def RSAA_ph_eucl_cell(delta, l_ray, par, frac_vol, xyinf, size, temps):
                     # ajout de l'inclusion, decalage entre le numero de phase et phi, choisi pur parcourir des tableaux
                     liste_ph.append([cen, ray, phi+1])
                     # calcul du nouveau volume occupe par la pĥase phi
-                    vol_inc[phi] = vol_inc[phi] + vol2D(ray)
+                    vol_inc[phi] = vol_inc[phi] + vol2D_size(ray)
 
         # fraction volumique occupee par les phases solides
-        total_frac_vol = vol_inc/size**2    # gax_1 = cen_rdil_th_1[1][0]
-    # gax_2 = cen_rdil_th_2[1][0]
+        total_frac_vol = vol_inc/size**2
 
     return(liste_ph, total_frac_vol)
 
@@ -239,8 +250,8 @@ def RSAA_ph_ell_cell(delta, l_ray, par, frac_vol, xyinf, size, temps):
     vol_inc= np.zeros(len(frac_vol))
 
     # bornes de la cellule
-    xinf = xyzinf[0]
-    yinf = xyzinf[1]
+    xinf = xyinf[0]
+    yinf = xyinf[1]
     #
     xsup = xinf + size
     ysup = yinf + size
@@ -313,7 +324,7 @@ def RSAA_ph_ell_cell(delta, l_ray, par, frac_vol, xyinf, size, temps):
                 # On ajoute la nouvelle inclusion, si cela est possible ; on calcule aussi le nouveau volume occupe par les boules
                 if C_ent:
                     # ajout de l'inclusion, decalage entre le numero de phase et phi, choisi pur parcourir des tableaux
-                    liste_ph.append(ell, phi+1])
+                    liste_ph.append([ell, phi+1])
                     # calcul du nouveau volume occupe par la pĥase phi
                     vol_inc[phi] = vol_inc[phi] + vol2D_ellell(ell)
 
