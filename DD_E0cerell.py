@@ -46,24 +46,24 @@ fig_dir = 'Figures2D/'
 
 # parametres graphiques
 
-# fig_todo = 'aff'
-fig_todo = 'save'
+fig_todo = 'aff'
+# fig_todo = 'save'
 
 # cmap_conv = 'night'
 cmap_conv = 'cement'
 
 if cmap_conv == 'night':
-    cmap = matplotlib.colors.ListedColormap(['blue','grey','yellow'])
+    cmap = matplotlib.colors.ListedColormap(['blue', 'grey', 'yellow'])
 elif cmap_conv == 'cement':
-    cmap = matplotlib.colors.ListedColormap(['cyan','grey','orange'])
+    cmap = matplotlib.colors.ListedColormap(['cyan', 'grey', 'orange'])
     # pour un fluide au plus deux phases solides
     fluid_color = 'cyan'
-    colors_ph = ['grey','orange']
+    colors_ph = ['grey', 'orange']
 
 # type d'inclusions
 
-type_inc = 'cer'
-# type_inc = 'ell'
+# type_inc = 'cer'
+type_inc = 'ell'
 
 # caracteristiques de la cellule
 
@@ -77,7 +77,7 @@ ysup = yinf + size
 
 # nombre maximal d'iterations
 
-tps_remp = 5000
+tps_remp = 100000
 
 # lois normales pour la taille des inclusions ; parametres #
 
@@ -94,7 +94,7 @@ delta_inc = 0.005
 
 # Affichage de la cellule elementaire
 
-nb_lcells = 3
+nb_lcells = 4
 
 u_res = 80
 v_res = 50
@@ -120,12 +120,13 @@ array_vol = list_vol_cell_inc[1]
 nb_inc = len(list_cell_inc)
 
 print('='*60)
-print('Premieres inclusions :', list_cell_inc[0:10])
+print('Premieres inclusions :', list_cell_inc[0:5])
 print('='*60)
 print('Fractions volumiques des phases solides :', array_vol)
 print('Nombre d inclusions solides :', nb_inc)
 print('='*60)
 
+# sys.exit('%'*20+' Fin de la generation RSAA '+'%'*20)
 ### ------------ Affichage de la la cellule generee aleatoirement ------------ ###
 
 # l_discs=[]
@@ -137,8 +138,8 @@ fig, ax_cell=plt.subplots()
 # taille du graphique
 ax_cell.set_xlim((xinf, xsup))
 ax_cell.set_ylim((yinf, ysup))
-# couleur de fond
 
+# couleur de fond
 ax_cell.set_axis_bgcolor(fluid_color)
 
 # inclusions, cellule unique
@@ -166,6 +167,7 @@ for i in range(nb_inc):
 
         gr_ell = Ellipse(xy = cen, width = gax, height = pax, angle = theta*360/(2*np.pi))
         gr_ell.set_facecolor(colors_ph[phase_index])
+        gr_ell.set_edgecolor(colors_ph[phase_index])
         ax_cell.add_artist(gr_ell)
 
 
@@ -194,6 +196,8 @@ elif fig_todo == 'save':
 
 plt.close()
 
+# print('%'*20+' Fin de l affichage; cellule unique '+'%'*20)
+
 ### ------------ Affichage d'une microstructure periodique avec la cellule generee aleatoirement ------------ ###
 
 # remplacer la deuxieme figure par un subplot ?
@@ -202,6 +206,9 @@ fig_per, ax_per = plt.subplots()
 # taille du graphique
 ax_per.set_xlim((xinf, xinf + nb_lcells*size))
 ax_per.set_ylim((yinf, yinf + nb_lcells*size))
+
+# couleur de fond
+ax_per.set_axis_bgcolor(fluid_color)
 
 # boucle sur les periodes
 for a in range(0,nb_lcells):
@@ -231,6 +238,7 @@ for a in range(0,nb_lcells):
                 theta = ell[2]
 
                 gr_ell = Ellipse(xy = cen, width = gax, height = pax, angle = theta*360/(2*np.pi))
+                gr_ell.set_edgecolor(colors_ph[phase_index])
                 gr_ell.set_facecolor(colors_ph[phase_index])
                 ax_per.add_artist(gr_ell)
 
