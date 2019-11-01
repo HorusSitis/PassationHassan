@@ -85,7 +85,7 @@ tps_remp = 100000
 
 lois_rayons = [rsa.unif, rsa.g_norm]
 
-par_rayons = [(0.005, 0.07), (0.1, 0.015)]
+par_rayons = [(0.005, 0.25), (0.1, 0.015)]
 
 # fractions volumiques pour les differentes phases ; marges
 
@@ -95,6 +95,13 @@ delta_inc = 0.005
 # Affichage de la cellule elementaire
 
 nb_lcells = 4
+
+# Affichage de la grille pour le motif periodique
+
+# plot_ax_per = True
+plot_ax_per = False
+
+# parametres pour le trace
 
 u_res = 80
 v_res = 50
@@ -242,13 +249,14 @@ for a in range(0,nb_lcells):
                 gr_ell.set_facecolor(colors_ph[phase_index])
                 ax_per.add_artist(gr_ell)
 
+if plot_ax_per == True:
 
-ax_per.xaxis.set_major_locator(plt.MultipleLocator(1.0))
-ax_per.yaxis.set_major_locator(plt.MultipleLocator(1.0))
-ax_per.grid(which='major', axis='x', linewidth=0.85, linestyle='-', color='0.45')
-ax_per.grid(which='major', axis='y', linewidth=0.85, linestyle='-', color='0.45')
-ax_per.set_xticklabels([])
-ax_per.set_yticklabels([])
+    ax_per.xaxis.set_major_locator(plt.MultipleLocator(1.0))
+    ax_per.yaxis.set_major_locator(plt.MultipleLocator(1.0))
+    ax_per.grid(which='major', axis='x', linewidth=0.85, linestyle='-', color='0.45')
+    ax_per.grid(which='major', axis='y', linewidth=0.85, linestyle='-', color='0.45')
+    ax_per.set_xticklabels([])
+    ax_per.set_yticklabels([])
 
 # instruction pour la sortie
 if fig_todo=='aff':
