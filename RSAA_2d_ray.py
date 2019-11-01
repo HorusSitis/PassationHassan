@@ -1,7 +1,7 @@
 ### Encodage ###
 
 
-### Paquets à importer ###
+### Paquets a importer ###
 
 #if __name__=='__main__':
 import numpy as np
@@ -14,31 +14,31 @@ import random as rd
 #import os
 
 
-## Remplissage avec des sphères
-#Entrées : une norme, une distance minimu entre les inclusions, les lois de probabilité pour les rayons des inclusions et pour chaque phase, les paramètres choisis pour ces lois, une fraction volumique pour chaque phase incluse dans l'espace ambiant initialement vide et un triplet pour le domaine spatial étudié
-#Sortie : liste unique, des rayons et centres des inclusions, indexés par le numéro de phase.
+## Remplissage avec des spheres
+#Entrees : une norme, une distance minimu entre les inclusions, les lois de probabilite pour les rayons des inclusions et pour chaque phase, les parametres choisis pour ces lois, une fraction volumique pour chaque phase incluse dans l'espace ambiant initialement vide et un triplet pour le domaine spatial etudie
+#Sortie : liste unique, des rayons et centres des inclusions, indexes par le numero de phase.
 
-#Principe : A chaque tour de boucle, on crée une sphère pour une phase donnée, et on vérifie que son centre est suffisamment loin de tous les autres centres déjà créés.
-#Cas périodique ?
+#Principe : A chaque tour de boucle, on cree une sphere pour une phase donnee, et on verifie que son centre est suffisamment loin de tous les autres centres deja crees.
+#Cas periodique ?
 
-##Remarque : l'arrêt de la procédure principale n'est pas prouvé
+##Remarque : l'arret de la procedure principale n'est pas prouve
 
-#Etape préliminaire : fonctions pour générer des nombres aléatoires dans des boucles. Lois éventuellement tronquées pour obtenir des valeurs positives, on cherche à simuler des rayons
+#Etape preliminaire : fonctions pour generer des nombres aleatoires dans des boucles. Lois eventuellement tronquees pour obtenir des valeurs positives, on cherche a simuler des rayons
 
 def g_norm(par):return(rd.gauss(par[0],par[1]))
 
-#Géométrie choisie avec la première variable : formules pour la distance et le volume
+#Geometrie choisie avec la premiere variable : formules pour la distance et le volume
 
-##Exemple : geom=[eucl3D,volB] liste de deux fonctions à appeler dans l'algorithme
+##Exemple : geom=[eucl2D,volB] liste de deux fonctions a appeler dans l'algorithme
 
 def eucl2D(a,b):return(np.sqrt((a[0]-b[0])**2+(a[1]-b[1])**2))
 
 def vol2D(r):return(max(1,np.pi*r**2))#cas discret : une boule de rayon nul, qui contient son centre, est de volume 1.
 
-#Fonction pour le remplissage d'une boule : on suppoe que la norme d'un vecteur de coordonnées est égale à sa norme euclidienne, comme pour les normes 1 et infini
+#Fonction pour le remplissage d'une boule : on suppoe que la norme d'un vecteur de coordonnees est egale a sa norme euclidienne, comme pour les normes 1 et infini
 
 
-#Fonction de calcul du volume, pour le cas non périodique
+#Fonction de calcul du volume, pour le cas non periodique
 ##Tient compte seulement de la distance choisie
 
 def vol2D_remp(cen,ray,dim,dist):
@@ -49,9 +49,9 @@ def vol2D_remp(cen,ray,dim,dist):
                         v=v+1
     return v
 
-###Dès que delta est non-négatif : l'algorithme ne s'arrête pas en pratique, même pour un petit domaine cf ci-dessus.
+###Des que delta est non-negatif : l'algorithme ne s'arrete pas en pratique, meme pour un petit domaine cf ci-dessus.
 ###Solution : interrompre la recherche ?
-###Dans ce cas, une interruption peut bloquer complètement le remplissage d'une phase, dès que celles qui précèdent auront cessé d'être remplies faute de temps de calcul.
+###Dans ce cas, une interruption peut bloquer completement le remplissage d'une phase, des que celles qui precedent auront cesse d'etre remplies faute de temps de calcul.
 
 
 
@@ -61,40 +61,40 @@ def vol2D_remp(cen,ray,dim,dist):
 
 
 
-#Nouvelle procédure : toutes les phases sont incluses à chaque tour de boucle, dès que les boules correspondantes satisfont la condition de non-recoupement avec la distance de sécurité delta.
-##Un multivolume, comparé aux entrées, décide de la sortie de boucle conjointement au temps d'éxécution.
+#Nouvelle procedure : toutes les phases sont incluses a chaque tour de boucle, des que les boules correspondantes satisfont la condition de non-recoupement avec la distance de securite delta.
+##Un multivolume, compare aux entrees, decide de la sortie de boucle conjointement au temps d'execution.
 
-##On ajoute une entrée : durée d'éxécution pour l'algorithme
-##Une autre : périodicité, chaîne de caractères
+##On ajoute une entree : duree d'execution pour l'algorithme
+##Une autre : periodicite, chaîne de caracteres
 
 def RSAA_ph_dist2D(geom,delta,l_ray,par,frac_vol,dim,temps,C_per):
-    #volume initial occupé par les phases 1, 2 ... : pour le cas d'une boucle unique ? Pas d'utilité sinon.
+    #volume initial occupe par les phases 1, 2 ... : pour le cas d'une boucle unique ? Pas d'utilite sinon.
     vol_inc= np.zeros(len(frac_vol))
-    #sortie : liste unique, dont on peut extraire la liste des centres et rayons concernant une seule phase, en utilisant une liste définie en compréhension.
+    #sortie : liste unique, dont on peut extraire la liste des centres et rayons concernant une seule phase, en utilisant une liste definie en comprehension.
     liste_ph=[]
-    #temps écoulé
+    #temps ecoule
     tps=0
     #nombre total de phases
     n_phi=len(l_ray)
-    #contitions d'arrêt de remplissage : fraction volumique par phase
+    #contitions d'arret de remplissage : fraction volumique par phase
     C_vol=[True]*n_phi
-    #arrêt de la boucle principale :
+    #arret de la boucle principale :
     Cont_ph=True
     #remplissage
     while Cont_ph:
         for phi in range(0,n_phi):
             l=l_ray[phi]
-            #position du centre de la sphère
+            #position du centre de la sphere
             cen=np.array([rd.randint(0,dim[0]),rd.randint(0,dim[1])])
             ray=max(0,l(par[phi]))
             #condition : par d'entrecoupement des boules
             C_ent=True
-            #test pour toutes les inclusions déjà réalisées : on tient compte des phases délà incluses et on parcourt list_ph
+            #test pour toutes les inclusions deja realisees : on tient compte des phases dela incluses et on parcourt list_ph
             i=0
             while(C_ent and i<len(liste_ph)):
-                if geom[0](np.array(liste_ph[i][0]),np.array(cen))<=delta+liste_ph[i][1]+ray:#une syntaxe avec des tableaux à la place de cen permet d'additionner terme à terme [dim[0],0] et liste_ph[i][0]
+                if geom[0](np.array(liste_ph[i][0]),np.array(cen))<=delta+liste_ph[i][1]+ray:#une syntaxe avec des tableaux a la place de cen permet d'additionner terme a terme [dim[0],0] et liste_ph[i][0]
                     C_ent=False
-                #on ajoute la condition qui correspond à la périodicité : boules traversant les quatre faces du rectangle ambiant
+                #on ajoute la condition qui correspond a la periodicite : boules traversant les quatre faces du rectangle ambiant
                 if C_per=='per' :
                     #print(np.array(liste_ph[i][0])+np.array([dim[0],0]))
                     #print(cen)
@@ -111,14 +111,14 @@ def RSAA_ph_dist2D(geom,delta,l_ray,par,frac_vol,dim,temps,C_per):
                     if geom[0](np.array(liste_ph[i][0])+np.array([0,-dim[1]]),cen)<=delta+liste_ph[i][1]+ray:
                         C_ent=False
                 i=i+1
-            #On ajoute la nouvelle inclusion, si cela est possible ; on calcule aussi le nouveau volume occupé par les boules
+            #On ajoute la nouvelle inclusion, si cela est possible ; on calcule aussi le nouveau volume occupe par les boules
             if C_ent:
-                liste_ph.append([cen,ray,phi+1])#décalage entre le numéro de phase et phi, choisi pur parcourir des tableaux
+                liste_ph.append([cen,ray,phi+1])#decalage entre le numero de phase et phi, choisi pur parcourir des tableaux
                 if C_per=='per':
                     vol_inc[phi]=vol_inc[phi]+geom[1](ray)
                 else:
-                    vol_inc[phi]=vol_inc[phi]+vol3D_remp(cen,ray,dim,geom[0])
-                ##cas non périodique : volume à calculer avec une autre méthode que geom[1]
+                    vol_inc[phi]=vol_inc[phi]+vol2D_remp(cen,ray,dim,geom[0])
+                ##cas non periodique : volume a calculer avec une autre methode que geom[1]
             if vol_inc[phi]>frac_vol[phi]*dim[0]*dim[1]:
                 C_vol[phi]=False
             tps=tps+1
@@ -127,7 +127,219 @@ def RSAA_ph_dist2D(geom,delta,l_ray,par,frac_vol,dim,temps,C_per):
         Cont_ph=any(C_vol) and tps<temps
     return(liste_ph,vol_inc)
 
-##Remplissage d'un rectangle avec les inclusions, d'après une sortie de RSAA_ph_dist2D
+# RSAA dans une cellule elementaire exploitable avec rom_diffeo_dhom
+
+# Une autre fonction, adaptee au choix d'une cellule elementaire
+
+def RSAA_ph_eucl_cell(delta, l_ray, par, frac_vol, xyinf, size, temps):
+
+    # volume initial occupe par les phases 1, 2 ... : pour le cas d'une boucle unique ? Pas d'utilite sinon.
+    vol_inc= np.zeros(len(frac_vol))
+
+    # bornes de la cellule
+    xinf = xyzinf[0]
+    yinf = xyzinf[1]
+    #
+    xsup = xinf + size
+    ysup = yinf + size
+
+    # sortie : liste unique, dont on peut extraire la liste des centres et rayons concernant une seule phase, en utilisant une liste definie en comprehension.
+    liste_ph=[]
+
+    # nombre total de phases
+    n_phi=len(l_ray)
+
+    # une iteration : placement d'au plus une inclusion par phase
+    for tps in range(temps):
+
+        # pour chaque phase solide : on tente de placer une inclusion
+        for phi in range(0,n_phi):
+
+            # condition pour placer l'inclusion : fraction volumique imposee
+            if vol_inc[phi] < frac_vol[phi]*size**2:
+
+                # loi  de probabilite pour le rayon a venir et tirage de ce rayon
+                l = l_ray[phi]
+                # ray = max(0,l(par[phi]))
+                ray = abs(l(par[phi]))
+
+                # position du centre de la sphere tiree uniformement
+                cen = np.array([rd.uniform(xinf, xsup), rd.uniform(yinf, ysup)])
+
+                # condition : par d'entrecoupement des boules
+                C_ent=True
+                # test pour toutes les inclusions deja realisees : on tient compte des phases dela incluses et on parcourt list_ph
+                i = 0
+                # test sur l'entrecoupement
+                while(C_ent and i<len(liste_ph)):
+
+                    # une syntaxe avec des tableaux a la place de cen permet d'additionner terme a terme [dim[0],0] et liste_ph[i][0]
+                    cen_test = liste_ph[i][0]
+                    ray_test = liste_ph[i][1]
+
+
+                    if eucl2D(cen_test, cen) <= delta + ray_test + ray:
+                        C_ent=False
+
+                    # on ajoute la condition qui correspond a la periodicite : boules traversant les quatre faces du rectangle ambiant
+                    for a in range(2):
+
+                        for vect in [-size, size]:
+
+                            cen_test_per = cen_test
+                            cen_test_per[a] = cen_test[a] + vect
+
+                            if eucl2D(cen_test_per, cen) <= delta + ray_test + ray:
+                                C_ent=False
+
+                    # on passe a l'inclusion suivante pour testerle recoupement
+                    i = i + 1
+
+                # On ajoute la nouvelle inclusion, si cela est possible ; on calcule aussi le nouveau volume occupe par les boules
+                if C_ent:
+                    # ajout de l'inclusion, decalage entre le numero de phase et phi, choisi pur parcourir des tableaux
+                    liste_ph.append([cen, ray, phi+1])
+                    # calcul du nouveau volume occupe par la pĥase phi
+                    vol_inc[phi] = vol_inc[phi] + vol2D(ray)
+
+        # fraction volumique occupee par les phases solides
+        total_frac_vol = vol_inc/size**2    # gax_1 = cen_rdil_th_1[1][0]
+    # gax_2 = cen_rdil_th_2[1][0]
+
+    return(liste_ph, total_frac_vol)
+
+
+# Une fonction pour ellipses : preliminaires
+
+## ellipse : [[cen], [gax, dil], theta]
+
+def dist2D_ellell(cen_rdil_th_1, cen_rdil_th_2):
+
+    cen_1 = cen_rdil_th_1[0]
+    cen_2 = cen_rdil_th_2[0]
+
+    dist2D = np.sqrt((cen_1[0] - cen_2[0])**2 + (cen_1[1] - cen_2[1])**2)
+
+    return(dist2D)
+
+def vol2D_ellell(cen_rdil_th):
+
+    gax = cen_rdil_th[1][0]
+    dil = cen_rdil_th[1][1]
+
+    vol2D = np.pi*dil*gax**2
+
+    return(vol2D)
+
+# Une fonction pour ellipses : RSAA avec theta et pax/gax tires selon une loi uniforme
+
+def RSAA_ph_ell_cell(delta, l_ray, par, frac_vol, xyinf, size, temps):
+
+    # volume initial occupe par les phases 1, 2 ... : pour le cas d'une boucle unique ? Pas d'utilite sinon.
+    vol_inc= np.zeros(len(frac_vol))
+
+    # bornes de la cellule
+    xinf = xyzinf[0]
+    yinf = xyzinf[1]
+    #
+    xsup = xinf + size
+    ysup = yinf + size
+
+    # sortie : liste unique, dont on peut extraire la liste des centres et rayons concernant une seule phase, en utilisant une liste definie en comprehension.
+    liste_ph=[]
+
+    # nombre total de phases
+    n_phi=len(l_ray)
+
+    # une iteration : placement d'au plus une inclusion par phase
+    for tps in range(temps):
+
+        # pour chaque phase solide : on tente de placer une inclusion
+        for phi in range(0,n_phi):
+
+            # condition pour placer l'inclusion : fraction volumique imposee
+            if vol_inc[phi] < frac_vol[phi]*size**2:
+
+                # loi  de probabilite pour le rayon a venir et tirage de ce rayon
+                l = l_ray[phi]
+                # ray = max(0,l(par[phi]))
+                gax = abs(l(par[phi]))
+
+                # position du centre de la sphere tiree uniformement
+                cen = np.array([rd.uniform(xinf, xsup), rd.uniform(yinf, ysup)])
+                # rapport du petit axe au grand axe
+                dil = rd.uniform(0, 1)
+                # angle d'inclinaison du grand axe par rapport a l'axe des abscisses
+                theta = rd.uniform(0, 2*np.pi)
+
+                # ellipse courante
+                ell = [cen, [gax, dil], theta]
+
+                # condition : par d'entrecoupement des boules
+                C_ent=True
+                # test pour toutes les inclusions deja realisees : on tient compte des phases dela incluses et on parcourt list_ph
+                i = 0
+                # test sur l'entrecoupement
+                while(C_ent and i<len(liste_ph)):
+
+                    # inclusion a tester
+                    ell_test = liste_ph[i][0]
+                    # composantes a extraire, pour translater vers les cellules voisines et evaluer des distances
+                    cen_test = ell_test[0][0]
+                    gax_test = ell_test[0][1][0]
+
+                    # distance entre l'inclusion courante et l'inclusion testee
+                    if dist2D_ellell(cen_test, cen) <= delta + gax_test + gax:
+                        C_ent=False
+
+                    # on ajoute la condition qui correspond a la periodicite : boules traversant les quatre faces du rectangle ambiant
+                    for a in range(2):
+
+                        for vect in [-size, size]:
+
+                            # on deplace le centre de l'ellipse testee
+                            cen_test_per = cen_test
+                            cen_test_per[a] = cen_test[a] + vect
+
+                            ell_test_per = ell_test
+                            ell_test_per[0] = cen_test_per
+
+                            if dist2D_ellell(ell_per, ell) <= delta + gax_test + gax:
+                                C_ent=False
+
+                    # on passe a l'inclusion suivante pour testerle recoupement
+                    i = i + 1
+
+                # On ajoute la nouvelle inclusion, si cela est possible ; on calcule aussi le nouveau volume occupe par les boules
+                if C_ent:
+                    # ajout de l'inclusion, decalage entre le numero de phase et phi, choisi pur parcourir des tableaux
+                    liste_ph.append(ell, phi+1])
+                    # calcul du nouveau volume occupe par la pĥase phi
+                    vol_inc[phi] = vol_inc[phi] + vol2D_ellell(ell)
+
+        # fraction volumique occupee par les phases solides
+        total_frac_vol = vol_inc/size**2
+
+    return(liste_ph, total_frac_vol)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##Remplissage d'un rectangle avec les inclusions, d'apres une sortie de RSAA_ph_dist2D
 
 def remp2D(ex_rseq,dist,dim,C_per):
     ex=ex_rseq[0]
@@ -153,9 +365,9 @@ def remp2D(ex_rseq,dist,dim,C_per):
                         A[i,j]=ex[k][2]
     return(A)#[A,z])
 
-#Optimisation : une fonction vectorisée, peu d'intérêt pour de grandes dimensions
+#Optimisation : une fonction vectorisee, peu d'interet pour de grandes dimensions
 
-#Une fonction intermédiaire : phase au pixel I [i,j]
+#Une fonction intermediaire : phase au pixel I [i,j]
 
 def phase_pt(I,liste_ph,n_phi,dist,dim,C_per):
     phase=0
@@ -170,7 +382,7 @@ def phase_pt(I,liste_ph,n_phi,dist,dim,C_per):
         #on extrait les vecteurs correspondant aux rayons et aux centres
         cen=A[:,0]
         ray=A[:,1]
-        #fonction distance vectorisée
+        #fonction distance vectorisee
         def dist_pt(pt):
             return(dist([i,j],pt))
         v_dist_ij_pt=np.vectorize(dist_pt)
@@ -179,9 +391,9 @@ def phase_pt(I,liste_ph,n_phi,dist,dim,C_per):
         if any(dist_cen<=ray):
             phase=phi
             C_ont=False
-        #cas périodique
+        #cas periodique
         if C_per=='per':
-            ##------------------------- on translate les boules de [dim[],] etc puis on vérifie l'appartenance du point courant I à leurs images
+            ##------------------------- on translate les boules de [dim[],] etc puis on verifie l'appartenance du point courant I a leurs images
             if C_ont:
                 B=A+[[dim[0],0],0,0]
                 cen=B[:,0]
@@ -217,11 +429,11 @@ def phase_pt(I,liste_ph,n_phi,dist,dim,C_per):
             if any(dist_cen<=ray):
                 phase=phi
                 C_ont=False
-        ##------------------------- fin pour la périodicité ----------------------------##
+        ##------------------------- fin pour la periodicite ----------------------------##
         phi=phi+1
     return(phase)
 
-#Reformulation : indice k unique pour le parcours de la matrice spatiale dans l'ordre lexicographique, éventuellement à lancer sur des treads indépendants
+#Reformulation : indice k unique pour le parcours de la matrice spatiale dans l'ordre lexicographique, eventuellement a lancer sur des treads independants
 
 def parc_liste(k_lex,L,n_phi,dist,dim,C_per):
     i=k_lex//dim[1]
@@ -229,7 +441,7 @@ def parc_liste(k_lex,L,n_phi,dist,dim,C_per):
     a_ph=phase_pt([i,j],L,n_phi,dist,dim,C_per)
     return(a_ph)
 
-#Remplissage, boucle avec des instructions vectorisées, un seul thread
+#Remplissage, boucle avec des instructions vectorisees, un seul thread
 
 def Vremp2D(ex_rseq,dist,dim,C_per):
     A=np.arange(dim[0]*dim[1])
@@ -245,7 +457,7 @@ def Vremp2D(ex_rseq,dist,dim,C_per):
 
 
 
-#version parallélisée
+#version parallelisee
 
 
 #if __name__=='__main__':
@@ -258,11 +470,11 @@ def ParVremp2D(ex_rseq,dist,dim,C_per):
     L=ex_rseq[0]#liste des centre-rayon-phase ; on oublie les saturations respectives des phases
     M=np.array(L)
     n_phi=max(M[:,2])
-    #définition et éxécution des threads : huit, pour MECALAC
+    #definition et execution des threads : huit, pour MECALAC
     ##
     num_cores=multiprocessing.cpu_count()
     ##
-    #boucle principale, parallélisée
+    #boucle principale, parallelisee
     ##
     A=Parallel(n_jobs=num_cores)(delayed(parc_liste)(k,L,n_phi,dist,dim,C_per)for k in range(0,len(A)))
     ##
