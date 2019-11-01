@@ -108,14 +108,8 @@ def RSAA_ph_dist2D(geom,delta,l_ray,par,frac_vol,dim,temps,C_per):
                     C_ent=False
                 #on ajoute la condition qui correspond a la periodicite : boules traversant les quatre faces du rectangle ambiant
                 if C_per=='per' :
-                    #print(np.array(liste_ph[i][0])+np.array([dim[0],0]))
-                    #print(cen)
-                    #print(geom[0](np.array(liste_ph[i][0])+np.array([dim[0],0]),cen))#np.array(cen)
-                    #print(delta+liste_ph[i][1]+ray)
                     if geom[0](np.array(liste_ph[i][0])+np.array([dim[0],0]),cen)<=delta+liste_ph[i][1]+ray:
-                        #print(np.array(liste_ph[i][0])+np.array([dim[0],0]))
                         C_ent=False
-                        #print(C_ent,'per')
                     if geom[0](np.array(liste_ph[i][0])+np.array([-dim[0],0]),cen)<=delta+liste_ph[i][1]+ray:
                         C_ent=False
                     if geom[0](np.array(liste_ph[i][0])+np.array([0,dim[1]]),cen)<=delta+liste_ph[i][1]+ray:
@@ -194,15 +188,26 @@ def RSAA_ph_eucl_cell(delta, l_ray, par, frac_vol, xyinf, size, temps):
                         C_ent=False
 
                     # on ajoute la condition qui correspond a la periodicite : boules traversant les quatre faces du rectangle ambiant
-                    for a in range(2):
+                    if eucl2D(cen_test+[size,0], cen) <= delta + ray_test + ray:
+                        C_ent=False
+                    if eucl2D(cen_test+[-size,0], cen) <= delta + ray_test + ray:
+                        C_ent=False
+                    if eucl2D(cen_test+[0,size], cen) <= delta + ray_test + ray:
+                        C_ent=False
+                    if eucl2D(cen_test+[0,-size], cen) <= delta + ray_test + ray:
+                        C_ent=False
 
-                        for vect in [-size, size]:
 
-                            cen_test_per = cen_test
-                            cen_test_per[a] = cen_test[a] + vect
-
-                            if eucl2D(cen_test_per, cen) <= delta + ray_test + ray:
-                                C_ent=False
+                    # # on ajoute la condition qui correspond a la periodicite : boules traversant les quatre faces du rectangle ambiant
+                    # for a in range(2):
+                    #
+                    #     for vect in [-size, size]:
+                    #
+                    #         cen_test_per = cen_test
+                    #         cen_test_per[a] = cen_test[a] + vect
+                    #
+                    #         if eucl2D(cen_test_per, cen) <= delta + ray_test + ray:
+                    #             C_ent=False
 
                     # on passe a l'inclusion suivante pour testerle recoupement
                     i = i + 1
@@ -279,7 +284,7 @@ def RSAA_ph_ell_cell(delta, l_ray, par, frac_vol, xyinf, size, temps):
                 # position du centre de la sphere tiree uniformement
                 cen = np.array([rd.uniform(xinf, xsup), rd.uniform(yinf, ysup)])
                 # rapport du petit axe au grand axe
-                dil = rd.uniform(0, 1)
+                dil = rd.uniform(0.5, 1)
                 # angle d'inclinaison du grand axe par rapport a l'axe des abscisses
                 theta = rd.uniform(0, 2*np.pi)
 
