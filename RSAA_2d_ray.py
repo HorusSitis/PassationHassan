@@ -187,27 +187,30 @@ def RSAA_ph_eucl_cell(delta, l_ray, par, frac_vol, xyinf, size, temps):
                     if eucl2D(cen_test, cen) <= delta + ray_test + ray:
                         C_ent=False
 
-                    # on ajoute la condition qui correspond a la periodicite : boules traversant les quatre faces du rectangle ambiant
-                    if eucl2D(cen_test+[size,0], cen) <= delta + ray_test + ray:
-                        C_ent=False
-                    if eucl2D(cen_test+[-size,0], cen) <= delta + ray_test + ray:
-                        C_ent=False
-                    if eucl2D(cen_test+[0,size], cen) <= delta + ray_test + ray:
-                        C_ent=False
-                    if eucl2D(cen_test+[0,-size], cen) <= delta + ray_test + ray:
-                        C_ent=False
-
-
                     # # on ajoute la condition qui correspond a la periodicite : boules traversant les quatre faces du rectangle ambiant
-                    # for a in range(2):
-                    #
-                    #     for vect in [-size, size]:
-                    #
-                    #         cen_test_per = cen_test
-                    #         cen_test_per[a] = cen_test[a] + vect
-                    #
-                    #         if eucl2D(cen_test_per, cen) <= delta + ray_test + ray:
-                    #             C_ent=False
+                    # if eucl2D(cen_test+[size,0], cen) <= delta + ray_test + ray:
+                    #     C_ent=False
+                    # if eucl2D(cen_test+[-size,0], cen) <= delta + ray_test + ray:
+                    #     C_ent=False
+                    # if eucl2D(cen_test+[0,size], cen) <= delta + ray_test + ray:
+                    #     C_ent=False
+                    # if eucl2D(cen_test+[0,-size], cen) <= delta + ray_test + ray:
+                    #     C_ent=False
+                    # ## --- fonctionne --- ##
+
+                    # on ajoute la condition qui correspond a la periodicite : boules traversant les quatre faces du rectangle ambiant
+                    for a in range(2):
+                        for h in [-size, size]:
+
+                            vect = np.zeros(2)
+                            vect[a] = h
+
+                            cen_test_per = cen_test + vect
+                            # cen_test_per[a] = cen_test[a] + vect
+
+                            if eucl2D(cen_test_per, cen) <= delta + ray_test + ray:
+                                C_ent=False
+                    ## --- fonctionne : plus de chevauchement --- ##
 
                     # on passe a l'inclusion suivante pour testerle recoupement
                     i = i + 1
@@ -278,7 +281,6 @@ def RSAA_ph_ell_cell(delta, l_ray, par, frac_vol, xyinf, size, temps):
 
                 # loi  de probabilite pour le rayon a venir et tirage de ce rayon
                 l = l_ray[phi]
-                # ray = max(0,l(par[phi]))
                 gax = abs(l(par[phi]))
 
                 # position du centre de la sphere tiree uniformement
@@ -310,12 +312,14 @@ def RSAA_ph_ell_cell(delta, l_ray, par, frac_vol, xyinf, size, temps):
 
                     # on ajoute la condition qui correspond a la periodicite : boules traversant les quatre faces du rectangle ambiant
                     for a in range(2):
+                        for h in [-size, size]:
 
-                        for vect in [-size, size]:
+                            vect = np.zeros(2)
+                            vect[a] = h
 
                             # on deplace le centre de l'ellipse testee
-                            cen_test_per = cen_test
-                            cen_test_per[a] = cen_test[a] + vect
+                            cen_test_per = cen_test + vect
+                            # cen_test_per[a] = cen_test[a] + vect
 
                             ell_test_per = ell_test
                             ell_test_per[0] = cen_test_per
@@ -326,15 +330,23 @@ def RSAA_ph_ell_cell(delta, l_ray, par, frac_vol, xyinf, size, temps):
                     # on passe a l'inclusion suivante pour testerle recoupement
                     i = i + 1
 
+
                 # On ajoute la nouvelle inclusion, si cela est possible ; on calcule aussi le nouveau volume occupe par les boules
                 if C_ent:
                     # ajout de l'inclusion, decalage entre le numero de phase et phi, choisi pur parcourir des tableaux
                     liste_ph.append([ell, phi+1])
+                    if tps <= 10:
+                        print('%'*60)
+                        print(ell)
                     # calcul du nouveau volume occupe par la pĥase phi
                     vol_inc[phi] = vol_inc[phi] + vol2D_ellell(ell)
 
         # fraction volumique occupee par les phases solides
         total_frac_vol = vol_inc/size**2
+
+    # impression du debut de la liste
+    print('#'*60)
+    print('debut de la liste', liste_ph[0:10])
 
     return(liste_ph, total_frac_vol)
 
