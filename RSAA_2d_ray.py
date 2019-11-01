@@ -238,7 +238,7 @@ def vol2D_ellell(cen_rdil_th):
     gax = cen_rdil_th[1][0]
     dil = cen_rdil_th[1][1]
 
-    vol2D = np.pi*dil*gax**2
+    vol2D = np.pi*dil*(gax**2)
 
     return(vol2D)
 
@@ -296,11 +296,11 @@ def RSAA_ph_ell_cell(delta, l_ray, par, frac_vol, xyinf, size, temps):
                     # inclusion a tester
                     ell_test = liste_ph[i][0]
                     # composantes a extraire, pour translater vers les cellules voisines et evaluer des distances
-                    cen_test = ell_test[0][0]
-                    gax_test = ell_test[0][1][0]
+                    cen_test = ell_test[0]
+                    gax_test = ell_test[1][0]
 
                     # distance entre l'inclusion courante et l'inclusion testee
-                    if dist2D_ellell(cen_test, cen) <= delta + gax_test + gax:
+                    if dist2D_ellell(ell_test, ell) <= delta + gax_test + gax:
                         C_ent=False
 
                     # on ajoute la condition qui correspond a la periodicite : boules traversant les quatre faces du rectangle ambiant
@@ -315,7 +315,7 @@ def RSAA_ph_ell_cell(delta, l_ray, par, frac_vol, xyinf, size, temps):
                             ell_test_per = ell_test
                             ell_test_per[0] = cen_test_per
 
-                            if dist2D_ellell(ell_per, ell) <= delta + gax_test + gax:
+                            if dist2D_ellell(ell_test_per, ell) <= delta + gax_test + gax:
                                 C_ent=False
 
                     # on passe a l'inclusion suivante pour testerle recoupement
