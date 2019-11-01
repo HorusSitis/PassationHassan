@@ -187,17 +187,6 @@ def RSAA_ph_eucl_cell(delta, l_ray, par, frac_vol, xyinf, size, temps):
                     if eucl2D(cen_test, cen) <= delta + ray_test + ray:
                         C_ent=False
 
-                    # # on ajoute la condition qui correspond a la periodicite : boules traversant les quatre faces du rectangle ambiant
-                    # if eucl2D(cen_test+[size,0], cen) <= delta + ray_test + ray:
-                    #     C_ent=False
-                    # if eucl2D(cen_test+[-size,0], cen) <= delta + ray_test + ray:
-                    #     C_ent=False
-                    # if eucl2D(cen_test+[0,size], cen) <= delta + ray_test + ray:
-                    #     C_ent=False
-                    # if eucl2D(cen_test+[0,-size], cen) <= delta + ray_test + ray:
-                    #     C_ent=False
-                    # ## --- fonctionne --- ##
-
                     # on ajoute la condition qui correspond a la periodicite : boules traversant les quatre faces du rectangle ambiant
                     for a in range(2):
                         for h in [-size, size]:
@@ -286,7 +275,14 @@ def RSAA_ph_ell_cell(delta, l_ray, par, frac_vol, xyinf, size, temps):
                 # position du centre de la sphere tiree uniformement
                 cen = np.array([rd.uniform(xinf, xsup), rd.uniform(yinf, ysup)])
                 # rapport du petit axe au grand axe
-                dil = rd.uniform(0.5, 1)
+                dil_no_bd = rd.gauss(0.5, 0.5)
+                # si la valeur de dilatation n'est pas dasn [0; 1] : on tire dil uniformement
+                if dil_no_bd > 1 or dil_no_bd< 0:
+                    dil_bd = rd.uniform(0, 1)
+                else:
+                    dil_bd = dil_no_bd
+
+                dil = dil_bd
                 # angle d'inclinaison du grand axe par rapport a l'axe des abscisses
                 theta = rd.uniform(0, 2*np.pi)
 
@@ -334,18 +330,8 @@ def RSAA_ph_ell_cell(delta, l_ray, par, frac_vol, xyinf, size, temps):
                 if C_ent:
                     # ajout de l'inclusion, decalage entre le numero de phase et phi, choisi pur parcourir des tableaux
                     liste_ph.append([ell, phi+1])
-                    # if tps <= 5:
-                    #     print('%'*60)
-                    #     print('ellipse courante :', ell)
-                    #     print('-'*60)
-                    #     print('derniere inclusion :', liste_ph[len(liste_ph)-1])
                     # calcul du nouveau volume occupe par la pĥase phi
                     vol_inc[phi] = vol_inc[phi] + vol2D_ellell(ell)
-
-                    # if tps <= 5:
-                    #     print('-'*60)
-                    #     print('premiere inclusion apres vol2D :', liste_ph[0])
-                    #     print('%'*60)
 
         # fraction volumique occupee par les phases solides
         total_frac_vol = vol_inc/size**2
