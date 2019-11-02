@@ -50,8 +50,8 @@ fig_dir = 'Figures3D/'
 
 # parametres graphiques
 
-fig_todo = 'aff'
-# fig_todo = 'save'
+# fig_todo = 'aff'
+fig_todo = 'save'
 
 # cmap_conv = 'night'
 cmap_conv = 'cement'
@@ -78,7 +78,7 @@ zsup = zinf + size
 
 # nombre maximal d'iterations
 
-tps_remp = 350
+tps_remp = 25000
 
 # lois normales pour la taille des inclusions ; parametres #
 
@@ -86,16 +86,16 @@ tps_remp = 350
 
 lois_rayons = [rsa.unif, rsa.g_norm]
 
-par_rayons = [(0.05, 0.16), (0.18, 0.02)]
+par_rayons = [(0.01, 0.16), (0.14, 0.03)]
 
 # fractions volumiques pour les differentes phases ; marges
 
-frac_vol = [0.15, 0.16]
+frac_vol = [0.25, 0.09]
 delta_inc = 0.01
 
 # Affichage de la cellule elementaire
 
-nb_lcells = 3
+nb_lcells = 4
 
 u_res = 80
 v_res = 50
@@ -237,7 +237,7 @@ if fig_todo == 'aff':
     plt.title('Inclusions pour une cellule, ' + 'cylindres et spheres, ' + str(tps_remp) + ' iterations RSAA')
     plt.show()
 elif fig_todo == 'save':
-    plt.savefig(fig_dir + 'inc_cell' + '_cylsph'+ str(len(lois_rayons)) + '_tps' + str(tps_remp) + '.png')
+    plt.savefig(fig_dir + 'inc_cell' + str(nb_lcells) + '_cylsph'+ str(len(lois_rayons)) + '_tps' + str(tps_remp) + '.png')
 
 plt.close()
 

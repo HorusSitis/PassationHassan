@@ -46,8 +46,8 @@ fig_dir = 'Figures2D/'
 
 # parametres graphiques
 
-fig_todo = 'aff'
-# fig_todo = 'save'
+# fig_todo = 'aff'
+fig_todo = 'save'
 
 # cmap_conv = 'night'
 cmap_conv = 'cement'
@@ -62,8 +62,8 @@ elif cmap_conv == 'cement':
 
 # type d'inclusions
 
-# type_inc = 'cer'
-type_inc = 'ell'
+type_inc = 'cer'
+# type_inc = 'ell'
 
 # caracteristiques de la cellule
 
