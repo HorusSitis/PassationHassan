@@ -1,8 +1,8 @@
 #####################################################################################################################################
-######################################### Etape II : extrapolation des clichés, domaine_fixe ########################################
+######################################### Etape II : extrapolation des cliches, domaine_fixe ########################################
 #####################################################################################################################################
 
-### ------------ Reproduire éventuellement pour des étapes ultérieures. Laisser seulement dans DDD_fun_obj ? ------------ ###
+### ------------ Reproduire eventuellement pour des etapes ulterieures. Laisser seulement dans DDD_fun_obj ? ------------ ###
 
 tol=1e-10
 
@@ -44,7 +44,7 @@ class PeriodicBoundary(SubDomain):
 
 mesh_dir="maillages_per/3D/"
 
-## inclusions simples ou rayons liés
+## inclusions simples ou rayons lies
 if dom_fixe=="am":
  mesh_f_name=mesh_dir+"cube_periodique_triangle"+"_"+dom_fixe+"_sur"+str(res_gmsh)+"_fixe.xml"
 ## inclusions multiples, unique rayon variable
@@ -53,7 +53,7 @@ elif dom_fixe=="solid":
  if config=='2sph':
   mesh_f_name=mesh_fixe_prefix+"fixe"+str(int(round(100*r_v_0,2)))+"sur"+str(res_gmsh)+".xml"
  elif config=='cylsph':
-  ## rayon du cylindre aux arètes ou de la sphère centrale fixés à 0.15 ##
+  ## rayon du cylindre aux aretes ou de la sphere centrale fixes a 0.15 ##
   if geo_p=='ray_sph':
    mesh_f_name=mesh_fixe_prefix+str(int(round(100*r_c_0,2)))+"fixe"+"sur"+str(res_gmsh)+".xml"
   elif geo_p=='ray_cyl':
@@ -62,7 +62,7 @@ elif dom_fixe=="solid":
    elif fixe_comp=='sph_un':
     mesh_f_name=mesh_dir+"cubesphere_periodique_triangle_"+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)+".xml"
 elif dom_fixe=="ray_min":
- fixe_comp=True#utilisation du domaine fixe avec annulation du rayon du cylindre dans le fichier général
+ fixe_comp=True#utilisation du domaine fixe avec annulation du rayon du cylindre dans le fichier general
  if config=='cylsph':
   if geo_p=='ray_sph':
    mesh_f_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_c_0,2)))+str(int(round(100*r_min,2)))+"sur"+str(res_gmsh)+".xml"
@@ -76,7 +76,7 @@ mesh_fixe=Mesh(mesh_f_name)
 
 V_fixe=VectorFunctionSpace(mesh_fixe,'P',2,constrained_domain=PeriodicBoundary())
 
-### ------------ Etapes reproduites : dépendances directes de Main3D ------------ ###
+### ------------ Etapes reproduites : dependances directes de Main3D ------------ ###
 
 # Chargement de la liste des snapshots physiques
 
@@ -86,7 +86,7 @@ with sh.open(repertoire_parent+l_name) as l_loa:
  list_chi_v = l_loa["maliste"]
 
 #sys.exit()
-# Extrapolation au domaine Omega_fixe : inclusion sphérique de rayon 0.0001, chi_prime défini sur ce domaine
+# Extrapolation au domaine Omega_fixe : inclusion spherique de rayon 0.0001, chi_prime defini sur ce domaine
 
 def extra_snap(n):
  r=0.05*n
@@ -103,7 +103,7 @@ def extra_snap(n):
    r_v=0.15
    mesh_name=mesh_prefix+str(int(round(100*r,2)))+str(int(round(100*r_v,2)))+"sur"+str(res)+".xml"
   elif config=='cylsph':
-   ## rayon du cylindre aux arètes ou de la sphère centrale fixés à 0.15 ##
+   ## rayon du cylindre aux aretes ou de la sphere centrale fixes a 0.15 ##
    if geo_p=='ray_sph':
     r_s=r
     r_c=0.15
@@ -121,7 +121,7 @@ def extra_snap(n):
  # extrapolation du snapshot au domaine fixe
  chi_n.set_allow_extrapolation(True)
  chi_n_prime=interpolate(chi_n,V_fixe)
- # vérification sur chi_n
+ # verification sur chi_n
  ###
  ## on range le snapshot dans une liste
  #list_snap.append(chi_n_prime)
@@ -156,8 +156,8 @@ else:
 
 
 #print(Usnap[0:5,0:5])
-#sys.exit("attendons un peu pour les représentations graphiques post-traitement")
-# Représentations graphiques
+#sys.exit("attendons un peu pour les representations graphiques post-traitement")
+# Representations graphiques
 
 list_snap=[]
 for n in range(1,1+Nsnap):
@@ -169,7 +169,7 @@ for n in range(1,1+Nsnap):
 #cen=cen_snap_ray
 for n in range(1,1+Nsnap):
  chi_prime_n=list_snap[n-1]
- # Affichage des valeurs de la solution interpolée
+ # Affichage des valeurs de la solution interpolee
  plot(chi_prime_n, linewidth=lw)
  plt.title("Snapshot "+str(n),fontsize=30)
  if fig_todo=='aff':
@@ -177,10 +177,10 @@ for n in range(1,1+Nsnap):
  else:
   plt.savefig("Figures3D/snap_interp"+dom_fixe+"_"+str(n)+"_sur"+str(Nsnap)+config+'_'+geo_p+"res"+str(res)+".png")
  plt.close()
- # Affichage des valeurs et erreurs de la solution périodique, quelle que soit la configuration
+ # Affichage des valeurs et erreurs de la solution periodique, quelle que soit la configuration
  #err_per_ind_01(chi_prime_n,cen,r,npas_err)
  r=n*0.05
- ### Débuggage : cylindre et sphère ###
+ ### Debuggage : cylindre et sphere ###
  if test_Dhom and (config=='cylsph' or config=='2sph'):
   if geo_p=='ray':
    r_cen=r
@@ -202,7 +202,7 @@ for n in range(1,1+Nsnap):
    mesh_postfixe=str(int(round(100*r_c,2)))+str(int(round(100*r_s,2)))+"sur"+str(res)
   ##
   mesh_name="cube"+config+"_periodique_triangle_"+mesh_postfixe
-  print("Vérification : maillage courant",mesh_name)
+  print("Verification : maillage courant",mesh_name)
   mesh=Mesh("maillages_per/3D/"+mesh_name+".xml")
   ##
   V_n=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
@@ -242,7 +242,7 @@ for n in range(1,1+Nsnap):
    for l in range(0,3):
     T_chi_prime[k,l]=assemble(grad(chi_prime_n)[k,l]*dxf)
   #sys.exit()#------------------------------------------------------------------------------------------------------------------------
-  ## les trois coefficients à comparer
+  ## les trois coefficients a comparer
   ###
   D=por*np.eye(3)
   integr_k_postprime=D_k*(D+T_chi.T)
@@ -273,7 +273,7 @@ for n in range(1,1+Nsnap):
   D=por*np.eye(3)
   integr_k_postprime=D_k*(D+T_chi.T)
   Dhom_k_postprime=integr_k_postprime*(1/por_prime)#por en dimensionnel
- ## ------------------------ Sphère unique, test ------------------------ ##
+ ## ------------------------ Sphere unique, test ------------------------ ##
  elif test_Dhom and config=='sph_un':
   if geo_p=='ray':
    r_cen=r
@@ -281,7 +281,7 @@ for n in range(1,1+Nsnap):
    por_prime=1
   ##
   mesh_name="cubesphere_periodique_triangle_"+str(int(round(100*r_cen,2)))+"sur"+str(res)
-  print("Vérification : maillage courant",mesh_name)
+  print("Verification : maillage courant",mesh_name)
   mesh=Mesh("maillages_per/3D/"+mesh_name+".xml")
   ##
   V_n=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
@@ -311,7 +311,7 @@ for n in range(1,1+Nsnap):
   for k in range(0,3):
    for l in range(0,3):
     T_chi_prime[k,l]=assemble(grad(chi_prime_n)[k,l]*dxf)
-  ## les trois coefficients à comparer
+  ## les trois coefficients a comparer
   ###
   D=por*np.eye(3)
   integr_k_postprime=D_k*(D+T_chi.T)
@@ -326,13 +326,13 @@ for n in range(1,1+Nsnap):
   Dhom_k_prime=integr_k_prime*(1/por_prime)
   ##
  if test_Dhom:
-  print('Géométrie : '+conf_mess+', '+geo_mess+', '+str(int(round(100*r,2))))
-  print('DUsnap fixe :',Dhom_k_prime[0,0],'porosité fixe',por_prime)
-  print('DUsnap fixe restreint au domaine courant :',Dhom_k_restr_prime[0,0],'porosité',por)
-  print('DUsnap physique :',Dhom_k_postprime[0,0],'porosité',por)
+  print('Geometrie : '+conf_mess+', '+geo_mess+', '+str(int(round(100*r,2))))
+  print('DUsnap fixe :',Dhom_k_prime[0,0],'porosite fixe',por_prime)
+  print('DUsnap fixe restreint au domaine courant :',Dhom_k_restr_prime[0,0],'porosite',por)
+  print('DUsnap physique :',Dhom_k_postprime[0,0],'porosite',por)
   print()
  ###
- # Dans ce cas, les faces du cube sont entières
+ # Dans ce cas, les faces du cube sont entieres
  ##cen=[0.5,0.5,0.5]
  ##err_per_gr(cen,r,chi_prime_n,npas_err,fig_todo)
  if config=='cylsph' and geo_p=='ray_sph':

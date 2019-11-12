@@ -1,8 +1,8 @@
 ####################################################################################################################################
-## Etape III : en utilisant la méthode des snapshots, calcul de la POD et des coefficients aléatoires, toujours dans domaine_fixe ##
+## Etape III : en utilisant la methode des snapshots, calcul de la POD et des coefficients aleatoires, toujours dans domaine_fixe ##
 ####################################################################################################################################
 
-### ------------ Reproduire éventuellement pour des étapes ultérieures. Laisser seulement dans DDD_fun_obj ? ------------ ###
+### ------------ Reproduire eventuellement pour des etapes ulterieures. Laisser seulement dans DDD_fun_obj ? ------------ ###
 
 tol=1e-10
 
@@ -44,7 +44,7 @@ class PeriodicBoundary(SubDomain):
 
 mesh_dir="maillages_per/3D/"
 
-## inclusions simples ou rayons liés
+## inclusions simples ou rayons lies
 if dom_fixe=="am":
  mesh_f_name=mesh_dir+"cube_periodique_triangle"+"_"+dom_fixe+"_sur"+str(res_gmsh)+"_fixe.xml"
 ## inclusions multiples, unique rayon variable
@@ -53,7 +53,7 @@ elif dom_fixe=="solid":
  if config=='2sph':
   mesh_f_name=mesh_fixe_prefix+"fixe"+str(int(round(100*r_v_0,2)))+"sur"+str(res_gmsh)+".xml"
  elif config=='cylsph':
-  ## rayon du cylindre aux arètes ou de la sphère centrale fixés à 0.15 ##
+  ## rayon du cylindre aux aretes ou de la sphere centrale fixes a 0.15 ##
   if geo_p=='ray_sph':
    mesh_f_name=mesh_fixe_prefix+str(int(round(100*r_c_0,2)))+"fixe"+"sur"+str(res_gmsh)+".xml"
   elif geo_p=='ray_cyl':
@@ -62,7 +62,7 @@ elif dom_fixe=="solid":
    elif fixe_comp=='sph_un':
     mesh_f_name=mesh_dir+"cubesphere_periodique_triangle_"+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)+".xml"
 elif dom_fixe=="ray_min":
- fixe_comp=True#utilisation du domaine fixe avec annulation du rayon du cylindre dans le fichier général
+ fixe_comp=True#utilisation du domaine fixe avec annulation du rayon du cylindre dans le fichier general
  if config=='cylsph':
   if geo_p=='ray_sph':
    mesh_f_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_c_0,2)))+str(int(round(100*r_min,2)))+"sur"+str(res_gmsh)+".xml"
@@ -75,7 +75,7 @@ mesh_fixe=Mesh(mesh_f_name)
 
 V_fixe=VectorFunctionSpace(mesh_fixe,'P',2,constrained_domain=PeriodicBoundary())
 
-### ------------ Etapes reproduites : dépendances directes de Main3D ------------ ###
+### ------------ Etapes reproduites : dependances directes de Main3D ------------ ###
 
 
 
@@ -91,25 +91,25 @@ with sh.open(repertoire_parent+u_name) as u_loa:
  Usnap = u_loa["maliste"]
 
 #
-## matrice de corrélation
+## matrice de correlation
 #print(Usnap[0:5,0:5])
 C=mat_corr_temp(V_fixe,Nsnap,Usnap)
 B=C-C.T
 #print(B[0:10,0:10])
 #print(C[0:5,0:5])
 #
-## Calcul des coefficients aléatoires et la base POD
+## Calcul des coefficients aleatoires et la base POD
 vp_A_phi=mat_a_mat_phi(Nsnap,Usnap,C,V_fixe,'L2')
 #
 val_propres=vp_A_phi[0]
 Aleat=vp_A_phi[1]
-## Attention les objets rangés dans tableau suivant sont des vecteurs
+## Attention les objets ranges dans tableau suivant sont des vecteurs
 Phi_prime_v=vp_A_phi[2]
 #
-## Sortie du spectre de la matrice des snapshots, qui doit servir à choisir la taille du modèle réduit
+## Sortie du spectre de la matrice des snapshots, qui doit servir a choisir la taille du modele reduit
 #
 print("Valeurs propres POD :",val_propres)
-#res, res_fixe=20 : énergie [71%, 24%, 5%, 0.37%, 0.058%, 0%, 0%, 0%]
+#res, res_fixe=20 : energie [71%, 24%, 5%, 0.37%, 0.058%, 0%, 0%, 0%]
 
 #plot()
 #plt.show()
@@ -124,16 +124,16 @@ with sh.open(repertoire_parent+phi_name) as p_sto:
  p_sto["maliste"] = Phi_prime_v
 
 #sys.exit()#-----------------------------------------------------------------
-## Pour réintroduire la base de POD dans l'espace des fonctions définies dans le domaine fixe
+## Pour reintroduire la base de POD dans l'espace des fonctions definies dans le domaine fixe
 
 #mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_0001fixe.xml")
 #V_fixe=V=VectorFunctionSpace(mesh_fixe, 'P', 3, constrained_domain=PeriodicBoundary())
 
-## Tests : orthogonalité ou orthonrmalité de Phi_prime
+## Tests : orthogonalite ou orthonrmalite de Phi_prime
 ui=Function(V_fixe)
 uj=Function(V_fixe)
 
-## Orthogonalité
+## Orthogonalite
 for i in range(Nsnap-1):
  ui.vector().set_local(Phi_prime_v[:,i])
  for j in range(i+1,Nsnap):
@@ -156,10 +156,10 @@ for i in range(Nsnap):
  print('norme L2 :',norme_L2)
  #print('quotient n2/L2 :',scal/norme_q)
 
-# Représentation graphique des vecteurs de POD :
+# Representation graphique des vecteurs de POD :
 
-## Type de données : on veut calculer les fonctions phi_prime_i 
-## Représentation graphique des phi_prime_i :
+## Type de donnees : on veut calculer les fonctions phi_prime_i
+## Representation graphique des phi_prime_i :
 
 phi=Function(V_fixe)
 for i in range(Nsnap):
@@ -173,9 +173,9 @@ for i in range(Nsnap):
   plt.savefig("Figures3D/phi_"+str(i+1)+"_"+config+'_'+geo_p+"_res"+str(res)+".png")
  plt.close()
 
-# Energie et énergie cumulée des modes spatiaux, choix du nombre de modes
+# Energie et energie cumulee des modes spatiaux, choix du nombre de modes
 
-## Energie et énergie cumulée, avec les valeurs propres de la matrice de corrélation temporelle
+## Energie et energie cumulee, avec les valeurs propres de la matrice de correlation temporelle
 ener_pour=energie_pourcentage(val_propres)[0]
 ener_pour_cumul=energie_pourcentage(val_propres)[1]
 
@@ -203,7 +203,7 @@ else:
  plt.savefig("Figures3D/ener_cumul_vp_"+config+'_'+geo_p+"_res"+str(res)+".png")
 plt.close()
 
-## Choix du nombre de modes, avec une valeur seuil d'énergie à atteindre avec les vacteurs de la base POD
+## Choix du nombre de modes, avec une valeur seuil d'energie a atteindre avec les vacteurs de la base POD
 nb_modes=0
 
 seuil_ener=99.99#9
@@ -216,6 +216,5 @@ while ener_pour_cumul[i]<seuil_ener or i==0:
 Nseuil=i
 
 
-print('Energie '+str(seuil_ener)+' pourcent, '+conf_mess+', '+geo_mess+' , résolution '+str(res_gmsh)+' :')
+print('Energie '+str(seuil_ener)+' pourcent, '+conf_mess+', '+geo_mess+' , resolution '+str(res_gmsh)+' :')
 print(Nseuil)
- 
