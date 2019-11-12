@@ -160,12 +160,14 @@ if EIV and res_gmsh!=50:
         registre.write('\n')
         registre.write('\\'+'hline'+'\n')
 
+        registre.write('\\'+'rowcolor{'+'lightgray'+'}')
+
         registre.write('\\'+'('+'\\'+'tilde{'+'\\'+'rho'+'}'+'\\'+')'+'&')
         registre.write('Nodes'+'&')
 
         registre.write('\\'+'('+'{'+'\\'+'frac{'+'\\'+'int'+'\\'+'nabla'+'\\'+'chi}{'+'\\'+'Omega}}_{ROM}'+'\\'+')'+'&')
         registre.write('\\'+'('+'{'+'\\'+'frac{'+'\\'+'int'+'\\'+'nabla'+'\\'+'chi}{'+'\\'+'Omega}}_{FOM}'+'\\'+')'+'&')
-        registre.write('\\'+'('+'Err'+')'+'\\'+')'+'&')
+        registre.write('\\'+'('+'Err'+'\\'+')'+'&')
 
         registre.write('\\'+'('+'t_{build}'+'\\'+')'+'&')
         registre.write('\\'+'('+'t_{solve}'+'\\'+')'+'&')
@@ -173,6 +175,8 @@ if EIV and res_gmsh!=50:
 
         registre.write('\\'+'('+'\\'+'mathcal{G}_{rom}'+'\\'+')'+'&')
         registre.write('\\'+'('+'\\'+'mathcal{G}_{rom-sol}'+'\\'+')'+'\\'+'\\'+'\n')
+
+        registre.write('\\'+'hline'+'\n')
 
         for rho in list_rho_test:
 
