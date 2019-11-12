@@ -305,7 +305,7 @@ elif config=='cylsph':
   err_per_gr_compl(config,r_c_0,chi_nouv,npas_err,fig_todo)
  elif geo_p=='ray_cyl':
   err_per_gr_compl(config,r_nouv,chi_nouv,npas_err,fig_todo)
- #elif geo_p=='ray_linked':
+
 
 # Tenseur de diffusion homogeneise
 ## Integrale de chi sur le domaine fluide
@@ -387,42 +387,22 @@ if Report :
  print('##############################################################################')
 
 
-##############################################################################
-##############################################################################
-##############################################################################
-
-#registre=open(nom_fichier,'w')
-
-# registre.write('rayon : '+str(r_nouv)+'\n')
-# registre.write('tableau 1\n')
-# registre.write('0,'+str(int(round(100*r_nouv,2)))+'&0,'+str(round(por,6))+'&0,'+str(round(Dhom_kMOR[0,0],7))+'&0,'+str(round(Dhom_kMEF[0,0],6))+'&'+str(t_meshing)+'s&0,'+str(round(err_rel_dhom,4))+'\%&'+str(round(t_phi_nouv,2))+'s&'+str(round(t_rom_linear+t_rom_Dhom,2))+'s&'+str(round(t_fem,2))+'s&'+str(V_nouv.dim())+'\\'+'\\'+'\n')
-# registre.write('\n')
-#
-# registre.write('tableau 2\n')
-# registre.write('0,'+str(int(round(100*r_nouv,2T_chi_rom[0,0]1./R_rom_Nmaill)))+'&'+str(round(R_rom,2))+'&'+str(round(R_interpolation,2))+'&'+str(round(R_rom-R_interpolation,2))+'&'+str(V_nouv.dim())+'\\'+'\\')
-# registre.write('\n')
-#
-# registre.write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n')
-
-#registre.close()
-
-
 
 
 ##############################################################################
 ##############################################################################
 
 
-registre.write(str(r_nouv)+'&')
-registre.write(str(V_nouv.dim())+'&')T_chi_rom[0,0]
+registre.write(str(2*r_nouv)+'&')
+registre.write(str(V_nouv.dim())+'&')
 
 registre.write(str(round(T_chi_rom[0,0], 4))+'&')
 registre.write(str(round(T_chi_fom[0,0], 4))+'&')
-registre.write(str(round(err_rel_ig, 2)+'\\'+'%'+'&')
+registre.write(str(round(err_rel_ig, 2))+'\\'+'%'+'&')
 
-registre.write(str(t_phi_nouv)+'s'+'&')
-registre.write(str(t_rom_linear+t_rom_Dhom)+'s'+'&')
-registre.write(str(t_fem)+'s'+'&')
+registre.write(str(round(t_phi_nouv, 2))+'s'+'&')
+registre.write(str(round(t_rom_linear+t_rom_Dhom, 2))+'s'+'&')
+registre.write(str(round(t_fem, 2))+'s'+'&')
 
 registre.write(str(round(1./R_rom_Nmaill, 2))+'&')
 registre.write(str(round(1./Rdiff_rom, 2))+'\\'+'\\'+'\n')
