@@ -380,7 +380,7 @@ if Report :
  R_interpolation_Nmaill = t_phi_nouv/t_fem
  Rdiff_rom = R_rom_Nmaill - R_interpolation_Nmaill
  print('Gain de temps sans maillage :', 1./R_rom_Nmaill)#,'sans unite')
- print('Interpolation sans maillage :', 1./R_interpolation_Nmaill)#,'sans unite')
+ # print('Interpolation sans maillage :', 1./R_interpolation_Nmaill)#,'sans unite')
  print('ROM seul sans maillage :', 1./Rdiff_rom)#,'sans unite')
  #
  print('##############################################################################')

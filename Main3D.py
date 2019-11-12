@@ -70,11 +70,11 @@ Report=True
 # nom de l'appareil utilise pour generer les donnees enregistrees
 computer='MECALAC_29x8'#'T1700_35x8'#
 
-# Choix de la resolution du maillage : nombre de noeuds par cote du cube
-
-res_gmsh=10
-if typ_msh=='gms':
-    res=res_gmsh
+# # Choix de la resolution du maillage : nombre de noeuds par cote du cube
+#
+# res_gmsh=10
+# if typ_msh=='gms':
+#     res=res_gmsh
 
 # parametres pour l'execution des etapes : affichage, tests de periodicite etc
 
@@ -163,9 +163,9 @@ if EIV and res_gmsh!=50:
         registre.write('\\'+'('+'\\'+'tilde{'+'\\'+'rho'+'}'+'\\'+')'+'&')
         registre.write('Nodes'+'&')
 
-        registre.write('\\'+'('+'{'+'\\'+'frac{'+'\\'+'int'+'\\'+'nabla'+'\\'+'chi}{'+'\\'+'Omega}}_{ROM}'+'\\'+'&')
-        registre.write('\\'+'('+'{'+'\\'+'frac{'+'\\'+'int'+'\\'+'nabla'+'\\'+'chi}{'+'\\'+'Omega}}_{FOM}'+'\\'+'&')
-        registre.write('\\'+'('+'Err'+')'+'\\'+'&')
+        registre.write('\\'+'('+'{'+'\\'+'frac{'+'\\'+'int'+'\\'+'nabla'+'\\'+'chi}{'+'\\'+'Omega}}_{ROM}'+'\\'+')'+'&')
+        registre.write('\\'+'('+'{'+'\\'+'frac{'+'\\'+'int'+'\\'+'nabla'+'\\'+'chi}{'+'\\'+'Omega}}_{FOM}'+'\\'+')'+'&')
+        registre.write('\\'+'('+'Err'+')'+'\\'+')'+'&')
 
         registre.write('\\'+'('+'t_{build}'+'\\'+')'+'&')
         registre.write('\\'+'('+'t_{solve}'+'\\'+')'+'&')
