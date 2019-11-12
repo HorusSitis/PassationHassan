@@ -4,7 +4,7 @@
 #--- mpirun -np 8 python3 Main3D.py ---#
 #--- affiche npfois 'pas encore' fait avec l'étape IV ---#
 
-# Attention : on éxécute parallèlement 
+# Attention : on éxécute parallèlement
 
 ### Paquets à importer ###
 
@@ -56,7 +56,7 @@ test_Dhom=True
 
 EIII=False
 EIV=True
-Interpolation=False
+Interpolation=True
 Report=True
 
 
@@ -183,13 +183,42 @@ ind_fixe=True##-----------> dom_fixe devant le 'Phi'
 ind_res=True#False###----------> on précise la résolution du maillage, qui apparaît ou non dans le fichier contenant Phi
 
 if EIV and res_gmsh!=50:
+
  if Interpolation:
-  nom_fichier='Perf3D/'+computer+'res'+str(res_gmsh)+config+geo_p+'Nmor'+str(N_mor)+'.txt'
-  registre=open(nom_fichier,'w')
-  for rho in [0.11,0.22]:
+
+  nom_fichier='Perf3D/' + computer + 'res' + str(res_gmsh) + config + geo_p + 'Nmor' + str(N_mor)
+  registre=open(nom_fichier + 'txt','w')
+
+  registre.write('\\'+'begin{tabular}')
+  registre.write('{|c|c||c|c|c||c|c|c||c|c|}')
+  registre.write('\n')
+  registre.write('\\'+'hline'+'\n')
+
+  registre.write('\\'+'('+'\\'+'tilde{'+'\\'+'rho'+'}'+'\\'+')'+'&')
+  registre.write('Nodes'+'&')
+
+  registre.write('\\'+'('+'{'+'\\'+'frac{'+'\\'+'int'+'\\'+'nabla'+'\\'+'chi}{'+'\\'+'Omega}}_{ROM}'+'\\'+'&')
+  registre.write('\\'+'('+'{'+'\\'+'frac{'+'\\'+'int'+'\\'+'nabla'+'\\'+'chi}{'+'\\'+'Omega}}_{FOM}'+'\\'+'&')
+  registre.write('\\'+'('+'Err'+')'+'\\'+'&')
+
+  registre.write('\\'+'('+'t_{build}'+'\\'+')'+'&')
+  registre.write('\\'+'('+'t_{solve}'+'\\'+')'+'&')
+  registre.write('\\'+'('+'t_{FEM}'+'\\'+')'+'&')
+
+  registre.write('\\'+'('+'\\'+'mathcal{G}_{rom}'+'\\'+')'+'&')
+  registre.write('\\'+'('+'\\'+'mathcal{G}_{rom-sol}'+'\\'+')'+'\\'+'\\')
+
+  for rho in [0.11, 0.22, 0.33, 0.44]:
+
    r_nouv=rho
    exec(open("DDD_EIV.py").read())
+
+
+  registre.write('\\'+'end{tabular}')
+
   registre.close()
+  os.rename(nom + 'txt', nom + '_raydeb' + str() + 'tex')
+
  else:
   exec(open("DDD_EIV_fixe.py").read())
 
@@ -241,4 +270,3 @@ if EIV and res_gmsh==50:
     with open("DDD_EIV.py",'r') as op:
      exec(op.read())
   registre.close()
-

@@ -1,0 +1,38 @@
+# Figures
+*.png
+*.pdf
+
+# Text
+*.odt
+
+# Fuse
+.fuse*
+
+# numpy matrices
+*.npy
+
+# HDF Files
+*.h5
+*.hdf
+
+# VTK files
+*.vtu
+*.vtk
+*.pvd
+*.xml
+*.msh
+
+# precompiled python code
+*.pyc
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# LaTeX
+.aux
+.bbl
+.blg
+.dvi
+.log
+.tex.backup

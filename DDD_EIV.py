@@ -166,11 +166,11 @@ if config=='sph_un' or config=='cyl_un':
  Coeff=calc_Ab_3D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,cen_snap_ray,nb_modes,config)
 else:
  Coeff=calc_Ab_compl_3D(mesh_n_name,Phi_nouv_v,nb_modes)
-#sys.exit("solveur ROM execute pour des inclusions multiples")
+
 A=Coeff[0]
 b=Coeff[1]
 
-print('A :',A,'b :',b)
+# print('A :',A,'b :',b)
 ## On resoud le modele reduit
 
 a_nouv=np.linalg.solve(A.T,-b)
@@ -223,10 +223,10 @@ elif config=='cylsph':
 
 # Tenseur de diffusion homogeneise
 ## Integrale de chi sur le domaine fluide
-T_chi=np.zeros((3,3))
+T_chi_rom=np.zeros((3,3))
 for k in range(0,3):
  for l in range(0,3):
-  T_chi[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
+  T_chi_rom[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
   #print("Integrale ",assemble(grad(chi_nouv)[k,l]*dx))
 ## Integrale de l'identite sur le domaine fluide
 ### Calcul de la porosite
@@ -248,8 +248,8 @@ elif config=='cylsph':
 ### Integration du terme constant du coefficient d diffusion, sur le domaine fluide
 D=por*np.eye(3)
 ## Calcul et affichage du tenseur Dhom
-Dhom_kMOR=D_k*(D+T_chi.T)
-#print(('Tenseur Dhom_k',Dhom_k))
+Dhom_kMOR=D_k*(D+T_chi_rom.T)
+
 print('Coefficient Dhom_k11 '+conf_mess+', '+geo_mess+' valeur '+str(rho)+' MOR :',Dhom_kMOR[0,0])
 
 ## On enregistre et imprime le temps d'execution de SE3
@@ -293,7 +293,7 @@ if fig_todo=='aff':
 elif fig_todo=='save':
  plt.savefig("Figures3D/sol_rom"+str(int(round(100*r_nouv,2)))+"_sur"+str(Nsnap)+config+'_'+geo_p+"res"+str(res)+".png")
 plt.close()
-#sys.exit()
+
 # Affichage des valeurs et erreurs de la solution periodique, quelle que soit la configuration
 if config=='sph_un' or config=='cyl_un':
  #err_per_ind_01(chi_n,cen,r,npas_err)
@@ -309,23 +309,25 @@ elif config=='cylsph':
 
 # Tenseur de diffusion homogeneise
 ## Integrale de chi sur le domaine fluide
-T_chi=np.zeros((3,3))
+T_chi_fom=np.zeros((3,3))
 for k in range(0,3):
  for l in range(0,3):
-  T_chi[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
+  T_chi_fom[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
 ## Integrale de l'identite sur le domaine fluide : voir ce qui precede avec la porosite
 print('Noeuds :',V_nouv.dim())
 print('Porosite :',por)
-#print('tenseur : ',T_chi)
+
 ## Calcul et affichage du tenseur Dhom
-Dhom_kMEF=D_k*(D+T_chi.T)
-#print(('Tenseur Dhom_k',Dhom_k))
+Dhom_kMEF=D_k*(D+T_chi_fom.T)
 print('Coefficient Dhom_k11 '+conf_mess+', '+geo_mess+' valeur '+str(rho)+ ' MEF :',Dhom_kMEF[0,0])
 
 ## Comparaison
 
-err_rel=100*(Dhom_kMOR[0,0]-Dhom_kMEF[0,0])/Dhom_kMEF[0,0]
-print('Erreur relative MEF-MOR :', err_rel , ' pourcent')
+err_rel_dhom=100*(Dhom_kMOR[0,0]-Dhom_kMEF[0,0])/Dhom_kMEF[0,0]
+print('Erreur relative Dhom MEF-MOR :', err_rel_dhom , ' pourcent')
+
+err_rel_ig=100*(T_chi_rom[0,0]-T_chi_fom[0,0])/T_chi_fom[0,0]
+print('Erreur relative int_grad MEF-MOR :', err_rel_ig , ' pourcent')
 
 ## On enregistre et imprime le temps d'execution de SE4
 
@@ -348,11 +350,18 @@ if Report :
  #
  ## Porosite ##
  print('Porosite :',por)
- ## Dhom, erreur, et temps d'execution ##
- print('Coefficient Dhom_k11 '+' MOR :',Dhom_kMOR[0,0])
- print('Coefficient Dhom_k11 '+' MEF :',Dhom_kMEF[0,0])
+ ## Generation du maillage : temps d'execution ... ##
  print('Maillage :',t_meshing,'secondes')
- print('Erreur relative MEF-MOR :',err_rel,'pourcent')
+ ## Dhom, erreur, et temps d'execution ##
+ print('%'*78)
+ print('Coefficient Dhom_k11 MOR :',Dhom_kMOR[0,0])
+ print('Coefficient Dhom_k11 MEF :',Dhom_kMEF[0,0])
+ print('Erreur relative MEF-MOR :',err_rel_dhom,'pourcent')
+ print('%'*78)
+ print('Coefficient int_grad11 MOR :',T_chi_rom[0,0])
+ print('Coefficient int_grad11 MEF :',T_chi_fom[0,0])
+ print('Erreur relative MEF-MOR :',err_rel_ig,'pourcent')
+ print('%'*78)
  ## Temps de calcul a evaluer ##
  print('T_phi_nouv',t_phi_nouv,'secondes')
  print('T_ROM',t_rom_linear+t_rom_Dhom,'secondes')
@@ -360,59 +369,40 @@ if Report :
  ## Nombre de noeuds ##
  print('Noeuds :',V_nouv.dim())
  ## Rapports de temps de calcul, sans unite ##
+ print('='*78)
  R_rom=(t_phi_nouv+t_rom_linear+t_rom_Dhom+t_meshing)/(t_fem+t_meshing)
  R_interpolation=t_phi_nouv/(t_fem+t_meshing)
- print('Gain de temps de la methode :',R_rom)#,'sans unite')
- print('Contribution de l interpolation :',R_interpolation)#,'sans unite')
- print('Difference :',R_rom-R_interpolation)#,'sans unite')
+ print('Gain de temps maillage EF compris :', 1./R_rom)#,'sans unite')
+ # print('Contribution de l interpolation :',R_interpolation)#,'sans unite')
+ # print('Difference :',R_rom-R_interpolation)#,'sans unite')
+ print('='*78)
+ R_rom_Nmaill = (t_phi_nouv+t_rom_linear+t_rom_Dhom)/t_fem
+ R_interpolation_Nmaill = t_phi_nouv/t_fem
+ Rdiff_rom = R_rom_Nmaill - R_interpolation_Nmaill
+ print('Gain de temps sans maillage :', 1./R_rom_Nmaill)#,'sans unite')
+ print('Interpolation sans maillage :', 1./R_interpolation_Nmaill)#,'sans unite')
+ print('ROM seul sans maillage :', 1./Rdiff_rom)#,'sans unite')
  #
  print('##############################################################################')
  print('##############################################################################')
 
+
+##############################################################################
+##############################################################################
 ##############################################################################
 
-#nom_fichier='Perf3D/'+'res'+str(res_gmsh)+computer+config+geo_p+str(int(round(100*r_nouv,2)))+'Nmor'+str(N_mor)+'.txt'
 #registre=open(nom_fichier,'w')
-#registre.write('Resultats '+conf_mess+', '+geo_mess+' valeur '+str(r_nouv)+' :\n')
-#registre.write('##############################################################################\n')
-#registre.write('Porosite :'+str(por)+'\n')
 
-#registre.write('Coefficient Dhom_k11 '+' MOR :'+str(Dhom_kMOR[0,0])+'\n')
-#registre.write('Coefficient Dhom_k11 '+' MEF :'+str(Dhom_kMEF[0,0])+'\n')
-#registre.write('Maillage :'+str(t_meshing)+'secondes\n')
-#registre.write('Erreur relative MEF-MOR :'+str(err_rel)+'pourcent\n')#
-
-#registre.write('T_phi_nouv'+str(t_phi_nouv)+'secondes\n')
-#registre.write('T_ROM'+str(t_rom_linear+t_rom_Dhom)+'secondes\n')
-#registre.write('T_FEM'+str(t_fem)+'secondes\n')
-
-#registre.write('Noeuds :'+str(V_nouv.dim())+'\n')
-
-## Rapports de temps de calcul, sans unite ##
-#registre.write('Gain de temps de la methode :'+str(R_rom)+'\n')
-#registre.write('Contribution de l interpolation :'+str(R_interpolation)+'\n')
-#registre.write('Difference :'+str(R_rom-R_interpolation)+'\n')
+# registre.write('rayon : '+str(r_nouv)+'\n')
+# registre.write('tableau 1\n')
+# registre.write('0,'+str(int(round(100*r_nouv,2)))+'&0,'+str(round(por,6))+'&0,'+str(round(Dhom_kMOR[0,0],7))+'&0,'+str(round(Dhom_kMEF[0,0],6))+'&'+str(t_meshing)+'s&0,'+str(round(err_rel_dhom,4))+'\%&'+str(round(t_phi_nouv,2))+'s&'+str(round(t_rom_linear+t_rom_Dhom,2))+'s&'+str(round(t_fem,2))+'s&'+str(V_nouv.dim())+'\\'+'\\'+'\n')
+# registre.write('\n')
 #
-#registre.write('##############################################################################\n')
-
-#registre.close()
-
-##############################################################################
-##############################################################################
-##############################################################################
-
-#registre=open(nom_fichier,'w')
-
-registre.write('rayon : '+str(r_nouv)+'\n')
-registre.write('tableau 1\n')
-registre.write('0,'+str(int(round(100*r_nouv,2)))+'&0,'+str(round(por,6))+'&0,'+str(round(Dhom_kMOR[0,0],7))+'&0,'+str(round(Dhom_kMEF[0,0],6))+'&'+str(t_meshing)+'s&0,'+str(round(err_rel,4))+'\%&'+str(round(t_phi_nouv,2))+'s&'+str(round(t_rom_linear+t_rom_Dhom,2))+'s&'+str(round(t_fem,2))+'s&'+str(V_nouv.dim())+'\\'+'\\'+'\n')
-registre.write('\n')
-
-registre.write('tableau 2\n')
-registre.write('0,'+str(int(round(100*r_nouv,2)))+'&'+str(round(R_rom,2))+'&'+str(round(R_interpolation,2))+'&'+str(round(R_rom-R_interpolation,2))+'&'+str(V_nouv.dim())+'\\'+'\\')
-registre.write('\n')
-
-registre.write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n')
+# registre.write('tableau 2\n')
+# registre.write('0,'+str(int(round(100*r_nouv,2T_chi_rom[0,0]1./R_rom_Nmaill)))+'&'+str(round(R_rom,2))+'&'+str(round(R_interpolation,2))+'&'+str(round(R_rom-R_interpolation,2))+'&'+str(V_nouv.dim())+'\\'+'\\')
+# registre.write('\n')
+#
+# registre.write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n')
 
 #registre.close()
 
@@ -421,3 +411,20 @@ registre.write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 ##############################################################################
 ##############################################################################
+
+
+registre.write(str(r_nouv)+'&')
+registre.write(str(V_nouv.dim())+'&')T_chi_rom[0,0]
+
+registre.write(str(round(T_chi_rom[0,0], 4))+'&')
+registre.write(str(round(T_chi_fom[0,0], 4))+'&')
+registre.write(str(round(err_rel_ig, 2)+'\\'+'%'+'&')
+
+registre.write(str(t_phi_nouv)+'s'+'&')
+registre.write(str(t_rom_linear+t_rom_Dhom)+'s'+'&')
+registre.write(str(t_fem)+'s'+'&')
+
+registre.write(str(round(1./R_rom_Nmaill, 2))+'&')
+registre.write(str(round(1./Rdiff_rom, 2))+'\\'+'\\'+'\n')
+
+registre.write('\\'+'hline'+'\n')
