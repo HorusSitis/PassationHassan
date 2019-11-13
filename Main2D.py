@@ -1,6 +1,6 @@
-### ------------ Paquets à importer ------------ ###
+### ------------ Paquets a importer ------------ ###
 
-# paquets mathématiques
+# paquets mathematiques
 import numpy as np
 import random as rd
 from math import sqrt
@@ -15,14 +15,14 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.gridspec as gridspec
 
-# système
+# systeme
 
 import os
 import sys
 
 from importlib import reload
 
-# calcul parallèle
+# calcul parallele
 
 import threading
 import time
@@ -35,7 +35,7 @@ import subprocess
 import marshal as ma
 import shelve as sh
 
-## Paquets spécifiques à POD-MOR ##
+## Paquets specifiques a POD-MOR ##
 
 from fenics import *
 from dolfin import *
@@ -48,7 +48,7 @@ from DD_fun_obj import *
 #F2d=reload(F2d)
 
 ##########################################################
-### ------------ Code à lire : conditions ------------ ###
+### ------------ Code a lire : conditions ------------ ###
 ##########################################################
 
 E_=False
@@ -62,8 +62,8 @@ test_Dhom=True
 
 
 EIII=False
-EIV=False
-EIVfixe=True
+EIV=True
+EIVfixe=False
 
 
 
@@ -72,18 +72,18 @@ res_gmsh=100
 fixe_aff=False
 fig_todo=''
 
-### ------------ Etape 0 : Génération de microstructures périodiques aléatoires ------------ ###
+### ------------ Etape 0 : Generation de microstructures periodiques aleatoires ------------ ###
 
 if E_ :
  from DD_E0 import *
 
 #########################################################
-### ----------------- Etapes I à IV ----------------- ###
+### ----------------- Etapes I a IV ----------------- ###
 #########################################################
 
-### ------------------ Important : degré pour la résolution par éléments finis ------------------ ###
+### ------------------ Important : degre pour la resolution par elements finis ------------------ ###
 VFS_degree=2#3#
-## degré 2 : comme en dimension 3, permet d'éviter les erreurs de périodicité pour des pas qui nen sont pas de la forme 2"n, où n est un diviseur de 100 ##
+## degre 2 : comme en dimension 3, permet d'eviter les erreurs de periodicite pour des pas qui nen sont pas de la forme 2"n, ou n est un diviseur de 100 ##
 
 config='cer_un'#'compl'#
 
@@ -104,7 +104,7 @@ if config=='cer_un':
  #csr_list=[[0.05*k,0.5] for k in range(1,1+Nsnap)]
  ##
  if cen_snap_ray==[0.5,0.5]:
-  conf_mess=conf_mess+" centré"
+  conf_mess=conf_mess+" centre"
   mention=""
   ### 'i_per' : Nrom=... ; 'solid_1': Nrom=... ; ### ???
  elif cen_snap_ray==[0.,0.]:
@@ -125,13 +125,13 @@ elif config=='compl':
  elif geo_p=='hor':
   cen_snap_ray=[0.,0.5]
  ##
- conf_mess='deux disques par période'
+ conf_mess='deux disques par periode'
  mess_prefix=' rayon central variable'
  mention=''
  if geo_p=='diag':
-  geo_mess='alignés en diagonale, '+mess_prefix
+  geo_mess='alignes en diagonale, '+mess_prefix
  elif geo_p=='hor':
-  geo_mess='alignés horizontalement, '+mess_prefix
+  geo_mess='alignes horizontalement, '+mess_prefix
 
 # choix du type de maillage
 
@@ -154,30 +154,30 @@ if typ_refi=='vol':
 elif typ_refi=='front':
  refi_mess='Surface'
 
-# nom de l'appareil utilisé pour générer les données enregistrées
+# nom de l'appareil utilise pour generer les donnees enregistrees
 computer='MECALAC_29x8'##'T1700_35x8'##
 
-# apprentissage : calcul parallèle ou séquentiel, prise en compte de la résolution
+# apprentissage : calcul parallele ou sequentiel, prise en compte de la resolution
 
 gen_snap='par8'#'seq'#'seq_par'#
 
-# répertoire pour les résultats
+# repertoire pour les resultats
 
 repertoire_parent="Res2D/"
 
-### ------------ Exécution des étapes demandées en préambule, imports spécifiques ------------ ###
+### ------------ Execution des etapes demandees en preambule, imports specifiques ------------ ###
 
 
 from LEc import *
 
 D_k=1.0
 Nsnap=8
-deb=1# par défaut##5# pour les tests cer_un et diag##6# pour hor##
+deb=1# par defaut##5# pour les tests cer_un et diag##6# pour hor##
 npas_err=50
 ordo='Ordr'#'Nordr'
 
 
-## ------------ Etape lL 1demi : Affichage de microstructures périodiques ------------ ##
+## ------------ Etape lL 1demi : Affichage de microstructures periodiques ------------ ##
 
 nb_lcells=1
 cem_color='grey'#'r'
@@ -187,9 +187,9 @@ fluid_color='cyan'
 if E_lL :
  exec(open("DD_ElL.py").read())
 
-## ---------- Etape I, mêmes paramètres que pour 1demi ---------- ##
+## ---------- Etape I, memes parametres que pour 1demi ---------- ##
 
-# Exécution
+# Execution
 
 if EI :
  exec(open("DD_EI.py").read())
@@ -203,8 +203,8 @@ if EII :
 
 from PO23D import *
 
-# On soustrait éventuellement la moyenne des snapshots interpolés à chaque snapshot
-##moy_mod='soust_m'#'' par défaut
+# On soustrait eventuellement la moyenne des snapshots interpoles a chaque snapshot
+##moy_mod='soust_m'#'' par defaut
 
 if EIII :
  exec(open("DD_EIII.py").read())
@@ -218,11 +218,10 @@ if EIII :
 N_mor=2
 r_nouv=0.33#0.44#0.22#0.11#0.10#
 
-# La mesure du temps d'éxécution doit se faire avec l'option 'save' de fig_todo
+# La mesure du temps d'execution doit se faire avec l'option 'save' de fig_todo
 
 if EIV :
  exec(open("DD_EIV.py").read())
 
 if EIVfixe:
  exec(open("DD_EIV_fixe.py").read())
-

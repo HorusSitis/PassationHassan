@@ -1,5 +1,5 @@
 ####################################################################################################################################
-## Etape III : en utilisant la méthode des snapshots, calcul de la POD et des coefficients aléatoires, toujours dans domaine_fixe ##
+## Etape III : en utilisant la methode des snapshots, calcul de la POD et des coefficients aleatoires, toujours dans domaine_fixe ##
 ####################################################################################################################################
 
 dimension=2
@@ -7,7 +7,7 @@ dimension=2
 class PeriodicBoundary(SubDomain):
  # Left boundary is "target domain" G
  def inside(self, x, on_boundary):
-  return on_boundary and not(near(x[0],xsup,tol) or near(x[1],ysup,tol))## merci à Arnold Douglas
+  return on_boundary and not(near(x[0],xsup,tol) or near(x[1],ysup,tol))## merci a Arnold Douglas
  # Map right boundary (H) to left boundary (G)
  def map(self, x, y):
   for i in range(dimension):
@@ -40,11 +40,11 @@ print(repertoire_parent+u_name)
 with sh.open(repertoire_parent+u_name) as u_loa:
  Usnap = u_loa["maliste"]
 #sys.exit()#----------------------------------------------------------------
-# matrice de corrélation
+# matrice de correlation
 
 C=mat_corr_temp(V_fixe,Nsnap,Usnap)
 
-# Calcul des coefficients aléatoires et la base POD
+# Calcul des coefficients aleatoires et la base POD
 
 vp_A_phi=mat_a_mat_phi(Nsnap,Usnap,C,V_fixe,'n2')
 vp_A_phi=mat_a_mat_phi(Nsnap,Usnap,C,V_fixe,'L2')
@@ -52,7 +52,7 @@ vp_A_phi=mat_a_mat_phi(Nsnap,Usnap,C,V_fixe,'L2')
 
 val_propres=vp_A_phi[0]
 Aleat=vp_A_phi[1]
-## Attention les objets rangés dans tableau suivant sont des vecteurs
+## Attention les objets ranges dans tableau suivant sont des vecteurs
 Phi_prime_v=vp_A_phi[2]
 
 ## Enregistrement de la matrice de la base POD, sous la forme vectorielle
@@ -63,11 +63,11 @@ print(phi_name)
 with sh.open(repertoire_parent+phi_name) as p_sto:
  p_sto["maliste"] = Phi_prime_v
 
-## Tests : orthogonalité ou orthonrmalité de Phi_prime
+## Tests : orthogonalite ou orthonrmalite de Phi_prime
 ui=Function(V_fixe)
 uj=Function(V_fixe)
 
-## Orthogonalité
+## Orthogonalite
 for i in range(Nsnap-1):
  ui.vector().set_local(Phi_prime_v[:,i])
  for j in range(i+1,Nsnap):
@@ -90,10 +90,10 @@ for i in range(Nsnap):
  print('norme L2 :',norme_L2)
  #print('quotient n2/L2 :',scal/norme_q)
 
-# Représentation graphique des vecteurs de POD :
+# Representation graphique des vecteurs de POD :
 
-## Type de données : on veut calculer les fonctions phi_prime_i 
-## Représentation graphique des phi_prime_i :
+## Type de donnees : on veut calculer les fonctions phi_prime_i
+## Representation graphique des phi_prime_i :
 
 phi=Function(V_fixe)
 for i in range(Nsnap):
@@ -107,9 +107,9 @@ for i in range(Nsnap):
 
 
 
-# Energie et énergie cumulée des modes spatiaux, choix du nombre de modes
+# Energie et energie cumulee des modes spatiaux, choix du nombre de modes
 
-## Energie et énergie cumulée, avec les valeurs propres de la matrice de corrélation temporelle
+## Energie et energie cumulee, avec les valeurs propres de la matrice de correlation temporelle
 ener_pour=energie_pourcentage(val_propres)[0]
 ener_pour_cumul=energie_pourcentage(val_propres)[1]
 
@@ -134,7 +134,7 @@ else:
  plt.savefig("Figures2D/ener_cumul_vp_"+config+'_'+geo_p+".png")#+"_res"+str(res)
 plt.close()
 
-## Choix du nombre de modes, avec une valeur seuil d'énergie à atteindre avec les vacteurs de la base POD
+## Choix du nombre de modes, avec une valeur seuil d'energie a atteindre avec les vacteurs de la base POD
 nb_modes=0
 
 seuil_ener=99.99
@@ -168,8 +168,3 @@ for i in range(Nseuil):
  list_DPhi.append(1+int_grad)
 
 print('Dhom POD-ROM :',list_DPhi)
-
-
-
-
-

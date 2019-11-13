@@ -1,8 +1,8 @@
 #################################################################################################
-## Etape IV : Prédictions. Choisir les paramètres du problème à résoudre par le modèle réduit. ##
+## Etape IV : Predictions. Choisir les parametres du probleme a resoudre par le modele reduit. ##
 #################################################################################################
 
-### ------------ Reproduire pour des étapes I à IV. ------------ ###
+### ------------ Reproduire pour des etapes I a IV. ------------ ###
 
 tol=1e-10
 
@@ -18,7 +18,7 @@ dimension=2
 class PeriodicBoundary(SubDomain):
  # Left boundary is "target domain" G
  def inside(self, x, on_boundary):
-  return on_boundary and not(near(x[0],xsup,tol) or near(x[1],ysup,tol))## merci à Arnold Douglas
+  return on_boundary and not(near(x[0],xsup,tol) or near(x[1],ysup,tol))## merci a Arnold Douglas
  # Map right boundary (H) to left boundary (G)
  def map(self, x, y):
   for i in range(dimension):
@@ -46,11 +46,11 @@ V_fixe=VectorFunctionSpace(mesh_fixe, 'P', VFS_degree, constrained_domain=Period
 
 import time
 
-### ------------ Etapes reproduites : dépendances directes de Main3D ------------ ###
+### ------------ Etapes reproduites : dependances directes de Main3D ------------ ###
 
 nb_modes=N_mor
 
-## mention="..." ## affectation effectuée en préambule, voir Main2D.py
+## mention="..." ## affectation effectuee en preambule, voir Main2D.py
 
 if typ_msh=='gms':
  mesh_repository="maillages_per/2D/"
@@ -74,7 +74,7 @@ start=time.time()
 
 nb_noeuds_fixe=V_fixe.dim()
 
-## Chargement de la base POD complète
+## Chargement de la base POD complete
 
 phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+"res"+str(res)+'_'+ordo+'_'+computer
 
@@ -83,11 +83,11 @@ print(phi_name)
 with sh.open(repertoire_parent+phi_name) as phi_loa:
  Phi_prime_v = phi_loa["maliste"]
 
-## Création de la base POD tronquée, sous forme vectorielle
+## Creation de la base POD tronquee, sous forme vectorielle
 
 Phi_mor=Phi_prime_v[:,range(0,nb_modes)]
 
-## Extrapolation des fonctions de la base POD pour former le modèle réduit défini sur V_nouv
+## Extrapolation des fonctions de la base POD pour former le modele reduit defini sur V_nouv
 
 nb_noeuds_nouv=V_nouv.dim()
 Phi_nouv_v=np.zeros((nb_noeuds_nouv,nb_modes))
@@ -101,7 +101,7 @@ for n in range(0,nb_modes):
  # extrapolation du snapshot au domaine fixe
  phi_fixe.set_allow_extrapolation(True)
  phi_n_nouv=interpolate(phi_fixe,V_nouv)
- # affichage des modes extrapolés
+ # affichage des modes extrapoles
  plot(phi_n_nouv)
  plt.title("Phi "+str(n+1)+" sur Omega_nouv",fontsize=30)
  if fig_todo=='aff':
@@ -109,22 +109,22 @@ for n in range(0,nb_modes):
  elif fig_todo=='save':
   plt.savefig("Figures2D/phi_nouv_"+str(n+1)+"_"+config+'_'+geo_p+".png")
  plt.close()
- # on range le vecteur de POD interpolée dans la matrice Phi_nouv_v
+ # on range le vecteur de POD interpolee dans la matrice Phi_nouv_v
  Phi_nouv_v[:,n]=phi_n_nouv.vector().get_local()
 
-## On enregistre et imprime le temps d'éxécution de SE1
+## On enregistre et imprime le temps d'execution de SE1
 
 end=time.time()
 
 print('se1 faite ',end-start,' secondes')
 #sys.exit()#-------------------------------------
-# --------------------- SE2 : résolution du modèle réduit --------------------- #
+# --------------------- SE2 : resolution du modele reduit --------------------- #
 
-## On réinitialise le temps de calcul ##
+## On reinitialise le temps de calcul ##
 
 start=time.time()
 
-## On écrit les deux tenseurs qui comportent les coefficients de l'équation du modèle réduit : ceux-ci dépendent des vecteurs de la base POD projetée
+## On ecrit les deux tenseurs qui comportent les coefficients de l'equation du modele reduit : ceux-ci dependent des vecteurs de la base POD projetee
 
 #from PO23D import *
 
@@ -132,25 +132,25 @@ if test_snap=='i_per':
  Coeff=calc_Ab_2D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,cen_snap_ray,nb_modes)
 else:
  Coeff=calc_Ab_compl(V_nouv,mesh_nouv,Phi_nouv_v,nb_modes,test_snap)
- print('modèle réduit complexe utilisé')
+ print('modele reduit complexe utilise')
 
 A=Coeff[0]
 b=Coeff[1]
 
-## On résoud le modèle réduit
+## On resoud le modele reduit
 
 a_nouv=np.linalg.solve(A.T,-b)
 
-## On enregistre et imprime le temps d'éxécution de SE2
+## On enregistre et imprime le temps d'execution de SE2
 
 end=time.time()
 
 print('se2 faite ',end-start,' secondes')
 print(A,b,a_nouv)
-sys.exit('débuggage')#-------------------------------------
+sys.exit('debuggage')#-------------------------------------
 # --------------------- SE3 : calcul du nouveau champ de vecteurs, affichage --------------------- #
 
-## On réinitialise le temps de calcul ##
+## On reinitialise le temps de calcul ##
 
 start=time.time()
 
@@ -172,17 +172,17 @@ plt.close()
 r=r_nouv
 rho=r_nouv
 
-# Affichage des valeurs et erreurs de la solution périodique, quelle que soit la configuration
+# Affichage des valeurs et erreurs de la solution periodique, quelle que soit la configuration
 #err_per_ind_01(chi_n,cen,r,npas_err)
 
 #err_per_gr(cen_snap_ray,r_nouv,chi_nouv,npas_err,fig_todo)
-# Tenseur de diffusion homogénéisé
-## Intégrale de chi sur le domaine fluide
+# Tenseur de diffusion homogeneise
+## Integrale de chi sur le domaine fluide
 T_chi=np.zeros((2,2))
 for k in range(0,2):
  for l in range(0,2):
   T_chi[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
-## Intégrale de l'identité sur le domaine fluide
+## Integrale de l'identite sur le domaine fluide
 if config!='compl':
  por=(1-pi*r**2)
 else:
@@ -193,19 +193,19 @@ Dhom_kMOR=D_k*(D+T_chi.T)
 #print(('Tenseur Dhom_k',Dhom_k))
 print('Coefficient Dhom_k11 '+conf_mess+', '+geo_mess+' valeur '+str(rho)+' MOR :',Dhom_kMOR[0,0])
 
-## On enregistre et imprime le temps d'éxécution de SE3
+## On enregistre et imprime le temps d'execution de SE3
 
 end=time.time()
 
 print('se3 faite ',end-start,' secondes')
 #sys.exit()#-------------------------------------
-# --------------------- SE4 : comparaison avec la méthode des éléments finis --------------------- #
+# --------------------- SE4 : comparaison avec la methode des elements finis --------------------- #
 
-## On réinitialise le temps de calcul ##
+## On reinitialise le temps de calcul ##
 
 start=time.time()
 
-## On réinitialise le champ chi_nouv pour la méthode des éléments finis
+## On reinitialise le champ chi_nouv pour la methode des elements finis
 
 #res=20
 if test_snap=='i_per':
@@ -217,25 +217,25 @@ else:
 rho=r_nouv
 r=r_nouv
 
-# Affichage des valeurs et erreurs de la solution périodique, quelle que soit la configuration
+# Affichage des valeurs et erreurs de la solution periodique, quelle que soit la configuration
 #err_per_ind_01(chi_n,cen,r,npas_err)
 for npas_test in []:#30,40]:#7,15,16,60,125,250]:
  err_per_gr(cen_snap_ray,r_nouv,chi_nouv,npas_test,fig_todo)
 
-# Tenseur de diffusion homogénéisé
-## Intégrale de chi sur le domaine fluide
+# Tenseur de diffusion homogeneise
+## Integrale de chi sur le domaine fluide
 T_chi=np.zeros((2,2))
 for k in range(0,2):
  for l in range(0,2):
   T_chi[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
-## Intégrale de l'identité sur le domaine fluide
+## Integrale de l'identite sur le domaine fluide
 if config!='compl':
  por=(1-pi*r**2)
 else:
  por=1-pi*(r**2+0.15**2)
 D=por*np.eye(2)
 print('Noeuds :',V_nouv.dim())
-print('Porosité :',por)
+print('Porosite :',por)
 ## Calcul et affichage du tenseur Dhom
 Dhom_kMEF=D_k*(D+T_chi.T)
 #print(('Tenseur Dhom_k',Dhom_k))
@@ -256,7 +256,7 @@ else:
  plt.savefig("Figures2D/solFEM_"+config+'_'+geo_p+str(int(round(100*r_nouv,2)))+".png")
 plt.close()
 
-## On enregistre et imprime le temps d'éxécution de SE4
+## On enregistre et imprime le temps d'execution de SE4
 
 end=time.time()
 
