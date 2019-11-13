@@ -58,16 +58,16 @@ from DD_pars import *
 E_=False
 E_lL=False
 
-EI=True
+EI=False
 snap_done=False
 
-EII=True
+EII=False
 exsnap_done=False
 test_Dhom=False
 
 EIII=False
 
-EIV=False
+EIV=True
 
 # EIVfixe=False
 
@@ -112,8 +112,6 @@ if EIII :
     exec(open("DD_EIII.py").read())
 
 ## ---------- Etape IV ---------- ##
-
-
 
 # La mesure du temps d'execution doit se faire avec l'option 'save' de fig_todo
 

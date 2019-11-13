@@ -39,7 +39,7 @@ print(repertoire_parent+u_name)
 
 with sh.open(repertoire_parent+u_name) as u_loa:
     Usnap = u_loa["maliste"]
-#sys.exit()#----------------------------------------------------------------
+
 # matrice de correlation
 
 C=mat_corr_temp(V_fixe,N_snap,Usnap)
@@ -48,7 +48,7 @@ C=mat_corr_temp(V_fixe,N_snap,Usnap)
 
 vp_A_phi=mat_a_mat_phi(N_snap,Usnap,C,V_fixe,'n2')
 vp_A_phi=mat_a_mat_phi(N_snap,Usnap,C,V_fixe,'L2')
-#vp_A_phi=pod.mat_a_mat_phi(N_snap,Usnap,C,'')
+# vp_A_phi=pod.mat_a_mat_phi(N_snap,Usnap,C,'')
 
 val_propres=vp_A_phi[0]
 Aleat=vp_A_phi[1]
@@ -99,6 +99,7 @@ for i in range(N_snap):
     phi.vector().set_local(Phi_prime_v[:,i])
     plot(phi, linewidth=0.08)
     if fig_todo=='aff':
+        plt.title('Phi '+str(i+1)+' sur domaine fixe')
         plt.show()
     else:
         plt.savefig("Figures2D/phi_"+str(i+1)+"_"+config+'_'+geo_p+".png")
@@ -149,21 +150,17 @@ Nseuil=i
 print('1-nu '+str(seuil_ener_pour)+' pourcent :')
 print('Nrom = ', Nseuil)
 
-
-
-
-
 ## Tests sur les fonctions POD et leurs valeurs propres associeess
 
 print('Valeurs propres :',val_propres)
 
-list_DPhi=[]
-ui=Function(V_fixe)
-
-for i in range(Nseuil):
-    ui.vector().set_local(Phi_prime_v[:,i])
-    #
-    int_grad=assemble(grad(ui)[0,0]*dx)
-    list_DPhi.append(1+int_grad)
-
-print('Dhom POD-ROM :',list_DPhi)
+# list_DPhi=[]
+# ui=Function(V_fixe)
+#
+# for i in range(Nseuil):
+#     ui.vector().set_local(Phi_prime_v[:,i])
+#     #
+#     int_grad=assemble(grad(ui)[0,0]*dx)
+#     list_DPhi.append(1+int_grad)
+#
+# print('Dhom POD-ROM :',list_DPhi)

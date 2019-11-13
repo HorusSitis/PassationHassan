@@ -5,15 +5,15 @@ import numpy as np
 import os
 import sys
 
-
 ##########################################################
 ### ------------ Code a lire : conditions ------------ ###
 ##########################################################
 
 fixe_aff=False
+
 # fig_todo=''
-fig_todo='aff'
-# fig_todo='save'
+# fig_todo='aff'
+fig_todo='save'
 
 ### ------------------ Important : degre pour la resolution par elements finis ------------------ ###
 VFS_degree=2#3#
@@ -136,7 +136,7 @@ from LEc import *
 ## ------------ Etape lL 1demi : Affichage de microstructures periodiques ------------ ##
 
 nb_lcells=1
-cem_color='grey'#'r'
+cem_color='grey'
 sand_color='orange'
 fluid_color='cyan'
 
