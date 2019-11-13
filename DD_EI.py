@@ -43,31 +43,33 @@ if typ_msh=='gms':
 
 #if geo_p=='ray':
 #cen_snap_ray=[0.5,0.5]
-def snap_circ_ray(r_par):
+def snap_circ_ray(N_par):
+    rho=list_rho_appr[N_par]
+
     if test_snap=='i_per':
-        chi_r=snapshot_circ_per(cen_snap_ray,0.05*r_par,res)
+        chi_r=snapshot_circ_per(cen_snap_ray,rho,res)
     else:
-        chi_r=snapshot_compl_per(geo_p,0.05*r_par,cen_snap_ray,mention,test_snap)
+        chi_r=snapshot_compl_per(geo_p,rho,cen_snap_ray,mention,test_snap)
     chi_r_v=chi_r.vector().get_local()
     return([r_par,chi_r_v])
 
-#if geo_p=='cen':
-#ray_snap_cen=0.25
-#csr_list=[[0.5,0.3+0.05*k] for k in range(1,1+Nsnap)]
-#c_par : parametre scalaire pour la position du centre
-def snap_circ_cen(c_par):
-    cen_snap_ray=csr_list[c_par-1]
-    chi_c=snapshot_circ_per(cen_snap_ray,ray_snap_cen,res)
-    chi_c_v=chi_c.vector().get_local()
-    return([c_par,chi_c_v])
+# #if geo_p=='cen':
+# #ray_snap_cen=0.25
+# #csr_list=[[0.5,0.3+0.05*k] for k in range(1,1+Nsnap)]
+# #c_par : parametre scalaire pour la position du centre
+# def snap_circ_cen(c_par):
+#     cen_snap_ray=csr_list[c_par-1]
+#     chi_c=snapshot_circ_per(cen_snap_ray,ray_snap_cen,res)
+#     chi_c_v=chi_c.vector().get_local()
+#     return([c_par,chi_c_v])
 
-def snap_compl_ray(r_par):
-    if geo_p=='diag':
-        rho=0.05*r_par
-    elif geo_p=='hor':
-        rho=0.01+0.04*r_par
+def snap_compl_ray(N_par):
+
+    rho=list_rho_appr[N_par]
+
     chi_compl=snapshot_compl_per(geo_p,rho,cen_snap_ray,mention,test_snap)
     chi_compl_v=chi_compl.vector().get_local()
+
     return([r_par,chi_compl_v])
 
 # ------------------------- Snapshots, conditionnellement ------------------------- #
@@ -80,19 +82,19 @@ if not snap_done:
         pool=multiprocessing.Pool(processes=8)
         if config=='cer_un':
             if geo_p=='ray':
-                list_chi_n_v=pool.map(snap_circ_ray,(n for n in range(1,1+Nsnap)))
+                list_chi_n_v=pool.map(snap_circ_ray,(n for n in range(0,Nsnap)))
             elif geo_p=='cen':
-                list_chi_n_v=pool.map(snap_circ_cen,(n for n in range(1,1+Nsnap)))
+                list_chi_n_v=pool.map(snap_circ_cen,(n for n in range(0,Nsnap)))
             elif config=='cer_un_som':
-                list_chi_n_v=pool.map(snap_circ_ray,(n for n in range(1,1+Nsnap)))
+                list_chi_n_v=pool.map(snap_circ_ray,(n for n in range(0,Nsnap)))
             elif config=='compl':
-                list_chi_n_v=pool.map(snap_compl_ray,(n for n in range(1,1+Nsnap)))
+                list_chi_n_v=pool.map(snap_compl_ray,(n for n in range(0,Nsnap)))
 
     # Generation sequentielle des snapshots
     elif gen_snap=='seq':
         start=time.time()
         list_chi_n_v=[]
-        for n in range(1,1+Nsnap):
+        for n in range(0,Nsnap):
             if geo_p=='ray':
                 list_chi_n_v.append(snap_circ_ray(n))
             elif geo_p=='cen':
@@ -111,7 +113,7 @@ if not snap_done:
     # Construction de la liste des snapshots vectorises : cas d'un parametre geometrique definissant un ordre - lien avec la porosite ; ou non.
     list_chi_v=[]
     if geo_p=='ray' or config=='compl':
-        for n in range(1,1+Nsnap):
+        for n in range(0,Nsnap):
             for i in range(0,Nsnap):
                 if list_chi_n_v[i][0]==n:
                     chi_n_v=list_chi_n_v[i][1]
@@ -135,17 +137,19 @@ else :
 
 # --------------------------------------------------------------------------------- #
 
-
-for n in range(1,1+Nsnap):#attention le rayon d'un cercle doit etre non nul
+# for rho in list_rho_appr:
+for n in range(0,Nsnap):
     # Extraction du snapshot de rang n
-    chi_n_v=list_chi_v[n-1]
+    chi_n_v=list_chi_v[n]
     # On cree un maillage pour reecrire les snapshots sous la forme de fonctions
     mesh_directory="maillages_per/2D/"
+
+    rho=list_rho_appr[N_par]
+    r = rho
 
     if config=='cer_un':
         if geo_p=='ray':
             cen=cen_snap_ray
-            r=n*0.05
         if typ_msh=='gms':
             mesh_name="maillage_trou2D_"+str(int(round(100*r,2)))
             mesh=Mesh(mesh_directory+mesh_name+".xml")
@@ -175,11 +179,6 @@ for n in range(1,1+Nsnap):#attention le rayon d'un cercle doit etre non nul
             mesh=creer_maill_circ([c_x,c_y],r,res)
 
     else:
-        if geo_p=='diag':
-            rho=0.05*n
-        elif geo_p=='hor':
-            rho=0.01+0.04*n
-        r=rho
         r_fixe=0.15
 
         mesh_name="maillage_trous2D_"+geo_p+"_"+str(int(round(100*rho,2)))
@@ -201,8 +200,8 @@ for n in range(1,1+Nsnap):#attention le rayon d'un cercle doit etre non nul
     chi_n.vector().set_local(chi_n_v)
     # Figures et erreurs
     plot(chi_n)
-    if n==1:
-        plt.title("Rho = 0,05", fontsize=40)
+    if n==0 and rho_appr_min <1:
+        plt.title("Rho = 0,0"+str(int(round(100*r,1))), fontsize=40)
     else:
         plt.title("Rho = 0,"+str(int(round(100*r,2))),fontsize=40)
     #plot(grad(chi_n)[:,0]
@@ -210,7 +209,7 @@ for n in range(1,1+Nsnap):#attention le rayon d'un cercle doit etre non nul
     if fig_todo=='aff':
         plt.show()
     elif fig_todo=='save':
-        plt.savefig("Figures2D/sol_"+str(n)+"_sur"+str(Nsnap)+config+'_'+geo_p+".png")
+        plt.savefig("Figures2D/sol_"+str(n+1)+"_sur"+str(Nsnap)+config+'_'+geo_p+".png")
     plt.close()
     if config!='compl':
         err_per_gr(cen_snap_ray,r,chi_n,npas_err,fig_todo)
@@ -221,8 +220,8 @@ for n in range(1,1+Nsnap):#attention le rayon d'un cercle doit etre non nul
     ## Integrale de chi sur le domaine fluide
     T_chi=np.zeros((2,2))
     for k in range(0,2):
-    for l in range(0,2):
-        T_chi[k,l]=assemble(grad(chi_n)[k,l]*dx)
+        for l in range(0,2):
+            T_chi[k,l]=assemble(grad(chi_n)[k,l]*dx)
     ## Integrale de l'identite sur le domaine fluide
     if config!='compl':
         por=(1-pi*r**2)
@@ -232,7 +231,7 @@ for n in range(1,1+Nsnap):#attention le rayon d'un cercle doit etre non nul
     ## Calcul et affichage du tenseur Dhom
     Dhom_k=D_k*(D+T_chi.T)
     print("Porosite :", por)
-    print('Coefficient Dhom_k11, snapshot '+str(n)+", "+conf_mess+', '+geo_mess+" :",Dhom_k[0,0])
+    print('Coefficient Dhom_k11, snapshot '+str(n+1)+", "+conf_mess+', '+geo_mess+" :",Dhom_k[0,0])
     ## Anisotropie
     mod_diag=min(abs(Dhom_k[0,0]),abs(Dhom_k[1,1]))
     mod_ndiag=0

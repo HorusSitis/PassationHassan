@@ -64,23 +64,29 @@ VFS_degree=2#3#
 ## degre 2 : comme en dimension 3, permet d'eviter les erreurs de periodicite pour des pas qui nen sont pas de la forme 2"n, ou n est un diviseur de 100 ##
 
 config='cer_un'#'compl'#
-
+# config='compl'
 
 if config=='cer_un':
-    test_snap='i_per'#'solid_1'#''#
+    test_snap='i_per'
+    # test_snap = ''
+    # test_snap = 'solid_1'
     ### on exclut 'solid_2' ###
-    dom_fixe="am"#"multiray"#"ray_min"#
+    dom_fixe= "am"
+    # dom_fixe = "multiray"
+    # dom_fixe = "ray_min"
     ##
-    geo_p='ray'#'cen'#
-    cen_snap_ray=[0.5,0.5]#[0.,0.]#
+    geo_p='ray'
+    # geo_p = "cen"
+    cen_snap_ray=[0.5,0.5]
+    # cen_snap_ray = [0.,0.]
     ##
     conf_mess='disque unique'
     ##
     if geo_p=='ray':
         geo_mess='rayon variable'
     ### geo_p='centre'
-    #ray_snap_cen=0.25
-    #csr_list=[[0.05*k,0.5] for k in range(1,1+Nsnap)]
+    # ray_snap_cen=0.25
+    # csr_list=[[0.05*k,0.5] for k in range(1,1+Nsnap)]
     ##
     if cen_snap_ray==[0.5,0.5]:
         conf_mess=conf_mess+" centre"
@@ -94,9 +100,11 @@ if config=='cer_un':
 elif config=='compl':
     test_snap='solid_1'#'solid_2'#''#
     ##
-    dom_fixe="solid"#"am"#
+    dom_fixe="solid"
+    # dom_fixe = "am"
     ##
-    geo_p='hor'#'diag'#
+    geo_p='hor'
+    # geo_p='diag'
     ##
     if geo_p=='diag':
         cen_snap_ray=[0.,0.]
@@ -112,6 +120,24 @@ elif config=='compl':
     elif geo_p=='hor':
         geo_mess='alignes horizontalement, '+mess_prefix
 
+### ------------ Important : liste des rayons pour l'apprentissage et les tests ------------ ###
+
+N_snap = 8
+
+if config != 'compl' of (config == 'compl' and geo_p == 'diag'):
+    rho_appr_min = 0.05
+    # rho_appr_min = 0.1
+    rho_appr_max = 0.4
+    # rho_appr_max = 0.45
+    list_rho_test = np.linspace(0.11, 0.44, 4)
+elif config == 'compl' and geo_p = 'hor':
+    rho_appr_min = 0.01
+    rho_appr_max = 0.028
+    list_rho_test = np.linspace(0.04, 0.1, 0.2, 0.3)
+
+list_rho_appr = np.linspace(rho_appr_min, rho_appr_max, N_snap)
+
+
 # choix du type de maillage
 
 typ_msh='gms'
@@ -121,11 +147,14 @@ if typ_msh=='gms':
     res=res_gmsh
     res_fixe=res_gmsh
 
-# raffinement de maillages
+# raffinement de maillages : ocouronnes, volumes
 
 Nrefine=1
 #crow=(1/res_gmsh)*1e-1
-typ_refi='front'#'vol'#
+
+typ_refi='front'
+# typ_refi='vol'
+
 lg_crow=-1
 crow=2*10**(lg_crow)
 
@@ -145,6 +174,7 @@ repertoire_parent="Res2D/"
 
 from LEc import *
 
+
 ## ------------ Etape lL 1demi : Affichage de microstructures periodiques ------------ ##
 
 nb_lcells=1
@@ -156,9 +186,9 @@ fluid_color='cyan'
 ## ---------- Etape II ---------- ##
 
 D_k=1.0
-Nsnap=8
+# Nsnap=8
 
-# important : 
+# important :
 deb=1
 
 # par defaut##5# pour les tests cer_un et diag##6# pour hor##
@@ -167,21 +197,31 @@ ordo='Ordr'
 # ordo='Nordr'
 # apprentissage : calcul parallele ou sequentiel, prise en compte de la resolution
 
-gen_snap='par8'#'seq'#'seq_par'#
+gen_snap = 'par8'
+# gen_snap = 'par4'
+#
+# gen_snap = 'seq'
+
+# # non prepare dans EI-II
+# gen_snap = 'seq_par'
 
 ## ---------- Etape III ---------- ##
 
 seuil_ener_pour=99.99
 
 # On soustrait eventuellement la moyenne des snapshots interpoles a chaque snapshot
-##moy_mod='soust_m'#'' par defaut
+## moy_mod='soust_m'#'' par defaut
 
 
-##99,99% :
+## 99,99% :
 ### compl diag N_mor=3 pour "solid", 4 pour "am"
 ### compl hor N_mor=4
 
 ## ---------- Etape IV ---------- ##
 
 N_mor=2
-r_nouv=0.33#0.44#0.22#0.11#0.10#
+
+# r_nouv=0.11
+# r_nouv=0.22
+r_nouv=0.33
+# r_nouv=0.44

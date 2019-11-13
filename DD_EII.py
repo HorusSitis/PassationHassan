@@ -57,13 +57,10 @@ plt.close()
 
 def extra_snap(n):
 
-    if geo_p=='hor':
-        r=0.01+0.04*n
-    else:
-        r=0.05*n
+    r = list_rho_appr[n]
 
     # chargement du snapshot courant
-    chi_n_v=list_chi_v[n-1]
+    chi_n_v=list_chi_v[n]
 
     # mise sous forme d'une fonction EF
     if config!='compl':
@@ -97,15 +94,15 @@ if not exsnap_done:
 
     # preparation du calcul parallele gros grains
     pool=multiprocessing.Pool(processes=8)
-    list_chi_n_prime_v=pool.map(extra_snap,(n for n in range(1,1+Nsnap)))
+    list_chi_n_prime_v=pool.map(extra_snap,(n for n in range(0,Nsnap)))
 
     # Remplissage de la matrice
     nb_noeuds=V_fixe.dim()
     Usnap=np.zeros((nb_noeuds,Nsnap))
-    for n in range(1,1+Nsnap):
+    for n in range(0,Nsnap):
         for i in range(0,Nsnap):
             if list_chi_n_prime_v[i][0]==n:
-                Usnap[:,n-1]=list_chi_n_prime_v[i][1]
+                Usnap[:,n]=list_chi_n_prime_v[i][1]
 
     # Stochage de la matrice des snapshots
     u_name='Usnap_'+dom_fixe+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
@@ -125,29 +122,27 @@ else:
 # Representations graphiques
 
 list_snap=[]
-for n in range(1,1+Nsnap):
+for n in range(0,Nsnap):
     chi_prime=Function(V_fixe)
-    chi_prime.vector().set_local(Usnap[:,n-1])
+    chi_prime.vector().set_local(Usnap[:,n])
     # remplissage de la liste de fonctions
     list_snap.append(chi_prime)
 
 cen=cen_snap_ray
-for n in range(1,1+Nsnap):
+for n in range(0,Nsnap):
 
-    if geo_p=='hor':
-        r=0.01+0.04*n
-    else:
-        r=0.05*n
-    chi_prime_n=list_snap[n-1]
+    r = list_rho_appr[n]
+
+    chi_prime_n=list_snap[n]
 
     if fig_todo=='aff' or fig_todo=='save':
         # Affichage des valeurs de la solution interpolee
         plot(chi_prime_n)
-        plt.title("Snapshot "+str(n),fontsize=40)
+        plt.title("Snapshot "+str(n+1),fontsize=40)
         if fig_todo=='aff':
             plt.show()
         else:
-            plt.savefig("Figures2D/snap_"+str(n)+"_sur"+str(Nsnap)+config+'_'+geo_p+".png")
+            plt.savefig("Figures2D/snap_"+str(n+1)+"_sur"+str(Nsnap)+config+'_'+geo_p+".png")
         plt.close()
     else:
         print('pffrrh !')
