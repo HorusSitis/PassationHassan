@@ -49,8 +49,7 @@ from DD_fun_obj import *
 
 # Parametres
 
-from DD_par import *
-
+from DD_pars import *
 
 ##########################################################
 ### ------------ Code a lire : conditions ------------ ###
@@ -59,25 +58,20 @@ from DD_par import *
 E_=False
 E_lL=False
 
-EI=False
-snap_done=True
+EI=True
+snap_done=False
 
-EII=False
-
-exsnap_done=True
-test_Dhom=True
-
+EII=True
+exsnap_done=False
+test_Dhom=False
 
 EIII=False
-EIV=True
-EIVfixe=False
 
+EIV=False
 
+# EIVfixe=False
 
-res_gmsh=100
-
-fixe_aff=False
-fig_todo=''
+# res_gmsh=100
 
 ### ------------ Etape 0 : Generation de microstructures periodiques aleatoires ------------ ###
 
@@ -88,35 +82,21 @@ if E_ :
 ### ----------------- Etapes I a IV ----------------- ###
 #########################################################
 
-### ------------------ Important : degre pour la resolution par elements finis ------------------ ###
-VFS_degree=2#3#
-## degre 2 : comme en dimension 3, permet d'eviter les erreurs de periodicite pour des pas qui nen sont pas de la forme 2"n, ou n est un diviseur de 100 ##
-
-config='cer_un'#'compl'#
-
 ### ------------ Execution des etapes demandees en preambule, imports specifiques ------------ ###
-
 
 from LEc import *
 
-
-
-
 ## ------------ Etape lL 1demi : Affichage de microstructures periodiques ------------ ##
-
-
 
 if E_lL :
     exec(open("DD_ElL.py").read())
 
 ## ---------- Etape I, memes parametres que pour 1demi ---------- ##
 
-# Execution
-
 if EI :
     exec(open("DD_EI.py").read())
 
-## ---------- Etape II ---------- ##
+## ---------- Etape II : int_grad eventuellement sur dom_fixe ---------- ##
 
 if EII :
     exec(open("DD_EII.py").read())
@@ -128,12 +108,8 @@ if exsnap_done and test_Dhom :
 
 from PO23D import *
 
-
-
 if EIII :
     exec(open("DD_EIII.py").read())
-
-
 
 ## ---------- Etape IV ---------- ##
 

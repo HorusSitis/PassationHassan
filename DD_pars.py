@@ -1,63 +1,19 @@
 ### ------------ Paquets a importer ------------ ###
 
-# paquets mathematiques
 import numpy as np
-# import random as rd
-# from math import sqrt
-# from math import exp
-#
-# # affichage etc
-#
-# import pylab as pl
-# #from pylab import *
-#
-# import matplotlib.pyplot as plt
-# from mpl_toolkits.axes_grid1 import make_axes_locatable
-# import matplotlib.gridspec as gridspec
-
-# systeme
 
 import os
 import sys
-
-# from importlib import reload
-#
-# # calcul parallele
-#
-# import threading
-# import time
-# import multiprocessing
-#
-# import subprocess
-#
-# # stockage d'objets python
-#
-# import marshal as ma
-# import shelve as sh
-#
-# ## Paquets specifiques a POD-MOR ##
-#
-# from fenics import *
-# from dolfin import *
-# from mshr import *
-#
-# # Fonctions 2D
-#
-# from DD_fun_obj import *
 
 
 ##########################################################
 ### ------------ Code a lire : conditions ------------ ###
 ##########################################################
 
-### ------------ Etape 0 : Generation de microstructures periodiques aleatoires ------------ ###
-
-if E_ :
-    from DD_E0 import *
-
-#########################################################
-### ----------------- Etapes I a IV ----------------- ###
-#########################################################
+fixe_aff=False
+# fig_todo=''
+fig_todo='aff'
+# fig_todo='save'
 
 ### ------------------ Important : degre pour la resolution par elements finis ------------------ ###
 VFS_degree=2#3#
@@ -124,13 +80,13 @@ elif config=='compl':
 
 N_snap = 8
 
-if config != 'compl' of (config == 'compl' and geo_p == 'diag'):
+if config != 'compl' or (config == 'compl' and geo_p == 'diag'):
     rho_appr_min = 0.05
     # rho_appr_min = 0.1
     rho_appr_max = 0.4
     # rho_appr_max = 0.45
     list_rho_test = np.linspace(0.11, 0.44, 4)
-elif config == 'compl' and geo_p = 'hor':
+elif config == 'compl' and geo_p == 'hor':
     rho_appr_min = 0.01
     rho_appr_max = 0.028
     list_rho_test = np.linspace(0.04, 0.1, 0.2, 0.3)
@@ -139,6 +95,8 @@ list_rho_appr = np.linspace(rho_appr_min, rho_appr_max, N_snap)
 
 
 # choix du type de maillage
+
+res_gmsh=100
 
 typ_msh='gms'
 # typ_msh=''

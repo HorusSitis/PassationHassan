@@ -34,7 +34,7 @@ nb_noeuds = V_fixe.dim()
 
 ## Chargement de la marice des snapshots
 
-u_name='Usnap_'+dom_fixe+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
+u_name='Usnap_'+dom_fixe+str(N_snap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
 print(repertoire_parent+u_name)
 
 with sh.open(repertoire_parent+u_name) as u_loa:
@@ -42,13 +42,13 @@ with sh.open(repertoire_parent+u_name) as u_loa:
 #sys.exit()#----------------------------------------------------------------
 # matrice de correlation
 
-C=mat_corr_temp(V_fixe,Nsnap,Usnap)
+C=mat_corr_temp(V_fixe,N_snap,Usnap)
 
 # Calcul des coefficients aleatoires et la base POD
 
-vp_A_phi=mat_a_mat_phi(Nsnap,Usnap,C,V_fixe,'n2')
-vp_A_phi=mat_a_mat_phi(Nsnap,Usnap,C,V_fixe,'L2')
-#vp_A_phi=pod.mat_a_mat_phi(Nsnap,Usnap,C,'')
+vp_A_phi=mat_a_mat_phi(N_snap,Usnap,C,V_fixe,'n2')
+vp_A_phi=mat_a_mat_phi(N_snap,Usnap,C,V_fixe,'L2')
+#vp_A_phi=pod.mat_a_mat_phi(N_snap,Usnap,C,'')
 
 val_propres=vp_A_phi[0]
 Aleat=vp_A_phi[1]
@@ -57,7 +57,7 @@ Phi_prime_v=vp_A_phi[2]
 
 ## Enregistrement de la matrice de la base POD, sous la forme vectorielle
 
-phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+"res"+str(res)+'_'+ordo+'_'+computer
+phi_name='Phi'+dom_fixe+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+"res"+str(res)+'_'+ordo+'_'+computer
 print(phi_name)
 
 with sh.open(repertoire_parent+phi_name) as p_sto:
@@ -68,15 +68,15 @@ ui=Function(V_fixe)
 uj=Function(V_fixe)
 
 ## Orthogonalite
-for i in range(Nsnap-1):
+for i in range(N_snap-1):
     ui.vector().set_local(Phi_prime_v[:,i])
-    for j in range(i+1,Nsnap):
+    for j in range(i+1,N_snap):
         uj.vector().set_local(Phi_prime_v[:,j])
         scal=assemble(dot(ui,uj)*dx)
         print(scal)
 
 ## Norme des vacteurs dela base POD, L2 ou n2
-for i in range(Nsnap):
+for i in range(N_snap):
     ui.vector().set_local(Phi_prime_v[:,i])
     scal=assemble(dot(ui,ui)*dx)
     norme_L2=sqrt(scal)
@@ -95,7 +95,7 @@ for i in range(Nsnap):
 ## Representation graphique des phi_prime_i :
 
 phi=Function(V_fixe)
-for i in range(Nsnap):
+for i in range(N_snap):
     phi.vector().set_local(Phi_prime_v[:,i])
     plot(phi, linewidth=0.08)
     if fig_todo=='aff':
@@ -112,7 +112,7 @@ for i in range(Nsnap):
 ener_pour=energie_pourcentage(val_propres)[0]
 ener_pour_cumul=energie_pourcentage(val_propres)[1]
 
-absc=np.arange(1,Nsnap+1,1)
+absc=np.arange(1,N_snap+1,1)
 
 plt.plot(absc,ener_pour)
 plt.xlabel('valeurs propres')

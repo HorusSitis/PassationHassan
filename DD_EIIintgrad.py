@@ -29,8 +29,6 @@ class PeriodicBoundary(SubDomain):
             else:
                 y[i]=x[i]
 
-
-
 # Extrapolation au domaine Omega_fixe :
 if dom_fixe=="am":
     mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2D_am.xml")
@@ -48,7 +46,7 @@ V_fixe = VectorFunctionSpace(mesh_fixe, 'P', VFS_degree, constrained_domain=Peri
 
 if exsnap_done:
     # Chargement de la matrice des snapshots
-    u_name='Usnap_'+dom_fixe+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
+    u_name='Usnap_'+dom_fixe+str(N_snap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
     print(repertoire_parent+u_name)
     with sh.open(repertoire_parent+u_name) as u_loa:
         Usnap = u_loa["maliste"]
@@ -59,20 +57,20 @@ else:
 # Representations graphiques
 
 list_snap=[]
-for n in range(1,1+Nsnap):
+for n in range(0,N_snap):
     chi_prime=Function(V_fixe)
-    chi_prime.vector().set_local(Usnap[:,n-1])
+    chi_prime.vector().set_local(Usnap[:,n])
     # remplissage de la liste de fonctions
     list_snap.append(chi_prime)
 
 cen=cen_snap_ray
-for n in range(1,1+Nsnap):
+for n in range(0,N_snap):
 
     if geo_p=='hor':
         r=0.01+0.04*n
     else:
         r=0.05*n
-    chi_prime_n=list_snap[n-1]
+    chi_prime_n=list_snap[n]
 
     if fig_todo=='aff' or fig_todo=='save':
         # Affichage des valeurs de la solution interpolee
@@ -81,7 +79,7 @@ for n in range(1,1+Nsnap):
         if fig_todo=='aff':
             plt.show()
         else:
-            plt.savefig("Figures2D/snap_"+str(n)+"_sur"+str(Nsnap)+config+'_'+geo_p+".png")
+            plt.savefig("Figures2D/snap_"+str(n)+"_sur"+str(N_snap)+config+'_'+geo_p+".png")
         plt.close()
     else:
         print('pffrrh !')
@@ -112,13 +110,11 @@ def width(i):
     return crow/i**2
 
 def f_testDhom(n):
-    if geo_p=='hor':
-        r=0.01+0.04*n
-    else:
-        r=0.05*n
-    chi_prime_n=list_snap[n-1]
-    if geo_p=='ray':
-        por=1-pi*r**2
+
+    rho=list_rho_appr[n]
+    r = rho
+    chi_prime_n=list_snap[n]
+
     por_prime=1
 
     ## Creation du maillage fixe local
@@ -194,7 +190,7 @@ def f_testDhom(n):
     nb_noeuds_refi=V_fixe.dim()
     end=time.time()
     tps_interp=end-start
-    if Nrefine>0 and fig_mesh and n==3:
+    if Nrefine>0 and fig_mesh and n==2:
         plot(mesh_fixe)
         plt.title('Maillage raffine '+str(Nrefine)+' fois rayon '+str(int(round(100*r,2)))+'x10e-2')
         plt.show()
@@ -223,18 +219,17 @@ def f_testDhom(n):
 print('Liste des snapshots :',u_name)
 
 pool=multiprocessing.Pool(processes=n_mp_refi)
-list_refi_interp=pool.map(f_testDhom,(n for n in range(1,1+Nsnap)))
+list_refi_interp=pool.map(f_testDhom,(n for n in range(0,N_snap)))
 
 nom_fichier='Res2D/'+'testDhom'+config+geo_p+'_'+dom_fixe+'_crown10'+str(lg_crow)+'_Nrefi'+str(Nrefine)+'.txt'
 registre=open(nom_fichier,'w')
 
-for n in range(1,1+Nsnap):
+for n in range(0,N_snap):
 
     # calcul de rho d'apres les parametres geometriques exploitables avec multiprocessing
-    if geo_p=='hor':
-        r=0.01+0.04*n
-    else:
-        r=0.05*n
+    rho=list_rho_appr[n]
+    r = rho
+
     if geo_p=='ray':
         por=1-pi*r**2
     por_prime=1
@@ -253,7 +248,7 @@ for n in range(1,1+Nsnap):
             T_chi_postprime[k,l]=assemble(grad(chi_postprime_n)[k,l]*dx)
 
     ## Chargement des resultats d'integration des tenseurs d'homogeneisation sur les differents maillages
-    [tps_refi,tps_interp,T_chi_restr_prime,co_T_chi_restr_prime,T_chi_postprime,nb_noeuds_refi]=list_refi_interp[n-1]
+    [tps_refi,tps_interp,T_chi_restr_prime,co_T_chi_restr_prime,T_chi_postprime,nb_noeuds_refi]=list_refi_interp[n]
 
     ## Integration sur le domaine virtuel : carre unite eventuellement prive d'un point
     T_chi_prime=np.zeros((2,2))
