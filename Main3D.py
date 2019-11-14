@@ -109,7 +109,7 @@ if EIV and res_gmsh!=50:
         registre=open(nom_fichier + '.txt','w')
 
         registre.write('\\'+'begin{tabular}')
-        registre.write('{|c|c||c|c|c||c|c|c|c|c||c|c|}')
+        registre.write('{|c|c||c|c|c||c|c|c|c|c||c|c|c|}')
         registre.write('\n')
         registre.write('\\'+'hline'+'\n')
 
@@ -118,18 +118,19 @@ if EIV and res_gmsh!=50:
         registre.write('\\'+'('+'\\'+'tilde{'+'\\'+'rho'+'}'+'\\'+')'+'&')
         registre.write('Nodes'+'&')
 
-        registre.write('\\'+'('+'{'+'\\'+'frac{'+'\\'+'int'+'\\'+'nabla'+'\\'+'chi}{'+'\\'+'Omega}}_{ROM}'+'\\'+')'+'&')
-        registre.write('\\'+'('+'{'+'\\'+'frac{'+'\\'+'int'+'\\'+'nabla'+'\\'+'chi}{'+'\\'+'Omega}}_{FOM}'+'\\'+')'+'&')
+        registre.write('\\'+'('+'\\'+'frac{'+'\\'+'int'+'\\'+'nabla'+'\\'+'chi_{rom}}{|'+'\\'+'Omega|}'+'\\'+')'+'&')
+        registre.write('\\'+'('+'\\'+'frac{'+'\\'+'int'+'\\'+'nabla'+'\\'+'chi_{fem}}{|'+'\\'+'Omega|}'+'\\'+')'+'&')
         registre.write('\\'+'('+'Err'+'\\'+')'+'&')
 
-        registre.write('\\'+'('+'t_{'+'\\'+'phi nouv}'+'\\'+')'+'&')
+        registre.write('\\'+'('+'t_{'+'\\'+'phi^{nouv}}'+'\\'+')'+'&')
         registre.write('\\'+'('+'t_{Ab}'+'\\'+')'+'&')
         registre.write('\\'+'('+'t_{solve}'+'\\'+')'+'&')
-        registre.write('\\'+'('+'t_{dhom}'+'\\'+')'+'&')
-        registre.write('\\'+'('+'t_{FEM}'+'\\'+')'+'&')
+        registre.write('\\'+'('+'t_{D^{hom}}'+'\\'+')'+'&')
+        registre.write('\\'+'('+'t_{fem}'+'\\'+')'+'&')
 
-        registre.write('\\'+'('+'\\'+'mathcal{G}_{rom}'+'\\'+')'+'&')
-        registre.write('\\'+'('+'\\'+'mathcal{G}_{rom-'+'\\'+'phi nouv}'+'\\'+')'+'\\'+'\\'+'\n')
+        registre.write('\\'+'('+'\\'+'mathcal{G}^{rom}'+'\\'+')'+'&')
+        registre.write('\\'+'('+'\\'+'mathcal{G}^{rom}_{-'+'\\'+'phi}'+'\\'+')'+'&')
+        registre.write('\\'+'('+'\\'+'mathcal{G}^{rom}_{solve}'+'\\'+')'+'\\'+'\\'+'\n')
 
         registre.write('\\'+'hline'+'\n')
 
@@ -142,7 +143,10 @@ if EIV and res_gmsh!=50:
         registre.write('\\'+'end{tabular}')
 
         registre.close()
-        nom_tab_latex = 'LaTeXArticle/'+ config + '_res' + str(res_gmsh) + '_raydeb_o' + str(int(100*2*list_rho_appr[0]))# geo_p + 'Npod' + str(N_mor) +
+
+        # nom_tab_latex = 'LaTeXArticle/'+ config + '_res' + str(res_gmsh) + '_raydeb_o' + str(int(100*2*list_rho_appr[0]))# geo_p + 'Npod' + str(N_mor) +
+        nom_tab_latex = '../GitLab/rom_diffeo_dhom/latex_article/'+ config + '_res' + str(res_gmsh) + '_raydeb_o' + str(int(100*2*list_rho_appr[0]))
+
         os.rename(nom_fichier + '.txt', nom_tab_latex + '.tex')
 
     else:

@@ -350,9 +350,11 @@ if Report :
     R_rom_Nmaill = (t_phi_nouv+t_int_Ab+t_rom_linear+t_rom_Dhom)/t_fem
     R_interpolation_Nmaill = t_phi_nouv/t_fem
     Rdiff_rom = R_rom_Nmaill - R_interpolation_Nmaill
+    R_rom_solve = t_rom_linear/t_fem
     print('Gain de temps sans maillage :', 1./R_rom_Nmaill)#,'sans unite')
     # print('Interpolation sans maillage :', 1./R_interpolation_Nmaill)#,'sans unite')
     print('ROM seul sans maillage :', 1./Rdiff_rom)#,'sans unite')
+    print('Resolution du ROM seule :', round(0.0001/R_rom_solve, 2), '10E4')
     #
     print('#'*78)
     print('#'*78)
@@ -371,11 +373,12 @@ registre.write(str(round(err_rel_ig, 2))+'\\'+'%'+'&')
 
 registre.write(str(round(t_phi_nouv, 2))+'s'+'&')
 registre.write(str(round(t_int_Ab, 2))+'s'+'&')
-registre.write(str(round(10000*t_rom_linear, 2))+'\\'+'('+'\\'+'times 10^{-4}'+'\\'+')'+'s'+'&')
+registre.write(str(round(100000*t_rom_linear, 2))+'\\'+'('+'\\'+'cdot 10^{-5}'+'\\'+')'+'s'+'&')
 registre.write(str(round(t_rom_Dhom, 2))+'s'+'&')
 registre.write(str(round(t_fem, 2))+'s'+'&')
 
 registre.write(str(round(1./R_rom_Nmaill, 2))+'&')
-registre.write(str(round(1./Rdiff_rom, 2))+'\\'+'\\'+'\n')
+registre.write(str(round(1./Rdiff_rom, 2))+'&')
+registre.write(str(round(0.0001/R_rom_solve, 2))+'\\'+'('+'\\'+'cdot 10^4'+'\\'+')'+'\\'+'\\'+'\n')
 
 registre.write('\\'+'hline'+'\n')
