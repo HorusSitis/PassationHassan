@@ -371,7 +371,7 @@ registre.write(str(round(err_rel_ig, 2))+'\\'+'%'+'&')
 
 registre.write(str(round(t_phi_nouv, 2))+'s'+'&')
 registre.write(str(round(t_int_Ab, 2))+'s'+'&')
-registre.write(str(round(t_rom_linear, 2))+'s'+'&')
+registre.write(str(round(10000*t_rom_linear, 2))+'\\'+'('+'\\'+'times 10^{-4}'+'\\'+')'+'s'+'&')
 registre.write(str(round(t_rom_Dhom, 2))+'s'+'&')
 registre.write(str(round(t_fem, 2))+'s'+'&')
 

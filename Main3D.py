@@ -122,14 +122,14 @@ if EIV and res_gmsh!=50:
         registre.write('\\'+'('+'{'+'\\'+'frac{'+'\\'+'int'+'\\'+'nabla'+'\\'+'chi}{'+'\\'+'Omega}}_{FOM}'+'\\'+')'+'&')
         registre.write('\\'+'('+'Err'+'\\'+')'+'&')
 
-        registre.write('\\'+'('+'t_{phi nouv}'+'\\'+')'+'&')
+        registre.write('\\'+'('+'t_{'+'\\'+'phi nouv}'+'\\'+')'+'&')
         registre.write('\\'+'('+'t_{Ab}'+'\\'+')'+'&')
         registre.write('\\'+'('+'t_{solve}'+'\\'+')'+'&')
         registre.write('\\'+'('+'t_{dhom}'+'\\'+')'+'&')
         registre.write('\\'+'('+'t_{FEM}'+'\\'+')'+'&')
 
         registre.write('\\'+'('+'\\'+'mathcal{G}_{rom}'+'\\'+')'+'&')
-        registre.write('\\'+'('+'\\'+'mathcal{G}_{rom-sol}'+'\\'+')'+'\\'+'\\'+'\n')
+        registre.write('\\'+'('+'\\'+'mathcal{G}_{rom-'+'\\'+'phi nouv}'+'\\'+')'+'\\'+'\\'+'\n')
 
         registre.write('\\'+'hline'+'\n')
 
