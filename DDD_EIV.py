@@ -3,41 +3,41 @@
 #################################################################################################
 ## Etape IV : Predictions. Choisir les parametres du probleme a resoudre par le modele reduit.#
 
-tol=1e-10
-
-xinf=0.0
-yinf=0.0
-zinf=0.0
-xsup=1.0
-ysup=1.0
-zsup=1.0
-
-dimension=3
-
-if res_gmsh==10:
- lw=0.27
-elif res_gmsh==20:
- lw=0.15
-elif res_gmsh==50:
- lw=0.01
-
-r_s_0=0.15
-r_v_0=0.15
-r_c_0=0.15
-
-r_min=0.05
-
-class PeriodicBoundary(SubDomain):
- # Left boundary is "target domain" G
- def inside(self, x, on_boundary):
-  return on_boundary and not(near(x[0],xsup,tol) or near(x[1],ysup,tol) or near(x[2],zsup,tol))
- # Map right boundary (H) to left boundary (G)
- def map(self, x, y):
-  for i in range(dimension):
-   if near(x[i],1.0,tol):
-    y[i]=0.0
-   else:
-    y[i]=x[i]
+# tol=1e-10
+#
+# xinf=0.0
+# yinf=0.0
+# zinf=0.0
+# xsup=1.0
+# ysup=1.0
+# zsup=1.0
+#
+# dimension=3
+#
+# if res_gmsh==10:
+#  lw=0.27
+# elif res_gmsh==20:
+#  lw=0.15
+# elif res_gmsh==50:
+#  lw=0.01
+#
+# r_s_0=0.15
+# r_v_0=0.15
+# r_c_0=0.15
+#
+# r_min=0.05
+#
+# class PeriodicBoundary(SubDomain):
+#  # Left boundary is "target domain" G
+#  def inside(self, x, on_boundary):
+#   return on_boundary and not(near(x[0],xsup,tol) or near(x[1],ysup,tol) or near(x[2],zsup,tol))
+#  # Map right boundary (H) to left boundary (G)
+#  def map(self, x, y):
+#   for i in range(dimension):
+#    if near(x[i],1.0,tol):
+#     y[i]=0.0
+#    else:
+#     y[i]=x[i]
 
 # maillage du domaine fixe
 
@@ -84,16 +84,16 @@ import time
 nb_modes=N_mor
 
 if config=='sph_un':
- mesh_n_name=mesh_dir+"cubesphere_periodique_triangle_"+str(int(round(100*r_nouv,2)))+"sur"+str(res_gmsh)
+    mesh_n_name=mesh_dir+"cubesphere_periodique_triangle_"+str(int(round(100*r_nouv,2)))+"sur"+str(res_gmsh)
 elif config=='cyl_un':
- mesh_n_name=mesh_dir+"cubecylindre_periodique_triangle_"+str(int(round(100*r_nouv,2)))+"sur"+str(res_gmsh)
+    mesh_n_name=mesh_dir+"cubecylindre_periodique_triangle_"+str(int(round(100*r_nouv,2)))+"sur"+str(res_gmsh)
 if config=='2sph':
- mesh_n_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_nouv,2)))+str(int(round(100*r_v_0,2)))+"sur"+str(res_gmsh)
+    mesh_n_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_nouv,2)))+str(int(round(100*r_v_0,2)))+"sur"+str(res_gmsh)
 elif config=='cylsph':
- if geo_p=='ray_sph':
-  mesh_n_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_c_0,2)))+str(int(round(100*r_nouv,2)))+"sur"+str(res_gmsh)
- elif geo_p=='ray_cyl':
-  mesh_n_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_nouv,2)))+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)
+    if geo_p=='ray_sph':
+        mesh_n_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_c_0,2)))+str(int(round(100*r_nouv,2)))+"sur"+str(res_gmsh)
+    elif geo_p=='ray_cyl':
+        mesh_n_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_nouv,2)))+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)
 
 mesh_nouv=Mesh(mesh_n_name+".xml")
 
@@ -113,15 +113,15 @@ nb_noeuds_fixe=V_fixe.dim()
 ## Chargement de la base POD complete
 
 if ind_res:
- phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+"res"+str(res)+'_'+ordo+'_'+computer
+    phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+"res"+str(res)+'_'+ordo+'_'+computer
 elif ind_fixe:
- phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+    phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
 else:
- phi_name='Phi'+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+    phi_name='Phi'+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
 
 
 with sh.open(repertoire_parent+phi_name) as phi_loa:
- Phi_prime_v = phi_loa["maliste"]
+    Phi_prime_v = phi_loa["maliste"]
 
 ## Creation de la base POD tronquee, sous forme vectorielle
 
@@ -137,12 +137,12 @@ phi_nouv=Function(V_nouv)
 phi_fixe=Function(V_fixe)
 
 for n in range(0,nb_modes):
- phi_fixe.vector().set_local(Phi_mor[:,n])
- # extrapolation du snapshot au domaine fixe
- phi_fixe.set_allow_extrapolation(True)
- phi_n_nouv=interpolate(phi_fixe,V_nouv)
- # on range le vecteur de POD interpolee dans la matrice Phi_nouv_v
- Phi_nouv_v[:,n]=phi_n_nouv.vector().get_local()
+    phi_fixe.vector().set_local(Phi_mor[:,n])
+    # extrapolation du snapshot au domaine fixe
+    phi_fixe.set_allow_extrapolation(True)
+    phi_n_nouv=interpolate(phi_fixe,V_nouv)
+    # on range le vecteur de POD interpolee dans la matrice Phi_nouv_v
+    Phi_nouv_v[:,n]=phi_n_nouv.vector().get_local()
 
 ## Stockage de la matrice du modele reduit
 
@@ -158,17 +158,21 @@ print('se1 faite ',t_phi_nouv,' secondes')
 
 ## On reinitialise le temps de calcul ##
 
-start=time.time()
+start_se2=time.time()
 
 ## On ecrit les deux tenseurs qui comportent les coefficients de l'equation du modele reduit : ceux-ci dependent des vecteurs de la base POD projetee
 
 if config=='sph_un' or config=='cyl_un':
- Coeff=calc_Ab_3D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,cen_snap_ray,nb_modes,config)
+    Coeff=calc_Ab_3D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,cen_snap_ray,nb_modes,config)
 else:
- Coeff=calc_Ab_compl_3D(mesh_n_name,Phi_nouv_v,nb_modes)
+    Coeff=calc_Ab_compl_3D(mesh_n_name,Phi_nouv_v,nb_modes)
 
 A=Coeff[0]
 b=Coeff[1]
+
+end=time.time()
+
+t_int_Ab = end - start_se2
 
 # print('A :',A,'b :',b)
 ## On resoud le modele reduit
@@ -179,9 +183,9 @@ a_nouv=np.linalg.solve(A.T,-b)
 
 end=time.time()
 
-t_rom_linear=end-start
+t_rom_linear=end-t_int_Ab
 
-print('se2 faite ',t_rom_linear,' secondes')
+print('se2 faite ',end - start_se2,' secondes')
 # --------------------- SE3 : calcul du nouveau champ de vecteurs, affichage --------------------- #
 
 ## On reinitialise le temps de calcul ##
@@ -197,9 +201,9 @@ chi_nouv.vector().set_local(chi_nouv_v)
 plot(chi_nouv, linewidth=lw)
 plt.title("Rho = 0,"+str(int(round(100*r_nouv,2))),fontsize=40)
 if fig_todo=='aff':
- plt.show()
+    plt.show()
 elif fig_todo=='save':
- plt.savefig("Figures3D/sol_rom"+str(int(round(100*r_nouv,2)))+"_sur"+str(Nsnap)+config+'_'+geo_p+"res"+str(res)+".png")
+    plt.savefig("Figures3D/sol_rom"+str(int(round(100*r_nouv,2)))+"_sur"+str(Nsnap)+config+'_'+geo_p+"res"+str(res)+".png")
 plt.close()
 
 ## Exploitation du champ ainsi obtenu
@@ -209,42 +213,39 @@ rho=r_nouv
 # Affichage des valeurs et erreurs de la solution periodique, quelle que soit la configuration
 
 if config=='sph_un' or config=='cyl_un':
- #err_per_ind_01(chi_n,cen,r,npas_err)
- err_per_gr(cen_snap_ray,r_nouv,chi_nouv,npas_err,fig_todo)
+    err_per_gr(cen_snap_ray,r_nouv,chi_nouv,npas_err,fig_todo)
 elif config=='2sph':
- err_per_gr_compl(config,r_v_0,chi_nouv,npas_err,fig_todo)
+    err_per_gr_compl(config,r_v_0,chi_nouv,npas_err,fig_todo)
 elif config=='cylsph':
- if geo_p=='ray_sph':
-  err_per_gr_compl(config,r_c_0,chi_nouv,npas_err,fig_todo)
- elif geo_p=='ray_cyl':
-  err_per_gr_compl(config,r_nouv,chi_nouv,npas_err,fig_todo)
- #elif geo_p=='ray_linked':
+    if geo_p=='ray_sph':
+        err_per_gr_compl(config,r_c_0,chi_nouv,npas_err,fig_todo)
+    elif geo_p=='ray_cyl':
+        err_per_gr_compl(config,r_nouv,chi_nouv,npas_err,fig_todo)
 
 
 # Tenseur de diffusion homogeneise
 ## Integrale de chi sur le domaine fluide
 T_chi_rom=np.zeros((3,3))
 for k in range(0,3):
- for l in range(0,3):
-  T_chi_rom[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
-  #print("Integrale ",assemble(grad(chi_nouv)[k,l]*dx))
+    for l in range(0,3):
+        T_chi_rom[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
+        #print("Integrale ",assemble(grad(chi_nouv)[k,l]*dx))
 ## Integrale de l'identite sur le domaine fluide
 ### Calcul de la porosite
 if config=='sph_un':
- por=1-4/3*pi*r_nouv**3
+    por=1-4/3*pi*r_nouv**3
 elif config=='cyl_un':
- por=1-pi*r_nouv**2
+    por=1-pi*r_nouv**2
 elif config=='2sph':
- por=1-4/3*pi*(r_nouv**3+r_v_0**3)
+    por=1-4/3*pi*(r_nouv**3+r_v_0**3)
 elif config=='cylsph':
- if geo_p=='ray_sph':
-  r_s=r_nouv
-  r_c=r_c_0
- elif geo_p=='ray_cyl':
-  r_s=r_s_0
-  r_c=r_nouv
- #elif geo_p=='ray_linked':
- por=1-4/3*pi*r_s**3-pi*r_c**2
+    if geo_p=='ray_sph':
+        r_s=r_nouv
+        r_c=r_c_0
+    elif geo_p=='ray_cyl':
+        r_s=r_s_0
+        r_c=r_nouv
+    por=1-4/3*pi*r_s**3-pi*r_c**2
 ### Integration du terme constant du coefficient d diffusion, sur le domaine fluide
 D=por*np.eye(3)
 ## Calcul et affichage du tenseur Dhom
@@ -270,17 +271,17 @@ start=time.time()
 
 #res=20
 if config=='sph_un':
- chi_nouv=snapshot_sph_per(cen_snap_ray,r_nouv,res,typ_sol)
+    chi_nouv=snapshot_sph_per(cen_snap_ray,r_nouv,res,typ_sol)
 elif config=='cyl_un':
- chi_nouv=snapshot_cyl_per(top_snap_ray,r_nouv,res,typ_sol)
+    chi_nouv=snapshot_cyl_per(top_snap_ray,r_nouv,res,typ_sol)
 elif config=='2sph':
- if geo_p=='ray':
-  chi_nouv=snapshot_compl_per(r_nouv,r_v_0,config,res_gmsh,typ_sol)
+if geo_p=='ray':
+    chi_nouv=snapshot_compl_per(r_nouv,r_v_0,config,res_gmsh,typ_sol)
 elif config=='cylsph':
- if geo_p=='ray_sph':
-  chi_nouv=snapshot_compl_per(r_nouv,r_c_0,config,res_gmsh,typ_sol)
- elif geo_p=='ray_cyl':
-  chi_nouv=snapshot_compl_per(r_s_0,r_nouv,config,res_gmsh,typ_sol)
+    if geo_p=='ray_sph':
+        chi_nouv=snapshot_compl_per(r_nouv,r_c_0,config,res_gmsh,typ_sol)
+    elif geo_p=='ray_cyl':
+        chi_nouv=snapshot_compl_per(r_s_0,r_nouv,config,res_gmsh,typ_sol)
 
 ## Exploitation du champ ainsi obtenu
 rho=r_nouv
@@ -289,30 +290,30 @@ r=r_nouv
 plot(chi_nouv, linewidth=lw)
 plt.title("Rho = 0,"+str(int(round(100*r_nouv,2))),fontsize=40)
 if fig_todo=='aff':
- plt.show()
+    plt.show()
 elif fig_todo=='save':
- plt.savefig("Figures3D/sol_rom"+str(int(round(100*r_nouv,2)))+"_sur"+str(Nsnap)+config+'_'+geo_p+"res"+str(res)+".png")
+    plt.savefig("Figures3D/sol_rom"+str(int(round(100*r_nouv,2)))+"_sur"+str(Nsnap)+config+'_'+geo_p+"res"+str(res)+".png")
 plt.close()
 
 # Affichage des valeurs et erreurs de la solution periodique, quelle que soit la configuration
 if config=='sph_un' or config=='cyl_un':
- #err_per_ind_01(chi_n,cen,r,npas_err)
- err_per_gr(cen_snap_ray,r_nouv,chi_nouv,npas_err,fig_todo)
+    #err_per_ind_01(chi_n,cen,r,npas_err)
+    err_per_gr(cen_snap_ray,r_nouv,chi_nouv,npas_err,fig_todo)
 elif config=='2sph':
- err_per_gr_compl(config,r_v_0,chi_nouv,npas_err,fig_todo)
+    err_per_gr_compl(config,r_v_0,chi_nouv,npas_err,fig_todo)
 elif config=='cylsph':
- if geo_p=='ray_sph':
-  err_per_gr_compl(config,r_c_0,chi_nouv,npas_err,fig_todo)
- elif geo_p=='ray_cyl':
-  err_per_gr_compl(config,r_nouv,chi_nouv,npas_err,fig_todo)
+    if geo_p=='ray_sph':
+        err_per_gr_compl(config,r_c_0,chi_nouv,npas_err,fig_todo)
+    elif geo_p=='ray_cyl':
+        err_per_gr_compl(config,r_nouv,chi_nouv,npas_err,fig_todo)
 
 
 # Tenseur de diffusion homogeneise
 ## Integrale de chi sur le domaine fluide
 T_chi_fom=np.zeros((3,3))
 for k in range(0,3):
- for l in range(0,3):
-  T_chi_fom[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
+    for l in range(0,3):
+        T_chi_fom[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
 ## Integrale de l'identite sur le domaine fluide : voir ce qui precede avec la porosite
 print('Noeuds :',V_nouv.dim())
 print('Porosite :',por)
@@ -342,51 +343,52 @@ print('se4 faite ',t_fem,' secondes')
 ##############################################################################
 
 if Report :
- print('##############################################################################')
- print('########################## Evaluation de la methode ##########################')
- print('##############################################################################')
- print('Resultats '+conf_mess+', '+geo_mess+' valeur '+str(r_nouv)+' :')
- print('##############################################################################')
- #
- ## Porosite ##
- print('Porosite :',por)
- ## Generation du maillage : temps d'execution ... ##
- print('Maillage :',t_meshing,'secondes')
- ## Dhom, erreur, et temps d'execution ##
- print('%'*78)
- print('Coefficient Dhom_k11 MOR :',Dhom_kMOR[0,0])
- print('Coefficient Dhom_k11 MEF :',Dhom_kMEF[0,0])
- print('Erreur relative MEF-MOR :',err_rel_dhom,'pourcent')
- print('%'*78)
- print('Coefficient int_grad11 MOR :',T_chi_rom[0,0])
- print('Coefficient int_grad11 MEF :',T_chi_fom[0,0])
- print('Erreur relative MEF-MOR :',err_rel_ig,'pourcent')
- print('%'*78)
- ## Temps de calcul a evaluer ##
- print('T_phi_nouv',t_phi_nouv,'secondes')
- print('T_ROM',t_rom_linear+t_rom_Dhom,'secondes')
- print('T_FEM',t_fem,'secondes')
- ## Nombre de noeuds ##
- print('Noeuds :',V_nouv.dim())
- ## Rapports de temps de calcul, sans unite ##
- print('='*78)
- R_rom=(t_phi_nouv+t_rom_linear+t_rom_Dhom+t_meshing)/(t_fem+t_meshing)
- R_interpolation=t_phi_nouv/(t_fem+t_meshing)
- print('Gain de temps maillage EF compris :', 1./R_rom)#,'sans unite')
- # print('Contribution de l interpolation :',R_interpolation)#,'sans unite')
- # print('Difference :',R_rom-R_interpolation)#,'sans unite')
- print('='*78)
- R_rom_Nmaill = (t_phi_nouv+t_rom_linear+t_rom_Dhom)/t_fem
- R_interpolation_Nmaill = t_phi_nouv/t_fem
- Rdiff_rom = R_rom_Nmaill - R_interpolation_Nmaill
- print('Gain de temps sans maillage :', 1./R_rom_Nmaill)#,'sans unite')
- # print('Interpolation sans maillage :', 1./R_interpolation_Nmaill)#,'sans unite')
- print('ROM seul sans maillage :', 1./Rdiff_rom)#,'sans unite')
- #
- print('##############################################################################')
- print('##############################################################################')
-
-
+    print('#'*78)
+    print('#'*26+' Evaluation de la methode '+'#'*26)
+    # print('########################## Evaluation de la methode ##########################')
+    print('#'*78)
+    print('Resultats '+conf_mess+', '+geo_mess+' valeur '+str(r_nouv)+' :')
+    print('#'*78)    #
+    ## Porosite ##
+    print('Porosite :',por)
+    ## Generation du maillage : temps d'execution ... ##
+    print('Maillage :',t_meshing,'secondes')
+    ## Dhom, erreur, et temps d'execution ##
+    print('%'*78)
+    print('Coefficient Dhom_k11 MOR :',Dhom_kMOR[0,0])
+    print('Coefficient Dhom_k11 MEF :',Dhom_kMEF[0,0])
+    print('Erreur relative MEF-MOR :',err_rel_dhom,'pourcent')
+    print('%'*78)
+    print('Coefficient int_grad11 MOR :',T_chi_rom[0,0])
+    print('Coefficient int_grad11 MEF :',T_chi_fom[0,0])
+    print('Erreur relative MEF-MOR :',err_rel_ig,'pourcent')
+    print('%'*78)
+    ## Temps de calcul a evaluer ##
+    print('Tps_phi_nouv',t_phi_nouv,'secondes')
+    print('Tps_int_Ab', t_int_Ab, 'secondes')
+    print('Tps_solve', t_rom_linear, 'secondes')
+    print('Tps_dhom',t_rom_Dhom, 'secondes')
+    print('='*78)
+    print('Tps_FEM', t_fem, 'secondes')
+    ## Nombre de noeuds ##
+    print('Noeuds :',V_nouv.dim())
+    ## Rapports de temps de calcul, sans unite ##
+    print('%'*78)
+    R_rom=(t_phi_nouv+t_int_Ab+t_rom_linear+t_rom_Dhom+t_meshing)/(t_fem+t_meshing)
+    R_interpolation=t_phi_nouv/(t_fem+t_meshing)
+    print('Gain de temps maillage EF compris :', 1./R_rom)#,'sans unite')
+    # print('Contribution de l interpolation :',R_interpolation)#,'sans unite')
+    # print('Difference :',R_rom-R_interpolation)#,'sans unite')
+    print('='*78)
+    R_rom_Nmaill = (t_phi_nouv+t_int_Ab+t_rom_linear+t_rom_Dhom)/t_fem
+    R_interpolation_Nmaill = t_phi_nouv/t_fem
+    Rdiff_rom = R_rom_Nmaill - R_interpolation_Nmaill
+    print('Gain de temps sans maillage :', 1./R_rom_Nmaill)#,'sans unite')
+    # print('Interpolation sans maillage :', 1./R_interpolation_Nmaill)#,'sans unite')
+    print('ROM seul sans maillage :', 1./Rdiff_rom)#,'sans unite')
+    #
+    print('#'*78)
+    print('#'*78)
 
 
 ##############################################################################
@@ -401,7 +403,9 @@ registre.write(str(round(T_chi_fom[0,0], 4))+'&')
 registre.write(str(round(err_rel_ig, 2))+'\\'+'%'+'&')
 
 registre.write(str(round(t_phi_nouv, 2))+'s'+'&')
-registre.write(str(round(t_rom_linear+t_rom_Dhom, 2))+'s'+'&')
+registre.write(str(round(t_int_Ab, 2))+'s'+'&')
+registre.write(str(round(t_rom_linear, 2))+'s'+'&')
+registre.write(str(round(t_rom_Dhom 2))+'s'+'&')
 registre.write(str(round(t_fem, 2))+'s'+'&')
 
 registre.write(str(round(1./R_rom_Nmaill, 2))+'&')
