@@ -2,38 +2,7 @@
 ## Etape I : realisation des cliches, avec la methode des elements finis. Calcul du tenseur d'homogeneisation. Stockage dans snap2D/ ##
 #######################################################################################################################################
 
-### ------------ Reproduire eventuellement pour des etapes ulterieures. Laisser seulement dans DDD_fun_obj ? ------------ ###
 
-tol=1e-10
-
-xinf=0.0
-yinf=0.0
-zinf=0.0
-xsup=1.0
-ysup=1.0
-zsup=1.0
-
-import time
-
-#determiner le domaine fixe pour interpoler la solution
-
-dimension=3
-
-class PeriodicBoundary(SubDomain):
-    # Left boundary is "target domain" G
-    def inside(self, x, on_boundary):
-        return on_boundary and not(near(x[0],xsup,tol) or near(x[1],ysup,tol) or near(x[2],zsup,tol))
-    # Map right boundary (H) to left boundary (G)
-    def map(self, x, y):
-        for i in range(dimension):
-            if near(x[i],1.0,tol):
-                y[i]=0.0
-            else:
-                y[i]=x[i]
-
-
-
-#sys.exit("chargement du maillage fixe termine")
 ## Boucle pour la creation des snapshots, avec un parametre pouvant etre le rayon d'une inclusion circulaire, ou l'emplacement de son centre
 
 # Pour avoir des fonctions "top-level" a paralleliser
@@ -53,7 +22,7 @@ def snap_sph_ray(N_par):
 
 # #if geo_p=='cen':
 # #ray_snap_cen=0.25
-# #csr_list=[[0.5,0.5,0.05*k] for k in range(1,1+Nsnap)]
+# #csr_list=[[0.5,0.5,0.05*k] for k in range(1,1+N_snap)]
 # #c_par : parametre scalaire pour la position du centre
 # def snap_sph_cen(c_par):
 #     cen_snap_ray=csr_list[c_par-1]
@@ -75,7 +44,7 @@ def snap_cyl_ray(N_par):
 
 # #if geo_p=='axe':
 # #ray_snap_axe=0.25
-# asr_list=[[0.5,0.3+0.05*k] for k in range(1,1+Nsnap)]
+# asr_list=[[0.5,0.3+0.05*k] for k in range(1,1+N_snap)]
 # #c_par : parametre scalaire pour la position du centre
 # def snap_cyl_axe(c_par):
 #     cen_snap_ray=csr_list[c_par-1]
@@ -133,21 +102,21 @@ if not snap_done:
         pool=multiprocessing.Pool(processes=nproc)
         if config=='sph_un':
             if geo_p=='ray':
-                list_chi_n_v=pool.map(snap_sph_ray,(N for N in range(0,Nsnap)))
+                list_chi_n_v=pool.map(snap_sph_ray,(N for N in range(0,N_snap)))
             # elif geo_p=='cen':
-            #     list_chi_n_v=pool.map(snap_sph_cen,(N for N in range(0,Nsnap)))
+            #     list_chi_n_v=pool.map(snap_sph_cen,(N for N in range(0,N_snap)))
         elif config=='cyl_un':
             if geo_p=='ray':
-                list_chi_n_v=pool.map(snap_cyl_ray,(N for N in range(0,Nsnap)))
+                list_chi_n_v=pool.map(snap_cyl_ray,(N for N in range(0,N_snap)))
             # elif geo_p=='axe':
-            #     list_chi_n_v=pool.map(snap_cyl_axe,(N for N in range(0,Nsnap)))
+            #     list_chi_n_v=pool.map(snap_cyl_axe,(N for N in range(0,N_snap)))
             else:
-                list_chi_n_v=pool.map(snap_compl_ray,(N for N in range(0,Nsnap)))
+                list_chi_n_v=pool.map(snap_compl_ray,(N for N in range(0,N_snap)))
     ### Generation sequentielle des snapshots, pour des tests de la methode des elements finis ###
     elif gen_snap=='seq':
         start=time.time()
         list_chi_n_v=[]
-        for n in range(1,1+Nsnap):
+        for n in range(1,1+N_snap):
             print(n)
             if config=='sph_un':
                 if geo_p=='ray':
@@ -170,18 +139,18 @@ if not snap_done:
     # Construction de la liste des snapshots vectorises : cas d'un parametre geometrique definissant un ordre - lien avec la porosite ; ou non.
     list_chi_v=[]
     if geo_p=='ray' or config=='compl':
-        for n in range(0,Nsnap):
-            for i in range(0,Nsnap):
+        for n in range(0,N_snap):
+            for i in range(0,N_snap):
                 if list_chi_n_v[i][0]==n:
                     chi_n_v=list_chi_n_v[i][1]
                     list_chi_v.append(chi_n_v)
     else:
-        for i in range(0,Nsnap):
+        for i in range(0,N_snap):
             chi_n_v=list_chi_n_v[i][1]
             list_chi_v.append(chi_n_v)
 
     # Liste des snapshots : sauvegarde, on precise l'identite de la machine qui a effectue le calcul
-    l_name='Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+"sur"+str(res)+'_'+ordo+'_'+computer
+    l_name='Lchi_'+str(N_snap)+'_'+config+'_'+geo_p+'_'+"sur"+str(res)+'_'+ordo+'_'+computer
     # sauvegarde de la liste des solutions indexees calculees avec la methode des elements finis
     with sh.open(repertoire_parent+l_name) as l_sto:
         l_sto["maliste"] = list_chi_v
@@ -189,7 +158,7 @@ if not snap_done:
 # Matrice des snapshots : plus tard, voir l'etape II
 
 else :
-    l_name='Lchi_'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+"sur"+str(res)+'_'+ordo+'_'+computer
+    l_name='Lchi_'+str(N_snap)+'_'+config+'_'+geo_p+'_'+"sur"+str(res)+'_'+ordo+'_'+computer
     with sh.open(repertoire_parent+l_name) as l_loa:
         list_chi_v = l_loa["maliste"]
 
@@ -205,7 +174,7 @@ elif res==20:
 elif res==50:
     lw=0.01
 
-for n in range(0,Nsnap):
+for n in range(0,N_snap):
     # Extraction du snapshot de rang n
     chi_n_v=list_chi_v[n]
     r=list_rho_appr[n]
@@ -263,7 +232,7 @@ for n in range(0,Nsnap):
     if fig_todo=='aff':
         plt.show()
     else:
-        plt.savefig("Figures3D/sol_"+str(n)+"_sur"+str(Nsnap)+config+'_'+geo_p+"res"+str(res)+".png")
+        plt.savefig("Figures3D/sol_"+str(n)+"_sur"+str(N_snap)+config+'_'+geo_p+"res"+str(res)+".png")
     plt.close()
     # Affichage des valeurs et erreurs de la solution periodique, quelle que soit la configuration
     #err_per_ind_01(chi_n,cen,r,npas_err)

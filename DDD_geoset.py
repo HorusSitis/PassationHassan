@@ -18,6 +18,16 @@ import numpy as np
 ### ------------ Code a lire : conditions ------------ ###
 ##########################################################
 
+# Choix de la resolution du maillage : nombre de noeuds par cote du cube
+
+res_gmsh=10
+
+typ_msh='gms'
+# typ_msh=''
+
+if typ_msh=='gms':
+    res=res_gmsh
+
 # configuration du domaine periodique
 
 tol=1e-10
@@ -70,15 +80,31 @@ list_rho_appr = np.linspace(rho_appr_min, rho_appr_max, N_snap)
 list_rho_test = np.linspace(0.11, 0.44, 4)
 
 
-# Choix de la resolution du maillage : nombre de noeuds par cote du cube
+# parametres pour l'execution des etapes : affichage, tests de periodicite etc
 
-res_gmsh=20
+fig_todo='save'
+typ_msh='gms'#''
+D_k=1.0
 
-typ_msh='gms'
-# typ_msh=''
+N_snap=len(list_rho_appr)
 
-if typ_msh=='gms':
-    res=res_gmsh
+npas_err=10
+typ_sol="bic_cyr"#"default"#seulement si res=10##
+ordo='Ordr'#'Nordr'
+
+Nrefine=1
+crow=(1/res_gmsh)*1e-1
+typ_refi='vol'#'front'#
+
+# apprentissage : calcul parallele ou sequentiel, prise en compte de la resolution
+
+gen_snap='par8'
+# gen_snap='par4'
+# gen_snap='seq'
+# gen_snap='seq_par'
+
+# repertoire pour les resultats
+repertoire_parent="Res3D/"
 
 # -------------------- Geometrie du probleme -------------------- #
 
@@ -140,3 +166,21 @@ elif config=='cylsph':
         geo_mess='rayon de la sphere variable'
     elif geo_p=='ray_linked':
         geo_mess='rayons lies'
+
+## ------------ Etape lL 1demi : Affichage de microstructures periodiques ------------ ##
+
+nb_lcells=5
+cem_color='grey'
+sand_color='orange'
+fluid_color='cyan'
+
+## -------------------- Etape IV -------------------- ##
+
+N_mor=3
+t_meshing=1.89
+r_nouv=0.33#0.44#0.22#0.11#
+
+# La mesure du temps d'execution doit se faire avec l'option 'save' de fig_todo
+
+ind_fixe=True##-----------> dom_fixe devant le 'Phi'
+ind_res=True#False###----------> on precise la resolution du maillage, qui apparaît ou non dans le fichier contenant Phi

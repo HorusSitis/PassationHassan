@@ -70,51 +70,13 @@ Report=True
 # nom de l'appareil utilise pour generer les donnees enregistrees
 computer='MECALAC_29x8'#'T1700_35x8'#
 
-# # Choix de la resolution du maillage : nombre de noeuds par cote du cube
-#
-# res_gmsh=10
-# if typ_msh=='gms':
-#     res=res_gmsh
-
-# parametres pour l'execution des etapes : affichage, tests de periodicite etc
-
-fig_todo='save'
-typ_msh='gms'#''
-D_k=1.0
-
-Nsnap=len(list_rho_appr)
-
-npas_err=20
-typ_sol="bic_cyr"#"default"#seulement si res=10##
-ordo='Ordr'#'Nordr'
-
-Nrefine=1
-crow=(1/res_gmsh)*1e-1
-typ_refi='vol'#'front'#
-
-# apprentissage : calcul parallele ou sequentiel, prise en compte de la resolution
-
-gen_snap='par8'
-# gen_snap='par4'
-# gen_snap='seq'
-# gen_snap='seq_par'
-
-# repertoire pour les resultats
-repertoire_parent="Res3D/"
-
-
-
-## -------------------- Etape I -------------------- ##
 
 ## ------------ Etape lL 1demi : Affichage de microstructures periodiques ------------ ##
 
-nb_lcells=5
-cem_color='grey'
-sand_color='orange'
-fluid_color='cyan'
-
 if E_lL :
     exec(open("DDD_ElL.py").read())
+
+## -------------------- Etape I -------------------- ##
 
 # Execution
 
@@ -139,15 +101,6 @@ if EIII :
 
 ## -------------------- Etape IV -------------------- ##
 
-N_mor=3
-t_meshing=1.89
-r_nouv=0.33#0.44#0.22#0.11#
-
-# La mesure du temps d'execution doit se faire avec l'option 'save' de fig_todo
-
-ind_fixe=True##-----------> dom_fixe devant le 'Phi'
-ind_res=True#False###----------> on precise la resolution du maillage, qui apparaît ou non dans le fichier contenant Phi
-
 if EIV and res_gmsh!=50:
 
     if Interpolation:
@@ -156,7 +109,7 @@ if EIV and res_gmsh!=50:
         registre=open(nom_fichier + '.txt','w')
 
         registre.write('\\'+'begin{tabular}')
-        registre.write('{|c|c||c|c|c||c|c|c||c|c|}')
+        registre.write('{|c|c||c|c|c||c|c|c|c|c||c|c|}')
         registre.write('\n')
         registre.write('\\'+'hline'+'\n')
 
@@ -169,8 +122,10 @@ if EIV and res_gmsh!=50:
         registre.write('\\'+'('+'{'+'\\'+'frac{'+'\\'+'int'+'\\'+'nabla'+'\\'+'chi}{'+'\\'+'Omega}}_{FOM}'+'\\'+')'+'&')
         registre.write('\\'+'('+'Err'+'\\'+')'+'&')
 
-        registre.write('\\'+'('+'t_{build}'+'\\'+')'+'&')
+        registre.write('\\'+'('+'t_{phi nouv}'+'\\'+')'+'&')
+        registre.write('\\'+'('+'t_{Ab}'+'\\'+')'+'&')
         registre.write('\\'+'('+'t_{solve}'+'\\'+')'+'&')
+        registre.write('\\'+'('+'t_{dhom}'+'\\'+')'+'&')
         registre.write('\\'+'('+'t_{FEM}'+'\\'+')'+'&')
 
         registre.write('\\'+'('+'\\'+'mathcal{G}_{rom}'+'\\'+')'+'&')

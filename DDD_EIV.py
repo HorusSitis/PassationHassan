@@ -3,42 +3,6 @@
 #################################################################################################
 ## Etape IV : Predictions. Choisir les parametres du probleme a resoudre par le modele reduit.#
 
-# tol=1e-10
-#
-# xinf=0.0
-# yinf=0.0
-# zinf=0.0
-# xsup=1.0
-# ysup=1.0
-# zsup=1.0
-#
-# dimension=3
-#
-# if res_gmsh==10:
-#  lw=0.27
-# elif res_gmsh==20:
-#  lw=0.15
-# elif res_gmsh==50:
-#  lw=0.01
-#
-# r_s_0=0.15
-# r_v_0=0.15
-# r_c_0=0.15
-#
-# r_min=0.05
-#
-# class PeriodicBoundary(SubDomain):
-#  # Left boundary is "target domain" G
-#  def inside(self, x, on_boundary):
-#   return on_boundary and not(near(x[0],xsup,tol) or near(x[1],ysup,tol) or near(x[2],zsup,tol))
-#  # Map right boundary (H) to left boundary (G)
-#  def map(self, x, y):
-#   for i in range(dimension):
-#    if near(x[i],1.0,tol):
-#     y[i]=0.0
-#    else:
-#     y[i]=x[i]
-
 # maillage du domaine fixe
 
 mesh_dir="maillages_per/3D/"
@@ -46,28 +10,29 @@ mesh_dir="maillages_per/3D/"
 ## inclusions simples ou rayons lies
 
 if dom_fixe=="am":
- mesh_f_name=mesh_dir+"cube_periodique_triangle"+"_"+dom_fixe+"_sur"+str(res_gmsh)+"_fixe.xml"
+    mesh_f_name=mesh_dir+"cube_periodique_triangle"+"_"+dom_fixe+"_sur"+str(res_gmsh)+"_fixe.xml"
 ## inclusions multiples, unique rayon variable
 elif dom_fixe=="solid":
- mesh_fixe_prefix=mesh_dir+"cube"+config+"_periodique_triangle_"
- if config=='2sph':
-  mesh_f_name=mesh_fixe_prefix+"fixe"+str(int(round(100*r_v_0,2)))+"sur"+str(res_gmsh)+".xml"
- elif config=='cylsph':
-  ## rayon du cylindre aux aretes ou de la sphere centrale fixes a 0.15 ##
-  if geo_p=='ray_sph':
-   mesh_f_name=mesh_fixe_prefix+str(int(round(100*r_c_0,2)))+"fixe"+"sur"+str(res_gmsh)+".xml"
-  elif geo_p=='ray_cyl':
-   if fixe_comp=='cyl_sph':
-    mesh_f_name=mesh_fixe_prefix+"fixe"+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)+".xml"
-   elif fixe_comp=='sph_un':
-    mesh_f_name=mesh_dir+"cubesphere_periodique_triangle_"+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)+".xml"
+    mesh_fixe_prefix=mesh_dir+"cube"+config+"_periodique_triangle_"
+    if config=='2sph':
+        mesh_f_name=mesh_fixe_prefix+"fixe"+str(int(round(100*r_v_0,2)))+"sur"+str(res_gmsh)+".xml"
+    elif config=='cylsph':
+        ## rayon du cylindre aux aretes ou de la sphere centrale fixes a 0.15 ##
+        if geo_p=='ray_sph':
+            mesh_f_name=mesh_fixe_prefix+str(int(round(100*r_c_0,2)))+"fixe"+"sur"+str(res_gmsh)+".xml"
+        elif geo_p=='ray_cyl':
+            if fixe_comp=='cyl_sph':
+                mesh_f_name=mesh_fixe_prefix+"fixe"+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)+".xml"
+            elif fixe_comp=='sph_un':
+                mesh_f_name=mesh_dir+"cubesphere_periodique_triangle_"+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)+".xml"
 elif dom_fixe=="ray_min":
- fixe_comp=True#utilisation du domaine fixe avec annulation du rayon du cylindre dans le fichier general
- if config=='cylsph':
-  if geo_p=='ray_sph':
-   mesh_f_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_c_0,2)))+str(int(round(100*r_min,2)))+"sur"+str(res_gmsh)+".xml"
-  elif geo_p=='ray_cyl':
-   mesh_f_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_min,2)))+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)+".xml"
+    # utilisation du domaine fixe avec annulation du rayon du cylindre dans le fichier general
+    fixe_comp=True
+    if config=='cylsph':
+        if geo_p=='ray_sph':
+            mesh_f_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_c_0,2)))+str(int(round(100*r_min,2)))+"sur"+str(res_gmsh)+".xml"
+        elif geo_p=='ray_cyl':
+            mesh_f_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_min,2)))+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)+".xml"
 
 mesh_fixe=Mesh(mesh_f_name)
 
@@ -113,11 +78,11 @@ nb_noeuds_fixe=V_fixe.dim()
 ## Chargement de la base POD complete
 
 if ind_res:
-    phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+"res"+str(res)+'_'+ordo+'_'+computer
+    phi_name='Phi'+dom_fixe+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_'+"res"+str(res)+'_'+ordo+'_'+computer
 elif ind_fixe:
-    phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+    phi_name='Phi'+dom_fixe+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
 else:
-    phi_name='Phi'+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+    phi_name='Phi'+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
 
 
 with sh.open(repertoire_parent+phi_name) as phi_loa:
@@ -158,7 +123,7 @@ print('se1 faite ',t_phi_nouv,' secondes')
 
 ## On reinitialise le temps de calcul ##
 
-start_se2=time.time()
+start=time.time()
 
 ## On ecrit les deux tenseurs qui comportent les coefficients de l'equation du modele reduit : ceux-ci dependent des vecteurs de la base POD projetee
 
@@ -172,10 +137,12 @@ b=Coeff[1]
 
 end=time.time()
 
-t_int_Ab = end - start_se2
+t_int_Ab = end - start
 
 # print('A :',A,'b :',b)
 ## On resoud le modele reduit
+
+start = time.time()
 
 a_nouv=np.linalg.solve(A.T,-b)
 
@@ -183,9 +150,9 @@ a_nouv=np.linalg.solve(A.T,-b)
 
 end=time.time()
 
-t_rom_linear=end-t_int_Ab
+t_rom_linear=end-start
 
-print('se2 faite ',end - start_se2,' secondes')
+print('se2 faite', t_int_Ab + t_rom_linear, 'secondes')
 # --------------------- SE3 : calcul du nouveau champ de vecteurs, affichage --------------------- #
 
 ## On reinitialise le temps de calcul ##
@@ -203,7 +170,7 @@ plt.title("Rho = 0,"+str(int(round(100*r_nouv,2))),fontsize=40)
 if fig_todo=='aff':
     plt.show()
 elif fig_todo=='save':
-    plt.savefig("Figures3D/sol_rom"+str(int(round(100*r_nouv,2)))+"_sur"+str(Nsnap)+config+'_'+geo_p+"res"+str(res)+".png")
+    plt.savefig("Figures3D/sol_rom"+str(int(round(100*r_nouv,2)))+"_sur"+str(N_snap)+config+'_'+geo_p+"res"+str(res)+".png")
 plt.close()
 
 ## Exploitation du champ ainsi obtenu
@@ -275,8 +242,8 @@ if config=='sph_un':
 elif config=='cyl_un':
     chi_nouv=snapshot_cyl_per(top_snap_ray,r_nouv,res,typ_sol)
 elif config=='2sph':
-if geo_p=='ray':
-    chi_nouv=snapshot_compl_per(r_nouv,r_v_0,config,res_gmsh,typ_sol)
+    if geo_p=='ray':
+        chi_nouv=snapshot_compl_per(r_nouv,r_v_0,config,res_gmsh,typ_sol)
 elif config=='cylsph':
     if geo_p=='ray_sph':
         chi_nouv=snapshot_compl_per(r_nouv,r_c_0,config,res_gmsh,typ_sol)
@@ -292,7 +259,7 @@ plt.title("Rho = 0,"+str(int(round(100*r_nouv,2))),fontsize=40)
 if fig_todo=='aff':
     plt.show()
 elif fig_todo=='save':
-    plt.savefig("Figures3D/sol_rom"+str(int(round(100*r_nouv,2)))+"_sur"+str(Nsnap)+config+'_'+geo_p+"res"+str(res)+".png")
+    plt.savefig("Figures3D/sol_rom"+str(int(round(100*r_nouv,2)))+"_sur"+str(N_snap)+config+'_'+geo_p+"res"+str(res)+".png")
 plt.close()
 
 # Affichage des valeurs et erreurs de la solution periodique, quelle que soit la configuration
@@ -364,12 +331,12 @@ if Report :
     print('Erreur relative MEF-MOR :',err_rel_ig,'pourcent')
     print('%'*78)
     ## Temps de calcul a evaluer ##
-    print('Tps_phi_nouv',t_phi_nouv,'secondes')
-    print('Tps_int_Ab', t_int_Ab, 'secondes')
-    print('Tps_solve', t_rom_linear, 'secondes')
-    print('Tps_dhom',t_rom_Dhom, 'secondes')
+    print('Tps_phi_nouv :',t_phi_nouv,'secondes')
+    print('Tps_int_Ab :', t_int_Ab, 'secondes')
+    print('Tps_solve :', t_rom_linear, 'secondes')
+    print('Tps_dhom :',t_rom_Dhom, 'secondes')
     print('='*78)
-    print('Tps_FEM', t_fem, 'secondes')
+    print('Tps_FEM :', t_fem, 'secondes')
     ## Nombre de noeuds ##
     print('Noeuds :',V_nouv.dim())
     ## Rapports de temps de calcul, sans unite ##
@@ -405,7 +372,7 @@ registre.write(str(round(err_rel_ig, 2))+'\\'+'%'+'&')
 registre.write(str(round(t_phi_nouv, 2))+'s'+'&')
 registre.write(str(round(t_int_Ab, 2))+'s'+'&')
 registre.write(str(round(t_rom_linear, 2))+'s'+'&')
-registre.write(str(round(t_rom_Dhom 2))+'s'+'&')
+registre.write(str(round(t_rom_Dhom, 2))+'s'+'&')
 registre.write(str(round(t_fem, 2))+'s'+'&')
 
 registre.write(str(round(1./R_rom_Nmaill, 2))+'&')
