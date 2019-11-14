@@ -9,50 +9,74 @@
 ### Paquets a importer ###
 
 # from fenics import *
-# from dolfin import *
-# from mshr import *
+from dolfin import *
+from mshr import *
 # import matplotlib.pyplot as plt
 import numpy as np
-# from math import sqrt
-# import sys
-
-# Calcul parallele
-
-import multiprocessing
-
-# Performances
-
-import time
-
-# Stockage d'objets python
-
-import marshal as ma
-import shelve as sh
-
-# Fonctions maison
-
-from DDD_fun_obj import *
-
-## Paquets specifiques a la 3d ##
-
-from mpl_toolkits.mplot3d.axes3d import get_test_data
-# This import registers the 3D projection, but is otherwise unused.
-from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
-import mpl_toolkits.mplot3d.art3d as art3d
-from matplotlib.patches import Circle, PathPatch
 
 ##########################################################
 ### ------------ Code a lire : conditions ------------ ###
 ##########################################################
 
-list_rho_appr = np.linspace(0.05, 0.40, 8)
-# list_rho_appr = np.linspace(0,1, 0.45, 8)
+# configuration du domaine periodique
 
+tol=1e-10
+
+xinf=0.0
+yinf=0.0
+zinf=0.0
+xsup=1.0
+ysup=1.0
+zsup=1.0
+
+dimension=3
+
+if res_gmsh==10:
+    lw=0.27
+elif res_gmsh==20:
+    lw=0.15
+elif res_gmsh==50:
+    lw=0.01
+
+r_s_0=0.15
+r_v_0=0.15
+r_c_0=0.15
+
+r_min=0.05
+
+class PeriodicBoundary(SubDomain):
+    # Left boundary is "target domain" G
+    def inside(self, x, on_boundary):
+        return on_boundary and not(near(x[0],xsup,tol) or near(x[1],ysup,tol) or near(x[2],zsup,tol))
+    # Map right boundary (H) to left boundary (G)
+    def map(self, x, y):
+        for i in range(dimension):
+            if near(x[i],1.0,tol):
+                y[i]=0.0
+            else:
+                y[i]=x[i]
+
+
+### ------------ Important : liste des rayons pour l'apprentissage et les tests ------------ ###
+
+N_snap = 8
+
+rho_appr_min = 0.05
+# rho_appr_min = 0.1
+rho_appr_max = 0.4
+# rho_appr_max = 0.45
+
+list_rho_appr = np.linspace(rho_appr_min, rho_appr_max, N_snap)
 list_rho_test = np.linspace(0.11, 0.44, 4)
+
 
 # Choix de la resolution du maillage : nombre de noeuds par cote du cube
 
-res_gmsh=10
+res_gmsh=20
+
+typ_msh='gms'
+# typ_msh=''
+
 if typ_msh=='gms':
     res=res_gmsh
 
