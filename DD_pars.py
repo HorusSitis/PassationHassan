@@ -5,6 +5,12 @@ import numpy as np
 import os
 import sys
 
+# from fenics import *
+from dolfin import *
+from mshr import *
+# import matplotlib.pyplot as plt
+import numpy as np
+
 ##########################################################
 ### ------------ Code a lire : conditions ------------ ###
 ##########################################################
@@ -14,6 +20,33 @@ fixe_aff=False
 # fig_todo=''
 # fig_todo='aff'
 fig_todo='save'
+
+import time
+
+### ------------ Implementation du domaine periodique ------------ ###
+
+tol=1e-10
+
+xinf=0.0
+yinf=0.0
+xsup=1.0
+ysup=1.0
+
+# determiner le domaine fixe pour interpoler la solution
+
+dimension=2
+
+class PeriodicBoundary(SubDomain):
+    # Left boundary is "target domain" G
+    def inside(self, x, on_boundary):
+        return on_boundary and not(near(x[0],xsup,tol) or near(x[1],ysup,tol))## merci a Arnold Douglas
+    # Map right boundary (H) to left boundary (G)
+    def map(self, x, y):
+        for i in range(dimension):
+            if near(x[i],1.0,tol):
+                y[i]=0.0
+            else:
+                y[i]=x[i]
 
 ### ------------------ Important : degre pour la resolution par elements finis ------------------ ###
 VFS_degree=2
