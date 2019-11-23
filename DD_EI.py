@@ -200,10 +200,10 @@ for n in range(0,N_snap):
     chi_n.vector().set_local(chi_n_v)
     # Figures et erreurs
     plot(chi_n)
-    if n==0 and rho_appr_min <1:
-        plt.title("Rho = 0,0"+str(int(round(100*r,1))), fontsize=40)
-    else:
-        plt.title("Rho = 0,"+str(int(round(100*r,2))),fontsize=40)
+    # if n==0 and rho_appr_min <1:
+    #     plt.title("Rho = 0,0"+str(int(round(100*r,1))), fontsize=40)
+    # else:
+    #     plt.title("Rho = 0,"+str(int(round(100*r,2))),fontsize=40)
     #plot(grad(chi_n)[:,0]
     #plot(grad(chi_n)[:,1]
     if fig_todo=='aff':
