@@ -1,5 +1,5 @@
 #####################################################################################################################################
-######################################### Etape II : extrapolation des cliches, domaine_fixe ########################################
+######################################### Etape II : extrapolation des cliches, domaine fixe ########################################
 #####################################################################################################################################
 
 # Extrapolation au domaine Omega_fixe :
@@ -14,7 +14,6 @@ elif dom_fixe=="ray_min":
         mesh_fixe=Mesh('maillages_per/2D/maillage_trou2D_5.xml')
 
 V_fixe = VectorFunctionSpace(mesh_fixe, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
-
 
 
 if exsnap_done:

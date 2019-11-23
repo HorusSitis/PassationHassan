@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+### Une commande possible dans le terminal ###
+
+#--- mpirun -np 8 python3 Main3D.py ---#
+#--- affiche npfois 'pas encore' fait avec l'etape IV ---#
+
+# Attention : on execute parallelement
+
 ### ------------ Paquets a importer ------------ ###
 
 # paquets mathematiques
@@ -9,7 +17,6 @@ from math import exp
 # affichage etc
 
 import pylab as pl
-#from pylab import *
 
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -63,16 +70,15 @@ snap_done=True
 
 EII=False
 exsnap_done=True
+
 test_Dhom=False
 
-EIII=True
+EIII=False
 
-EIV=False
+EIV=True
 Report = True
 
 # EIVfixe=False
-
-# res_gmsh=100
 
 ### ------------ Etape 0 : Generation de microstructures periodiques aleatoires ------------ ###
 
@@ -95,7 +101,7 @@ if E_lL :
 ## ---------- Etape I, memes parametres que pour 1demi ---------- ##
 
 if EI :
-    exec(open("DD_EI.py").read())
+    exec(open("DD_EI.py", encoding="utf-8").read())
 
 ## ---------- Etape II : int_grad eventuellement sur dom_fixe ---------- ##
 
@@ -103,14 +109,14 @@ if EII :
     exec(open("DD_EII.py").read())
 
 if exsnap_done and test_Dhom :
-    exec(open("DD_EIIintgrad.py").read())
+    exec(open("DD_EIIintgrad.py", encoding="utf-8").read())
 
 ## ---------- Etape III ---------- ##
 
 from PO23D import *
 
 if EIII :
-    exec(open("DD_EIII.py").read())
+    exec(open("DD_EIII.py", encoding="utf-8").read())
 
 ## ---------- Etape IV ---------- ##
 
@@ -164,7 +170,7 @@ if EIV :
     # for rho in [0.33]:
 
         r_nouv=rho
-        exec(open("DD_EIV.py").read())
+        exec(open("DD_EIV.py", encoding="utf-8").read())
 
 
     ## fin des deux tableaux

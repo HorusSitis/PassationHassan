@@ -125,7 +125,3 @@ for n in range(0,N_snap):
     # Affichage des composantes scalaires : interpolee
     if config=='cer_un' and geo_p=='ray' and fig_todo!='':
         fig_chi(cen_snap_ray,r,chi_prime_n,fig_todo)
-
-# # test possible de Dhom calcule directement sur des interpolees : a ecrire sur un autre fichier ?
-# if not test_Dhom:
-#     sys.exit('fin de l etape II, sans tests d integration sur des sousdomaines')#-------------------------------------------------------------------------------------------------------------------------------------------
