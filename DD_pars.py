@@ -16,10 +16,11 @@ fixe_aff=False
 fig_todo='save'
 
 ### ------------------ Important : degre pour la resolution par elements finis ------------------ ###
-VFS_degree=2#3#
+VFS_degree=2
+# VFS_degree=3
 ## degre 2 : comme en dimension 3, permet d'eviter les erreurs de periodicite pour des pas qui nen sont pas de la forme 2"n, ou n est un diviseur de 100 ##
 
-config='cer_un'#'compl'#
+config='cer_un'
 # config='compl'
 
 if config=='cer_un':
@@ -108,7 +109,8 @@ if typ_msh=='gms':
 # raffinement de maillages : ocouronnes, volumes
 
 Nrefine=1
-#crow=(1/res_gmsh)*1e-1
+
+# crow=(1/res_gmsh)*1e-1
 
 typ_refi='front'
 # typ_refi='vol'
@@ -177,6 +179,7 @@ seuil_ener_pour=99.99
 
 ## ---------- Etape IV ---------- ##
 
+# cer_un 99,99% ; ...
 N_mor=2
 
 # r_nouv=0.11
