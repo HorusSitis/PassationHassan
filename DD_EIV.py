@@ -117,7 +117,9 @@ for n in range(0,nb_modes):
 
 end=time.time()
 
-print('se1 faite ',end-start,' secondes')
+t_phi_nouv=end-start
+
+print('se1 faite ',t_phi_nouv,' secondes')
 
 # --------------------- SE2 : resolution du modele reduit --------------------- #
 
@@ -136,7 +138,13 @@ else:
 A=Coeff[0]
 b=Coeff[1]
 
+end=time.time()
+
+t_int_Ab = end - start
+
 ## On resoud le modele reduit
+
+start = time.time()
 
 a_nouv=np.linalg.solve(A.T,-b)
 
@@ -144,7 +152,9 @@ a_nouv=np.linalg.solve(A.T,-b)
 
 end=time.time()
 
-print('se2 faite ',end-start,' secondes')
+t_rom_linear=end-start
+
+print('se2 faite', t_int_Ab + t_rom_linear, 'secondes')
 print(A,b,a_nouv)
 
 # --------------------- SE3 : calcul du nouveau champ de vecteurs, affichage --------------------- #
@@ -175,10 +185,10 @@ rho=r_nouv
 
 # Tenseur de diffusion homogeneise
 ## Integrale de chi sur le domaine fluide
-T_chi=np.zeros((2,2))
+T_chi_rom=np.zeros((2,2))
 for k in range(0,2):
     for l in range(0,2):
-        T_chi[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
+        T_chi_rom[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
 ## Integrale de l'identite sur le domaine fluide
 if config!='compl':
     por=(1-pi*r**2)
@@ -186,14 +196,16 @@ else:
     por=1-pi*(r**2+0.15**2)
 D=por*np.eye(2)
 ## Calcul et affichage du tenseur Dhom
-Dhom_kMOR=D_k*(D+T_chi.T)
+Dhom_kMOR=D_k*(D+T_chi_rom.T)
 print('Coefficient Dhom_k11 '+conf_mess+', '+geo_mess+' valeur '+str(rho)+' MOR :',Dhom_kMOR[0,0])
 
 ## On enregistre et imprime le temps d'execution de SE3
 
 end=time.time()
 
-print('se3 faite ',end-start,' secondes')
+t_rom_Dhom=end-start
+
+print('se3 faite ',t_rom_Dhom,' secondes')
 
 # --------------------- SE4 : comparaison avec la methode des elements finis --------------------- #
 
@@ -220,10 +232,10 @@ for npas_test in []:#30,40]:#7,15,16,60,125,250]:
 
 # Tenseur de diffusion homogeneise
 ## Integrale de chi sur le domaine fluide
-T_chi=np.zeros((2,2))
+T_chi_fom=np.zeros((2,2))
 for k in range(0,2):
     for l in range(0,2):
-        T_chi[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
+        T_chi_fom[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
 ## Integrale de l'identite sur le domaine fluide
 if config!='compl':
     por=(1-pi*r**2)
@@ -233,13 +245,8 @@ D=por*np.eye(2)
 print('Noeuds :',V_nouv.dim())
 print('Porosite :',por)
 ## Calcul et affichage du tenseur Dhom
-Dhom_kMEF=D_k*(D+T_chi.T)
+Dhom_kMEF=D_k*(D+T_chi_fom.T)
 print('Coefficient Dhom_k11 '+conf_mess+', '+geo_mess+' valeur '+str(rho)+ ' MEF :',Dhom_kMEF[0,0])
-
-## Comparaison
-
-err_rel=100*(Dhom_kMOR[0,0]-Dhom_kMEF[0,0])/Dhom_kMEF[0,0]
-print('Erreur relative MEF-MOR :', err_rel , ' pourcent')
 
 ## Sortie graphique
 
@@ -251,8 +258,91 @@ else:
     plt.savefig("Figures2D/solFEM_"+config+'_'+geo_p+str(int(round(100*r_nouv,2)))+".png")
 plt.close()
 
+## Comparaison
+
+err_rel_dhom=100*(Dhom_kMOR[0,0]-Dhom_kMEF[0,0])/Dhom_kMEF[0,0]
+print('Erreur relative Dhom MEF-MOR :', err_rel_dhom , ' pourcent')
+
+err_rel_ig=100*(T_chi_rom[0,0]-T_chi_fom[0,0])/T_chi_fom[0,0]
+print('Erreur relative int_grad MEF-MOR :', err_rel_ig , ' pourcent')
+
 ## On enregistre et imprime le temps d'execution de SE4
 
 end=time.time()
 
-print('se4 faite ',end-start,' secondes')
+t_fem=end-start
+
+print('se4 faite ',t_fem,' secondes')
+
+##############################################################################
+########################## Evaluation de la methode ##########################
+##############################################################################
+
+if Report :
+    print('#'*78)
+    print('#'*26+' Evaluation de la methode '+'#'*26)
+    print('#'*78)
+    print('Resultats '+conf_mess+', '+geo_mess+' valeur '+str(r_nouv)+' :')
+    print('#'*78)    #
+    ## Porosite ##
+    print('Porosite :',por)
+    ## Dhom, erreur, et temps d'execution ##
+    print('%'*78)
+    print('Coefficient Dhom_k11 MOR :',Dhom_kMOR[0,0])
+    print('Coefficient Dhom_k11 MEF :',Dhom_kMEF[0,0])
+    print('Erreur relative MEF-MOR :',err_rel_dhom,'pourcent')
+    print('%'*78)
+    print('Coefficient int_grad11 MOR :',T_chi_rom[0,0])
+    print('Coefficient int_grad11 MEF :',T_chi_fom[0,0])
+    print('Erreur relative MEF-MOR :',err_rel_ig,'pourcent')
+    print('%'*78)
+    ## Temps de calcul a evaluer ##
+    t_rom = t_phi_nouv + t_int_Ab + t_rom_linear + t_rom_Dhom
+    print('Tps_ROM :', t_rom)
+    print('-'*78)
+    print('Tps_phi_nouv :',t_phi_nouv,'secondes')
+    print('Tps_int_Ab :', t_int_Ab, 'secondes')
+    print('Tps_solve :', t_rom_linear, 'secondes')
+    print('Tps_dhom :',t_rom_Dhom, 'secondes')
+    print('='*78)
+    print('Tps_FEM :', t_fem, 'secondes')
+    ## Nombre de noeuds ##
+    print('Noeuds :',V_nouv.dim())
+    ## Rapports de temps de calcul, sans unite ##
+    print('%'*78)
+    R_rom_Nmaill = (t_phi_nouv+t_int_Ab+t_rom_linear+t_rom_Dhom)/t_fem
+    R_rom_solve = t_rom_linear/t_fem
+    print('Gain de temps :', 1./R_rom_Nmaill)
+    # print('Resolution du ROM seule :', round(0.0001/R_rom_solve, 2), '10E4')
+    #
+    print('#'*78)
+    print('#'*78)
+
+##############################################################################
+##############################################################################
+
+## ecriture des resultats dans le tableau _pg
+
+registre_pg.write(str(2*r_nouv)+'&')
+registre_pg.write(str(V_nouv.dim())+'&')
+
+registre_pg.write(str(round(T_chi_rom[0,0], 4))+'&')
+registre_pg.write(str(round(T_chi_fom[0,0], 4))+'&')
+registre_pg.write(str(round(err_rel_ig, 3))+'\\'+'%'+'&')
+
+registre_pg.write(str(round(1./R_rom_Nmaill, 2))+'\\'+'\\'+'\n')
+
+registre_pg.write('\\'+'hline'+'\n')
+
+## ecriture des ersultats dans le tableau _gr
+
+registre_gr.write(str(2*r_nouv)+'&')
+registre_gr.write(str(V_nouv.dim())+'&')
+
+registre_gr.write(str(round(100*(t_phi_nouv/t_rom), 2))+'\\'+'%'+'&')
+registre_gr.write(str(round(100*(t_int_Ab/t_rom), 2))+'\\'+'%'+'&')
+registre_gr.write(str(round(100*(t_rom_linear/t_rom), 4))+'\\'+'%'+'&')
+registre_gr.write(str(round(100*(t_rom_Dhom/t_rom), 2))+'\\'+'%'+'\\'+'\\'+'\n')
+
+
+registre_gr.write('\\'+'hline'+'\n')
