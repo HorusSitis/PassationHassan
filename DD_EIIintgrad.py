@@ -2,33 +2,6 @@
 ######################################### Etape II : extrapolation des cliches, domaine_fixe ########################################
 #####################################################################################################################################
 
-### ------------ Reproduire eventuellement pour des etapes ulterieures. Laisser seulement dans DD_fun_obj ? ------------ ###
-
-import time
-
-tol=1e-10
-
-xinf=0.0
-yinf=0.0
-xsup=1.0
-ysup=1.0
-
-# determiner le domaine fixe pour interpoler la solution
-
-dimension=2
-
-class PeriodicBoundary(SubDomain):
-    # Left boundary is "target domain" G
-    def inside(self, x, on_boundary):
-        return on_boundary and not(near(x[0],xsup,tol) or near(x[1],ysup,tol))## merci a Arnold Douglas
-    # Map right boundary (H) to left boundary (G)
-    def map(self, x, y):
-        for i in range(dimension):
-            if near(x[i],1.0,tol):
-                y[i]=0.0
-            else:
-                y[i]=x[i]
-
 # Extrapolation au domaine Omega_fixe :
 if dom_fixe=="am":
     mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2D_am.xml")

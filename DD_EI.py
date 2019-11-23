@@ -2,31 +2,6 @@
 ## Etape I : realisation des cliches, avec la methode des elements finis. Calcul du tenseur d'homogeneisation. Stockage dans snap2D/ ##
 #######################################################################################################################################
 
-### ------------ Reproduire eventuellement pour des etapes ulterieures. Laisser seulement dans DD_fun_obj ? ------------ ###
-
-tol=1e-10
-
-xinf=0.0
-yinf=0.0
-xsup=1.0
-ysup=1.0
-
-import time
-
-dimension=2
-
-class PeriodicBoundary(SubDomain):
-    # Left boundary is "target domain" G
-    def inside(self, x, on_boundary):
-        return on_boundary and not(near(x[0],xsup,tol) or near(x[1],ysup,tol))## merci a Arnold Douglas
-    # Map right boundary (H) to left boundary (G)
-    def map(self, x, y):
-        for i in range(dimension):
-            if near(x[i],1.0,tol):
-                y[i]=0.0
-            else:
-                y[i]=x[i]
-
 
 if typ_msh=='gms':
     res_fixe=res_gmsh

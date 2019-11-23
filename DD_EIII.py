@@ -2,20 +2,6 @@
 ## Etape III : en utilisant la methode des snapshots, calcul de la POD et des coefficients aleatoires, toujours dans domaine_fixe ##
 ####################################################################################################################################
 
-dimension=2
-
-class PeriodicBoundary(SubDomain):
-    # Left boundary is "target domain" G
-    def inside(self, x, on_boundary):
-        return on_boundary and not(near(x[0],xsup,tol) or near(x[1],ysup,tol))## merci a Arnold Douglas
-    # Map right boundary (H) to left boundary (G)
-    def map(self, x, y):
-        for i in range(dimension):
-            if near(x[i],1.0,tol):
-                y[i]=0.0
-            else:
-                y[i]=x[i]
-
 if dom_fixe=="am":
     mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2D_am.xml")
 elif dom_fixe=="multiray":
