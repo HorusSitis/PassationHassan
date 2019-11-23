@@ -2,32 +2,7 @@
 ######################################### Etape II : extrapolation des cliches, domaine_fixe ########################################
 #####################################################################################################################################
 
-### ------------ Reproduire eventuellement pour des etapes ulterieures. Laisser seulement dans DD_fun_obj ? ------------ ###
 
-import time
-
-tol=1e-10
-
-xinf=0.0
-yinf=0.0
-xsup=1.0
-ysup=1.0
-
-#determiner le domaine fixe pour interpoler la solution
-
-dimension=2
-
-class PeriodicBoundary(SubDomain):
-    # Left boundary is "target domain" G
-    def inside(self, x, on_boundary):
-        return on_boundary and not(near(x[0],xsup,tol) or near(x[1],ysup,tol))## merci a Arnold Douglas
-    # Map right boundary (H) to left boundary (G)
-    def map(self, x, y):
-        for i in range(dimension):
-            if near(x[i],1.0,tol):
-                y[i]=0.0
-            else:
-                y[i]=x[i]
 
 # Chargement de la liste des snapshots physiques
 
@@ -151,6 +126,6 @@ for n in range(0,N_snap):
     if config=='cer_un' and geo_p=='ray' and fig_todo!='':
         fig_chi(cen_snap_ray,r,chi_prime_n,fig_todo)
 
-# test possible de Dhom calcule directement sur des interpolees : a ecrire sur un autre fichier ?
-if not test_Dhom:
-    sys.exit('fin de l etape II, sans tests d integration sur des sousdomaines')#-------------------------------------------------------------------------------------------------------------------------------------------
+# # test possible de Dhom calcule directement sur des interpolees : a ecrire sur un autre fichier ?
+# if not test_Dhom:
+#     sys.exit('fin de l etape II, sans tests d integration sur des sousdomaines')#-------------------------------------------------------------------------------------------------------------------------------------------
