@@ -67,7 +67,7 @@ Interpolation=True
 Report=True
 
 
-# nom de l'appareil utilise pour generer les donnees enregistrees
+# nom de l'appareil utilise pour generer les donnees enregistre_pges
 computer='MECALAC_29x8'#'T1700_35x8'#
 
 
@@ -105,34 +105,49 @@ if EIV and res_gmsh!=50:
 
     if Interpolation:
 
-        nom_fichier='Perf3D/' + computer + 'res' + str(res_gmsh) + config + geo_p + 'Nmor' + str(N_mor)
-        registre=open(nom_fichier + '.txt','w')
+        nom_fichier_pg='Perf3D/' + 'pg_' + computer + 'res' + str(res_gmsh) + config + geo_p + 'Nmor' + str(N_mor)
+        nom_fichier_gr='Perf3D/' + 'gr_' + computer + 'res' + str(res_gmsh) + config + geo_p + 'Nmor' + str(N_mor)
 
-        registre.write('\\'+'begin{tabular}')
-        registre.write('{|c|c||c|c|c||c|c|c|c|c||c|c|c|}')
-        registre.write('\n')
-        registre.write('\\'+'hline'+'\n')
+        registre_pg=open(nom_fichier_pg + '.txt','w')
+        registre_gr=open(nom_fichier_gr + '.txt','w')
 
-        registre.write('\\'+'rowcolor{'+'lightgray'+'}')
+        ## en tete du tableau de resultats et performances
+        registre_pg.write('\\'+'begin{tabular}')
+        registre_pg.write('{|c|c||c|c|c||c|}')
+        registre_pg.write('\n')
+        registre_pg.write('\\'+'hline'+'\n')
 
-        registre.write('\\'+'('+'\\'+'tilde{'+'\\'+'rho'+'}'+'\\'+')'+'&')
-        registre.write('Nodes'+'&')
+        registre_pg.write('\\'+'rowcolor{'+'lightgray'+'}')
+        registre_pg.write('\\'+'('+'\\'+'tilde{'+'\\'+'rho'+'}'+'\\'+')'+'&')
+        registre_pg.write('Nodes'+'&')
 
-        registre.write('\\'+'('+'\\'+'frac{'+'\\'+'int'+'\\'+'nabla'+'\\'+'chi_{rom}}{|'+'\\'+'Omega|}'+'\\'+')'+'&')
-        registre.write('\\'+'('+'\\'+'frac{'+'\\'+'int'+'\\'+'nabla'+'\\'+'chi_{fem}}{|'+'\\'+'Omega|}'+'\\'+')'+'&')
-        registre.write('\\'+'('+'Err'+'\\'+')'+'&')
+        registre_pg.write('\\'+'('+'\\'+'frac{'+'\\'+'int'+'\\'+'nabla'+'\\'+'chi_{rom}}{|'+'\\'+'Omega|}'+'\\'+')'+'&')
+        registre_pg.write('\\'+'('+'\\'+'frac{'+'\\'+'int'+'\\'+'nabla'+'\\'+'chi_{fem}}{|'+'\\'+'Omega|}'+'\\'+')'+'&')
+        registre_pg.write('\\'+'('+'Err'+'\\'+')'+'&')
 
-        registre.write('\\'+'('+'t_{'+'\\'+'phi^{nouv}}'+'\\'+')'+'&')
-        registre.write('\\'+'('+'t_{Ab}'+'\\'+')'+'&')
-        registre.write('\\'+'('+'t_{solve}'+'\\'+')'+'&')
-        registre.write('\\'+'('+'t_{D^{hom}}'+'\\'+')'+'&')
-        registre.write('\\'+'('+'t_{fem}'+'\\'+')'+'&')
+        registre_pg.write('\\'+'('+'\\'+'mathcal{G}^{rom}'+'\\'+')'+'\\'+'\\'+'\n')
+        # registre_pg.write('\\'+'('+'\\'+'mathcal{G}^{rom}_{-'+'\\'+'phi}'+'\\'+')'+'&')
+        # registre_pg.write('\\'+'('+'\\'+'mathcal{G}^{rom}_{solve}'+'\\'+')'+'\\'+'\\'+'\n')
 
-        registre.write('\\'+'('+'\\'+'mathcal{G}^{rom}'+'\\'+')'+'&')
-        registre.write('\\'+'('+'\\'+'mathcal{G}^{rom}_{-'+'\\'+'phi}'+'\\'+')'+'&')
-        registre.write('\\'+'('+'\\'+'mathcal{G}^{rom}_{solve}'+'\\'+')'+'\\'+'\\'+'\n')
+        registre_pg.write('\\'+'hline'+'\n')
 
-        registre.write('\\'+'hline'+'\n')
+        ## en tete du tableau de performances temporelles relatives
+        registre_gr.write('\\'+'begin{tabular}')
+        registre_gr.write('{|c|c||c|c|c|c|}')
+        registre_gr.write('\n')
+        registre_gr.write('\\'+'hline'+'\n')
+
+        registre_gr.write('\\'+'rowcolor{'+'lightgray'+'}')
+        registre_gr.write('\\'+'('+'\\'+'tilde{'+'\\'+'rho'+'}'+'\\'+')'+'&')
+        registre_gr.write('Nodes'+'&')
+
+        registre_gr.write('\\'+'('+'t_{'+'\\'+'phi^{nouv}}/t_{ROM}'+'\\'+')'+'&')
+        registre_gr.write('\\'+'('+'t_{Ab}/t_{ROM}'+'\\'+')'+'&')
+        registre_gr.write('\\'+'('+'t_{solve}/t_{ROM}'+'\\'+')'+'&')
+        registre_gr.write('\\'+'('+'t_{D^{hom}}/t_{ROM}'+'\\'+')'+'\\'+'\\'+'\n')
+        # registre_gr.write('\\'+'('+'t_{fem}'+'\\'+')'+'&')
+
+        registre_gr.write('\\'+'hline'+'\n')
 
         for rho in list_rho_test:
 
@@ -140,14 +155,18 @@ if EIV and res_gmsh!=50:
             exec(open("DDD_EIV.py").read())
 
 
-        registre.write('\\'+'end{tabular}')
+        ## fin des deux tableaux
+        registre_pg.write('\\'+'end{tabular}')
+        registre_gr.write('\\'+'end{tabular}')
 
-        registre.close()
+        registre_pg.close()
+        registre_gr.close()
 
-        # nom_tab_latex = 'LaTeXArticle/'+ config + '_res' + str(res_gmsh) + '_raydeb_o' + str(int(100*2*list_rho_appr[0]))# geo_p + 'Npod' + str(N_mor) +
-        nom_tab_latex = '../GitLab/rom_diffeo_dhom/latex_article/'+ config + '_res' + str(res_gmsh) + '_raydeb_o' + str(int(100*2*list_rho_appr[0]))
+        nom_tab_latex_pg = '../GitLab/rom_diffeo_dhom/latex_article/' + 'pg_' + config + '_res' + str(res_gmsh) + '_raydeb_o' + str(int(100*2*list_rho_appr[0]))
+        nom_tab_latex_gr = '../GitLab/rom_diffeo_dhom/latex_article/' + 'gr_' + config + '_res' + str(res_gmsh) + '_raydeb_o' + str(int(100*2*list_rho_appr[0]))
 
-        os.rename(nom_fichier + '.txt', nom_tab_latex + '.tex')
+        os.rename(nom_fichier_pg + '.txt', nom_tab_latex_pg + '.tex')
+        os.rename(nom_fichier_gr + '.txt', nom_tab_latex_gr + '.tex')
 
     else:
         exec(open("DDD_EIV_fixe.py").read())
@@ -189,7 +208,7 @@ if EIV and res_gmsh!=50:
 #   deb=dico_conf_g[conf_g][3]
 #   ##
 #   nom_fichier='Perf3D/'+computer+'_res'+str(res_gmsh)+config+geo_p+'Nmor'+str(N_mor)+'.txt'
-#   registre=open(nom_fichier,'w')
+#   registre_pg=open(nom_fichier,'w')
 #   #
 #   for i in range(deb,len(l_rho)):
 #     print('rayon',str(l_rho[i]),'maillage :',l_tm[i],'secondes')
@@ -199,4 +218,4 @@ if EIV and res_gmsh!=50:
 #     t_meshing=l_tm[i]
 #     with open("DDD_EIV.py",'r') as op:
 #      exec(op.read())
-#   registre.close()
+#   registre_pg.close()

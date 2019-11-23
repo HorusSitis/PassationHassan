@@ -331,6 +331,9 @@ if Report :
     print('Erreur relative MEF-MOR :',err_rel_ig,'pourcent')
     print('%'*78)
     ## Temps de calcul a evaluer ##
+    t_rom = t_phi_nouv + t_int_Ab + t_rom_linear + t_rom_Dhom
+    print('Tps_ROM :', t_rom)
+    print('-'*78)
     print('Tps_phi_nouv :',t_phi_nouv,'secondes')
     print('Tps_int_Ab :', t_int_Ab, 'secondes')
     print('Tps_solve :', t_rom_linear, 'secondes')
@@ -363,22 +366,31 @@ if Report :
 ##############################################################################
 ##############################################################################
 
+## ecriture des resultats dans le tableau _pg
 
-registre.write(str(2*r_nouv)+'&')
-registre.write(str(V_nouv.dim())+'&')
+registre_pg.write(str(2*r_nouv)+'&')
+registre_pg.write(str(V_nouv.dim())+'&')
 
-registre.write(str(round(T_chi_rom[0,0], 4))+'&')
-registre.write(str(round(T_chi_fom[0,0], 4))+'&')
-registre.write(str(round(err_rel_ig, 2))+'\\'+'%'+'&')
+registre_pg.write(str(round(T_chi_rom[0,0], 4))+'&')
+registre_pg.write(str(round(T_chi_fom[0,0], 4))+'&')
+registre_pg.write(str(round(err_rel_ig, 2))+'\\'+'%'+'&')
 
-registre.write(str(round(t_phi_nouv, 2))+'s'+'&')
-registre.write(str(round(t_int_Ab, 2))+'s'+'&')
-registre.write(str(round(100000*t_rom_linear, 2))+'\\'+'('+'\\'+'cdot 10^{-5}'+'\\'+')'+'s'+'&')
-registre.write(str(round(t_rom_Dhom, 2))+'s'+'&')
-registre.write(str(round(t_fem, 2))+'s'+'&')
+registre_pg.write(str(round(1./R_rom_Nmaill, 2))+'\\'+'\\'+'\n')
+# registre_pg.write(str(round(1./Rdiff_rom, 2))+'&')
+# registre_pg.write(str(round(0.0001/R_rom_solve, 2))+'\\'+'('+'\\'+'cdot 10^4'+'\\'+')'+'\\'+'\\'+'\n')
 
-registre.write(str(round(1./R_rom_Nmaill, 2))+'&')
-registre.write(str(round(1./Rdiff_rom, 2))+'&')
-registre.write(str(round(0.0001/R_rom_solve, 2))+'\\'+'('+'\\'+'cdot 10^4'+'\\'+')'+'\\'+'\\'+'\n')
+registre_pg.write('\\'+'hline'+'\n')
 
-registre.write('\\'+'hline'+'\n')
+## ecriture des ersultats dans le tableau _gr
+
+registre_gr.write(str(2*r_nouv)+'&')
+registre_gr.write(str(V_nouv.dim())+'&')
+
+registre_gr.write(str(round(100*(t_phi_nouv/t_rom), 2))+'\\'+'%'+'&')
+registre_gr.write(str(round(100*(t_int_Ab/t_rom), 2))+'\\'+'%'+'&')
+registre_gr.write(str(round(100*(t_rom_linear/t_rom), 4))+'\\'+'%'+'&')
+registre_gr.write(str(round(100*(t_rom_Dhom/t_rom), 2))+'\\'+'%'+'\\'+'\\'+'\n')
+# registre_pg.write(str(round(t_fem, 2))+'s'+'&')
+
+
+registre_gr.write('\\'+'hline'+'\n')
