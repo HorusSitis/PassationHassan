@@ -22,10 +22,18 @@ def snap_circ_ray(N_par):
     rho=list_rho_appr[N_par]
 
     if test_snap=='i_per':
+        # resolution du probleme variationnel avec un seul thread
         chi_r=snapshot_circ_per(cen_snap_ray,rho,res)
+
     else:
+        # # generation en temps reel du maillage
+        # creer_maill_compl_per_gpar(config, geo_p, mention, xyinfsup, rho, ray_p)
+        # resolution du probleme variationnel avec un seul thread
         chi_r=snapshot_compl_per(geo_p,rho,cen_snap_ray,mention,test_snap)
+
+    # pour stocker une fonction vectorisee avec multiprocessing
     chi_r_v=chi_r.vector().get_local()
+
     return([N_par,chi_r_v])
 
 # #if geo_p=='cen':
@@ -41,8 +49,10 @@ def snap_circ_ray(N_par):
 def snap_compl_ray(N_par):
 
     rho=list_rho_appr[N_par]
-
+    # resolution du probleme variationnel avec un seul thread
     chi_compl=snapshot_compl_per(geo_p,rho,cen_snap_ray,mention,test_snap)
+
+    # pour stocker une fonction vectorisee avec multiprocessing
     chi_compl_v=chi_compl.vector().get_local()
 
     return([N_par,chi_compl_v])
@@ -51,6 +61,13 @@ def snap_compl_ray(N_par):
 
 if not snap_done:
 
+    # generation sequentielle des maillages
+    for n in range(0,N_snap):
+        rho=list_rho_appr[n]
+
+        if not mesh_appr_done:
+            creer_maill_per_gpar(config, geo_p, mention, [[-1., -1.], [1., 1.]], rho, ray_p)
+        
     # Calcul des snapshots, sous forme vectorielle
     if gen_snap=='par8':
         # Generation parallele des snapshots
