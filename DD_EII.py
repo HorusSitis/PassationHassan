@@ -105,10 +105,10 @@ def extra_snap(n):
 
     # mise sous forme d'une fonction EF
     if config!='compl':
-        if cen_snap_ray==[0.,0.]:
-            mention='_som'
+        if cen_snap_ray == [xinf, yinf]:
+            mention = '_som'
         else:
-            mention=''
+            mention = ''
 
     if typ_msh=='gms':
         mesh_name='maillages_per/2D/maillage_trou2D'+mention+'_'+str(int(round(100*r,2)))+'.xml'
@@ -117,8 +117,6 @@ def extra_snap(n):
     else:
         mesh_name='maillages_per/2D/maillage_trous2D_'+geo_p+'_'+str(int(round(100*r,2)))+'.xml'
         mesh=Mesh(mesh_name)
-
-
 
     V_n=VectorFunctionSpace(mesh, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
 
