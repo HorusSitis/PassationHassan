@@ -33,8 +33,8 @@ tol=1e-10
 
 xinf=-1.0
 yinf=-1.0
-# xinf=0
-# yinf=0
+# xinf=0.
+# yinf=0.
 xsup=1.0
 ysup=1.0
 
@@ -51,8 +51,8 @@ class PeriodicBoundary(SubDomain):
     # Map right boundary (H) to left boundary (G)
     def map(self, x, y):
         for i in range(dimension):
-            if near(x[i],1.0,tol):
-                y[i]=0.0
+            if near(x[i],xsup,tol):
+                y[i]=xinf
             else:
                 y[i]=x[i]
 
@@ -78,8 +78,8 @@ if config=='cer_un':
     ##
     geo_p='ray'
     # geo_p = 'cen'
-    cen_snap_ray=[0.5,0.5]
-    # cen_snap_ray = [0.,0.]
+    cen_snap_ray = [(xinf + xsup)/2., (yinf + ysup)/2.]
+    # cen_snap_ray = [xinf, yinf]
     ##
     conf_mess='disque unique'
     ##
@@ -89,35 +89,35 @@ if config=='cer_un':
     # ray_snap_cen=0.25
     # csr_list=[[0.05*k,0.5] for k in range(1,1+Nsnap)]
     ##
-    if cen_snap_ray==[0.5,0.5]:
-        conf_mess=conf_mess+' centre'
-        mention=''
+    if cen_snap_ray == [(xinf + xsup)/2., (yinf + ysup)/2.]:
+        conf_mess = conf_mess+' centre'
+        mention = ''
         ### 'i_per' : Nrom=... ; 'solid_1': Nrom=... ; ### ???
-    elif cen_snap_ray==[0.,0.]:
-        conf_mess=conf_mess+' aux sommets'
-        mention='_som'
-        config=config+mention
-        ### 'i_per' : Nrom=2 ; 'solid_1': Nrom=5 ; 'solid_2': Nrom=2 ---> ne fonctionne pas
+    elif cen_snap_ray == [xinf, yinf]:
+        conf_mess = conf_mess+' aux sommets'
+        mention = '_som'
+    config = config + mention
+    ### 'i_per' : Nrom=2 ; 'solid_1': Nrom=5 ; 'solid_2': Nrom=2 ---> ne fonctionne pas
     # pour des procedures communes aa toutes les configurations
     ray_p = 0.
 elif config=='compl':
     ray_p = 0.3
     # espace des snapshots
-    test_snap='solid_1'#'solid_2'#''#
+    test_snap = 'solid_1'#'solid_2'#''#
     ##
     dom_fixe='solid'
     # dom_fixe = 'am'
     ##
-    geo_p='hor'
-    # geo_p='diag'
+    # geo_p='hor'
+    geo_p='diag'
     # pour editer les fichiers de maillages
     mesh_prefix = 'maillage_trous2D_'+geo_p+'_'
     ##
     if geo_p=='diag':
-        cen_snap_ray=[0.,0.]
+        cen_snap_ray=[xinf, yinf]
         ### 'solid_1': Nrom=3 ;
     elif geo_p=='hor':
-        cen_snap_ray=[0.,0.5]
+        cen_snap_ray=[xinf, (yinf + ysup)/2.]
     ##
     conf_mess='deux disques par periode'
     mess_prefix=' rayon central variable'

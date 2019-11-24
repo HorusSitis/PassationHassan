@@ -5,10 +5,10 @@
 
 if typ_msh=='gms':
     res_fixe=res_gmsh
-    if dom_fixe=="am":
-        mesh_f_name="maillages_per/2D/maillage_fixe2D_am.xml"
+    if dom_fixe=='am':
+        mesh_f_name='maillages_per/2D/maillage_fixe2D_am.xml'
     elif config=='compl':
-        mesh_f_name="maillages_per/2D/maillage_trous2D_"+geo_p+"_fixe.xml"
+        mesh_f_name='maillages_per/2D/maillage_trous2D_'+geo_p+'_fixe.xml'
 
 ## Boucle pour la creation des snapshots, avec un parametre pouvant etre le rayon d'une inclusion circulaire, ou l'emplacement de son centre ##
 # Calcule aussi le tenseur de diffusion homogeneise #
@@ -64,7 +64,7 @@ if not mesh_appr_done:
     for n in range(0,N_snap):
         rho = list_rho_appr[n]
 
-        creer_maill_per_gpar(config, geo_p, mention, [[-1., -1.], [1., 1.]], rho, ray_p)
+        creer_maill_per_gpar(config, geo_p, mention, xyinfsup, rho, ray_p)
 
 # ------------------------- Snapshots, conditionnellement ------------------------- #
 
@@ -120,13 +120,13 @@ if not snap_done:
     l_name='Lchi_'+str(N_snap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
     # sauvegarde de la liste des solutions indexees calculees avec la methode des elements finis
     with sh.open(repertoire_parent+l_name) as l_sto:
-        l_sto["maliste"] = list_chi_v
+        l_sto['maliste'] = list_chi_v
     # Matrice des snapshots : plus tard, voir l'etape II
 
 else :
     l_name='Lchi_'+str(N_snap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
     with sh.open(repertoire_parent+l_name) as l_loa:
-        list_chi_v = l_loa["maliste"]
+        list_chi_v = l_loa['maliste']
 
 
 # --------------------------------------------------------------------------------- #
@@ -136,7 +136,7 @@ for n in range(0,N_snap):
     # Extraction du snapshot de rang n
     chi_n_v=list_chi_v[n]
     # On cree un maillage pour reecrire les snapshots sous la forme de fonctions
-    mesh_repository = "maillages_per/2D/"
+    mesh_repository = 'maillages_per/2D/'
 
     rho=list_rho_appr[n]
     r = rho
@@ -145,8 +145,8 @@ for n in range(0,N_snap):
         if geo_p=='ray':
             cen=cen_snap_ray
         if typ_msh=='gms':
-            mesh_name="maillage_trou2D_"+str(int(round(100*r,2)))
-            mesh=Mesh(mesh_repository+mesh_name+".xml")
+            mesh_name='maillage_trou2D_'+str(int(round(100*r,2)))
+            mesh=Mesh(mesh_repository+mesh_name+'.xml')
             plot(mesh)
             plt.tight_layout(pad=0)
             if fig_todo=='aff':
@@ -158,16 +158,16 @@ for n in range(0,N_snap):
             mesh=creer_maill_circ(cen,r,res)
     elif config=='cer_un_som':
         r=n*0.05
-        mention="_som"
+        mention='_som'
         if typ_msh=='gms':
-            mesh_name="maillage_trou2D"+mention+"_"+str(int(round(100*r,2)))
-            mesh=Mesh(mesh_repository+mesh_name+".xml")
+            mesh_name='maillage_trou2D'+mention+'_'+str(int(round(100*r,2)))
+            mesh=Mesh(mesh_repository+mesh_name+'.xml')
             plot(mesh)
             plt.tight_layout(pad=0)
             if fig_todo=='aff':
                 plt.show()
             elif fig_todo=='save' and (r==0.25):
-                plt.savefig('Figures2D/maillage_gmsh_per_'+config+geo_p+'_ray'+str(int(round(100*r,2)))+".png")
+                plt.savefig('Figures2D/maillage_gmsh_per_'+config+geo_p+'_ray'+str(int(round(100*r,2)))+'.png')
             plt.close()
         else:
             mesh=creer_maill_circ([c_x,c_y],r,res)
@@ -175,14 +175,14 @@ for n in range(0,N_snap):
     else:
         r_fixe=0.15
 
-        mesh_name = mesh_prefix + str(int(round(100*rho,2))) + "_rayp" + str(int(round(100*ray_p,2)))
-        mesh=Mesh(mesh_repository + mesh_name + ".xml")
+        mesh_name = mesh_prefix + str(int(round(100*rho,2))) + '_rayp' + str(int(round(100*ray_p,2)))
+        mesh=Mesh(mesh_repository + mesh_name + '.xml')
         plot(mesh)
         plt.tight_layout(pad=0)
         if fig_todo=='aff':
             plt.show()
         elif fig_todo=='save' and (r==0.25):
-            plt.savefig('Figures2D/maillage_gmsh_per_'+config+geo_p+'_ray'+str(int(round(100*r,2)))+".png")
+            plt.savefig('Figures2D/maillage_gmsh_per_'+config+geo_p+'_ray'+str(int(round(100*r,2)))+'.png')
         plt.close()
 
     V_n=VectorFunctionSpace(mesh, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
@@ -195,15 +195,15 @@ for n in range(0,N_snap):
     # Figures et erreurs
     plot(chi_n)
     # if n==0 and rho_appr_min <1:
-    #     plt.title("Rho = 0,0"+str(int(round(100*r,1))), fontsize=40)
+    #     plt.title('Rho = 0,0'+str(int(round(100*r,1))), fontsize=40)
     # else:
-    #     plt.title("Rho = 0,"+str(int(round(100*r,2))),fontsize=40)
+    #     plt.title('Rho = 0,'+str(int(round(100*r,2))),fontsize=40)
     #plot(grad(chi_n)[:,0]
     #plot(grad(chi_n)[:,1]
     if fig_todo=='aff':
         plt.show()
     elif fig_todo=='save':
-        plt.savefig("Figures2D/sol_"+str(n+1)+"_sur"+str(N_snap)+config+'_'+geo_p+".png")
+        plt.savefig('Figures2D/sol_'+str(n+1)+'_sur'+str(N_snap)+config+'_'+geo_p+'.png')
     plt.close()
     if err_eval:
         if config!='compl':
@@ -225,8 +225,8 @@ for n in range(0,N_snap):
     D=por*np.eye(2)
     ## Calcul et affichage du tenseur Dhom
     Dhom_k=D_k*(D+T_chi.T)
-    print("Porosite :", por)
-    print('Coefficient Dhom_k11, snapshot '+str(n+1)+", "+conf_mess+', '+geo_mess+" :",Dhom_k[0,0])
+    print('Porosite :', por)
+    print('Coefficient Dhom_k11, snapshot '+str(n+1)+', '+conf_mess+', '+geo_mess+' :',Dhom_k[0,0])
     ## Anisotropie
     mod_diag=min(abs(Dhom_k[0,0]),abs(Dhom_k[1,1]))
     mod_ndiag=0
@@ -237,8 +237,8 @@ for n in range(0,N_snap):
         for j in range(i+1,2):
             if abs(Dhom_k[i,j])>mod_ndiag:
                 mod_ndiag=abs(Dhom_k[i,j])
-    print("Anisotropie I- : ",max(abs(Dhom_k[0,0]),abs(Dhom_k[1,1]))/mod_diag-1)
-    print("Anisotropie II- : ",mod_ndiag/mod_diag)
+    print('Anisotropie I- : ',max(abs(Dhom_k[0,0]),abs(Dhom_k[1,1]))/mod_diag-1)
+    print('Anisotropie II- : ',mod_ndiag/mod_diag)
     # Affichage des composantes scalaires : solution
     if config=='cer_un' and geo_p=='ray':
         fig_chi(cen_snap_ray,r,chi_n,fig_todo)

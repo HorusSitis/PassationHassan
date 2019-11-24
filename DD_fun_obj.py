@@ -104,7 +104,7 @@ def creer_maill_per_gpar(config, geo_p, mention, xyinfsup, rho, ray_p):
 
 def snapshot_circ_per(cen,r,res):
     c_x,c_y = cen[0],cen[1]
-    if cen == [0.,0.]:
+    if cen == [xinf, yinf]:
         mention = '_som'
     else:
         mention = ''
@@ -117,7 +117,7 @@ def snapshot_circ_per(cen,r,res):
     l_cen=[]
     for i in range(-1,2):
         for j in range(-1,2):
-            l_cen.append([cen[0]+i,cen[1]+j])
+            l_cen.append([cen[0]+2*i,cen[1]+2*j])
     class inclusion_periodique(SubDomain):
         def inside(self,x,on_boundary):
             return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]))#points de la frontiere du dysteme compris dans la boule de centre et rayons cen et r, pour la norme infinie
@@ -161,7 +161,6 @@ def snapshot_compl_per(geo_p, rho, cen, test_snap, ray_p):#,mention,res):
     ##
     mesh_name = mesh_prefix + str(int(round(100*rho,2))) + '_rayp' + str(int(round(100*ray_p,2)))
     ## Maillage : condition de resolution et de configuration
-    print('!'*20 + mesh_repository + mesh_name + '.xml' + '!'*20)
     mesh = Mesh(mesh_repository + mesh_name + '.xml')
     ## creation de l'espace des fonctions-test
     V = VectorFunctionSpace(mesh, 'P', VFS_degree, form_degree=0, constrained_domain=PeriodicBoundary())
