@@ -18,13 +18,13 @@ import numpy as np
 fixe_aff=False
 
 # fig_todo=''
-fig_todo='aff'
-# fig_todo='save'
+# fig_todo='aff'
+fig_todo='save'
 
 import time
 
 
-mesh_repository = "maillages_per/2D/"
+mesh_repository = 'maillages_per/2D/'
 
 
 ### ------------ Implementation du domaine periodique ------------ ###
@@ -45,7 +45,7 @@ xyinfsup = [[xinf, yinf], [xsup, ysup]]
 dimension=2
 
 class PeriodicBoundary(SubDomain):
-    # Left boundary is "target domain" G
+    # Left boundary is 'target domain' G
     def inside(self, x, on_boundary):
         return on_boundary and not(near(x[0],xsup,tol) or near(x[1],ysup,tol))## merci a Arnold Douglas
     # Map right boundary (H) to left boundary (G)
@@ -59,25 +59,25 @@ class PeriodicBoundary(SubDomain):
 ### ------------------ Important : degre pour la resolution par elements finis ------------------ ###
 VFS_degree=2
 # VFS_degree=3
-## degre 2 : comme en dimension 3, permet d'eviter les erreurs de periodicite pour des pas qui nen sont pas de la forme 2"n, ou n est un diviseur de 100 ##
+## degre 2 : comme en dimension 3, permet d'eviter les erreurs de periodicite pour des pas qui nen sont pas de la forme 2'n, ou n est un diviseur de 100 ##
 
-# config='cer_un'
-config='compl'
+config='cer_un'
+# config='compl'
 
 if config=='cer_un':
     # pour editer les fichiers de maillages
-    mesh_prefix = "maillage_trou2D_"
+    mesh_prefix = 'maillage_trou2D_'
     # espace des snapshots
     test_snap='i_per'
     # test_snap = ''
     # test_snap = 'solid_1'
     ### on exclut 'solid_2' ###
-    dom_fixe= "am"
-    # dom_fixe = "multiray"
-    # dom_fixe = "ray_min"
+    dom_fixe= 'am'
+    # dom_fixe = 'multiray'
+    # dom_fixe = 'ray_min'
     ##
     geo_p='ray'
-    # geo_p = "cen"
+    # geo_p = 'cen'
     cen_snap_ray=[0.5,0.5]
     # cen_snap_ray = [0.,0.]
     ##
@@ -90,12 +90,12 @@ if config=='cer_un':
     # csr_list=[[0.05*k,0.5] for k in range(1,1+Nsnap)]
     ##
     if cen_snap_ray==[0.5,0.5]:
-        conf_mess=conf_mess+" centre"
-        mention=""
+        conf_mess=conf_mess+' centre'
+        mention=''
         ### 'i_per' : Nrom=... ; 'solid_1': Nrom=... ; ### ???
     elif cen_snap_ray==[0.,0.]:
-        conf_mess=conf_mess+" aux sommets"
-        mention="_som"
+        conf_mess=conf_mess+' aux sommets'
+        mention='_som'
         config=config+mention
         ### 'i_per' : Nrom=2 ; 'solid_1': Nrom=5 ; 'solid_2': Nrom=2 ---> ne fonctionne pas
     # pour des procedures communes aa toutes les configurations
@@ -105,13 +105,13 @@ elif config=='compl':
     # espace des snapshots
     test_snap='solid_1'#'solid_2'#''#
     ##
-    dom_fixe="solid"
-    # dom_fixe = "am"
+    dom_fixe='solid'
+    # dom_fixe = 'am'
     ##
     geo_p='hor'
     # geo_p='diag'
     # pour editer les fichiers de maillages
-    mesh_prefix = "maillage_trous2D_"+geo_p+"_"
+    mesh_prefix = 'maillage_trous2D_'+geo_p+'_'
     ##
     if geo_p=='diag':
         cen_snap_ray=[0.,0.]
@@ -189,7 +189,7 @@ computer='MECALAC_29x8'##'T1700_35x8'##
 
 # repertoire pour les resultats
 
-repertoire_parent="Res2D/"
+repertoire_parent='Res2D/'
 
 ### ------------ Execution des etapes demandees en preambule, imports specifiques ------------ ###
 
@@ -235,7 +235,7 @@ seuil_ener_pour=99.99
 
 
 ## 99,99% :
-### compl diag N_mor=3 pour "solid", 4 pour "am"
+### compl diag N_mor=3 pour 'solid', 4 pour 'am'
 ### compl hor N_mor=4
 
 ## ---------- Etape IV ---------- ##

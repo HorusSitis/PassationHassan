@@ -4,7 +4,7 @@ def crown(r):#epaisseur de la couronne dans laquelle le maillage est raffine
     return r+tol#*(1+0.2*exp(-r**2))#1.2*r
 
 def raffinement_maillage_circ_per(cen,r,mesh):# Objectif : montrer que l'emplacement de l'inclusion periodique dans la cellule elementaire ne change pas le coefficient de diffusion homogeneise, calcule avec le tenseur chi
-    markers = MeshFunction("bool", mesh, mesh.topology().dim())
+    markers = MeshFunction('bool', mesh, mesh.topology().dim())
     markers.set_all(False)
     # on cree une liste des centres des inclusions voisines de la cellule elementaire
     l_cen=[]
@@ -49,18 +49,18 @@ def creer_maill_per_gpar(config, geo_p, mention, xyinfsup, rho, ray_p):
     xsup = xyinfsup[1][0]
     ysup = xyinfsup[1][1]
 
-    if mention == "":
+    if mention == '':
         xcen = (xinf + xsup)/2.
         ycen = (yinf + ysup)/2.
-    # elif mention == "_som":
+    # elif mention == '_som':
     #     #
 
     ### on cree le fichier qui code le maillage pour gmsh
-    mesh_name = mesh_prefix + mention + "sansgpar"
+    mesh_name = mesh_prefix + mention + 'sansgpar'
     fichier_sansentete = open(mesh_repository + mesh_name + '.txt', 'r')
 
     if config == 'compl':
-        nom_fichier_avecgpar = mesh_prefix + str(int(round(100*rho,2))) + "_rayp" + str(int(round(100*ray_p,2)))
+        nom_fichier_avecgpar = mesh_prefix + str(int(round(100*rho,2))) + '_rayp' + str(int(round(100*ray_p,2)))
     else:
         nom_fichier_avecgpar = mesh_prefix + mention + str(int(round(100*rho,2)))
 
@@ -74,7 +74,7 @@ def creer_maill_per_gpar(config, geo_p, mention, xyinfsup, rho, ray_p):
     gen_mesh.write('ymin = ' + str(yinf) + ';' + '\n')
     gen_mesh.write('xmax = ' + str(xsup) + ';' + '\n')
     gen_mesh.write('ymax = ' + str(ysup) + ';' + '\n')
-    if mention == "":
+    if mention == '':
         gen_mesh.write('cx = ' + str(xcen) + ';' + '\n')
         gen_mesh.write('cy = ' + str(ycen) + ';' + '\n')
 
@@ -105,15 +105,15 @@ def creer_maill_per_gpar(config, geo_p, mention, xyinfsup, rho, ray_p):
 def snapshot_circ_per(cen,r,res):
     c_x,c_y = cen[0],cen[1]
     if cen == [0.,0.]:
-        mention = "_som"
+        mention = '_som'
     else:
-        mention = ""
+        mention = ''
     ## on appelle le fichier .xml contenant le maillage
     mesh_name = mesh_prefix + mention + str(int(round(100*r,2)))
-    mesh_c_r = Mesh(mesh_repository + mesh_name + ".xml")
+    mesh_c_r = Mesh(mesh_repository + mesh_name + '.xml')
     # On pose et on resoud le probleme aux elements finis
     V = VectorFunctionSpace(mesh_c_r, 'P', VFS_degree, form_degree=0, constrained_domain=PeriodicBoundary())
-    ## On definit la bordure du domaine, sur laquelle integrer le second membre "L" de l'equation en dimension finie
+    ## On definit la bordure du domaine, sur laquelle integrer le second membre 'L' de l'equation en dimension finie
     l_cen=[]
     for i in range(-1,2):
         for j in range(-1,2):
@@ -123,12 +123,12 @@ def snapshot_circ_per(cen,r,res):
             return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]))#points de la frontiere du dysteme compris dans la boule de centre et rayons cen et r, pour la norme infinie
     ### Utilisation de la classe definie precedemment
     Gamma_sf = inclusion_periodique()
-    boundaries = MeshFunction("size_t", mesh_c_r, mesh_c_r.topology().dim()-1)
+    boundaries = MeshFunction('size_t', mesh_c_r, mesh_c_r.topology().dim()-1)
     print('Noeuds :',V.dim())
     print('Facettes : ',mesh_c_r.num_edges())
     boundaries.set_all(0)
     Gamma_sf.mark(boundaries, 5)
-    ds = Measure("ds")(subdomain_data=boundaries)
+    ds = Measure('ds')(subdomain_data=boundaries)
     num_front_cercle=5
     ## On resoud le probleme faible, avec une condition de type Neumann au bord de l'obstacle
     normale = FacetNormal(mesh_c_r)
@@ -146,7 +146,7 @@ def snapshot_circ_per(cen,r,res):
     moy_u_y=assemble(u[1]*dx)/porosity
     moy=Function(V)
     moy=Constant((moy_u_x,moy_u_y))
-    print("Valeur moyenne de u :",[moy_u_x,moy_u_y])
+    print('Valeur moyenne de u :',[moy_u_x,moy_u_y])
     moy_V=interpolate(moy,V)
     moy_Vv=moy_V.vector().get_local()
     u_v=u.vector().get_local()
@@ -159,17 +159,17 @@ def snapshot_circ_per(cen,r,res):
 
 def snapshot_compl_per(geo_p, rho, cen, test_snap, ray_p):#,mention,res):
     ##
-    mesh_name = mesh_prefix + str(int(round(100*rho,2))) + "_rayp" + str(int(round(100*ray_p,2)))
+    mesh_name = mesh_prefix + str(int(round(100*rho,2))) + '_rayp' + str(int(round(100*ray_p,2)))
     ## Maillage : condition de resolution et de configuration
-    print('!'*20 + mesh_repository + mesh_name + ".xml" + '!'*20)
-    mesh = Mesh(mesh_repository + mesh_name + ".xml")
+    print('!'*20 + mesh_repository + mesh_name + '.xml' + '!'*20)
+    mesh = Mesh(mesh_repository + mesh_name + '.xml')
     ## creation de l'espace des fonctions-test
     V = VectorFunctionSpace(mesh, 'P', VFS_degree, form_degree=0, constrained_domain=PeriodicBoundary())
     print('Noeuds :',V.dim())
-    ## On definit la bordure du domaine, sur laquelle integrer le second membre "L" de l'equation en dimension finie
-    boundaries = MeshFunction('size_t', mesh, mesh_repository + mesh_name + "_facet_region" + ".xml")
+    ## On definit la bordure du domaine, sur laquelle integrer le second membre 'L' de l'equation en dimension finie
+    boundaries = MeshFunction('size_t', mesh, mesh_repository + mesh_name + '_facet_region' + '.xml')
     print('Facettes : ',mesh.num_edges())
-    ds = Measure("ds")(subdomain_data=boundaries)
+    ds = Measure('ds')(subdomain_data=boundaries)
     ## Marquage des bordures pour la condition de Neumann
     if test_snap=='solid_1':
         num_solid_boundary=1
@@ -202,7 +202,7 @@ def snapshot_compl_per(geo_p, rho, cen, test_snap, ray_p):#,mention,res):
     moy_u_y=assemble(u[1]*dx)/porosity
     moy=Function(V)
     moy=Constant((moy_u_x,moy_u_y))
-    print("Valeur moyenne de u :",[moy_u_x,moy_u_y])
+    print('Valeur moyenne de u :',[moy_u_x,moy_u_y])
     moy_V=interpolate(moy,V)
     moy_Vv=moy_V.vector().get_local()
     u_v=u.vector().get_local()
@@ -224,22 +224,22 @@ def fig_chi(cen,r,u,todo):
     ax1=plt.subplot(gs1[0])
     spl1=plot(u[0])
     divider1=make_axes_locatable(ax1)
-    cax1=divider1.append_axes("right",size="8%",pad=0.08)
+    cax1=divider1.append_axes('right',size='8%',pad=0.08)
     bar1=plt.colorbar(spl1, cax=cax1)
-    plt.title("chi_y"+str(1))
+    plt.title('chi_y'+str(1))
     ## u_y2
     ax2=plt.subplot(gs1[1])
     spl2=plot(u[1])
     divider2=make_axes_locatable(ax2)
-    cax2=divider2.append_axes("right",size="8%",pad=0.08)
+    cax2=divider2.append_axes('right',size='8%',pad=0.08)
     bar2=plt.colorbar(spl2, cax=cax2)
-    plt.title("chi_y"+str(2))
+    plt.title('chi_y'+str(2))
     ## Show or save
     if todo=='aff':
         plt.show()
     elif todo=='save':
         #plt.tight_layout(pad=2)
-        plt.savefig("Figures2D/inc_c"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r,2)))+"_chi.png", bbox_inches="tight")#Cyrille
+        plt.savefig('Figures2D/inc_c'+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r,2)))+'_chi.png', bbox_inches='tight')#Cyrille
     ## Close
     plt.close()
     #
@@ -252,27 +252,27 @@ def fig_dchi(cen,r,U,todo):
     plt.subplot(221)
     spl1=plot(U[0,0])
     bar1=plt.colorbar(spl1)
-    plt.title("-dchi"+str(1)+"_dy"+str(1))
+    plt.title('-dchi'+str(1)+'_dy'+str(1))
     ## U_1_y2
     plt.subplot(222)
     spl2=plot(U[1,0])
     bar2=plt.colorbar(spl2)
-    plt.title("-dchi"+str(2)+"_dy"+str(1))
+    plt.title('-dchi'+str(2)+'_dy'+str(1))
     ## U_2_y1
     plt.subplot(223)
     spl3=plot(U[0,1])
     bar3=plt.colorbar(spl3)
-    plt.title("-dchi"+str(1)+"_dy"+str(2))
+    plt.title('-dchi'+str(1)+'_dy'+str(2))
     ## U_2_y2
     plt.subplot(224)
     spl4=plot(U[1,1])
     bar4=plt.colorbar(spl4)
-    plt.title("-dchi"+str(2)+"_dy"+str(2))
+    plt.title('-dchi'+str(2)+'_dy'+str(2))
     ## Show or save
     if todo=='aff':
         plt.show()
     elif todo=='save':
-        plt.savefig("Figures2D/inc_c"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r,2)))+"_Gradchi.png")
+        plt.savefig('Figures2D/inc_c'+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r,2)))+'_Gradchi.png')
     ## Close
     plt.close()
     #
@@ -362,25 +362,25 @@ def err_per_gr(cen,r,u,Npas,todo):
     ## u_y1
     plt.subplot(221)
     plt.plot(ulr_y1_0,coord_b,'bo',ulr_y1_1,coord_b,'k')
-    plt.title("chi_y1 on vertical edges")
+    plt.title('chi_y1 on vertical edges')
     ## u_y2
     plt.subplot(222)
     plt.plot(ulr_y2_0,coord_b,'bo',ulr_y2_1,coord_b,'k')
-    plt.title("chi_y2 on vertical edges")
+    plt.title('chi_y2 on vertical edges')
     # Compares and plots between top and bottom boundary for chi_y1 and chi_y2
     ## u_y1
     plt.subplot(223)
     plt.plot(coord_b,ubt_y1_0,'bo',coord_b,ubt_y1_1,'k')
-    plt.title("chi_y1 on horizontal edges")
+    plt.title('chi_y1 on horizontal edges')
     ## u_y2
     plt.subplot(224)
     plt.plot(coord_b,ubt_y2_0,'bo',coord_b,ubt_y2_1,'k')
-    plt.title("chi_y2 on horizontal edges")
+    plt.title('chi_y2 on horizontal edges')
     ## Show or save
     if todo=='aff':
         plt.show()
     elif todo=='save':
-        plt.savefig("Figures2D/inc_c"+"CompLRBT"+str(Npas)+"_cen"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+"_ray"+str(int(round(100*r,2)))+".png")
+        plt.savefig('Figures2D/inc_c'+'CompLRBT'+str(Npas)+'_cen'+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+'_ray'+str(int(round(100*r,2)))+'.png')
     ## Close
     plt.close()
     #

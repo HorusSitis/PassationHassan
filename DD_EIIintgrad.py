@@ -3,13 +3,13 @@
 #####################################################################################################################################
 
 # Extrapolation au domaine Omega_fixe :
-if dom_fixe=="am":
-    mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2D_am.xml")
-elif dom_fixe=="multiray":
-    mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2d_"+dom_fixe+".xml")
+if dom_fixe=='am':
+    mesh_fixe=Mesh('maillages_per/2D/maillage_fixe2D_am.xml')
+elif dom_fixe=='multiray':
+    mesh_fixe=Mesh('maillages_per/2D/maillage_fixe2d_'+dom_fixe+'.xml')
 elif config=='compl':
-    mesh_fixe=Mesh("maillages_per/2D/maillage_trous2D_"+geo_p+"_fixe.xml")
-elif dom_fixe=="ray_min":
+    mesh_fixe=Mesh('maillages_per/2D/maillage_trous2D_'+geo_p+'_fixe.xml')
+elif dom_fixe=='ray_min':
     if config=='cer_un':
         mesh_fixe=Mesh('maillages_per/2D/maillage_trou2D_5.xml')
 
@@ -21,7 +21,7 @@ if exsnap_done:
     u_name='Usnap_'+dom_fixe+str(N_snap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
     print(repertoire_parent+u_name)
     with sh.open(repertoire_parent+u_name) as u_loa:
-        Usnap = u_loa["maliste"]
+        Usnap = u_loa['maliste']
 else:
     sys.exit('snapshots non encore generes')
 
@@ -47,11 +47,11 @@ for n in range(0,N_snap):
     if fig_todo=='aff' or fig_todo=='save':
         # Affichage des valeurs de la solution interpolee
         plot(chi_prime_n)
-        plt.title("Snapshot "+str(n),fontsize=40)
+        plt.title('Snapshot '+str(n),fontsize=40)
         if fig_todo=='aff':
             plt.show()
         else:
-            plt.savefig("Figures2D/snap_"+str(n)+"_sur"+str(N_snap)+config+'_'+geo_p+".png")
+            plt.savefig('Figures2D/snap_'+str(n)+'_sur'+str(N_snap)+config+'_'+geo_p+'.png')
         plt.close()
     else:
         print('pffrrh !')
@@ -90,19 +90,19 @@ def f_testDhom(n):
     por_prime=1
 
     ## Creation du maillage fixe local
-    if dom_fixe=="am":
-        mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2D_am.xml")
+    if dom_fixe=='am':
+        mesh_fixe=Mesh('maillages_per/2D/maillage_fixe2D_am.xml')
     elif config=='compl':
-        mesh_fixe=Mesh("maillages_per/2D/maillage_trous2D_"+geo_p+"_fixe.xml")
-    elif dom_fixe=="ray_min":
+        mesh_fixe=Mesh('maillages_per/2D/maillage_trous2D_'+geo_p+'_fixe.xml')
+    elif dom_fixe=='ray_min':
         if config=='cer_un':
             mesh_fixe=Mesh('maillages_per/2D/maillage_trou2D_5.xml')
-    elif dom_fixe=="multiray":
-        mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2d_"+dom_fixe+".xml")
+    elif dom_fixe=='multiray':
+        mesh_fixe=Mesh('maillages_per/2D/maillage_fixe2d_'+dom_fixe+'.xml')
     V_fixe=VectorFunctionSpace(mesh_fixe, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
 
     ## Interpolation post-snapshot sur le maillage physique
-    mesh_name="maillages_per/2D/maillage_trou2D"+mention+"_"+str(int(round(100*r,2)))+".xml"
+    mesh_name='maillages_per/2D/maillage_trou2D'+mention+'_'+str(int(round(100*r,2)))+'.xml'
     mesh=Mesh(mesh_name)
     V_n=VectorFunctionSpace(mesh,'P',VFS_degree,constrained_domain=PeriodicBoundary())
     chi_postprime_n=Function(V_n)
@@ -115,14 +115,14 @@ def f_testDhom(n):
         for l in range(0,2):
             T_chi_postprime[k,l]=assemble(grad(chi_postprime_n)[k,l]*dx)
     ## Integration sur le domaine fluide avec le maillage fixe
-    print("Avec le maillage fixe")
+    print('Avec le maillage fixe')
 
     # Raffinement du maillage
     start=time.time()
     # Boucle pour des rafinements successifs
     for i in range(1,1+Nrefine):
         print('raffinement',i)
-        markers = MeshFunction("bool", mesh_fixe, mesh_fixe.topology().dim())
+        markers = MeshFunction('bool', mesh_fixe, mesh_fixe.topology().dim())
         markers.set_all(False)
         for c in cells(mesh_fixe):
             if typ_refi=='vol':
@@ -176,7 +176,7 @@ def f_testDhom(n):
     subdomains=MeshFunction('size_t',mesh_fixe,mesh_fixe.topology().dim())
     subdomains.set_all(1)
     dom_courant.mark(subdomains,12829)
-    dxf=Measure("dx", domain=mesh_fixe, subdomain_data=subdomains)
+    dxf=Measure('dx', domain=mesh_fixe, subdomain_data=subdomains)
 
     # Calcul de int_grad en restreignant sur plusieurs domaines
     T_chi_restr_prime=np.zeros((2,2))
@@ -207,7 +207,7 @@ for n in range(0,N_snap):
     por_prime=1
 
     ## Interpolation post-snapshot sur le maillage physique
-    mesh_name="maillages_per/2D/maillage_trou2D"+mention+"_"+str(int(round(100*r,2)))+".xml"
+    mesh_name='maillages_per/2D/maillage_trou2D'+mention+'_'+str(int(round(100*r,2)))+'.xml'
     mesh=Mesh(mesh_name)
     V_n=VectorFunctionSpace(mesh,'P',VFS_degree,constrained_domain=PeriodicBoundary())
     chi_postprime_n=Function(V_n)

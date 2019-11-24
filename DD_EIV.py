@@ -4,61 +4,61 @@
 ## Etape IV : Predictions. Choisir les parametres du probleme a resoudre par le modele reduit. ##
 #################################################################################################
 
-# maillage et fonctions tests du domaine fixe
-
-if dom_fixe=="am":
-    mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2D_am.xml")
-elif dom_fixe=="multiray":
-    mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2d_"+dom_fixe+".xml")
+if dom_fixe=='am':
+    mesh_fixe=Mesh('maillages_per/2D/maillage_fixe2D_am.xml')
+elif dom_fixe=='multiray':
+    mesh_fixe=Mesh('maillages_per/2D/maillage_fixe2d_'+dom_fixe+'.xml')
 elif config=='compl':
-    mesh_fixe=Mesh("maillages_per/2D/maillage_trous2D_"+geo_p+"_fixe.xml")
-elif dom_fixe=="ray_min":
+    mesh_fixe=Mesh('maillages_per/2D/maillage_trous2D_'+geo_p+'_fixe.xml')
+elif dom_fixe=='ray_min':
     if config=='cer_un':
         mesh_fixe=Mesh('maillages_per/2D/maillage_trou2D_5.xml')
 
-
 V_fixe=VectorFunctionSpace(mesh_fixe, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
 
-# Performances
+# --------------------- SE0 : maillage et fonctions tests du domaine fixe --------------------- #
 
-import time
+
+## mention='...' ## affectation effectuee en preambule, voir Main2D.py
+
+if typ_msh=='gms':
+
+    mesh_repository='maillages_per/2D/'
+
+    if config!='compl':
+        mesh_name = mesh_prefix + geo_p + mention + '_' + str(int(round(100*rho,2)))
+    else:
+        mesh_name = mesh_prefix + geo_p + '_' + str(int(round(100*rho,2))) + '_rayp' + str(int(round(100*ray_p,2)))
+
+mesh_nouv = Mesh(mesh_repository + mesh_name + '.xml')
+
+V_nouv = VectorFunctionSpace(mesh_nouv, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
+
+# # Performances
+# import time
 
 ### ------------ Etapes reproduites : dependances directes de Main3D ------------ ###
 
-nb_modes=N_mor
-
-## mention="..." ## affectation effectuee en preambule, voir Main2D.py
-
-if typ_msh=='gms':
-    mesh_repository="maillages_per/2D/"
-    if config!='compl':
-        mesh_name="maillage_trou2D"+mention+"_"+str(int(round(100*r_nouv,2)))+".xml"
-    else:
-        mesh_name="maillage_trous2D_"+geo_p+"_"+str(int(round(100*r_nouv,2)))+".xml"
-
-print("Maillage de Omega_nouv",mesh_repository+mesh_name)
-mesh_nouv=Mesh(mesh_repository+mesh_name)
-
-V_nouv=VectorFunctionSpace(mesh_nouv, "P", VFS_degree, constrained_domain=PeriodicBoundary())
+nb_modes = N_mor
 
 # --------------------- SE1 : projection de la base POD sur le nouveau domaine --------------------- #
 
 ## On initialise le temps de calcul ##
 
-start=time.time()
+start = time.time()
 
 ## Taille du maillage du domaine fixe ##
 
-nb_noeuds_fixe=V_fixe.dim()
+nb_noeuds_fixe = V_fixe.dim()
 
 ## Chargement de la base POD complete
 
-phi_name='Phi'+dom_fixe+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+"res"+str(res)+'_'+ordo+'_'+computer
+phi_name='Phi'+dom_fixe+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+'res'+str(res)+'_'+ordo+'_'+computer
 
 print(phi_name)
 
 with sh.open(repertoire_parent+phi_name) as phi_loa:
-    Phi_prime_v = phi_loa["maliste"]
+    Phi_prime_v = phi_loa['maliste']
 
 ## Creation de la base POD tronquee, sous forme vectorielle
 
@@ -80,12 +80,12 @@ for n in range(0,nb_modes):
     phi_n_nouv=interpolate(phi_fixe,V_nouv)
     # affichage des modes extrapoles
     plot(phi_n_nouv)
-    # plt.title("Phi "+str(n+1)+" sur Omega_nouv",fontsize=30)
+    # plt.title('Phi '+str(n+1)+' sur Omega_nouv',fontsize=30)
     if fig_todo=='aff':
-        plt.title("Phi "+str(n+1)+" sur Omega_nouv",fontsize=30)
+        plt.title('Phi '+str(n+1)+' sur Omega_nouv',fontsize=30)
         plt.show()
     elif fig_todo=='save':
-        plt.savefig("Figures2D/phi_nouv_"+str(n+1)+"_"+config+'_'+geo_p+".png")
+        plt.savefig('Figures2D/phi_nouv_'+str(n+1)+'_'+config+'_'+geo_p+'.png')
     plt.close()
     # on range le vecteur de POD interpolee dans la matrice Phi_nouv_v
     Phi_nouv_v[:,n]=phi_n_nouv.vector().get_local()
@@ -147,11 +147,11 @@ chi_nouv=Function(V_nouv)
 chi_nouv.vector().set_local(chi_nouv_v)
 
 plot(chi_nouv)#, linewidth=0.55)
-plt.title("Solution ROM", fontsize=30)#"Rho = 0,"+str(int(round(100*r_nouv,2))),fontsize=40)
+plt.title('Solution ROM', fontsize=30)#'Rho = 0,'+str(int(round(100*r_nouv,2))),fontsize=40)
 if fig_todo=='aff':
     plt.show()
 else:
-    plt.savefig("Figures2D/solROM_"+config+'_'+geo_p+str(int(round(100*r_nouv,2)))+".png")
+    plt.savefig('Figures2D/solROM_'+config+'_'+geo_p+str(int(round(100*r_nouv,2)))+'.png')
 plt.close()
 
 ## Exploitation du champ ainsi obtenu
@@ -228,11 +228,11 @@ print('Coefficient Dhom_k11 '+conf_mess+', '+geo_mess+' valeur '+str(rho)+ ' MEF
 ## Sortie graphique
 
 plot(chi_nouv)#, linewidth=0.55)
-plt.title("Solution EF",fontsize=30)
+plt.title('Solution EF',fontsize=30)
 if fig_todo=='aff':
     plt.show()
 else:
-    plt.savefig("Figures2D/solFEM_"+config+'_'+geo_p+str(int(round(100*r_nouv,2)))+".png")
+    plt.savefig('Figures2D/solFEM_'+config+'_'+geo_p+str(int(round(100*r_nouv,2)))+'.png')
 plt.close()
 
 ## Comparaison

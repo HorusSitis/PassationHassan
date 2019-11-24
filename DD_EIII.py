@@ -2,19 +2,19 @@
 ## Etape III : en utilisant la methode des snapshots, calcul de la POD et des coefficients aleatoires, toujours dans domaine_fixe ##
 ####################################################################################################################################
 
-if dom_fixe=="am":
-    mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2D_am.xml")
-elif dom_fixe=="multiray":
-    mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2d_"+dom_fixe+".xml")
+if dom_fixe=='am':
+    mesh_fixe=Mesh('maillages_per/2D/maillage_fixe2D_am.xml')
+elif dom_fixe=='multiray':
+    mesh_fixe=Mesh('maillages_per/2D/maillage_fixe2d_'+dom_fixe+'.xml')
 elif config=='compl':
-    mesh_fixe=Mesh("maillages_per/2D/maillage_trous2D_"+geo_p+"_fixe.xml")
-elif dom_fixe=="ray_min":
+    mesh_fixe=Mesh('maillages_per/2D/maillage_trous2D_'+geo_p+'_fixe.xml')
+elif dom_fixe=='ray_min':
     if config=='cer_un':
         mesh_fixe=Mesh('maillages_per/2D/maillage_trou2D_5.xml')
 
-print("maillages_per/2D/maillage_trous2D_"+geo_p+"_fixe.xml")
+print('maillages_per/2D/maillage_trous2D_'+geo_p+'_fixe.xml')
 
-V_fixe=VectorFunctionSpace(mesh_fixe, "P", VFS_degree, constrained_domain=PeriodicBoundary())
+V_fixe=VectorFunctionSpace(mesh_fixe, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
 nb_noeuds = V_fixe.dim()
 
 
@@ -24,7 +24,7 @@ u_name='Usnap_'+dom_fixe+str(N_snap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)
 print(repertoire_parent+u_name)
 
 with sh.open(repertoire_parent+u_name) as u_loa:
-    Usnap = u_loa["maliste"]
+    Usnap = u_loa['maliste']
 
 # matrice de correlation
 
@@ -43,11 +43,11 @@ Phi_prime_v=vp_A_phi[2]
 
 ## Enregistrement de la matrice de la base POD, sous la forme vectorielle
 
-phi_name='Phi'+dom_fixe+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+"res"+str(res)+'_'+ordo+'_'+computer
+phi_name='Phi'+dom_fixe+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+'res'+str(res)+'_'+ordo+'_'+computer
 print(phi_name)
 
 with sh.open(repertoire_parent+phi_name) as p_sto:
-    p_sto["maliste"] = Phi_prime_v
+    p_sto['maliste'] = Phi_prime_v
 
 ## Tests : orthogonalite ou orthonrmalite de Phi_prime
 ui=Function(V_fixe)
@@ -88,7 +88,7 @@ for i in range(N_snap):
         plt.title('Phi '+str(i+1)+' sur domaine fixe')
         plt.show()
     else:
-        plt.savefig("Figures2D/phi_"+str(i+1)+"_"+config+'_'+geo_p+".png")
+        plt.savefig('Figures2D/phi_'+str(i+1)+'_'+config+'_'+geo_p+'.png')
     plt.close()
 
 
@@ -108,7 +108,7 @@ plt.yscale('log')
 if fig_todo=='aff':
     plt.show()
 else:
-    plt.savefig("Figures2D/ener_vp_"+config+'_'+geo_p+".png")#+"_res"+str(res)
+    plt.savefig('Figures2D/ener_vp_'+config+'_'+geo_p+'.png')#+'_res'+str(res)
 plt.close()
 
 plt.plot(absc,ener_pour_cumul)
@@ -117,7 +117,7 @@ plt.ylabel('pourcentage_energie_cumule')
 if fig_todo=='aff':
     plt.show()
 else:
-    plt.savefig("Figures2D/ener_cumul_vp_"+config+'_'+geo_p+".png")#+"_res"+str(res)
+    plt.savefig('Figures2D/ener_cumul_vp_'+config+'_'+geo_p+'.png')#+'_res'+str(res)
 plt.close()
 
 ## Choix du nombre de modes, avec une valeur seuil d'energie a atteindre avec les vacteurs de la base POD

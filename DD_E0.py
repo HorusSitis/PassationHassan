@@ -105,9 +105,9 @@ if task == 'listS':
 
     l_name='L_'+str(cote)+'_'+str(Tps)
     # stockage : listes de centres-rayons-phases et fractions volumiques #
-    # sauvegarde de la variable maliste sous le nom "maliste" dans le fichier 'L_20_10000'
+    # sauvegarde de la variable maliste sous le nom 'maliste' dans le fichier 'L_20_10000'
     with sh.open(rep_inc+'/'+l_name) as l_sto:
-        l_sto["maliste"] = L
+        l_sto['maliste'] = L
 
     print('liste RSAA faite, '+str(len(L[0]))+' inclusions')
 
@@ -120,7 +120,7 @@ elif task == 'Ainc':
     l_name = 'L_'+str(cote)+'_'+str(Tps)
 
     with sh.open(rep_inc+'/'+l_name) as l_loa:
-        L_loa = l_loa["maliste"]
+        L_loa = l_loa['maliste']
 
     # sys.exit('Remplissage de A, '+str(len(L_loa[0]))+' inclusions')
     print('Remplissage de A, '+str(len(L_loa[0]))+' inclusions')
@@ -168,7 +168,7 @@ elif task == 'Ainc':
     rep_inc='IncAlea2D'
 
     with sh.open(rep_inc+'/'+a_name) as a_sto:
-        a_sto["maliste"] = A_remp
+        a_sto['maliste'] = A_remp
 
     print('matrice A creee')
 
@@ -177,7 +177,7 @@ elif task == 'graph':
     a_name='VA_'+str(cote)+'_'+str(Tps)
 
     with sh.open(rep_inc+'/'+a_name) as a_loa:
-        A_loa = a_loa["maliste"]
+        A_loa = a_loa['maliste']
 
     ## representation graphique ##
 

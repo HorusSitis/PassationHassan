@@ -16,7 +16,7 @@ ysup=1.0
 dimension=2
 
 class PeriodicBoundary(SubDomain):
- # Left boundary is "target domain" G
+ # Left boundary is 'target domain' G
  def inside(self, x, on_boundary):
   return on_boundary and not(near(x[0],xsup,tol) or near(x[1],ysup,tol))## merci à Arnold Douglas
  # Map right boundary (H) to left boundary (G)
@@ -29,13 +29,13 @@ class PeriodicBoundary(SubDomain):
 
 # maillage et fonctions tests du domaine fixe
 
-if dom_fixe=="am":
- mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2D_am.xml")
-elif dom_fixe=="multiray":
- mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2d_"+dom_fixe+".xml")
+if dom_fixe=='am':
+ mesh_fixe=Mesh('maillages_per/2D/maillage_fixe2D_am.xml')
+elif dom_fixe=='multiray':
+ mesh_fixe=Mesh('maillages_per/2D/maillage_fixe2d_'+dom_fixe+'.xml')
 elif config=='compl':
- mesh_fixe=Mesh("maillages_per/2D/maillage_trous2D_"+geo_p+"_fixe.xml")
-elif dom_fixe=="ray_min":
+ mesh_fixe=Mesh('maillages_per/2D/maillage_trous2D_'+geo_p+'_fixe.xml')
+elif dom_fixe=='ray_min':
  if config=='cer_un':
   mesh_fixe=Mesh('maillages_per/2D/maillage_trou2D_5.xml')
 
@@ -45,7 +45,7 @@ V_fixe=VectorFunctionSpace(mesh_fixe, 'P', VFS_degree, constrained_domain=Period
 
 import time
 
-## mention="..." ## affectation effectuée en préambule, voir Main2D.py
+## mention='...' ## affectation effectuée en préambule, voir Main2D.py
 
 ### ------------ Etapes spécifiques à la construction du modèle réduit ------------ ###
 
@@ -61,19 +61,19 @@ dom_courant=DomPhysFluide()
 subdomains=MeshFunction('size_t',mesh_fixe,mesh_fixe.topology().dim())
 subdomains.set_all(1)
 dom_courant.mark(subdomains,12829)
-dxf=Measure("dx", domain=mesh_fixe, subdomain_data=subdomains)
+dxf=Measure('dx', domain=mesh_fixe, subdomain_data=subdomains)
 
 if typ_msh=='gms':
- mesh_repository="maillages_per/2D/"
+ mesh_repository='maillages_per/2D/'
  if config!='compl':
-  mesh_name="maillage_trou2D"+mention+"_"+str(int(round(100*r_nouv,2)))+".xml"
+  mesh_name='maillage_trou2D'+mention+'_'+str(int(round(100*r_nouv,2)))+'.xml'
  else:
-  mesh_name="maillage_trous2D_"+geo_p+"_"+str(int(round(100*r_nouv,2)))+".xml"
+  mesh_name='maillage_trous2D_'+geo_p+'_'+str(int(round(100*r_nouv,2)))+'.xml'
 
-print("Maillage de Omega_nouv",mesh_repository+mesh_name)
+print('Maillage de Omega_nouv',mesh_repository+mesh_name)
 mesh_nouv=Mesh(mesh_repository+mesh_name)
 
-V_nouv=VectorFunctionSpace(mesh_nouv, "P", VFS_degree, constrained_domain=PeriodicBoundary())
+V_nouv=VectorFunctionSpace(mesh_nouv, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
 
 ## Taille du maillage du domaine fixe ##
 
@@ -81,12 +81,12 @@ nb_noeuds_fixe=V_fixe.dim()
 
 ## Chargement de la base POD complète
 
-phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+"res"+str(res)+'_'+ordo+'_'+computer
+phi_name='Phi'+dom_fixe+'_dim'+str(Nsnap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+'res'+str(res)+'_'+ordo+'_'+computer
 
 print(phi_name)
 
 with sh.open(repertoire_parent+phi_name) as phi_loa:
- Phi_prime_v = phi_loa["maliste"]
+ Phi_prime_v = phi_loa['maliste']
 
 ## Création de la base POD tronquée, sous forme vectorielle
 
@@ -113,7 +113,7 @@ mesh_r_fixe=mesh_fixe
 r=r_nouv
 for i in range(1,1+Nrefine):
  print('raffinement',i)
- markers = MeshFunction("bool", mesh_fixe, mesh_fixe.topology().dim())
+ markers = MeshFunction('bool', mesh_fixe, mesh_fixe.topology().dim())
  markers.set_all(False)
  for c in cells(mesh_fixe):
   if typ_refi=='vol':
@@ -145,11 +145,11 @@ tps_refi=end-start_refi
 
 if fig_todo=='aff':
  plot(mesh_r_fixe)
- plt.title("Maillage raffiné autour de la frontière physique, rayon "+str(int(round(100*r_nouv,2))))
+ plt.title('Maillage raffiné autour de la frontière physique, rayon '+str(int(round(100*r_nouv,2))))
  plt.show()
  plt.close()
 
-V_r_fixe=VectorFunctionSpace(mesh_r_fixe, "P", VFS_degree, constrained_domain=PeriodicBoundary())
+V_r_fixe=VectorFunctionSpace(mesh_r_fixe, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
 
 nb_noeuds_r_fixe=V_r_fixe.dim()
 Phi_r_fixe_v=np.zeros((nb_noeuds_r_fixe,nb_modes))
@@ -164,11 +164,11 @@ if Nrefine>0:
   phi_r_fixe=interpolate(phi_fixe,V_r_fixe)
   # affichage des modes extrapolés
   plot(phi_r_fixe)
-  plt.title("Phi "+str(n+1)+" sur le maillage raffiné",fontsize=30)
+  plt.title('Phi '+str(n+1)+' sur le maillage raffiné',fontsize=30)
   if fig_todo=='aff':
    plt.show()
   elif fig_todo=='save':
-   plt.savefig("Figures2D/phi_fixe_r_"+str(n+1)+"_"+config+'_'+geo_p+".png")
+   plt.savefig('Figures2D/phi_fixe_r_'+str(n+1)+'_'+config+'_'+geo_p+'.png')
   plt.close()
   # on range le vecteur de POD interpolée dans la matrice Phi_nouv_v
   Phi_r_fixe_v[:,n]=phi_r_fixe.vector().get_local()
@@ -237,11 +237,11 @@ chi_nouv=Function(V_nouv)
 chi_nouv.vector().set_local(chi_nouv_v)
 
 plot(chi_nouv)#, linewidth=0.55)
-plt.title("Solution ROM", fontsize=30)#"Rho = 0,"+str(int(round(100*r_nouv,2))),fontsize=40)
+plt.title('Solution ROM', fontsize=30)#'Rho = 0,'+str(int(round(100*r_nouv,2))),fontsize=40)
 if fig_todo=='aff':
  plt.show()
 else:
- plt.savefig("Figures2D/solROM_"+config+'_'+geo_p+str(int(round(100*r_nouv,2)))+".png")
+ plt.savefig('Figures2D/solROM_'+config+'_'+geo_p+str(int(round(100*r_nouv,2)))+'.png')
 plt.close()
 
 ## Exploitation du champ ainsi obtenu
@@ -325,11 +325,11 @@ print('Erreur relative MEF-MOR :', err_rel , ' pourcent')
 ## Sortie graphique
 
 plot(chi_nouv)#, linewidth=0.55)
-plt.title("Solution EF",fontsize=30)
+plt.title('Solution EF',fontsize=30)
 if fig_todo=='aff':
  plt.show()
 else:
- plt.savefig("Figures2D/solFEM_"+config+'_'+geo_p+str(int(round(100*r_nouv,2)))+".png")
+ plt.savefig('Figures2D/solFEM_'+config+'_'+geo_p+str(int(round(100*r_nouv,2)))+'.png')
 plt.close()
 
 ## On enregistre et imprime le temps d'éxécution de SE4

@@ -79,7 +79,7 @@ if config=='cercle unique' and cen_snap_ray==[0.5,0.5]:
  if fig_todo=='aff':
   plt.show()
  elif fig_todo=='save':
-  plt.savefig("Figures2D/macro_micro"+"_Lsurl"+str(nb_lcells)+"unique_par"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r,2)))+".png")
+  plt.savefig('Figures2D/macro_micro'+'_Lsurl'+str(nb_lcells)+'unique_par'+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r,2)))+'.png')
  plt.close()
 elif config=='cercle unique' and cen_snap_ray==[0.0,0.0]:
  l_discs=[]
@@ -109,7 +109,7 @@ elif config=='cercle unique' and cen_snap_ray==[0.0,0.0]:
  if fig_todo=='aff':
   plt.show()
  elif fig_todo=='save':
-  plt.savefig("Figures2D/macro_micro"+"_Lsurl"+str(nb_lcells)+"unique_par"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r,2)))+".png")
+  plt.savefig('Figures2D/macro_micro'+'_Lsurl'+str(nb_lcells)+'unique_par'+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r,2)))+'.png')
  plt.close()
 elif config=='compl' and geo_p=='deuxième disque aux sommets':
  l_cim=[]
@@ -142,7 +142,7 @@ elif config=='compl' and geo_p=='deuxième disque aux sommets':
  if fig_todo=='aff':
   plt.show()
  elif fig_todo=='save':
-  plt.savefig("Figures2D/macro_micro"+"_Lsurl"+str(nb_lcells)+"sommets_par"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r_c,2)))+str(int(round(100*r_v,2)))+".png")
+  plt.savefig('Figures2D/macro_micro'+'_Lsurl'+str(nb_lcells)+'sommets_par'+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r_c,2)))+str(int(round(100*r_v,2)))+'.png')
  plt.close()
 elif config=='compl' and geo_p=='deuxième disque latéral':
  l_cim=[]
@@ -175,11 +175,5 @@ elif config=='compl' and geo_p=='deuxième disque latéral':
  if fig_todo=='aff':
   plt.show()
  elif fig_todo=='save':
-  plt.savefig("Figures2D/macro_micro"+"_Lsurl"+str(nb_lcells)+"lat_par"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r_c,2)))+str(int(round(100*r_v,2)))+".png")
+  plt.savefig('Figures2D/macro_micro'+'_Lsurl'+str(nb_lcells)+'lat_par'+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r_c,2)))+str(int(round(100*r_v,2)))+'.png')
  plt.close()
-
-
-
-
-
-
