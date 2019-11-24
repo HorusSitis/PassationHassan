@@ -9,18 +9,85 @@
 l_name='Lchi_'+str(N_snap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
 
 with sh.open(repertoire_parent+l_name) as l_loa:
-    list_chi_v = l_loa["maliste"]
+    list_chi_v = l_loa['maliste']
 
 # Extrapolation au domaine Omega_fixe :
-if dom_fixe=="am":
-    mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2D_am.xml")
-elif dom_fixe=="multiray":
-    mesh_fixe=Mesh("maillages_per/2D/maillage_fixe2d_"+dom_fixe+".xml")
-elif config=='compl':
-    mesh_fixe=Mesh("maillages_per/2D/maillage_trous2D_"+geo_p+"_fixe.xml")
-elif dom_fixe=="ray_min":
-    if config=='cer_un':
-        mesh_fixe=Mesh('maillages_per/2D/maillage_trou2D_5.xml')
+if dom_fixe == 'am':
+    mesh_fixe_name = 'maillages_per/2D/maillage_fixe2d_am'#.xml'
+elif dom_fixe == 'multiray':
+    mesh_fixe_name = 'maillages_per/2D/maillage_fixe2d_'+dom_fixe#+'.xml'
+elif config == 'compl':
+    mesh_fixe_name = 'maillages_per/2D/maillage_trous2D_'+geo_p+'_fixe'#.xml'
+elif dom_fixe == 'ray_min':
+    if config == 'cer_un':
+        mesh_fixe_name = 'maillages_per/2D/maillage_trou2D_'+str(rho_appr_min)#.xml'
+
+# # Extrapolation au domaine Omega_fixe :
+# if dom_fixe=='am':
+#     mesh_fixe=Mesh('maillages_per/2D/maillage_fixe2D_am.xml')
+# elif dom_fixe=='multiray':
+#     mesh_fixe=Mesh('maillages_per/2D/maillage_fixe2d_'+dom_fixe+'.xml')
+# elif config=='compl':
+#     mesh_fixe=Mesh('maillages_per/2D/maillage_trous2D_'+geo_p+'_fixe.xml')
+# elif dom_fixe=='ray_min':
+#     if config=='cer_un':
+#         mesh_fixe=Mesh('maillages_per/2D/maillage_trou2D_5.xml')
+
+# generation du maillage fixe
+if not mesh_ex_done:
+
+    xinf = xyinfsup[0][0]
+    yinf = xyinfsup[0][1]
+    xsup = xyinfsup[1][0]
+    ysup = xyinfsup[1][1]
+
+    xcen = (xinf + xsup)/2.
+    ycen = (yinf + ysup)/2.
+    # elif mention == '_som':
+    #     #
+
+    ### on cree le fichier qui code le maillage pour gmsh
+    fichier_sansentete = open(mesh_fixe_name + '_sansxyinfsup' + '.txt', 'r')
+
+    gen_mesh = open(mesh_fixe_name + '.txt', 'w')
+
+    if config == 'ray_min':
+        gen_mesh.write('R = ' + str(rho) + ';' + '\n')
+        if mention == '':
+            gen_mesh.write('cx = ' + str(xcen) + ';' + '\n')
+            gen_mesh.write('cy = ' + str(ycen) + ';' + '\n')
+
+    if config == 'compl':
+        gen_mesh.write('S = ' + str(ray_p) + ';' + '\n')
+        if geo_p == 'hor':
+            gen_mesh.write('cy = ' + str((yinf + ysup)/2.) + ';' + '\n')
+
+    gen_mesh.write('xmin = ' + str(xinf) + ';' + '\n')
+    gen_mesh.write('ymin = ' + str(yinf) + ';' + '\n')
+    gen_mesh.write('xmax = ' + str(xsup) + ';' + '\n')
+    gen_mesh.write('ymax = ' + str(ysup) + ';' + '\n')
+
+    for line in fichier_sansentete :
+        gen_mesh.write(line)
+
+    gen_mesh.close()
+    fichier_sansentete.close()
+
+    ### Conversion du fichier texte obtenu et stockage du maillage en fichiers .xml
+    os.rename(mesh_fixe_name + '.txt', mesh_fixe_name + '.geo')
+
+    ### on genere le maillage avec gmsh
+    os.system('gmsh -' + str(dimension) + ' ' + mesh_fixe_name+ '.geo')
+
+    if fig_todo == 'aff':
+        ## affichage du maillage genere selon les parametres d'entree
+        os.system('gmsh ' + mesh_fixe_name + '.msh')
+
+    ### on convertit le maillage avec dolfin
+    os.system('dolfin-convert ' + mesh_fixe_name + '.msh' + ' ' + mesh_fixe_name + '.xml')
+
+
+mesh_fixe = Mesh(mesh_fixe_name + '.xml')
 
 V_fixe = VectorFunctionSpace(mesh_fixe, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
 
@@ -31,7 +98,6 @@ plt.close()
 # Extrapolation des solutions du probleme physique
 
 def extra_snap(n):
-
     r = list_rho_appr[n]
 
     # chargement du snapshot courant
@@ -40,24 +106,28 @@ def extra_snap(n):
     # mise sous forme d'une fonction EF
     if config!='compl':
         if cen_snap_ray==[0.,0.]:
-            mention="_som"
+            mention='_som'
         else:
-            mention=""
+            mention=''
+
     if typ_msh=='gms':
-        mesh_name="maillages_per/2D/maillage_trou2D"+mention+"_"+str(int(round(100*r,2)))+".xml"
+        mesh_name='maillages_per/2D/maillage_trou2D'+mention+'_'+str(int(round(100*r,2)))+'.xml'
         print(mesh_name)
         mesh=Mesh(mesh_name)
     else:
-        mesh_name="maillages_per/2D/maillage_trous2D_"+geo_p+"_"+str(int(round(100*r,2)))+".xml"
+        mesh_name='maillages_per/2D/maillage_trous2D_'+geo_p+'_'+str(int(round(100*r,2)))+'.xml'
         mesh=Mesh(mesh_name)
+
+
+
     V_n=VectorFunctionSpace(mesh, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
+
     chi_n=Function(V_n)
     chi_n.vector().set_local(chi_n_v)
     # extrapolation du snapshot au domaine fixe
     chi_n.set_allow_extrapolation(True)
     chi_n_prime=interpolate(chi_n,V_fixe)
-    ## on range le snapshot dans une liste
-    #list_snap.append(chi_n_prime)
+    #
     chi_n_prime_v=chi_n_prime.vector().get_local()
     return([n,chi_n_prime_v])
 
@@ -83,14 +153,14 @@ if not exsnap_done:
     u_name='Usnap_'+dom_fixe+str(N_snap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
     #
     with sh.open(repertoire_parent+u_name) as u_sto:
-        u_sto["maliste"] = Usnap
+        u_sto['maliste'] = Usnap
 
 else:
     # Chargement de la matrice des snapshots
     u_name='Usnap_'+dom_fixe+str(N_snap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
     print(repertoire_parent+u_name)
     with sh.open(repertoire_parent+u_name) as u_loa:
-        Usnap = u_loa["maliste"]
+        Usnap = u_loa['maliste']
 
 
 
@@ -104,23 +174,20 @@ for n in range(0,N_snap):
     list_snap.append(chi_prime)
 
 cen=cen_snap_ray
-for n in range(0,N_snap):
 
+for n in range(0,N_snap):
     r = list_rho_appr[n]
 
     chi_prime_n=list_snap[n]
 
-    if fig_todo=='aff' or fig_todo=='save':
-        # Affichage des valeurs de la solution interpolee
-        plot(chi_prime_n)
-        plt.title("Snapshot "+str(n+1),fontsize=40)
-        if fig_todo=='aff':
-            plt.show()
-        else:
-            plt.savefig("Figures2D/snap_"+str(n+1)+"_sur"+str(N_snap)+config+'_'+geo_p+".png")
-        plt.close()
+    # Affichage des valeurs de la solution interpolee
+    plot(chi_prime_n)
+    plt.title('Snapshot '+str(n+1),fontsize=40)
+    if fig_todo=='aff':
+        plt.show()
     else:
-        print('pffrrh !')
+        plt.savefig('Figures2D/snap_'+str(n+1)+'_sur'+str(N_snap)+config+'_'+geo_p+'.png')
+    plt.close()
 
     # Affichage des composantes scalaires : interpolee
     if config=='cer_un' and geo_p=='ray' and fig_todo!='':
