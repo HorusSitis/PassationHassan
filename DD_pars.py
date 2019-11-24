@@ -18,19 +18,27 @@ import numpy as np
 fixe_aff=False
 
 # fig_todo=''
-# fig_todo='aff'
+fig_todo='aff'
 fig_todo='save'
 
 import time
+
+
+mesh_repository = "maillages_per/2D/"
+
 
 ### ------------ Implementation du domaine periodique ------------ ###
 
 tol=1e-10
 
-xinf=0.0
-yinf=0.0
+xinf=-1.0
+yinf=-1.0
+# xinf=0
+# yinf=0
 xsup=1.0
 ysup=1.0
+
+xyinfsup = [[xinf, yinf], [xsup, ysup]]
 
 # determiner le domaine fixe pour interpoler la solution
 
@@ -57,6 +65,9 @@ config='cer_un'
 # config='compl'
 
 if config=='cer_un':
+    # pour editer les fichiers de maillages
+    mesh_prefix = "maillage_trou2D_"
+    # espace des snapshots
     test_snap='i_per'
     # test_snap = ''
     # test_snap = 'solid_1'
@@ -87,7 +98,12 @@ if config=='cer_un':
         mention="_som"
         config=config+mention
         ### 'i_per' : Nrom=2 ; 'solid_1': Nrom=5 ; 'solid_2': Nrom=2 ---> ne fonctionne pas
+    # pour des procedures communes aa toutes les configurations
+    ray_p = 0
 elif config=='compl':
+    # pour editer les fichiers de maillages
+    mesh_prefix = "maillage_trous2D_"
+    # espace des snapshots
     test_snap='solid_1'#'solid_2'#''#
     ##
     dom_fixe="solid"
@@ -114,16 +130,27 @@ elif config=='compl':
 
 N_snap = 8
 
+if xinf == 0.:
+    if config != 'compl' or (config == 'compl' and geo_p == 'diag'):
+        rho_appr_min = 0.05
+        # rho_appr_min = 0.1
+        rho_appr_max = 0.4
+        # rho_appr_max = 0.45
+        list_rho_test = np.linspace(0.11, 0.44, 4)
+    elif config == 'compl' and geo_p == 'hor':
+        rho_appr_min = 0.01
+        rho_appr_max = 0.028
+        list_rho_test = np.linspace(0.04, 0.1, 0.2, 0.3)
+
+
 if config != 'compl' or (config == 'compl' and geo_p == 'diag'):
-    rho_appr_min = 0.05
-    # rho_appr_min = 0.1
-    rho_appr_max = 0.4
-    # rho_appr_max = 0.45
-    list_rho_test = np.linspace(0.11, 0.44, 4)
+    rho_appr_min = 0.1
+    rho_appr_max = 0.8
+    list_rho_test = np.linspace(0.15, 0.85, 8)
 elif config == 'compl' and geo_p == 'hor':
-    rho_appr_min = 0.01
-    rho_appr_max = 0.028
-    list_rho_test = np.linspace(0.04, 0.1, 0.2, 0.3)
+    rho_appr_min = 0.02
+    rho_appr_max = 0.56
+    list_rho_test = np.linspace(0.08, 0.2, 0.4, 0.6)
 
 list_rho_appr = np.linspace(rho_appr_min, rho_appr_max, N_snap)
 
