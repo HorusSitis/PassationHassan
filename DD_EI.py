@@ -48,26 +48,28 @@ def snap_circ_ray(N_par):
 
 def snap_compl_ray(N_par):
 
-    rho=list_rho_appr[N_par]
+    rho = list_rho_appr[N_par]
     # resolution du probleme variationnel avec un seul thread
-    chi_compl=snapshot_compl_per(geo_p,rho,cen_snap_ray,mention,test_snap)
+    chi_compl = snapshot_compl_per(geo_p, rho, cen_snap_ray, test_snap, ray_p)#mention,
 
     # pour stocker une fonction vectorisee avec multiprocessing
-    chi_compl_v=chi_compl.vector().get_local()
+    chi_compl_v = chi_compl.vector().get_local()
 
     return([N_par,chi_compl_v])
+
+# ------------------------- Generation sequentielle des maillages, conditionnellement ------------------------- #
+
+if not mesh_appr_done:
+
+    for n in range(0,N_snap):
+        rho = list_rho_appr[n]
+
+        creer_maill_per_gpar(config, geo_p, mention, [[-1., -1.], [1., 1.]], rho, ray_p)
 
 # ------------------------- Snapshots, conditionnellement ------------------------- #
 
 if not snap_done:
 
-    # generation sequentielle des maillages
-    for n in range(0,N_snap):
-        rho=list_rho_appr[n]
-
-        if not mesh_appr_done:
-            creer_maill_per_gpar(config, geo_p, mention, [[-1., -1.], [1., 1.]], rho, ray_p)
-        
     # Calcul des snapshots, sous forme vectorielle
     if gen_snap=='par8':
         # Generation parallele des snapshots
@@ -79,8 +81,8 @@ if not snap_done:
                 list_chi_n_v=pool.map(snap_circ_cen,(n for n in range(0,N_snap)))
             elif config=='cer_un_som':
                 list_chi_n_v=pool.map(snap_circ_ray,(n for n in range(0,N_snap)))
-            elif config=='compl':
-                list_chi_n_v=pool.map(snap_compl_ray,(n for n in range(0,N_snap)))
+        elif config=='compl':
+            list_chi_n_v=pool.map(snap_compl_ray,(n for n in range(0,N_snap)))
 
     # Generation sequentielle des snapshots
     elif gen_snap=='seq':
@@ -134,7 +136,7 @@ for n in range(0,N_snap):
     # Extraction du snapshot de rang n
     chi_n_v=list_chi_v[n]
     # On cree un maillage pour reecrire les snapshots sous la forme de fonctions
-    mesh_directory="maillages_per/2D/"
+    mesh_repository = "maillages_per/2D/"
 
     rho=list_rho_appr[n]
     r = rho
@@ -144,7 +146,7 @@ for n in range(0,N_snap):
             cen=cen_snap_ray
         if typ_msh=='gms':
             mesh_name="maillage_trou2D_"+str(int(round(100*r,2)))
-            mesh=Mesh(mesh_directory+mesh_name+".xml")
+            mesh=Mesh(mesh_repository+mesh_name+".xml")
             plot(mesh)
             plt.tight_layout(pad=0)
             if fig_todo=='aff':
@@ -159,7 +161,7 @@ for n in range(0,N_snap):
         mention="_som"
         if typ_msh=='gms':
             mesh_name="maillage_trou2D"+mention+"_"+str(int(round(100*r,2)))
-            mesh=Mesh(mesh_directory+mesh_name+".xml")
+            mesh=Mesh(mesh_repository+mesh_name+".xml")
             plot(mesh)
             plt.tight_layout(pad=0)
             if fig_todo=='aff':
@@ -173,8 +175,8 @@ for n in range(0,N_snap):
     else:
         r_fixe=0.15
 
-        mesh_name="maillage_trous2D_"+geo_p+"_"+str(int(round(100*rho,2)))
-        mesh=Mesh(mesh_directory+mesh_name+".xml")
+        mesh_name = mesh_prefix + str(int(round(100*rho,2))) + "_rayp" + str(int(round(100*ray_p,2)))
+        mesh=Mesh(mesh_repository + mesh_name + ".xml")
         plot(mesh)
         plt.tight_layout(pad=0)
         if fig_todo=='aff':
@@ -203,10 +205,11 @@ for n in range(0,N_snap):
     elif fig_todo=='save':
         plt.savefig("Figures2D/sol_"+str(n+1)+"_sur"+str(N_snap)+config+'_'+geo_p+".png")
     plt.close()
-    if config!='compl':
-        err_per_gr(cen_snap_ray,r,chi_n,npas_err,fig_todo)
-    else:
-        err_per_gr(cen_snap_ray,r_fixe,chi_n,npas_err,fig_todo)
+    if err_eval:
+        if config!='compl':
+            err_per_gr(cen_snap_ray,r,chi_n,npas_err,fig_todo)
+        else:
+            err_per_gr(cen_snap_ray,r_fixe,chi_n,npas_err,fig_todo)
     ##
     # Tenseur de diffusion homogeneise
     ## Integrale de chi sur le domaine fluide

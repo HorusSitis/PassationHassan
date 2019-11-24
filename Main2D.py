@@ -48,34 +48,37 @@ from fenics import *
 from dolfin import *
 from mshr import *
 
-# Fonctions 2D
-
-from DD_fun_obj import *
-#import DD_fun_obj as F2d
-#F2d=reload(F2d)
-
 # Parametres
 
 from DD_pars import *
+
+# Fonctions 2D
+
+# from DD_fun_obj import *
+#import DD_fun_obj as F2d
+#F2d=reload(F2d)
+exec(open("DD_fun_obj.py", encoding="utf-8").read())
 
 ##########################################################
 ### ------------ Code a lire : conditions ------------ ###
 ##########################################################
 
-E_=False
-E_lL=False
+E_ = False
+E_lL = False
 
-EI=False
-snap_done=True
+EI = True
+mesh_appr_done = True
+snap_done = True
+err_eval = False
 
-EII=False
-exsnap_done=True
+EII = False
+exsnap_done = True
 
-test_Dhom=False
+test_Dhom = False
 
-EIII=False
+EIII = False
 
-EIV=True
+EIV = False
 Report = True
 
 # EIVfixe=False
@@ -96,7 +99,7 @@ from LEc import *
 ## ------------ Etape lL 1demi : Affichage de microstructures periodiques ------------ ##
 
 if E_lL :
-    exec(open("DD_ElL.py").read())
+    exec(open("DD_ElL.py", encoding="utf-8").read())
 
 ## ---------- Etape I, memes parametres que pour 1demi ---------- ##
 

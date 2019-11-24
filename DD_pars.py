@@ -19,7 +19,7 @@ fixe_aff=False
 
 # fig_todo=''
 fig_todo='aff'
-fig_todo='save'
+# fig_todo='save'
 
 import time
 
@@ -61,8 +61,8 @@ VFS_degree=2
 # VFS_degree=3
 ## degre 2 : comme en dimension 3, permet d'eviter les erreurs de periodicite pour des pas qui nen sont pas de la forme 2"n, ou n est un diviseur de 100 ##
 
-config='cer_un'
-# config='compl'
+# config='cer_un'
+config='compl'
 
 if config=='cer_un':
     # pour editer les fichiers de maillages
@@ -99,10 +99,9 @@ if config=='cer_un':
         config=config+mention
         ### 'i_per' : Nrom=2 ; 'solid_1': Nrom=5 ; 'solid_2': Nrom=2 ---> ne fonctionne pas
     # pour des procedures communes aa toutes les configurations
-    ray_p = 0
+    ray_p = 0.
 elif config=='compl':
-    # pour editer les fichiers de maillages
-    mesh_prefix = "maillage_trous2D_"
+    ray_p = 0.3
     # espace des snapshots
     test_snap='solid_1'#'solid_2'#''#
     ##
@@ -111,6 +110,8 @@ elif config=='compl':
     ##
     geo_p='hor'
     # geo_p='diag'
+    # pour editer les fichiers de maillages
+    mesh_prefix = "maillage_trous2D_"+geo_p+"_"
     ##
     if geo_p=='diag':
         cen_snap_ray=[0.,0.]
