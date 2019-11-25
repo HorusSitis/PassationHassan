@@ -80,7 +80,7 @@ def creer_maill_per_gpar(config, geo_p, mention, xyinfsup, rho, ray_p):
 
     for line in fichier_sansentete :
         gen_mesh.write(line)
-
+    # return()
     gen_mesh.close()
     fichier_sansentete.close()
 
@@ -157,7 +157,7 @@ def snapshot_circ_per(cen,r,res):
     # Resultat : snapshot
     return(chi)
 
-def snapshot_compl_per(geo_p, rho, cen, test_snap, ray_p):#,mention,res):
+def snapshot_compl_per(geo_p, rho, cen, test_snap, ray_p):#,mention):
     ##
     mesh_name = mesh_prefix + str(int(round(100*rho,2))) + '_rayp' + str(int(round(100*ray_p,2)))
     ## Maillage : condition de resolution et de configuration

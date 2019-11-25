@@ -2,25 +2,27 @@
 ## Etape III : en utilisant la methode des snapshots, calcul de la POD et des coefficients aleatoires, toujours dans domaine_fixe ##
 ####################################################################################################################################
 
-if dom_fixe=='am':
-    mesh_fixe=Mesh('maillages_per/2D/maillage_fixe2D_am.xml')
-elif dom_fixe=='multiray':
-    mesh_fixe=Mesh('maillages_per/2D/maillage_fixe2d_'+dom_fixe+'.xml')
-elif config=='compl':
-    mesh_fixe=Mesh('maillages_per/2D/maillage_trous2D_'+geo_p+'_fixe.xml')
-elif dom_fixe=='ray_min':
-    if config=='cer_un':
-        mesh_fixe=Mesh('maillages_per/2D/maillage_trou2D_5.xml')
+# Definition du domaine Omega_fixe :
+if dom_fixe == 'am':
+    mesh_fixe_name = 'maillages_per/2D/maillage_fixe2d_am'#.xml'
+elif dom_fixe == 'multiray':
+    mesh_fixe_name = 'maillages_per/2D/maillage_fixe2d_'+dom_fixe#+'.xml'
+elif config == 'compl':
+    mesh_fixe_name = 'maillages_per/2D/maillage_trous2D_'+geo_p+'_fixe'#.xml'
+elif dom_fixe == 'ray_min':
+    if config == 'cer_un':
+        mesh_fixe_name = 'maillages_per/2D/maillage_trou2D_'+str(rho_appr_min)#.xml'
 
-print('maillages_per/2D/maillage_trous2D_'+geo_p+'_fixe.xml')
+# print('maillages_per/2D/maillage_trous2D_'+geo_p+'_fixe.xml')
 
-V_fixe=VectorFunctionSpace(mesh_fixe, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
+mesh_fixe = Mesh(mesh_fixe_name + '.xml')
+V_fixe = VectorFunctionSpace(mesh_fixe, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
 nb_noeuds = V_fixe.dim()
 
 
-## Chargement de la marice des snapshots
+## Chargement de la matrice des snapshots
 
-u_name='Usnap_'+dom_fixe+str(N_snap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
+u_name = 'Usnap_' + dom_fixe + str(N_snap) + '_'+config + '_' + geo_p + '_deg' + str(VFS_degree) + '_' + ordo + '_' + computer
 print(repertoire_parent+u_name)
 
 with sh.open(repertoire_parent+u_name) as u_loa:

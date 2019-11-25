@@ -3,17 +3,17 @@
 #######################################################################################################################################
 
 
-if typ_msh=='gms':
-    res_fixe=res_gmsh
-    if dom_fixe=='am':
-        mesh_f_name='maillages_per/2D/maillage_fixe2D_am.xml'
-    elif config=='compl':
-        mesh_f_name='maillages_per/2D/maillage_trous2D_'+geo_p+'_fixe.xml'
+# if typ_msh=='gms':
+#     res_fixe=res_gmsh
+#     if dom_fixe=='am':
+#         mesh_fixe_name='maillages_per/2D/maillage_fixe2D_am'
+#     elif config=='compl':
+#         mesh_fixe_name='maillages_per/2D/maillage_trous2D_'+geo_p+'_fixe'
 
 ## Boucle pour la creation des snapshots, avec un parametre pouvant etre le rayon d'une inclusion circulaire, ou l'emplacement de son centre ##
 # Calcule aussi le tenseur de diffusion homogeneise #
 
-
+# mesh_fixe = Mesh(mesh_fixe_name + '.xml')
 ## Cercle unique
 
 #if geo_p=='ray':
@@ -26,8 +26,6 @@ def snap_circ_ray(N_par):
         chi_r=snapshot_circ_per(cen_snap_ray,rho,res)
 
     else:
-        # # generation en temps reel du maillage
-        # creer_maill_compl_per_gpar(config, geo_p, mention, xyinfsup, rho, ray_p)
         # resolution du probleme variationnel avec un seul thread
         chi_r=snapshot_compl_per(geo_p,rho,cen_snap_ray,mention,test_snap)
 
@@ -65,7 +63,7 @@ if not mesh_appr_done:
         rho = list_rho_appr[n]
 
         creer_maill_per_gpar(config, geo_p, mention, xyinfsup, rho, ray_p)
-
+# sys.exit()
 # ------------------------- Snapshots, conditionnellement ------------------------- #
 
 if not snap_done:

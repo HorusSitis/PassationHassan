@@ -3,39 +3,37 @@
 #################################################################################################
 ## Etape IV : Predictions. Choisir les parametres du probleme a resoudre par le modele reduit. ##
 #################################################################################################
+print('!'*60)
+# Definition du domaine Omega_fixe :
+if dom_fixe == 'am':
+    mesh_fixe_name = 'maillage_fixe2d_am'#.xml'
+elif config == 'compl':
+    mesh_fixe_name = 'maillage_trous2D_'+geo_p+'_fixe'#.xml'
 
-if dom_fixe=='am':
-    mesh_fixe=Mesh('maillages_per/2D/maillage_fixe2D_am.xml')
-elif dom_fixe=='multiray':
-    mesh_fixe=Mesh('maillages_per/2D/maillage_fixe2d_'+dom_fixe+'.xml')
-elif config=='compl':
-    mesh_fixe=Mesh('maillages_per/2D/maillage_trous2D_'+geo_p+'_fixe.xml')
-elif dom_fixe=='ray_min':
-    if config=='cer_un':
-        mesh_fixe=Mesh('maillages_per/2D/maillage_trou2D_5.xml')
-
-V_fixe=VectorFunctionSpace(mesh_fixe, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
-
+# print('maillages_per/2D/maillage_trous2D_'+geo_p+'_fixe.xml')
+#
+print(mesh_fixe_name)
+mesh_fixe = Mesh(mesh_repository + mesh_fixe_name + '.xml')
+# mesh_fixe = Mesh(mesh_repository + 'llll' + '.xml')
+V_fixe = VectorFunctionSpace(mesh_fixe, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
+# sys.exit()
 # --------------------- SE0 : maillage et fonctions tests du domaine fixe --------------------- #
+# rho = 0.11
+creer_maill_per_gpar(config, geo_p, mention, xyinfsup, rho, ray_p)
+# sys.exit()
+if config == 'compl':
+    mesh_name = mesh_prefix + str(int(round(100*rho,2))) + '_rayp' + str(int(round(100*ray_p,2)))
+else:
+    mesh_name = mesh_prefix + mention + str(int(round(100*rho,2)))
 
 
-## mention='...' ## affectation effectuee en preambule, voir Main2D.py
-
-if typ_msh=='gms':
-
-    mesh_repository='maillages_per/2D/'
-
-    if config!='compl':
-        mesh_name = mesh_prefix + geo_p + mention + '_' + str(int(round(100*rho,2)))
-    else:
-        mesh_name = mesh_prefix + geo_p + '_' + str(int(round(100*rho,2))) + '_rayp' + str(int(round(100*ray_p,2)))
-
+# appelle le maillage reconverti depuis maillages_per/2D
 mesh_nouv = Mesh(mesh_repository + mesh_name + '.xml')
 
+# pointe vers le meme maillage que la fonction snapshot_ de DD_fun_obj
 V_nouv = VectorFunctionSpace(mesh_nouv, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
 
-# # Performances
-# import time
+# Performances
 
 ### ------------ Etapes reproduites : dependances directes de Main3D ------------ ###
 
@@ -196,7 +194,8 @@ start=time.time()
 if test_snap=='i_per':
     chi_nouv=snapshot_circ_per(cen_snap_ray,r_nouv,res)
 else:
-    chi_nouv=snapshot_compl_per(geo_p,r_nouv,cen_snap_ray,mention,test_snap)
+    # chi_nouv=snapshot_compl_per(geo_p,r_nouv,cen_snap_ray,mention,test_snap)
+    chi_nouv=snapshot_compl_per(geo_p,r_nouv, cen_snap_ray, test_snap, ray_p)# mention,
 
 ## Exploitation du champ ainsi obtenu
 rho=r_nouv
@@ -300,7 +299,8 @@ if Report :
 
 ## ecriture des resultats dans le tableau _pg
 
-registre_pg.write(str(2*r_nouv)+'&')
+# registre_pg.write(str(2*r_nouv)+'&')
+registre_pg.write(str(r_nouv)+'&')
 registre_pg.write(str(V_nouv.dim())+'&')
 
 registre_pg.write(str(round(T_chi_rom[0,0], 4))+'&')

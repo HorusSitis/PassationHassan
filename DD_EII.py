@@ -14,24 +14,8 @@ with sh.open(repertoire_parent+l_name) as l_loa:
 # Extrapolation au domaine Omega_fixe :
 if dom_fixe == 'am':
     mesh_fixe_name = 'maillages_per/2D/maillage_fixe2d_am'#.xml'
-elif dom_fixe == 'multiray':
-    mesh_fixe_name = 'maillages_per/2D/maillage_fixe2d_'+dom_fixe#+'.xml'
 elif config == 'compl':
     mesh_fixe_name = 'maillages_per/2D/maillage_trous2D_'+geo_p+'_fixe'#.xml'
-elif dom_fixe == 'ray_min':
-    if config == 'cer_un':
-        mesh_fixe_name = 'maillages_per/2D/maillage_trou2D_'+str(rho_appr_min)#.xml'
-
-# # Extrapolation au domaine Omega_fixe :
-# if dom_fixe=='am':
-#     mesh_fixe=Mesh('maillages_per/2D/maillage_fixe2D_am.xml')
-# elif dom_fixe=='multiray':
-#     mesh_fixe=Mesh('maillages_per/2D/maillage_fixe2d_'+dom_fixe+'.xml')
-# elif config=='compl':
-#     mesh_fixe=Mesh('maillages_per/2D/maillage_trous2D_'+geo_p+'_fixe.xml')
-# elif dom_fixe=='ray_min':
-#     if config=='cer_un':
-#         mesh_fixe=Mesh('maillages_per/2D/maillage_trou2D_5.xml')
 
 # generation du maillage fixe
 if not mesh_ex_done:
@@ -51,8 +35,8 @@ if not mesh_ex_done:
 
     gen_mesh = open(mesh_fixe_name + '.txt', 'w')
 
-    if config == 'ray_min':
-        gen_mesh.write('R = ' + str(rho) + ';' + '\n')
+    if geo_p == 'ray_min':
+        gen_mesh.write('R = ' + str(rho_appr_min) + ';' + '\n')
         if mention == '':
             gen_mesh.write('cx = ' + str(xcen) + ';' + '\n')
             gen_mesh.write('cy = ' + str(ycen) + ';' + '\n')
@@ -89,6 +73,14 @@ if not mesh_ex_done:
 
 mesh_fixe = Mesh(mesh_fixe_name + '.xml')
 
+# if config == 'compl':
+#     mesh_name = mesh_prefix + str(int(round(100*r,2))) + '_rayp' + str(int(round(100*ray_p,2)))
+# else:
+#     mesh_name = mesh_prefix + mention + str(int(round(100*r,2)))
+# 
+#
+# mesh = Mesh(mesh_repository + mesh_name + '.xml')
+# sys.exit()
 V_fixe = VectorFunctionSpace(mesh_fixe, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
 
 plot(mesh_fixe)
@@ -110,14 +102,13 @@ def extra_snap(n):
         else:
             mention = ''
 
-    if typ_msh=='gms':
-        mesh_name='maillages_per/2D/maillage_trou2D'+mention+'_'+str(int(round(100*r,2)))+'.xml'
-        print(mesh_name)
-        mesh=Mesh(mesh_name)
+    # chargement du maillage genere avec DD_EI
+    if config == 'compl':
+        mesh_name = mesh_prefix + str(int(round(100*r,2))) + '_rayp' + str(int(round(100*ray_p,2)))
     else:
-        mesh_name='maillages_per/2D/maillage_trous2D_'+geo_p+'_'+str(int(round(100*r,2)))+'.xml'
-        mesh=Mesh(mesh_name)
+        mesh_name = mesh_prefix + mention + str(int(round(100*r,2)))
 
+    mesh = Mesh(mesh_repository + mesh_name + '.xml')
     V_n=VectorFunctionSpace(mesh, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
 
     chi_n=Function(V_n)
