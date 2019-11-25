@@ -61,8 +61,8 @@ VFS_degree=2
 # VFS_degree=3
 ## degre 2 : comme en dimension 3, permet d'eviter les erreurs de periodicite pour des pas qui nen sont pas de la forme 2'n, ou n est un diviseur de 100 ##
 
-config='cer_un'
-# config='compl'
+# config='cer_un'
+config='compl'
 
 if config=='cer_un':
     # pour editer les fichiers de maillages
@@ -73,8 +73,6 @@ if config=='cer_un':
     # test_snap = 'solid_1'
     ### on exclut 'solid_2' ###
     dom_fixe= 'am'
-    # dom_fixe = 'multiray'
-    # dom_fixe = 'ray_min'
     ##
     geo_p='ray'
     # geo_p = 'cen'
@@ -86,8 +84,6 @@ if config=='cer_un':
     if geo_p=='ray':
         geo_mess='rayon variable'
     ### geo_p='centre'
-    # ray_snap_cen=0.25
-    # csr_list=[[0.05*k,0.5] for k in range(1,1+Nsnap)]
     ##
     if cen_snap_ray == [(xinf + xsup)/2., (yinf + ysup)/2.]:
         conf_mess = conf_mess+' centre'
@@ -108,8 +104,8 @@ elif config=='compl':
     dom_fixe='solid'
     # dom_fixe = 'am'
     ##
-    # geo_p='hor'
-    geo_p='diag'
+    geo_p='hor'
+    # geo_p='diag'
     # pour editer les fichiers de maillages
     mesh_prefix = 'maillage_trous2D_'+geo_p+'_'
     ##
@@ -151,7 +147,7 @@ if config != 'compl' or (config == 'compl' and geo_p == 'diag'):
 elif config == 'compl' and geo_p == 'hor':
     rho_appr_min = 0.02
     rho_appr_max = 0.56
-    list_rho_test = np.linspace(0.08, 0.2, 0.4, 0.6)
+    list_rho_test = np.linspace(0.02, 0.56, 8)
 
 list_rho_appr = np.linspace(rho_appr_min, rho_appr_max, N_snap)
 
@@ -242,8 +238,3 @@ seuil_ener_pour=99.99
 
 # cer_un 99,99% ; ...
 N_mor=2
-
-# r_nouv=0.11
-# r_nouv=0.22
-r_nouv=0.33
-# r_nouv=0.44
