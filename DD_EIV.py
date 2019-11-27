@@ -313,7 +313,7 @@ registre_pg.write('\\'+'hline'+'\n')
 
 ## ecriture des ersultats dans le tableau _gr
 
-registre_gr.write(str(2*r_nouv)+'&')
+registre_gr.write(str(r_nouv)+'&')
 registre_gr.write(str(V_nouv.dim())+'&')
 
 registre_gr.write(str(round(100*(t_phi_nouv/t_rom), 2))+'\\'+'%'+'&')
