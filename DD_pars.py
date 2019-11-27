@@ -71,7 +71,6 @@ if config=='cer_un':
     test_snap='i_per'
     # test_snap = ''
     # test_snap = 'solid_1'
-    ### on exclut 'solid_2' ###
     dom_fixe= 'am'
     ##
     geo_p='ray'
@@ -88,18 +87,16 @@ if config=='cer_un':
     if cen_snap_ray == [(xinf + xsup)/2., (yinf + ysup)/2.]:
         conf_mess = conf_mess+' centre'
         mention = ''
-        ### 'i_per' : Nrom=... ; 'solid_1': Nrom=... ; ### ???
     elif cen_snap_ray == [xinf, yinf]:
         conf_mess = conf_mess+' aux sommets'
         mention = '_som'
     config = config + mention
-    ### 'i_per' : Nrom=2 ; 'solid_1': Nrom=5 ; 'solid_2': Nrom=2 ---> ne fonctionne pas
     # pour des procedures communes aa toutes les configurations
     ray_p = 0.
 elif config=='compl':
     ray_p = 0.3
     # espace des snapshots
-    test_snap = 'solid_1'#'solid_2'#''#
+    test_snap = 'solid_1'#''#
     ##
     dom_fixe='solid'
     # dom_fixe = 'am'
@@ -111,7 +108,6 @@ elif config=='compl':
     ##
     if geo_p=='diag':
         cen_snap_ray=[xinf, yinf]
-        ### 'solid_1': Nrom=3 ;
     elif geo_p=='hor':
         cen_snap_ray=[xinf, (yinf + ysup)/2.]
     ##
@@ -145,16 +141,15 @@ if config != 'compl' or (config == 'compl' and geo_p == 'diag'):
     rho_appr_max = 0.8
     list_rho_test = np.linspace(0.15, 0.85, 8)
 elif config == 'compl' and geo_p == 'hor':
-    rho_appr_min = 0.02
+    rho_appr_min = 0.07
     rho_appr_max = 0.56
-    list_rho_test = np.linspace(0.02, 0.56, 8)
+    list_rho_test = np.linspace(0.105, 0.595, 8)
 
 list_rho_appr = np.linspace(rho_appr_min, rho_appr_max, N_snap)
 
-
 # choix du type de maillage
 
-res_gmsh=100
+res_gmsh = 100
 
 typ_msh='gms'
 # typ_msh=''
@@ -191,32 +186,38 @@ repertoire_parent='Res2D/'
 
 from LEc import *
 
-
 ## ------------ Etape lL 1demi : Affichage de microstructures periodiques ------------ ##
 
-nb_lcells=1
-cem_color='grey'
-sand_color='orange'
-fluid_color='cyan'
+nb_lcells = 1
+
+cem_color = 'grey'
+sand_color = 'orange'
+fluid_color = 'cyan'
 
 ## ---------- Etape I, memes parametres que pour 1demi ---------- ##
+
+# solveur choisi
+
+# typ_sol = 'lu'
+# typ_sol = 'bic_cyr'
+typ_sol = 'kr_null_vect'
+
 ## ---------- Etape II ---------- ##
 
 D_k=1.0
-# Nsnap=8
 
 # important :
-deb=1
+deb = 1
 
-# par defaut##5# pour les tests cer_un et diag##6# pour hor##
-npas_err=50
-ordo='Ordr'
+# par defaut
+npas_err = 50
+ordo = 'Ordr'
 # ordo='Nordr'
+
 # apprentissage : calcul parallele ou sequentiel, prise en compte de la resolution
 
 gen_snap = 'par8'
 # gen_snap = 'par4'
-#
 # gen_snap = 'seq'
 
 # # non prepare dans EI-II
@@ -226,15 +227,6 @@ gen_snap = 'par8'
 
 seuil_ener_pour=99.99
 
-# On soustrait eventuellement la moyenne des snapshots interpoles a chaque snapshot
-## moy_mod='soust_m'#'' par defaut
-
-
-## 99,99% :
-### compl diag N_mor=3 pour 'solid', 4 pour 'am'
-### compl hor N_mor=4
-
 ## ---------- Etape IV ---------- ##
 
-# cer_un 99,99% ; ...
 N_mor=2

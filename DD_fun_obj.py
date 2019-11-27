@@ -135,25 +135,61 @@ def snapshot_circ_per(cen,r,res):
     nb_noeuds=V.dim()
     u = TrialFunction(V)
     v = TestFunction(V)
-    a=tr(dot((grad(u)).T, grad(v)))*dx
-    L=-dot(normale,v)*ds(num_front_cercle)
-    ### Resolution
-    u=Function(V)
-    solve(a==L,u)#,bc)
-    ## Annulation de la valeur moyenne
-    porosity=1-pi*r**2
-    moy_u_x=assemble(u[0]*dx)/porosity
-    moy_u_y=assemble(u[1]*dx)/porosity
-    moy=Function(V)
-    moy=Constant((moy_u_x,moy_u_y))
-    print('Valeur moyenne de u :',[moy_u_x,moy_u_y])
-    moy_V=interpolate(moy,V)
-    moy_Vv=moy_V.vector().get_local()
-    u_v=u.vector().get_local()
-    chi_v=u_v-moy_Vv
-    chi=Function(V)
-    chi.vector().set_local(chi_v)
-    chi=u
+    a = tr(dot((grad(u)).T, grad(v)))*dx
+    l = -dot(normale,v)*ds(num_front_cercle)
+
+    ### Resolution ###
+    u1 = Function(V)
+    A = assemble(a)
+    L = assemble(l)
+
+    # solveur lu : probleme mal pose, on annulle la moyenne a posteriori
+    if typ_sol == 'lu':
+
+        solve(A, u1.vector(), L)
+
+        ## Annulation de la valeur moyenne
+        porosity = 1-pi*r**2
+        moy_u_x = assemble(u[0]*dx)/porosity
+        moy_u_y = assemble(u[1]*dx)/porosity
+        moy = Function(V)
+        moy = Constant((moy_u_x,moy_u_y))
+        print('Valeur moyenne de u :',[moy_u_x,moy_u_y])
+
+        moy_V = interpolate(moy,V)
+        moy_Vv = moy_V.vector().get_local()
+        u_v = u.vector().get_local()
+        chi_v = u_v-moy_Vv
+        chi = Function(V)
+        chi.vector().set_local(chi_v)
+        chi = u
+
+    # solveur de krylov pour un probleme bien pose, dans un hyperplan
+    elif typ_sol == 'kr_null_vect':
+
+        solver = dolfin.PETScKrylovSolver("cg")
+
+        solver.parameters["absolute_tolerance"] = 1e-6
+        solver.parameters["relative_tolerance"] = 1e-6
+        solver.parameters["maximum_iterations"] = 5000
+        solver.parameters["error_on_nonconvergence"] = True
+        solver.parameters["monitor_convergence"] = True
+        solver.parameters["report"] = True
+
+        solver.set_operator(A)
+
+        null_vec = dolfin.Vector(u1.vector())
+        V.dofmap().set(null_vec, 1.0)
+        null_vec *= 1.0/(dolfin.norm(null_vec, norm_type = 'l2'))
+
+        null_space = dolfin.VectorSpaceBasis([null_vec])
+        dolfin.as_backend_type(A).set_nullspace(null_space)
+        null_space.orthogonalize(L)
+
+        # Resolution et restitution de chi
+        solver.solve(u1.vector(), L)
+        chi = u1
+
     # Resultat : snapshot
     return(chi)
 
