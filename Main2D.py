@@ -227,13 +227,14 @@ if EIV :
     os.rename(nom_fichier_gr + '.txt', nom_tab_latex_gr + '.tex')
 
     # representations graphiques
-    arr_x = np.array(list_rho_test)
+    arr_rho = np.array(list_rho_test)
+    arr_x = np.arange(5)
 
     #
     fig_1 = plt.figure()
 
-    pl.plot(arr_x, arr_int_grad_fem, linewidth = 2.2, color = 'blue')
-    pl.plot(arr_x, arr_int_grad_rom, linewidth = 2.2, color = 'red')
+    pl.plot(arr_rho, arr_int_grad_fem, linewidth = 2.2, color = 'blue')
+    pl.plot(arr_rho, arr_int_grad_rom, linewidth = 2.2, color = 'red')
 
     pl.title('Top left coefficient of int_grad, FEM versus ROM')
 
@@ -245,7 +246,7 @@ if EIV :
 
     fig_2 = plt.figure()
 
-    pl.plot(arr_x, ar_err_rel, linewidth = 2.2, color = 'green')
+    pl.plot(arr_rho, ar_err_rel, linewidth = 2.2, color = 'green')
 
     pl.xlabel('Tested radius')
     pl.ylabel('Error (%)')
@@ -256,7 +257,7 @@ if EIV :
         pl.savefig('Figures2D/' + 'err_rel_' + 'cer_un_ray' + '.png')# + '_res' + str(pars['resolution']) + '_snap' + str(i+1) + '.png')
     pl.close()
 
-    fig_3 = plt.figure()
+    fig_3, ax_3 = plt.subplots()
 
     tps_fem_moy = sum(arr_t[:, 0])/len(list_rho_test)
 
@@ -266,24 +267,31 @@ if EIV :
     print('='*75)
 
     # heights = [arr_t[i, :]/tps_fem_moy for i in range(len(list_rho_test))]
-    heights = [arr_t[0, :]/tps_fem_moy , arr_t[1, :]/tps_fem_moy]
+    # heights = [arr_t[0, :]/tps_fem_moy , arr_t[1, :]/tps_fem_moy]
     # arr_heights = np.array(heights)/tps_fem_moy
 
-    print('Performances par rayon :', heights)
+    # print('Performances par rayon :', heights)
     print('='*75)
-
     width = 0.05
     BarName = ['T FEM', 'T interp Phi', 'T Ab', 'T solve', 'T dhom']
 
+    for i in range(len(list_rho_test)):
+        print('x =', arr_x + i*width)
+        print('y =', arr_t[i, :]/tps_fem_moy)
+        print('%'*75)
+        plt.bar(arr_x + i*width, arr_t[i, :]/tps_fem_moy, width)
+
     # plt.bar(arr_x, arr_heights, width, align = 'center')
-    plt.bar(arr_x, heights, width, stacked = True, align = 'center')
+    # plt.bar(arr_x, heights, width, stacked = True, align = 'center')
 
     plt.xlim(-1, 5)
-    plt.ylim(0, max(arr_t[:, 0]))
+    plt.ylim(0, max(arr_t[:, 0]/tps_fem_moy))
 
     plt.title('Time elapsed to compute Dhom : FEM vs ROM')
 
     plt.ylabel('tps/t_FEM_moy')
+
+    pl.xticks(arr_x, BarName, rotation = 0)
 
     # if fig_todo == 'aff':
     plt.show()
