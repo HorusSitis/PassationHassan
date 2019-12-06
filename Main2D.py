@@ -54,10 +54,7 @@ from DD_pars import *
 
 # Fonctions 2D
 
-# from DD_fun_obj import *
-#import DD_fun_obj as F2d
-#F2d=reload(F2d)
-exec(open("DD_fun_obj.py", encoding="utf-8").read())
+exec(open('DD_fun_obj.py', encoding='utf-8').read())
 
 ##########################################################
 ### ------------ Code a lire : conditions ------------ ###
@@ -66,19 +63,21 @@ exec(open("DD_fun_obj.py", encoding="utf-8").read())
 E_ = False
 E_lL = False
 
-EI = True
+EI = False
 mesh_appr_done = True
 snap_done = True
+
 err_eval = False
 
+mesh_ex_done = False
 EII = False
-exsnap_done = True
+exsnap_done = False
 
 test_Dhom = False
 
 EIII = False
 
-EIV = False
+EIV = True
 Report = True
 
 # EIVfixe=False
@@ -99,27 +98,37 @@ from LEc import *
 ## ------------ Etape lL 1demi : Affichage de microstructures periodiques ------------ ##
 
 if E_lL :
-    exec(open("DD_ElL.py", encoding="utf-8").read())
+    exec(open('DD_ElL.py', encoding='utf-8').read())
 
 ## ---------- Etape I, memes parametres que pour 1demi ---------- ##
 
 if EI :
-    exec(open("DD_EI.py", encoding="utf-8").read())
+    exec(open('DD_EI.py', encoding='utf-8').read())
 
 ## ---------- Etape II : int_grad eventuellement sur dom_fixe ---------- ##
 
 if EII :
-    exec(open("DD_EII.py").read())
+    exec(open('DD_EII.py').read())
 
 if exsnap_done and test_Dhom :
-    exec(open("DD_EIIintgrad.py", encoding="utf-8").read())
+    exec(open('DD_EIIintgrad.py', encoding='utf-8').read())
 
 ## ---------- Etape III ---------- ##
 
-from PO23D import *
+# from PO23D import *
+exec(open('PO23D.py', encoding='utf-8').read())
 
 if EIII :
-    exec(open("DD_EIII.py", encoding="utf-8").read())
+    exec(open('DD_EIII.py', encoding='utf-8').read())
+
+if config == 'cer_un':
+    if mention == '':
+        N_mor = 2
+elif config == 'compl':
+    if geo_p == 'diag':
+        N_mor = 3
+    elif geo_p == 'hor':
+        N_mor = 3
 
 ## ---------- Etape IV ---------- ##
 
@@ -127,6 +136,27 @@ if EIII :
 
 if EIV :
 
+    # tableaux contenant les performances du ROM
+    arr_int_grad_fem = np.zeros(len(list_rho_test))
+    arr_int_grad_rom = np.zeros(len(list_rho_test))
+
+    arr_nodes = np.zeros(len(list_rho_test))
+
+    ar_err_rel = np.zeros(len(list_rho_test))
+
+    ## pour l'instant : on en compte pas le temps de maillage, identique pour FEM et ROM
+
+    ## performances temporelles
+    # arr_t_fem = np.zeros(len(list_rho_test))
+    #
+    # arr_t_phi_n = np.zeros(len(list_rho_test))
+    # arr_t_Ab = np.zeros(len(list_rho_test))
+    # arr_t_solve = np.zeros(len(list_rho_test))
+    # arr_t_dhom = np.zeros(len(list_rho_test))
+
+    arr_t = np.zeros((len(list_rho_test), 5))
+
+    # fichiers pour enregistrer textuellement les performances du ROM
     nom_fichier_pg='Perf3D/' + 'pg_' + computer + 'res' + str(res_gmsh) + config + geo_p + 'Nmor' + str(N_mor)
     nom_fichier_gr='Perf3D/' + 'gr_' + computer + 'res' + str(res_gmsh) + config + geo_p + 'Nmor' + str(N_mor)
 
@@ -169,11 +199,11 @@ if EIV :
 
     registre_gr.write('\\'+'hline'+'\n')
 
-    for rho in list_rho_test:
-    # for rho in [0.33]:
+    for i in range(len(list_rho_test)):
 
+        rho = list_rho_test[i]
         r_nouv=rho
-        exec(open("DD_EIV.py", encoding="utf-8").read())
+        exec(open('DD_EIV.py', encoding='utf-8').read())
 
 
     ## fin des deux tableaux
@@ -183,11 +213,81 @@ if EIV :
     registre_pg.close()
     registre_gr.close()
 
-    nom_tab_latex_pg = '../GitLab/rom_diffeo_dhom/latex_article/' + 'pg_' + config + '_res' + str(res_gmsh) + '_raydeb_o' + str(int(100*2*list_rho_appr[0]))
-    nom_tab_latex_gr = '../GitLab/rom_diffeo_dhom/latex_article/' + 'gr_' + config + '_res' + str(res_gmsh) + '_raydeb_o' + str(int(100*2*list_rho_appr[0]))
+    # nom_tab_latex_pg = '../GitLab/rom_diffeo_dhom/latex_article/' + 'pg_' + config + '_res' + str(res_gmsh) + '_raydeb_o' + str(int(100*2*list_rho_appr[0]))
+    # nom_tab_latex_gr = '../GitLab/rom_diffeo_dhom/latex_article/' + 'gr_' + config + '_res' + str(res_gmsh) + '_raydeb_o' + str(int(100*2*list_rho_appr[0]))
+
+    nom_tab_latex_pg = '../GitLab/rom_diffeo_dhom/latex_article/' + 'meshr_pg_' + config + '_res' + str(res_gmsh)# + '_raydeb_o' + str(int(100*2*list_rho_appr[0]))
+    nom_tab_latex_gr = '../GitLab/rom_diffeo_dhom/latex_article/' + 'meshr_gr_' + config + '_res' + str(res_gmsh)# + '_raydeb_o' + str(int(100*2*list_rho_appr[0]))
+
+    if config == 'compl':
+        nom_tab_latex_pg = nom_tab_latex_pg + '_rayp' + str(int(round(100*ray_p,2)))
+        nom_tab_latex_gr = nom_tab_latex_gr + '_rayp' + str(int(round(100*ray_p,2)))
 
     os.rename(nom_fichier_pg + '.txt', nom_tab_latex_pg + '.tex')
     os.rename(nom_fichier_gr + '.txt', nom_tab_latex_gr + '.tex')
 
-# if EIVfixe:
-#  exec(open("DD_EIV_fixe.py").read())
+    # representations graphiques
+    arr_x = np.array(list_rho_test)
+
+    #
+    fig_1 = plt.figure()
+
+    pl.plot(arr_x, arr_int_grad_fem, linewidth = 2.2, color = 'blue')
+    pl.plot(arr_x, arr_int_grad_rom, linewidth = 2.2, color = 'red')
+
+    pl.title('Top left coefficient of int_grad, FEM versus ROM')
+
+    if fig_todo == 'aff':
+        pl.show()
+    elif fig_todo == 'save':
+        pl.savefig('Figures2D/' + 'int_grad_FeRoM_' + 'cer_un_ray' + '.png')# + '_res' + str(pars['resolution']) + '_snap' + str(i+1) + '.png')
+    pl.close()
+
+    fig_2 = plt.figure()
+
+    pl.plot(arr_x, ar_err_rel, linewidth = 2.2, color = 'green')
+
+    pl.xlabel('Tested radius')
+    pl.ylabel('Error (%)')
+
+    if fig_todo == 'aff':
+        pl.show()
+    elif fig_todo == 'save':
+        pl.savefig('Figures2D/' + 'err_rel_' + 'cer_un_ray' + '.png')# + '_res' + str(pars['resolution']) + '_snap' + str(i+1) + '.png')
+    pl.close()
+
+    fig_3 = plt.figure()
+
+    tps_fem_moy = sum(arr_t[:, 0])/len(list_rho_test)
+
+    print('='*75)
+    print('Moyenne EF :', tps_fem_moy)
+    print('Performances :', arr_t)
+    print('='*75)
+
+    # heights = [arr_t[i, :]/tps_fem_moy for i in range(len(list_rho_test))]
+    heights = [arr_t[0, :]/tps_fem_moy , arr_t[1, :]/tps_fem_moy]
+    # arr_heights = np.array(heights)/tps_fem_moy
+
+    print('Performances par rayon :', heights)
+    print('='*75)
+
+    width = 0.05
+    BarName = ['T FEM', 'T interp Phi', 'T Ab', 'T solve', 'T dhom']
+
+    # plt.bar(arr_x, arr_heights, width, align = 'center')
+    plt.bar(arr_x, heights, width, stacked = True, align = 'center')
+
+    plt.xlim(-1, 5)
+    plt.ylim(0, max(arr_t[:, 0]))
+
+    plt.title('Time elapsed to compute Dhom : FEM vs ROM')
+
+    plt.ylabel('tps/t_FEM_moy')
+
+    # if fig_todo == 'aff':
+    plt.show()
+    # elif fig_todo == 'save':
+    #     plt.savefig('Figures2D/' + 'perf_temp_' + 'cer_un_ray' + '.png')
+
+    plt.close()
