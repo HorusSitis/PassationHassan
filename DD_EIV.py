@@ -3,24 +3,25 @@
 #################################################################################################
 ## Etape IV : Predictions. Choisir les parametres du probleme a resoudre par le modele reduit. ##
 #################################################################################################
-print('!'*60)
+
 # Definition du domaine Omega_fixe :
 if dom_fixe == 'am':
     mesh_fixe_name = 'maillage_fixe2d_am'#.xml'
 elif config == 'compl':
     mesh_fixe_name = 'maillage_trous2D_'+geo_p+'_fixe'#.xml'
 
-# print('maillages_per/2D/maillage_trous2D_'+geo_p+'_fixe.xml')
-#
-print(mesh_fixe_name)
+
+# print(mesh_fixe_name)
 mesh_fixe = Mesh(mesh_repository + mesh_fixe_name + '.xml')
-# mesh_fixe = Mesh(mesh_repository + 'llll' + '.xml')
+
 V_fixe = VectorFunctionSpace(mesh_fixe, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
-# sys.exit()
+
 # --------------------- SE0 : maillage et fonctions tests du domaine fixe --------------------- #
-# rho = 0.11
+
+start_mesh = time.time()
+
 creer_maill_per_gpar(config, geo_p, mention, xyinfsup, rho, ray_p)
-# sys.exit()
+
 if config == 'compl':
     mesh_name = mesh_prefix + str(int(round(100*rho,2))) + '_rayp' + str(int(round(100*ray_p,2)))
 else:
@@ -30,10 +31,13 @@ else:
 # appelle le maillage reconverti depuis maillages_per/2D
 mesh_nouv = Mesh(mesh_repository + mesh_name + '.xml')
 
+end_mesh = time.time()
+
 # pointe vers le meme maillage que la fonction snapshot_ de DD_fun_obj
 V_nouv = VectorFunctionSpace(mesh_nouv, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
 
 # Performances
+tps_mesh = end_mesh - start_mesh
 
 ### ------------ Etapes reproduites : dependances directes de Main3D ------------ ###
 
@@ -52,8 +56,6 @@ nb_noeuds_fixe = V_fixe.dim()
 ## Chargement de la base POD complete
 
 phi_name='Phi'+dom_fixe+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+'res'+str(res)+'_'+ordo+'_'+computer
-
-print(phi_name)
 
 with sh.open(repertoire_parent+phi_name) as phi_loa:
     Phi_prime_v = phi_loa['maliste']
@@ -130,7 +132,7 @@ end=time.time()
 t_rom_linear=end-start
 
 print('se2 faite', t_int_Ab + t_rom_linear, 'secondes')
-print(A,b,a_nouv)
+# print(A,b,a_nouv)
 
 # --------------------- SE3 : calcul du nouveau champ de vecteurs, affichage --------------------- #
 
@@ -323,3 +325,24 @@ registre_gr.write(str(round(100*(t_rom_Dhom/t_rom), 2))+'\\'+'%'+'\\'+'\\'+'\n')
 
 
 registre_gr.write('\\'+'hline'+'\n')
+
+## ecriture des resultats dans les vecteurs arr_
+
+arr_int_grad_fem[i] = T_chi_fom[0,0]
+arr_int_grad_rom[i] = T_chi_rom[0,0]
+
+arr_nodes[i] = V_nouv.dim()
+
+ar_err_rel[i] = err_rel_ig
+
+# arr_t_fem[i] = t_fem
+# arr_t_phi_n[i] = t_phi_nouv
+# arr_t_Ab[i] = t_int_Ab
+# arr_t_solve[i] = t_rom_linear
+# arr_t_dhom[i] = t_rom_Dhom
+
+arr_t[i, 0] = t_fem
+arr_t[i, 1] = t_phi_nouv
+arr_t[i, 2] = t_int_Ab
+arr_t[i, 3] = t_rom_linear
+arr_t[i, 4] = t_rom_Dhom
