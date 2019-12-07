@@ -289,13 +289,12 @@ if EIV :
     plt.ylim(2*10**(-6), max(arr_t[:, 0]/tps_fem_moy))
     pl.yscale('log')
 
-    plt.title('Time elapsed to compute Dhom : FEM vs ROM')
-
     plt.ylabel('tps/t_FEM_moy')
 
     pl.xticks(arr_x, BarName, rotation = 0)
 
     if fig_todo == 'aff':
+        plt.title('Time elapsed to compute Dhom : FEM vs ROM')
         plt.show()
     elif fig_todo == 'save':
         plt.savefig('Figures2D/' + 'perf_temp_' + 'logscale_' + 'cer_un_ray' + '.png')
@@ -332,13 +331,12 @@ if EIV :
     plt.xlim(-1, len(arr_t[0, :]))
     plt.ylim(0, max(arr_t[:, 0]/tps_fem_moy))
 
-    plt.title('Time elapsed to compute Dhom : FEM vs ROM')
-
     plt.ylabel('tps/t_FEM_moy')
 
     pl.xticks(arr_x, BarName, rotation = 0)
 
     if fig_todo == 'aff':
+        plt.title('Time elapsed to compute Dhom : FEM vs ROM')
         plt.show()
     elif fig_todo == 'save':
         plt.savefig('Figures2D/' + 'perf_temp_' + 'linscale_' + 'cer_un_ray' + '.png')
