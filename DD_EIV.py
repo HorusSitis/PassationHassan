@@ -342,7 +342,11 @@ ar_err_rel[i] = err_rel_ig
 # arr_t_dhom[i] = t_rom_Dhom
 
 arr_t[i, 0] = t_fem
-arr_t[i, 1] = t_phi_nouv
-arr_t[i, 2] = t_int_Ab
-arr_t[i, 3] = t_rom_linear
-arr_t[i, 4] = t_rom_Dhom
+
+t_rom = t_phi_nouv + t_int_Ab + t_rom_linear + t_rom_Dhom
+arr_t[i, 1] = t_rom
+
+arr_t[i, 2] = t_phi_nouv
+arr_t[i, 3] = t_int_Ab
+arr_t[i, 4] = t_rom_linear
+arr_t[i, 5] = t_rom_Dhom

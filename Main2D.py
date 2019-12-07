@@ -154,7 +154,7 @@ if EIV :
     # arr_t_solve = np.zeros(len(list_rho_test))
     # arr_t_dhom = np.zeros(len(list_rho_test))
 
-    arr_t = np.zeros((len(list_rho_test), 5))
+    arr_t = np.zeros((len(list_rho_test), 6))
 
     # fichiers pour enregistrer textuellement les performances du ROM
     nom_fichier_pg='Perf3D/' + 'pg_' + computer + 'res' + str(res_gmsh) + config + geo_p + 'Nmor' + str(N_mor)
@@ -228,7 +228,7 @@ if EIV :
 
     # representations graphiques
     arr_rho = np.array(list_rho_test)
-    arr_x = np.arange(5)
+    arr_x = np.arange(len(arr_t[0, :]))
 
     #
     fig_1 = plt.figure()
@@ -273,18 +273,63 @@ if EIV :
     # print('Performances par rayon :', heights)
     print('='*75)
     width = 0.05
-    BarName = ['T FEM', 'T interp Phi', 'T Ab', 'T solve', 'T dhom']
+    BarName = ['T FEM', 'T ROM', 'T interp Phi', 'T Ab', 'T solve', 'T dhom']
 
     for i in range(len(list_rho_test)):
         print('x =', arr_x + i*width)
         print('y =', arr_t[i, :]/tps_fem_moy)
         print('%'*75)
-        plt.bar(arr_x + i*width, arr_t[i, :]/tps_fem_moy, width)
+        plt.bar(arr_x + i*width, arr_t[i, :]/tps_fem_moy, width, color = ['blue', 'red', 'green', 'green', 'green', 'green'])
 
     # plt.bar(arr_x, arr_heights, width, align = 'center')
     # plt.bar(arr_x, heights, width, stacked = True, align = 'center')
 
-    plt.xlim(-1, 5)
+    plt.xlim(-1, len(arr_t[0, :]))
+
+    plt.ylim(2*10**(-6), max(arr_t[:, 0]/tps_fem_moy))
+    pl.yscale('log')
+
+    plt.title('Time elapsed to compute Dhom : FEM vs ROM')
+
+    plt.ylabel('tps/t_FEM_moy')
+
+    pl.xticks(arr_x, BarName, rotation = 0)
+
+    if fig_todo == 'aff':
+        plt.show()
+    elif fig_todo == 'save':
+        plt.savefig('Figures2D/' + 'perf_temp_' + 'logscale_' + 'cer_un_ray' + '.png')
+
+    plt.close()
+
+    fig_4, ax_4 = plt.subplots()
+
+    tps_fem_moy = sum(arr_t[:, 0])/len(list_rho_test)
+
+    print('='*75)
+    print('Moyenne EF :', tps_fem_moy)
+    print('Performances :', arr_t)
+    print('='*75)
+
+    # heights = [arr_t[i, :]/tps_fem_moy for i in range(len(list_rho_test))]
+    # heights = [arr_t[0, :]/tps_fem_moy , arr_t[1, :]/tps_fem_moy]
+    # arr_heights = np.array(heights)/tps_fem_moy
+
+    # print('Performances par rayon :', heights)
+    print('='*75)
+    width = 0.05
+    BarName = ['T FEM', 'T ROM', 'T interp Phi', 'T Ab', 'T solve', 'T dhom']
+
+    for i in range(len(list_rho_test)):
+        print('x =', arr_x + i*width)
+        print('y =', arr_t[i, :]/tps_fem_moy)
+        print('%'*75)
+        plt.bar(arr_x + i*width, arr_t[i, :]/tps_fem_moy, width, color = ['blue', 'red', 'green', 'green', 'green', 'green'])
+
+    # plt.bar(arr_x, arr_heights, width, align = 'center')
+    # plt.bar(arr_x, heights, width, stacked = True, align = 'center')
+
+    plt.xlim(-1, len(arr_t[0, :]))
     plt.ylim(0, max(arr_t[:, 0]/tps_fem_moy))
 
     plt.title('Time elapsed to compute Dhom : FEM vs ROM')
@@ -293,9 +338,9 @@ if EIV :
 
     pl.xticks(arr_x, BarName, rotation = 0)
 
-    # if fig_todo == 'aff':
-    plt.show()
-    # elif fig_todo == 'save':
-    #     plt.savefig('Figures2D/' + 'perf_temp_' + 'cer_un_ray' + '.png')
+    if fig_todo == 'aff':
+        plt.show()
+    elif fig_todo == 'save':
+        plt.savefig('Figures2D/' + 'perf_temp_' + 'linscale_' + 'cer_un_ray' + '.png')
 
     plt.close()
