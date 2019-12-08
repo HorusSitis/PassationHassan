@@ -233,15 +233,14 @@ if EIV :
     #
     fig_1 = plt.figure()
 
-    pl.plot(arr_rho, arr_int_grad_fem, linewidth = 2.2, color = 'blue')
-    pl.plot(arr_rho, arr_int_grad_rom, linewidth = 2.2, color = 'red')
+    plt.plot(arr_rho, arr_int_grad_fem, 'bo', arr_rho, arr_int_grad_rom, 'r*', markersize = 20)# 'k')
 
     pl.title('Top left coefficient of int_grad, FEM versus ROM')
 
     if fig_todo == 'aff':
         pl.show()
     elif fig_todo == 'save':
-        pl.savefig('Figures2D/' + 'int_grad_FeRoM_' + 'cer_un_ray' + '.png')# + '_res' + str(pars['resolution']) + '_snap' + str(i+1) + '.png')
+        pl.savefig('Figures2D/' + 'int_grad_FeRoM_' + 'cer_un_ray' + '.png')
     pl.close()
 
     fig_2 = plt.figure()
@@ -265,10 +264,6 @@ if EIV :
     print('Moyenne EF :', tps_fem_moy)
     print('Performances :', arr_t)
     print('='*75)
-
-    # heights = [arr_t[i, :]/tps_fem_moy for i in range(len(list_rho_test))]
-    # heights = [arr_t[0, :]/tps_fem_moy , arr_t[1, :]/tps_fem_moy]
-    # arr_heights = np.array(heights)/tps_fem_moy
 
     # print('Performances par rayon :', heights)
     print('='*75)
@@ -303,19 +298,8 @@ if EIV :
 
     fig_4, ax_4 = plt.subplots()
 
-    tps_fem_moy = sum(arr_t[:, 0])/len(list_rho_test)
+    # tps_fem_moy = sum(arr_t[:, 0])/len(list_rho_test)
 
-    print('='*75)
-    print('Moyenne EF :', tps_fem_moy)
-    print('Performances :', arr_t)
-    print('='*75)
-
-    # heights = [arr_t[i, :]/tps_fem_moy for i in range(len(list_rho_test))]
-    # heights = [arr_t[0, :]/tps_fem_moy , arr_t[1, :]/tps_fem_moy]
-    # arr_heights = np.array(heights)/tps_fem_moy
-
-    # print('Performances par rayon :', heights)
-    print('='*75)
     width = 0.05
     BarName = ['T FEM', 'T ROM', 'T interp Phi', 'T Ab', 'T solve', 'T dhom']
 
@@ -324,9 +308,6 @@ if EIV :
         print('y =', arr_t[i, :]/tps_fem_moy)
         print('%'*75)
         plt.bar(arr_x + i*width, arr_t[i, :]/tps_fem_moy, width, color = ['blue', 'red', 'green', 'green', 'green', 'green'])
-
-    # plt.bar(arr_x, arr_heights, width, align = 'center')
-    # plt.bar(arr_x, heights, width, stacked = True, align = 'center')
 
     plt.xlim(-1, len(arr_t[0, :]))
     plt.ylim(0, max(arr_t[:, 0]/tps_fem_moy))
