@@ -244,6 +244,8 @@ print('Erreur relative Dhom MEF-MOR :', err_rel_dhom , ' pourcent')
 err_rel_ig=100*(T_chi_rom[0,0]-T_chi_fom[0,0])/T_chi_fom[0,0]
 print('Erreur relative int_grad MEF-MOR :', err_rel_ig , ' pourcent')
 
+var_rel_ig = 100*(np.sqrt(2*(T_chi_rom[0,0]**2 + T_chi_fom[0,0]**2)/((T_chi_rom[0,0] + T_chi_fom[0,0])**2) - 1))
+
 ## On enregistre et imprime le temps d'execution de SE4
 
 end=time.time()
@@ -334,6 +336,7 @@ arr_int_grad_rom[i] = T_chi_rom[0,0]
 arr_nodes[i] = V_nouv.dim()
 
 ar_err_rel[i] = err_rel_ig
+ar_var_rel[i] = var_rel_ig
 
 # arr_t_fem[i] = t_fem
 # arr_t_phi_n[i] = t_phi_nouv

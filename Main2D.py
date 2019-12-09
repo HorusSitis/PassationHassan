@@ -143,6 +143,7 @@ if EIV :
     arr_nodes = np.zeros(len(list_rho_test))
 
     ar_err_rel = np.zeros(len(list_rho_test))
+    ar_var_rel = np.zeros(len(list_rho_test))
 
     ## pour l'instant : on en compte pas le temps de maillage, identique pour FEM et ROM
 
@@ -254,6 +255,24 @@ if EIV :
         pl.show()
     elif fig_todo == 'save':
         pl.savefig('Figures2D/' + 'err_rel_' + 'cer_un_ray' + '.png')# + '_res' + str(pars['resolution']) + '_snap' + str(i+1) + '.png')
+    pl.close()
+
+    fig_2bis = plt.figure()
+
+    pl.plot(arr_rho, ar_var_rel, linewidth = 2.2, color = 'green')
+
+    pl.xlabel('Tested radius')
+    pl.ylabel('RelV (%)')
+
+    plt.xlim(arr_rho[0] - 0.05, arr_rho[len(arr_rho) - 1] + 0.05)
+
+    plt.ylim(0.1*min(ar_var_rel), 10*max(ar_var_rel))
+    pl.yscale('log')
+
+    if fig_todo == 'aff':
+        pl.show()
+    elif fig_todo == 'save':
+        pl.savefig('Figures2D/' + 'var_rel_' + 'cer_un_ray' + '.png')# + '_res' + str(pars['resolution']) + '_snap' + str(i+1) + '.png')
     pl.close()
 
     fig_3, ax_3 = plt.subplots()
