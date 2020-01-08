@@ -60,7 +60,7 @@ r_c_0=0.15
 r_min=0.05
 
 class PeriodicBoundary(SubDomain):
-    # Left boundary is "target domain" G
+    # Left boundary is 'target domain' G
     def inside(self, x, on_boundary):
         return on_boundary and not(near(x[0],xsup,tol) or near(x[1],ysup,tol) or near(x[2],zsup,tol))
     # Map right boundary (H) to left boundary (G)
@@ -94,7 +94,7 @@ D_k=1.0
 N_snap=len(list_rho_appr)
 
 npas_err=10
-# typ_sol="bic_cyr"#"default"#seulement si res=10##
+# typ_sol='bic_cyr'#'default'#seulement si res=10##
 
 
 typ_sol = 'kr_null_vect'
@@ -114,61 +114,62 @@ gen_snap='seq'
 # gen_snap='seq_par'
 
 # repertoire pour les resultats
-repertoire_parent="Res3D/"
+repertoire_parent='Res3D/'
 
 # -------------------- Geometrie du probleme -------------------- #
 
-config='sph_un'
-# config='cyl_un'
-# config='cylsph'
-# config='2sph'
+# config = 'sph_un'
+# config = 'cyl_un'
+config = 'cylsph'
+# config = '2sph'
 
-ray_fix = 0.3
+ray_fix = 0.36
 
 ### inclusions simples
-if config=='sph_un':
+if config == 'sph_un':
 
-    dom_fixe="am"
-    geo_p='ray'#'cen'#
+    dom_fixe = 'am'
+    geo_p = 'ray'#'cen'#
     ##
-    conf_mess='sphere unique'
+    conf_mess = 'sphere unique'
 
-    if geo_p=='ray':
+    if geo_p == 'ray':
         geo_mess='rayon variable'
-        cen_snap_ray=[0.5,0.5,0.5]
-    elif geo_p=='cen':
-        geo_mess='centre variable'
-        ray_snap_cen=0.35
-        csr_list=[[0.5,0.5,0.3+0.05*k] for k in range(1,1+Nsnap)]
+        cen_snap_ray = [0.5,0.5,0.5]
+    elif geo_p == 'cen':
+        geo_mess = 'centre variable'
+        ray_snap_cen = 0.35
+        csr_list = [[0.5,0.5,0.3+0.05*k] for k in range(1,1+Nsnap)]
 
-elif config=='cyl_un':
+elif config == 'cyl_un':
 
-    dom_fixe="am"
-    geo_p='ray'#'axe'#
+    dom_fixe = 'am'
+    geo_p = 'ray'#'axe'#
     ##
-    conf_mess='cylindre unique'
-    if geo_p=='ray':
-        geo_mess='rayon variable'
-        cen_snap_ray=[0.5,0.,0.5]
-        top_snap_ray=[0.5,0.5]
-    elif geo_p=='axe':
-        asr_list=[[0.5,0.3+0.05*k] for k in range(1,1+Nsnap)]
+    conf_mess = 'cylindre unique'
+    if geo_p == 'ray':
+        geo_mess = 'rayon variable'
+        cen_snap_ray = [0.5,0.,0.5]
+        top_snap_ray = [0.5,0.5]
+    elif geo_p == 'axe':
+        asr_list = [[0.5,0.3+0.05*k] for k in range(1,1+Nsnap)]
 
 ### inclusions composees
-elif config=='2sph':
-    conf_mess='deux spheres'
-    dom_fixe="solid"#"am"#
+elif config == '2sph':
+    conf_mess = 'deux spheres'
+    dom_fixe = 'solid'
 
-    geo_p='ray'
-    geo_mess='rayon de la sphere centrale variable'
+    geo_p = 'ray'
+    geo_mess = 'rayon de la sphere centrale variable'
     ##
 
-elif config=='cylsph':
-    conf_mess='un cylindre et une sphere'
-    dom_fixe="ray_min"#"am"#"solid"#
+elif config == 'cylsph':
+    conf_mess = 'un cylindre et une sphere'
+    dom_fixe = 'ray_min'
 
-    geo_p='ray_sph'#'ray_cyl'#'ray_linked'
-    ###ray_sph pour le test diff_ion###
+    geo_p = 'ray_sph'
+    geo_p = 'ray_cyl'
+
     ##
     if geo_p=='ray_cyl':
         geo_mess='rayon du cylindre variable'

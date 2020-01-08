@@ -184,45 +184,6 @@ for n in range(0,N_snap):
 
     # On cree un maillage pour reecrire les snapshots sous la forme de fonctions
 
-    # if config=='sph_un':
-    #     if geo_p=='ray':
-    #         cen=cen_snap_ray
-    #         # r=list_rho_appr[n]
-    #         if typ_msh=='gms':
-    #             mesh_name="cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)
-    #         else:
-    #             mesh=creer_maill_sph(cen,r,res)
-    #     elif geo_p=='cen':
-    #         r=ray_snap_cen
-    #         mesh=creer_maill_sph(csr_list[n],r,res)
-    #
-    # elif config=='cyl_un':## avec gmsh
-    #     if geo_p=='ray':
-    #         # r=list_rho_appr[n]
-    #         mesh_name="cubecylindre_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)
-    #     #elif geo_p=='axe':
-    #         #r=ray_snap_ax
-    #         #mesh=creer_maill_cyl(acr_list[n-1],r,res)
-    #
-    # elif config=='2sph':
-    #     # r=n*0.05
-    #     r_s=r
-    #     r_v=r_v_0
-    #     mesh_name="cube"+config+"_periodique_triangle_"+str(int(round(100*r_s,2)))+str(int(round(100*r_v_0,2)))+"sur"+str(res)
-    #
-    # elif config=='cylsph':
-    #     # r=n*0.05
-    #     if geo_p=='ray_cyl':
-    #         r_c=r
-    #         r_s=r_s_0
-    #     elif geo_p=='ray_sph':
-    #         r_c=r_c_0
-    #         r_s=r
-    #     mesh_name="cube"+config+"_periodique_triangle_"+str(int(round(100*r_c,2)))+str(int(round(100*r_s,2)))+"sur"+str(res)
-    #
-    # print("maillages_per/3D/"+mesh_name+".xml")
-    # mesh=Mesh("maillages_per/3D/"+mesh_name+".xml")
-
     if config == 'sph_un':
         nom_fichier_avecgpar = mesh_prefix + 'rayc' + str(int(round(100*r,2))) + '_sur' + str(res)
     elif config == '2sph':
@@ -289,7 +250,7 @@ for n in range(0,N_snap):
 
     # D=por*np.eye(3)
     porosity = epsilon_p(r, config, geo_p, ray_fix)
-    
+
     D = porosity*np.eye(3)
     ## Calcul et affichage du tenseur Dhom
     Dhom_k = D_k*(D+T_chi.T)
