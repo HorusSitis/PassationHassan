@@ -61,8 +61,8 @@ VFS_degree=2
 # VFS_degree=3
 ## degre 2 : comme en dimension 3, permet d'eviter les erreurs de periodicite pour des pas qui nen sont pas de la forme 2'n, ou n est un diviseur de 100 ##
 
-# config='cer_un'
-config='compl'
+config='cer_un'
+# config='compl'
 
 if config=='cer_un':
     # pour editer les fichiers de maillages
@@ -119,21 +119,48 @@ elif config=='compl':
     elif geo_p=='hor':
         geo_mess='alignes horizontalement, '+mess_prefix
 
+if config == 'compl':
+    if geo_p == 'diag':
+        ray_p = 0.3
+    elif geo_p == 'hor':
+        ray_p = 0.25
+
+
+## ------------ Porosite ------------ ##
+
+size = (xsup - xinf)
+cell_vol = size**dimension
+
+def epsilon_p(r, config,  r_f):
+
+    # size = (xsup - xinf)
+    # cell_vol = size**dimension
+
+    if config!='compl':
+        fluid_vol = (cell_vol - pi*r**2)
+    else:
+        fluid_vol = cell_vol - pi*(r**2+r_f**2)
+
+    epsilon_p = fluid_vol/cell_vol
+
+    return epsilon_p
+
+
 ### ------------ Important : liste des rayons pour l'apprentissage et les tests ------------ ###
 
 N_snap = 8
 
-if xinf == 0.:
-    if config != 'compl' or (config == 'compl' and geo_p == 'diag'):
-        rho_appr_min = 0.05
-        # rho_appr_min = 0.1
-        rho_appr_max = 0.4
-        # rho_appr_max = 0.45
-        list_rho_test = np.linspace(0.11, 0.44, 4)
-    elif config == 'compl' and geo_p == 'hor':
-        rho_appr_min = 0.01
-        rho_appr_max = 0.028
-        list_rho_test = np.linspace(0.04, 0.1, 0.2, 0.3)
+# if xinf == 0.:
+#     if config != 'compl' or (config == 'compl' and geo_p == 'diag'):
+#         rho_appr_min = 0.05
+#         # rho_appr_min = 0.1
+#         rho_appr_max = 0.4
+#         # rho_appr_max = 0.45
+#         list_rho_test = np.linspace(0.11, 0.44, 4)
+#     elif config == 'compl' and geo_p == 'hor':
+#         rho_appr_min = 0.01
+#         rho_appr_max = 0.028
+#         list_rho_test = np.linspace(0.04, 0.1, 0.2, 0.3)
 
 
 if config != 'compl' or (config == 'compl' and geo_p == 'diag'):

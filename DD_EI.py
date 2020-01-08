@@ -34,15 +34,7 @@ def snap_circ_ray(N_par):
 
     return([N_par,chi_r_v])
 
-# #if geo_p=='cen':
-# #ray_snap_cen=0.25
-# #csr_list=[[0.5,0.3+0.05*k] for k in range(1,1+N_snap)]
-# #c_par : parametre scalaire pour la position du centre
-# def snap_circ_cen(c_par):
-#     cen_snap_ray=csr_list[c_par-1]
-#     chi_c=snapshot_circ_per(cen_snap_ray,ray_snap_cen,res)
-#     chi_c_v=chi_c.vector().get_local()
-#     return([c_par,chi_c_v])
+
 
 def snap_compl_ray(N_par):
 
@@ -154,24 +146,24 @@ for n in range(0,N_snap):
             plt.close()
         else:
             mesh=creer_maill_circ(cen,r,res)
-    elif config=='cer_un_som':
-        r=n*0.05
-        mention='_som'
-        if typ_msh=='gms':
-            mesh_name='maillage_trou2D'+mention+'_'+str(int(round(100*r,2)))
-            mesh=Mesh(mesh_repository+mesh_name+'.xml')
-            plot(mesh)
-            plt.tight_layout(pad=0)
-            if fig_todo=='aff':
-                plt.show()
-            elif fig_todo=='save' and (r==0.25):
-                plt.savefig('Figures2D/maillage_gmsh_per_'+config+geo_p+'_ray'+str(int(round(100*r,2)))+'.png')
-            plt.close()
-        else:
-            mesh=creer_maill_circ([c_x,c_y],r,res)
+    # elif config=='cer_un_som':
+    #     r=n*0.05
+    #     mention='_som'
+    #     if typ_msh=='gms':
+    #         mesh_name='maillage_trou2D'+mention+'_'+str(int(round(100*r,2)))
+    #         mesh=Mesh(mesh_repository+mesh_name+'.xml')
+    #         plot(mesh)
+    #         plt.tight_layout(pad=0)
+    #         if fig_todo=='aff':
+    #             plt.show()
+    #         elif fig_todo=='save' and (r==0.25):
+    #             plt.savefig('Figures2D/maillage_gmsh_per_'+config+geo_p+'_ray'+str(int(round(100*r,2)))+'.png')
+    #         plt.close()
+    #     else:
+    #         mesh=creer_maill_circ([c_x,c_y],r,res)
 
     else:
-        r_fixe=0.15
+        r_fixe = ray_p
 
         mesh_name = mesh_prefix + str(int(round(100*rho,2))) + '_rayp' + str(int(round(100*ray_p,2)))
         mesh=Mesh(mesh_repository + mesh_name + '.xml')
@@ -180,7 +172,7 @@ for n in range(0,N_snap):
         if fig_todo=='aff':
             plt.show()
         elif fig_todo=='save' and (r==0.25):
-            plt.savefig('Figures2D/maillage_gmsh_per_'+config+geo_p+'_ray'+str(int(round(100*r,2)))+'.png')
+            plt.savefig('Figures2D/maillage_gmsh_per_' + config + geo_p + '_ray' + str(int(round(100*r,2)))+'.png')
         plt.close()
 
     V_n=VectorFunctionSpace(mesh, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
@@ -210,21 +202,27 @@ for n in range(0,N_snap):
             err_per_gr(cen_snap_ray,r_fixe,chi_n,npas_err,fig_todo)
     ##
     # Tenseur de diffusion homogeneise
+
     ## Integrale de chi sur le domaine fluide
     T_chi=np.zeros((2,2))
     for k in range(0,2):
         for l in range(0,2):
             T_chi[k,l]=assemble(grad(chi_n)[k,l]*dx)
+    T_chi_omega = T_chi/cell_vol
+
     ## Integrale de l'identite sur le domaine fluide
-    if config!='compl':
-        por=(1-pi*r**2)
-    else:
-        por=1-pi*(r**2+0.15**2)
-    D=por*np.eye(2)
+    porosity = epsilon_p(r, config, ray_p)
+
+    D = porosity*np.eye(2)
     ## Calcul et affichage du tenseur Dhom
-    Dhom_k=D_k*(D+T_chi.T)
-    print('Porosite :', por)
+    Dhom_k = D_k*(D + T_chi_omega.T)
+    print('#'*78)
+    print('Porosite :', porosity)
+    print('-'*78)
+    print('Coefficient IG11, snapshot '+str(n+1)+', '+conf_mess+', '+geo_mess+' :', T_chi_omega[0,0])
     print('Coefficient Dhom_k11, snapshot '+str(n+1)+', '+conf_mess+', '+geo_mess+' :',Dhom_k[0,0])
+    print('%'*78)
+
     ## Anisotropie
     mod_diag=min(abs(Dhom_k[0,0]),abs(Dhom_k[1,1]))
     mod_ndiag=0
@@ -240,3 +238,5 @@ for n in range(0,N_snap):
     # Affichage des composantes scalaires : solution
     if config=='cer_un' and geo_p=='ray':
         fig_chi(cen_snap_ray,r,chi_n,fig_todo)
+    print('#'*78)
+    print('#'*78)
