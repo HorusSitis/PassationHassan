@@ -53,11 +53,11 @@ elif res_gmsh==20:
 elif res_gmsh==50:
     lw=0.01
 
-r_s_0=0.15
-r_v_0=0.15
-r_c_0=0.15
-
-r_min=0.05
+# r_s_0=0.15
+# r_v_0=0.15
+# r_c_0=0.15
+#
+# r_min=0.05
 
 class PeriodicBoundary(SubDomain):
     # Left boundary is 'target domain' G
@@ -66,8 +66,8 @@ class PeriodicBoundary(SubDomain):
     # Map right boundary (H) to left boundary (G)
     def map(self, x, y):
         for i in range(dimension):
-            if near(x[i],1.0,tol):
-                y[i]=0.0
+            if near(x[i],xsup,tol):
+                y[i]=xinf
             else:
                 y[i]=x[i]
 
@@ -222,19 +222,27 @@ registre_perf_num['t'] = 'Perf3D/' + 'tps_exec_' + config + '_' + geo_p + rg_per
 
 ## ------------ Porosite ------------ ##
 
+size = (xsup - xinf)
+cell_vol = size**dimension
+
 def epsilon_p(r, config, geo_p, r_f):
 
+    # size = (xsup - xinf)
+    # cell_vol = size**dimension
+
     if config == 'sph_un':
-        epsilon_p = 1 - 4/3*pi*r**3
+        fluid_vol = cell_vol - 4/3*pi*r**3
     elif config=='cyl_un':
-        epsilon_p = 1 - pi*r**2
+        fluid_vol = cell_vol - pi*r**2
     elif config=='2sph':
-        epsilon_p = 1 - 4/3*pi*(r**3+r_f**3)
+        fluid_vol = cell_vol - 4/3*pi*(r**3+r_f**3)
     elif config=='cylsph' :
         if geo_p == 'ray_sph':
-            epsilon_p = 1 - 4/3*pi*r**3-pi*r_f**2
+            fluid_vol = cell_vol - 4/3*pi*r**3-pi*r_f**2
         elif geo_p == 'ray_cyl':
-            epsilon_p = 1 - 4/3*pi*r_f**3-pi*r**2
+            fluid_vol = cell_vol - 4/3*pi*r_f**3-pi*r**2
+
+    epsilon_p = fluid_vol/cell_vol
 
     return epsilon_p
 
