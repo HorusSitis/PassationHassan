@@ -55,7 +55,7 @@ nb_noeuds_fixe = V_fixe.dim()
 
 ## Chargement de la base POD complete
 
-phi_name='Phi'+dom_fixe+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+'res'+str(res)+'_'+ordo+'_'+computer
+phi_name = 'Phi' + dom_fixe + '_dim' + str(N_snap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+'res'+str(res)+'_'+ordo+'_'+computer
 
 with sh.open(repertoire_parent+phi_name) as phi_loa:
     Phi_prime_v = phi_loa['maliste']
@@ -245,6 +245,7 @@ err_rel_ig=100*(T_chi_rom[0,0]-T_chi_fom[0,0])/T_chi_fom[0,0]
 print('Erreur relative int_grad MEF-MOR :', err_rel_ig , ' pourcent')
 
 var_rel_ig = 100*(np.sqrt(2*(T_chi_rom[0,0]**2 + T_chi_fom[0,0]**2)/((T_chi_rom[0,0] + T_chi_fom[0,0])**2) - 1))
+var_rel_ig_yy = 100*(np.sqrt(2*(T_chi_rom[1,1]**2 + T_chi_fom[1,1]**2)/((T_chi_rom[1,1] + T_chi_fom[1,1])**2) - 1))
 
 ## On enregistre et imprime le temps d'execution de SE4
 

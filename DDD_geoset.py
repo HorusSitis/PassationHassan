@@ -139,9 +139,9 @@ rho_test_min = rho_appr_min + 0.5*rho_diff
 rho_test_max = rho_appr_max - 0.5*rho_diff
 
 list_rho_test = np.array([0.35])
-list_rho_test = np.array([0.35, 0.65])
+# list_rho_test = np.array([0.35, 0.65])
 # list_rho_test = np.linspace(0.11, 0.44, 4)
-# list_rho_test = np.linspace(rho_test_min, rho_test_max, N_snap - 1)
+list_rho_test = np.linspace(rho_test_min, rho_test_max, N_snap - 1)
 
 
 ### inclusions simples
