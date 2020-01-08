@@ -125,7 +125,7 @@ if not mesh_ex_done:
 
 
 
-sys.exit()
+# sys.exit()
 
 
 
@@ -136,7 +136,7 @@ sys.exit()
 ### ------------ Generation du maillage fixe avec FEniCS et definition de VFS ------------ ###
 
 print('Maillage fixe :', mesh_repository + mesh_f_name)
-# mesh_fixe = Mesh(mesh_repository + mesh_f_name + '.xml')
+mesh_fixe = Mesh(mesh_repository + mesh_f_name + '.xml')
 
 # fonctions test du domaine fixe
 
@@ -146,9 +146,9 @@ V_fixe = VectorFunctionSpace(mesh_fixe,'P',2,constrained_domain=PeriodicBoundary
 
 # Chargement de la liste des snapshots physiques
 
-l_name='Lchi_'+str(N_snap)+'_'+config+'_'+geo_p+'_'+'sur'+str(res)+'_'+ordo+'_'+computer
+l_name='Lchi_' + str(N_snap) + '_'+config + '_' + geo_p + '_' + 'sur' + str(res) + '_' + ordo + '_' + computer
 print(l_name)
-with sh.open(repertoire_parent+l_name) as l_loa:
+with sh.open(repertoire_parent + l_name) as l_loa:
     list_chi_v = l_loa['maliste']
 
 
@@ -158,8 +158,12 @@ def extra_snap(n):
     # valeur de rho^j
     r = list_rho_appr[n]
     # chargement du snapshot courant
-    chi_n_v=list_chi_v[n-1]
+    chi_n_v=list_chi_v[n]
     # mise sous forme d'une fonction EF
+
+
+    # generation du maillage avec FEniCS
+
     if config == 'sph_un':
         nom_fichier_avecgpar = mesh_prefix + 'rayc' + str(int(round(100*r,2))) + '_sur' + str(res)
     elif config == '2sph':
@@ -168,98 +172,105 @@ def extra_snap(n):
         nom_fichier_avecgpar = mesh_prefix + 'rayc' + str(int(round(100*r,2))) + '_rayp' + str(int(round(100*ray_fix,2))) + '_sur' + str(res)
     elif config == 'cylsph' and geo_p == 'ray_cyl':
         nom_fichier_avecgpar = mesh_prefix + 'rayc' + str(int(round(100*ray_fix,2))) + '_rayp' + str(int(round(100*r,2))) + '_sur' + str(res)
+    mesh_name = nom_fichier_avecgpar
 
-    mesh_name = nom_fichier_avecgpar + '.xml'
+    mesh = Mesh(mesh_repository + mesh_name + '.xml')
 
-    # quelle que soit la configuration
-    mesh = Mesh(mesh_name)
+    # exploitation du maillage
     V_n = VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
     chi_n = Function(V_n)
     chi_n.vector().set_local(chi_n_v)
     # extrapolation du snapshot au domaine fixe
     chi_n.set_allow_extrapolation(True)
-    chi_n_prime = interpolate(chi_n,V_fixe)
+    chi_n_prime = interpolate(chi_n, V_fixe)
     # verification sur chi_n
     ###
     ## on range le snapshot dans une liste
     chi_n_prime_v = chi_n_prime.vector().get_local()
 
     ##
-    return([n,chi_n_prime_v])
+    return([n, chi_n_prime_v])
 
 
 
 # Constitution de la matrice des snapshots
 
 if not exsnap_done:
+
     pool=multiprocessing.Pool(processes=8)
-    list_chi_n_prime_v=pool.map(extra_snap,(n for n in range(1,1+N_snap)))
+    list_chi_n_prime_v=pool.map(extra_snap, (n for n in range(0, N_snap)))
+
     # Remplissage de la matrice
-    nb_noeuds=V_fixe.dim()
-    Usnap=np.zeros((nb_noeuds,N_snap))
-    for n in range(1,1+N_snap):
-        for i in range(0,N_snap):
-            if list_chi_n_prime_v[i][0]==n:
-                Usnap[:,n-1]=list_chi_n_prime_v[i][1]
-    # Stochage de la matrice des snapshots
+    nb_noeuds = V_fixe.dim()
+    Usnap = np.zeros((nb_noeuds, N_snap))
+    for n in range(0, N_snap):
+        for i in range(0, N_snap):
+            if list_chi_n_prime_v[i][0] == n:
+                Usnap[:, n]=list_chi_n_prime_v[i][1]
+    # Stockage de la matrice des snapshots
     u_name='Usnap_'+dom_fixe+'_'+str(N_snap)+'_'+config+'_'+geo_p+'_'+'res'+str(res)+'_'+ordo+'_'+computer
     #
     with sh.open(repertoire_parent+u_name) as u_sto:
         u_sto['maliste'] = Usnap
 else:
     # Chargement de la matrice des snapshots
-    u_name='Usnap_'+dom_fixe+'_'+str(N_snap)+'_'+config+'_'+geo_p+'_'+'res'+str(res)+'_'+ordo+'_'+computer
-    with sh.open(repertoire_parent+u_name) as u_loa:
+    u_name='Usnap_' + dom_fixe + '_' + str(N_snap) + '_' + config + '_' + geo_p + '_' + 'res' + str(res) + '_' + ordo + '_' + computer
+    with sh.open(repertoire_parent + u_name) as u_loa:
         Usnap = u_loa['maliste']
 
 
 # Representations graphiques
 
-list_snap=[]
-for n in range(1,1+N_snap):
+list_snap = []
+for n in range(0, N_snap):
     chi_prime=Function(V_fixe)
-    chi_prime.vector().set_local(Usnap[:,n-1])
+    chi_prime.vector().set_local(Usnap[:, n - 1])
     # remplissage de la liste de fonctions
     list_snap.append(chi_prime)
 
 #cen=cen_snap_ray
-for n in range(1,1+N_snap):
-    chi_prime_n=list_snap[n-1]
+for n in range(0, N_snap):
+
+    chi_prime_n = list_snap[n]
+    r = list_rho_appr[n]
+
+    porosity = epsilon_p(r, config, geo_p, ray_fix)
+    if config == 'sph_un' or config == 'cube2sph':
+        por_fix = epsilon_p(0., config, geo_p, ray_fix)
+    elif config == 'cylsph':
+        por_fix = epsilon_p(rho_appr_min, config, geo_p, ray_fix)
+
+    if config == 'sph_un':
+        nom_fichier_avecgpar = mesh_prefix + 'rayc' + str(int(round(100*r,2))) + '_sur' + str(res)
+    elif config == '2sph':
+        nom_fichier_avecgpar = mesh_prefix + 'rayc' + str(int(round(100*r,2))) + '_rayp' + str(int(round(100*ray_fix,2))) + '_sur' + str(res)
+    elif config == 'cylsph' and geo_p == 'ray_sph':
+        nom_fichier_avecgpar = mesh_prefix + 'rayc' + str(int(round(100*r,2))) + '_rayp' + str(int(round(100*ray_fix,2))) + '_sur' + str(res)
+    elif config == 'cylsph' and geo_p == 'ray_cyl':
+        nom_fichier_avecgpar = mesh_prefix + 'rayc' + str(int(round(100*ray_fix,2))) + '_rayp' + str(int(round(100*r,2))) + '_sur' + str(res)
+    mesh_name = nom_fichier_avecgpar
+
     # Affichage des valeurs de la solution interpolee
     plot(chi_prime_n, linewidth=lw)
-    plt.title('Snapshot '+str(n),fontsize=30)
-    if fig_todo=='aff':
+    plt.title('Snapshot ' + str(n + 1), fontsize=30)
+    if fig_todo == 'aff':
         plt.show()
     else:
         plt.savefig('Figures3D/snap_interp'+dom_fixe+'_'+str(n)+'_sur'+str(N_snap)+config+'_'+geo_p+'res'+str(res)+'.png')
     plt.close()
     # Affichage des valeurs et erreurs de la solution periodique, quelle que soit la configuration
-    #err_per_ind_01(chi_prime_n,cen,r,npas_err)
-    r=n*0.05
     ### Debuggage : cylindre et sphere ###
     if test_Dhom and (config=='cylsph' or config=='2sph'):
         if geo_p=='ray':
-            r_cen=r
-            r_per=r_v_0
-            por=1-4/3*pi*(r_cen**3+r_per**3)
-            por_prime=1-4/3*pi*r_per**3
             mesh_postfixe=str(int(round(100*r_cen,2)))+str(int(round(100*r_per,2)))+'sur'+str(res)
         elif geo_p=='ray_sph':
-            r_s=r
-            r_c=r_c_0
-            por=1-4/3*pi*r_s**3-pi*r_c**2
-            por_prime=1-4/3*pi*0.05**3-pi*r_c**2
             mesh_postfixe=str(int(round(100*r_c,2)))+str(int(round(100*r_s,2)))+'sur'+str(res)
         elif geo_p=='ray_cyl':
-            r_s=r_s_0
-            r_c=r
-            por=1-4/3*pi*r_s**3-pi*r_c**2
-            por_prime=1-4/3*pi*r_s**3-pi*0.05**2
             mesh_postfixe=str(int(round(100*r_c,2)))+str(int(round(100*r_s,2)))+'sur'+str(res)
         ##
-        mesh_name='cube'+config+'_periodique_triangle_'+mesh_postfixe
-        print('Verification : maillage courant',mesh_name)
-        mesh=Mesh('maillages_per/3D/'+mesh_name+'.xml')
+        # mesh_name = 'cube'+config+'_periodique_triangle_'+mesh_postfixe
+        # print('Verification : maillage courant',mesh_name)
+        mesh = Mesh(mesh_repository + mesh_name + '.xml')
         ##
         V_n=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
         chi_n=Function(V_n)
@@ -283,11 +294,11 @@ for n in range(1,1+N_snap):
             class DomPhysFluide(SubDomain):
                 def inside(self, x, on_boundary):
                     return True if (x[0]**2+x[2]**2>=r_c**2 and (1-x[0])**2+x[2]**2>=r_c**2 and x[0]**2+(1-x[2])**2>=r_c**2 and (1-x[0])**2+(1-x[2])**2>=r_c**2) else False
-        dom_courant=DomPhysFluide()
-        subdomains=MeshFunction('size_t',mesh_fixe,mesh_fixe.topology().dim())
+        dom_courant = DomPhysFluide()
+        subdomains = MeshFunction('size_t', mesh_fixe, mesh_fixe.topology().dim())
         subdomains.set_all(1)
         dom_courant.mark(subdomains,12829)
-        dxf=Measure('dx', domain=mesh_fixe, subdomain_data=subdomains)
+        dxf = Measure('dx', domain=mesh_fixe, subdomain_data=subdomains)
         T_chi_restr_prime=np.zeros((3,3))
         for k in range(0,3):
             for l in range(0,3):
@@ -299,21 +310,21 @@ for n in range(1,1+N_snap):
                 T_chi_prime[k,l]=assemble(grad(chi_prime_n)[k,l]*dxf)
         ## les trois coefficients a comparer
         ###
-        D=por*np.eye(3)
+        D=porosity*np.eye(3)
         integr_k_postprime=D_k*(D+T_chi.T)
-        Dhom_k_postprime=integr_k_postprime*(1/por_prime)#por en dimensionnel
+        Dhom_k_postprime=integr_k_postprime*(1/por_fix)#por en dimensionnel
         ###
-        D=por*np.eye(3)
+        D=porosity*np.eye(3)
         integr_k_restr_prime=D_k*(D+T_chi_restr_prime.T)
-        Dhom_k_restr_prime=integr_k_restr_prime*(1/por_prime)
+        Dhom_k_restr_prime=integr_k_restr_prime*(1/por_fix)
         ###
-        D_prime=por_prime*np.eye(3)
+        D_prime=por_fix*np.eye(3)
         integr_k_prime=D_k*(D_prime+T_chi_prime.T)
-        Dhom_k_prime=integr_k_prime*(1/por_prime)
+        Dhom_k_prime=integr_k_prime*(1/por_fix)
         ##
-    elif test_Dhom and config=='cyl_un':
-        mesh_name='cubecylindre_periodique_triangle_'+str(int(round(100*r,2)))+'sur'+str(res)
-        mesh=Mesh('maillages_per/3D/'+mesh_name+'.xml')
+    elif test_Dhom and config == 'cyl_un':
+        mesh_name = 'cubecylindre_periodique_triangle_'+str(int(round(100*r,2)))+'sur'+str(res)
+        mesh = Mesh(mesh_repository + mesh_name + '.xml')
         ##
         V_n=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
         chi_n=Function(V_n)
@@ -325,40 +336,36 @@ for n in range(1,1+N_snap):
             for l in range(0,3):
                 T_chi[k,l]=assemble(grad(chi_n)[k,l]*dx)
         ## a remplacer ##
-        por=1-pi*r**2
-        D=por*np.eye(3)
+        porosity = epsilon_p(r, config, geo_p, r_f)
+        D=porosity*np.eye(3)
         integr_k_postprime=D_k*(D+T_chi.T)
-        Dhom_k_postprime=integr_k_postprime*(1/por_prime)#por en dimensionnel
+        Dhom_k_postprime=integr_k_postprime*(1/por_fix)#por en dimensionnel
 
     ## ------------------------ Sphere unique, test ------------------------ ##
-    elif test_Dhom and config=='sph_un':
-        if geo_p=='ray':
-            r_cen=r
-            por=1-4/3*pi*r_cen**3
-            por_prime=1
+    elif test_Dhom and config == 'sph_un':
         ##
-        mesh_name='cubesphere_periodique_triangle_'+str(int(round(100*r_cen,2)))+'sur'+str(res)
-        print('Verification : maillage courant',mesh_name)
-        mesh=Mesh('maillages_per/3D/'+mesh_name+'.xml')
+        # mesh_name = 'cubesphere_periodique_triangle_'+str(int(round(100*r,2)))+'sur'+str(res_gmsh)
+        print('Verification : maillage courant', mesh_name)
+        mesh = Mesh(mesh_repository + mesh_name + '.xml')
         ##
-        V_n=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
+        V_n = VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
         chi_n=Function(V_n)
         chi_prime_n.set_allow_extrapolation(True)
-        chi_n=interpolate(chi_prime_n,V_n)
+        chi_n=interpolate(chi_prime_n, V_n)
         ##
         T_chi=np.zeros((3,3))
         for k in range(0,3):
             for l in range(0,3):
                 T_chi[k,l]=assemble(grad(chi_n)[k,l]*dx)
-    ##
-    class DomPhysFluide(SubDomain):
-        def inside(self, x, on_boundary):
-            return True if (x[0]**2+x[1]**2+x[2]**2>=r_cen**2) else False
+        ##
+        class DomPhysFluide(SubDomain):
+            def inside(self, x, on_boundary):
+                return True if (x[0]**2+x[1]**2+x[2]**2>=r**2) else False
         dom_courant = DomPhysFluide()
         subdomains = MeshFunction('size_t',mesh_fixe,mesh_fixe.topology().dim())
         subdomains.set_all(1)
         dom_courant.mark(subdomains,12829)
-        dxf=Measure('dx', domain=mesh_fixe, subdomain_data=subdomains)
+        dxf = Measure('dx', domain = mesh_fixe, subdomain_data=subdomains)
         T_chi_restr_prime=np.zeros((3,3))
         for k in range(0,3):
             for l in range(0,3):
@@ -370,26 +377,26 @@ for n in range(1,1+N_snap):
                 T_chi_prime[k,l]=assemble(grad(chi_prime_n)[k,l]*dxf)
         ## les trois coefficients a comparer
         ###
-        D=por*np.eye(3)
-        integr_k_postprime=D_k*(D+T_chi.T)
-        Dhom_k_postprime=integr_k_postprime*(1/por_prime)#por en dimensionnel
+        D = porosity*np.eye(3)
+        integr_k_postprime = D_k*(D+T_chi.T)
+        Dhom_k_postprime = integr_k_postprime*(1/por_fix)#por en dimensionnel
         ###
-        D=por*np.eye(3)
-        integr_k_restr_prime=D_k*(D+T_chi_restr_prime.T)
-        Dhom_k_restr_prime=integr_k_restr_prime*(1/por_prime)
+        D = porosity*np.eye(3)
+        integr_k_restr_prime = D_k*(D+T_chi_restr_prime.T)
+        Dhom_k_restr_prime = integr_k_restr_prime*(1/por_fix)
         ###
-        D_prime=por_prime*np.eye(3)
-        integr_k_prime=D_k*(D_prime+T_chi_prime.T)
-        Dhom_k_prime=integr_k_prime*(1/por_prime)
+        D_prime = por_fix*np.eye(3)
+        integr_k_prime = D_k*(D_prime+T_chi_prime.T)
+        Dhom_k_prime = integr_k_prime*(1/por_fix)
         ##
     if test_Dhom:
-        print('Geometrie : '+conf_mess+', '+geo_mess+', '+str(int(round(100*r,2))))
-        print('DUsnap fixe :',Dhom_k_prime[0,0],'porosite fixe',por_prime)
-        print('DUsnap fixe restreint au domaine courant :',Dhom_k_restr_prime[0,0],'porosite',por)
-        print('DUsnap physique :',Dhom_k_postprime[0,0],'porosite',por)
+        print('Geometrie : ' + conf_mess + ', ' + geo_mess + ', ' + str(int(round(100*r, 2))))
+        print('DUsnap fixe :', Dhom_k_prime[0,0], 'porosite fixe',por_fix)
+        print('DUsnap fixe restreint au domaine courant :', Dhom_k_restr_prime[0,0], 'porosite', porosity)
+        print('DUsnap physique :', Dhom_k_postprime[0,0], 'porosite', porosity)
         print()
     ###
     # Dans ce cas, les faces du cube sont entieres
     ##err_per_gr(cen,r,chi_prime_n,npas_err,fig_todo)
-    if config=='cylsph' and geo_p=='ray_sph':
-        err_per_gr_compl(config,0.15,chi_prime_n,npas_err,fig_todo)
+    if config == 'cylsph' and geo_p == 'ray_sph':
+        err_per_gr_compl(config, ray_fix, chi_prime_n, npas_err, fig_todo)
