@@ -16,7 +16,7 @@ def snap_sph_ray(N_par):
     # rho : on utilise la liste d'apprentissage definie dans DDD_geoset
     rho = list_rho_appr[N_par]
 
-    chi_r=snapshot_sph_per(cen_snap_ray,rho,res_gmsh,typ_sol)
+    chi_r=snapshot_sph_per(cen_snap_ray, rho, res_gmsh, typ_sol)
     chi_r_v=chi_r.vector().get_local()
 
     return([N_par,chi_r_v])
@@ -39,19 +39,10 @@ def snap_cyl_ray(N_par):
 
 
 
-r_s_0=0
-r_c_0=0
-r_v_0=0
 
 ### ray_fix et son usage sont fixes dans DDD_geoset ###
 
-# if config=='2sph':
-#     r_v_0=0.15
-# elif config=='cylsph':
-#     if geo_p=='ray_cyl':
-#         ray_fix=0.3
-#     elif geo_p=='ray_sph':
-#         ray_fix=0.3
+
 
 
 def snap_compl_ray(N_par):
@@ -132,7 +123,7 @@ if not snap_done:
             print('%'*60)
         end=time.time()
         print('#'*60)
-        print('temps EF : ',end - start,' secondes')
+        print('temps EF : ', end - start, ' secondes')
         print('#'*60)
     # ### Generation parallele pour chaque snapshot, pour de gros maillages ###
     # elif gen_snap=='seq_par':
@@ -176,11 +167,11 @@ elif res==20:
 elif res==50:
     lw=0.01
 
-for n in range(0,N_snap):
+for n in range(0, N_snap):
 
     # Extraction du snapshot de rang n
-    chi_n_v=list_chi_v[n]
-    r=list_rho_appr[n]
+    chi_n_v = list_chi_v[n]
+    r = list_rho_appr[n]
 
     # On cree un maillage pour reecrire les snapshots sous la forme de fonctions
 
@@ -213,7 +204,7 @@ for n in range(0,N_snap):
     if fig_todo=='aff':
         plt.show()
     else:
-        plt.savefig('Figures3D/sol_' + str(n) + '_sur' + str(N_snap) + config + '_' + geo_p + 'res' + str(res) + '.png')
+        plt.savefig('Figures3D/sol_' + str(n + 1) + '_sur' + str(N_snap) + config + '_' + geo_p + '_res' + str(res) + '.png')
 
     plt.close()
 
@@ -223,9 +214,9 @@ for n in range(0,N_snap):
         cen = [(xinf + xsup)/2., yinf, (zinf + zsup)/2.]
         # on triche un peu : on prend une face prevee d'une demie-sphere au lieu d'une face privee du disque frontal du cylindre
     if config == '2sph':
-        err_per_gr_compl(config, r_v, chi_n, npas_err, fig_todo)
+        err_per_gr_compl(config, r_fixe, chi_n, npas_err, fig_todo)
     elif config == 'cylsph':
-        err_per_gr_compl(config, r_c, chi_n, npas_err, fig_todo)
+        err_per_gr_compl(config, r_fixe, chi_n, npas_err, fig_todo)
     else:
         cen = [(xinf + xsup)/2., (yinf + ysup)/2., (zinf + zsup)/2.]
         err_per_gr(cen, r, chi_n, npas_err, fig_todo)
@@ -248,6 +239,7 @@ for n in range(0,N_snap):
     print('#'*78)
     print('Noeuds', V_n.dim())
     print('Porosite :', porosity)
+    print('Volume de la cellule :', cell_vol)
     print('-'*78)
     print('Tenseur IG ', T_chi_omega)
     print('-'*78)

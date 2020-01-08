@@ -44,10 +44,10 @@ from PO23D import *
 
 # Chargement de la matrice des snapshots
 
-u_name = 'Usnap_' + dom_fixe + '_' + str(N_snap) + '_' + config + '_' + geo_p + '_' + 'res'+str(res)+'_'+ordo+'_'+computer
+u_name = 'Usnap_' + dom_fixe + '_' + str(N_snap) + '_' + config + '_' + geo_p + '_' + 'res' + str(res) + '_' + ordo + '_' + computer
 print(u_name)
 with sh.open(repertoire_parent+u_name) as u_loa:
- Usnap = u_loa['maliste']
+    Usnap = u_loa['maliste']
 
 #
 ## matrice de correlation
@@ -80,7 +80,7 @@ print('Valeurs propres POD :', val_propres)
 phi_name='Phi'+dom_fixe+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_'+'res'+str(res)+'_'+ordo+'_'+computer
 
 with sh.open(repertoire_parent+phi_name) as p_sto:
- p_sto['maliste'] = Phi_prime_v
+    p_sto['maliste'] = Phi_prime_v
 
 ## Pour reintroduire la base de POD dans l'espace des fonctions definies dans le domaine fixe
 
