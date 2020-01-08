@@ -10,7 +10,8 @@
 ## Sphere unique
 
 #if geo_p=='ray':
-cen_snap_ray=[0.5,0.5,0.5]
+# cen_snap_ray=[0.5,0.5,0.5]
+cen_snap_ray=[(xinf + xsup)/2., (zinf + zsup)/2., (zinf + zsup)/2.]
 def snap_sph_ray(N_par):
     # rho : on utilise la liste d'apprentissage definie dans DDD_geoset
     rho = list_rho_appr[N_par]
@@ -79,9 +80,9 @@ if not mesh_appr_done:
         rho = list_rho_appr[n]
 
         # xyzinfsup est importe depuis DDD_geoset
-        creer_maill_per_gpar(config, geo_p, xyzinfsup, rho, ray_fix)
+        creer_maill_per_gpar(config, geo_p, xyzinfsup, rho, ray_fix, res_gmsh)
 
-
+    # sys.exit()
 
 # ------------------------- Snapshots, conditionnellement ------------------------- #
 
@@ -89,11 +90,13 @@ if not snap_done:
 
     # -------- Calcul des snapshots, sous forme vectorielle, avec des etiquettes -------- #
     ### Generation parallele des snapshots ###
-    if gen_snap=='par8' or gen_snap=='par4':
-        if gen_snap=='par8':
+    if gen_snap[0:3] == 'par' :
+        if gen_snap == 'par8':
             nproc=8
-        else:
+        elif gen_snap == 'par4':
             nproc=4
+        elif gen_snap == 'par2':
+            nproc=2
         pool=multiprocessing.Pool(processes=nproc)
         if config=='sph_un':
             if geo_p=='ray':
@@ -111,8 +114,9 @@ if not snap_done:
     elif gen_snap=='seq':
         start=time.time()
         list_chi_n_v=[]
-        for n in range(1,1+N_snap):
-            print(n)
+        for n in range(0,N_snap):
+            print('='*60)
+            print('Snapshot ' + str(n + 1))
             if config=='sph_un':
                 if geo_p=='ray':
                     list_chi_n_v.append(snap_sph_ray(n))
@@ -125,8 +129,11 @@ if not snap_done:
                     list_chi_n_v.append(snap_cyl_axe(n))
             else:
                 list_chi_n_v.append(snap_compl_ray(n))
+            print('%'*60)
         end=time.time()
-        print('temps EF : ',end-start,' secondes')
+        print('#'*60)
+        print('temps EF : ',end - start,' secondes')
+        print('#'*60)
     # ### Generation parallele pour chaque snapshot, pour de gros maillages ###
     # elif gen_snap=='seq_par':
     #     list_chi_n_v=[]
@@ -170,100 +177,129 @@ elif res==50:
     lw=0.01
 
 for n in range(0,N_snap):
+
     # Extraction du snapshot de rang n
     chi_n_v=list_chi_v[n]
     r=list_rho_appr[n]
+
     # On cree un maillage pour reecrire les snapshots sous la forme de fonctions
 
-    if config=='sph_un':
-        if geo_p=='ray':
-            cen=cen_snap_ray
-            # r=list_rho_appr[n]
-            if typ_msh=='gms':
-                mesh_name="cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)
-            else:
-                mesh=creer_maill_sph(cen,r,res)
-        elif geo_p=='cen':
-            r=ray_snap_cen
-            mesh=creer_maill_sph(csr_list[n],r,res)
+    # if config=='sph_un':
+    #     if geo_p=='ray':
+    #         cen=cen_snap_ray
+    #         # r=list_rho_appr[n]
+    #         if typ_msh=='gms':
+    #             mesh_name="cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)
+    #         else:
+    #             mesh=creer_maill_sph(cen,r,res)
+    #     elif geo_p=='cen':
+    #         r=ray_snap_cen
+    #         mesh=creer_maill_sph(csr_list[n],r,res)
+    #
+    # elif config=='cyl_un':## avec gmsh
+    #     if geo_p=='ray':
+    #         # r=list_rho_appr[n]
+    #         mesh_name="cubecylindre_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)
+    #     #elif geo_p=='axe':
+    #         #r=ray_snap_ax
+    #         #mesh=creer_maill_cyl(acr_list[n-1],r,res)
+    #
+    # elif config=='2sph':
+    #     # r=n*0.05
+    #     r_s=r
+    #     r_v=r_v_0
+    #     mesh_name="cube"+config+"_periodique_triangle_"+str(int(round(100*r_s,2)))+str(int(round(100*r_v_0,2)))+"sur"+str(res)
+    #
+    # elif config=='cylsph':
+    #     # r=n*0.05
+    #     if geo_p=='ray_cyl':
+    #         r_c=r
+    #         r_s=r_s_0
+    #     elif geo_p=='ray_sph':
+    #         r_c=r_c_0
+    #         r_s=r
+    #     mesh_name="cube"+config+"_periodique_triangle_"+str(int(round(100*r_c,2)))+str(int(round(100*r_s,2)))+"sur"+str(res)
+    #
+    # print("maillages_per/3D/"+mesh_name+".xml")
+    # mesh=Mesh("maillages_per/3D/"+mesh_name+".xml")
 
-    elif config=='cyl_un':## avec gmsh
-        if geo_p=='ray':
-            # r=list_rho_appr[n]
-            mesh_name="cubecylindre_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)
-        #elif geo_p=='axe':
-            #r=ray_snap_ax
-            #mesh=creer_maill_cyl(acr_list[n-1],r,res)
+    if config == 'sph_un':
+        nom_fichier_avecgpar = mesh_prefix + 'rayc' + str(int(round(100*r,2))) + '_sur' + str(res)
+    elif config == '2sph':
+        nom_fichier_avecgpar = mesh_prefix + 'rayc' + str(int(round(100*r,2))) + '_rayp' + str(int(round(100*ray_fix,2))) + '_sur' + str(res)
+    elif config == 'cylsph' and geo_p == 'ray_sph':
+        nom_fichier_avecgpar = mesh_prefix + 'rayc' + str(int(round(100*r,2))) + '_rayp' + str(int(round(100*ray_fix,2))) + '_sur' + str(res)
+    elif config == 'cylsph' and geo_p == 'ray_cyl':
+        nom_fichier_avecgpar = mesh_prefix + 'rayc' + str(int(round(100*ray_fix,2))) + '_rayp' + str(int(round(100*r,2))) + '_sur' + str(res)
 
-    elif config=='2sph':
-        # r=n*0.05
-        r_s=r
-        r_v=r_v_0
-        mesh_name="cube"+config+"_periodique_triangle_"+str(int(round(100*r_s,2)))+str(int(round(100*r_v_0,2)))+"sur"+str(res)
+    print(mesh_repository + nom_fichier_avecgpar + '.xml')
+    mesh = Mesh(mesh_repository + nom_fichier_avecgpar + '.xml')
 
-    elif config=='cylsph':
-        # r=n*0.05
-        if geo_p=='ray_cyl':
-            r_c=r
-            r_s=r_s_0
-        elif geo_p=='ray_sph':
-            r_c=r_c_0
-            r_s=r
-        mesh_name="cube"+config+"_periodique_triangle_"+str(int(round(100*r_c,2)))+str(int(round(100*r_s,2)))+"sur"+str(res)
+    V_n = VectorFunctionSpace(mesh, 'P', 2, constrained_domain = PeriodicBoundary())
 
-    print("maillages_per/3D/"+mesh_name+".xml")
-    mesh=Mesh("maillages_per/3D/"+mesh_name+".xml")
-    V_n=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
     # On restitue la forme fonctionnelle du snapshot courant
-    chi_n=Function(V_n)
+    chi_n = Function(V_n)
     chi_n.vector().set_local(chi_n_v)
+
     # Representation graphique
     plot(chi_n, linewidth=lw)
     plt.tight_layout(pad=0)
-    if r<0.1:
-        plt.title("Rho = 0,0"+str(int(round(100*r,2))), fontsize=40)
+
+    if r < 0.1:
+        plt.title("Rho = 0,0" + str(int(round(100*r, 2))), fontsize=40)
     else:
-        plt.title("Rho = 0,"+str(int(round(100*r,2))),fontsize=40)
+        plt.title("Rho = 0," + str(int(round(100*r, 2))), fontsize=40)
     if fig_todo=='aff':
         plt.show()
     else:
-        plt.savefig("Figures3D/sol_"+str(n)+"_sur"+str(N_snap)+config+'_'+geo_p+"res"+str(res)+".png")
+        plt.savefig("Figures3D/sol_" + str(n) + "_sur" + str(N_snap) + config + '_' + geo_p + "res" + str(res) + ".png")
+
     plt.close()
+
     # Affichage des valeurs et erreurs de la solution periodique, quelle que soit la configuration
     #err_per_ind_01(chi_n,cen,r,npas_err)
-    if config=='cyl_un' and geo_p=='ray':
-        cen=[0.5,0.,0.5]# on triche un peu : on prend une face prevee d'une demie-sphere au lieu d'une face privee du disque frontal du cylindre
-    if config=='2sph':
-        err_per_gr_compl(config,r_v,chi_n,npas_err,fig_todo)
-    elif config=='cylsph':
-        err_per_gr_compl(config,r_c,chi_n,npas_err,fig_todo)
+    if config == 'cyl_un' and geo_p == 'ray':
+        cen = [(xinf + xsup)/2., yinf, (zinf + zsup)/2.]
+        # on triche un peu : on prend une face prevee d'une demie-sphere au lieu d'une face privee du disque frontal du cylindre
+    if config == '2sph':
+        err_per_gr_compl(config, r_v, chi_n, npas_err, fig_todo)
+    elif config == 'cylsph':
+        err_per_gr_compl(config, r_c, chi_n, npas_err, fig_todo)
     else:
-        err_per_gr(cen,r,chi_n,npas_err,fig_todo)
+        cen = [(xinf + xsup)/2., (yinf + ysup)/2., (zinf + zsup)/2.]
+        err_per_gr(cen, r, chi_n, npas_err, fig_todo)
+
     # Tenseur de diffusion homogeneise
-    ## Integrale de khi sur le domaine fluide
+    ## Integrale de chi sur le domaine fluide
     T_chi=np.zeros((3,3))
     for k in range(0,3):
         for l in range(0,3):
             T_chi[k,l]=assemble(grad(chi_n)[k,l]*dx)
     #print(T_chi)
+
     ## Integrale de l'identite sur le domaine fluide
-    if config=='sph_un':
-        por=1-4/3*pi*r**3
-    elif config=='cyl_un':
-        por=1-pi*r**2
-    elif config=='2sph':
-        por=1-4/3*pi*(r_s**3+r_v**3)
-    elif config=='cylsph' :
-        por=1-4/3*pi*r_s**3-pi*r_c**2
-    D=por*np.eye(3)
+    # if config == 'sph_un':
+    #     por=1-4/3*pi*r**3
+    # elif config=='cyl_un':
+    #     por=1-pi*r**2
+    # elif config=='2sph':
+    #     por=1-4/3*pi*(r_s**3+r_v**3)
+    # elif config=='cylsph' :
+    #     por=1-4/3*pi*r_s**3-pi*r_c**2
+
+    # D=por*np.eye(3)
+    porosity = epsilon_p(r, config, geo_p, ray_fix)
+    
+    D = porosity*np.eye(3)
     ## Calcul et affichage du tenseur Dhom
-    Dhom_k=D_k*(D+T_chi.T)
+    Dhom_k = D_k*(D+T_chi.T)
     #print(('Tenseur Dhom_k',Dhom_k))
     print("Noeuds",V_n.dim())
-    print("Porosite :",por)
+    print("Porosite :", porosity)
     print('Coefficient Dhom_k11EF, snapshot '+str(n)+", "+conf_mess+', '+geo_mess+" :",Dhom_k[0,0])
     integ=assemble(chi_n[1]*dx)
     print('Valeur moyenne : ',integ)
+
     ## Anisotropie
     mod_diag=max(abs(Dhom_k[0,0]),abs(Dhom_k[1,1]),abs(Dhom_k[2,2]))
     mod_ndiag=0

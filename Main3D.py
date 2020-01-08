@@ -31,10 +31,6 @@ import time
 import marshal as ma
 import shelve as sh
 
-# Fonctions maison
-
-from DDD_fun_obj import *
-
 ## Paquets specifiques a la 3d ##
 
 from mpl_toolkits.mplot3d.axes3d import get_test_data
@@ -47,6 +43,10 @@ from matplotlib.patches import Circle, PathPatch
 
 from DDD_geoset import *
 
+# Fonctions maison
+
+exec(open('DDD_fun_obj.py', encoding='utf-8').read())
+
 ##########################################################
 ### ------------ Code a lire : conditions ------------ ###
 ##########################################################
@@ -54,15 +54,18 @@ from DDD_geoset import *
 E_=False
 E_lL=False
 
-EI=False
-snap_done=False
+EI=True
+mesh_appr_done = True
+snap_done=True
 
+mesh_ex_done = False
 EII=False
 exsnap_done=False
 test_Dhom=False
+
 EIII=False
 
-EIV=True
+EIV=False
 Interpolation=True
 Report=True
 

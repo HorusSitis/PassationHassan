@@ -20,7 +20,7 @@ import numpy as np
 
 # Choix de la resolution du maillage : nombre de noeuds par cote du cube
 
-res_gmsh=20
+res_gmsh=10
 
 typ_msh='gms'
 # typ_msh=''
@@ -32,14 +32,14 @@ if typ_msh=='gms':
 
 tol=1e-10
 
-xinf=0.0
-yinf=0.0
-zinf=0.0
+xinf=-1.0
+yinf=-1.0
+zinf=-1.0
 xsup=1.0
 ysup=1.0
 zsup=1.0
 
-xyinfsup = [[xinf, yinf, zinf], [xsup, ysup, zsup]]
+xyzinfsup = [[xinf, yinf, zinf], [xsup, ysup, zsup]]
 
 dimension=3
 
@@ -76,10 +76,10 @@ class PeriodicBoundary(SubDomain):
 
 N_snap = 8
 
-rho_appr_min = 0.05
-# rho_appr_min = 0.1
-rho_appr_max = 0.4
-# rho_appr_max = 0.45
+rho_appr_min = 0.1
+# rho_appr_min = 0.2
+rho_appr_max = 0.8
+# rho_appr_max = 0.9
 
 list_rho_appr = np.linspace(rho_appr_min, rho_appr_max, N_snap)
 list_rho_test = np.linspace(0.11, 0.44, 4)
@@ -94,7 +94,11 @@ D_k=1.0
 N_snap=len(list_rho_appr)
 
 npas_err=10
-typ_sol="bic_cyr"#"default"#seulement si res=10##
+# typ_sol="bic_cyr"#"default"#seulement si res=10##
+
+
+typ_sol = 'kr_null_vect'
+
 ordo='Ordr'#'Nordr'
 
 Nrefine=1
@@ -103,9 +107,10 @@ typ_refi='vol'#'front'#
 
 # apprentissage : calcul parallele ou sequentiel, prise en compte de la resolution
 
-gen_snap='par8'
+# gen_snap='par8'
 # gen_snap='par4'
-# gen_snap='seq'
+# gen_snap='par2'
+gen_snap='seq'
 # gen_snap='seq_par'
 
 # repertoire pour les resultats
@@ -174,12 +179,29 @@ elif config=='cylsph':
     elif geo_p=='ray_linked':
         geo_mess='rayons lies'
 
+## ------------ Porosite ------------ ##
+
+def epsilon_p(r, config, geo_p, r_f):
+
+    if config == 'sph_un':
+        epsilon_p = 1 - 4/3*pi*r**3
+    elif config=='cyl_un':
+        epsilon_p = 1 - pi*r**2
+    elif config=='2sph':
+        epsilon_p = 1 - 4/3*pi*(r**3+r_f**3)
+    elif config=='cylsph' :
+        if geo_p == 'ray_sph':
+            epsilon_p = 1 - 4/3*pi*r**3-pi*r_f**2
+        elif geo_p == 'ray_cyl':
+            epsilon_p = 1 - 4/3*pi*r_f**3-pi*r**2
+
+    return epsilon_p
 
 ## ------------ Pour les noms de fichiers de maillages ------------ ##
 
 
 if config == 'sph_un':
-    mesh_prefix = 'cubesphre_periodique_triangle_'
+    mesh_prefix = 'cubesphere_periodique_triangle_'
 elif config == '2sph':
     mesh_prefix = 'cube2sph_periodique_triangle_'
 elif config == 'cylsph':

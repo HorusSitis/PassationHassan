@@ -123,12 +123,16 @@ def creer_maill_cyl(top,r,slices_cyl,res):#valable quel que soit la position de 
 
 def creer_maill_per_gpar(config, geo_p, xyzinfsup, rho, ray_fix, res):
 
-    xinf = xyinfsup[0][0]
-    yinf = xyinfsup[0][1]
-    zinf = xyinfsup[0][2]
-    xsup = xyinfsup[1][0]
-    ysup = xyinfsup[1][1]
-    zsup = xyinfsup[1][2]
+    xinf = xyzinfsup[0][0]
+    yinf = xyzinfsup[0][1]
+    zinf = xyzinfsup[0][2]
+    xsup = xyzinfsup[1][0]
+    ysup = xyzinfsup[1][1]
+    zsup = xyzinfsup[1][2]
+
+    xcen = (xinf + xsup)/2.
+    ycen = (yinf + ysup)/2.
+    zcen = (zinf + zsup)/2.
 
     # if config == 'sph_un':
     #     mesh_prefix = 'cubesphre_periodique_triangle_'
@@ -142,29 +146,39 @@ def creer_maill_per_gpar(config, geo_p, xyzinfsup, rho, ray_fix, res):
     fichier_sansentete = open(mesh_repository + mesh_name + '.txt', 'r')
 
     if config == 'sph_un':
-        nom_fichier_avecgpar = mesh_prefix + '_rayc' + str(int(round(100*rho,2))) + '_sur' + str(res)
+        nom_fichier_avecgpar = mesh_prefix + 'rayc' + str(int(round(100*rho,2))) + '_sur' + str(res)
     elif config == '2sph':
-        nom_fichier_avecgpar = mesh_prefix + '_rayc' + str(int(round(100*rho,2))) + '_rayp' + str(int(round(100*ray_fix,2))) + '_sur' + str(res)
+        nom_fichier_avecgpar = mesh_prefix + 'rayc' + str(int(round(100*rho,2))) + '_rayp' + str(int(round(100*ray_fix,2))) + '_sur' + str(res)
     elif config == 'cylsph' and geo_p == 'ray_sph':
-        nom_fichier_avecgpar = mesh_prefix + '_rayc' + str(int(round(100*rho,2))) + '_rayp' + str(int(round(100*ray_fix,2))) + '_sur' + str(res)
+        nom_fichier_avecgpar = mesh_prefix + 'rayc' + str(int(round(100*rho,2))) + '_rayp' + str(int(round(100*ray_fix,2))) + '_sur' + str(res)
     elif config == 'cylsph' and geo_p == 'ray_cyl':
-        nom_fichier_avecgpar = mesh_prefix + '_rayc' + str(int(round(100*ray_fix,2))) + '_rayp' + str(int(round(100*rho,2))) + '_sur' + str(res)
+        nom_fichier_avecgpar = mesh_prefix + 'rayc' + str(int(round(100*ray_fix,2))) + '_rayp' + str(int(round(100*rho,2))) + '_sur' + str(res)
 
     gen_mesh = open(mesh_repository + nom_fichier_avecgpar + '.txt', 'w')
+
+    gen_mesh.write('/'*64 + '\n')
+    gen_mesh.write('/'*10 + ' Fichier de maillage rempli automatiquement ' + '/'*10 + '\n')
+    gen_mesh.write('/'*64 + '\n' + '\n')
 
     # parametres geometriques
 
     if config == 'sph_un':
-        gen_mesh.write('R = ' + str(rho) + ';' + '\n')
+        gen_mesh.write('R = ' + str(rho) + ';' + '\n' + '\n')
     if config == 'cube2sph':
         gen_mesh.write('R = ' + str(rho) + ';' + '\n')
-        gen_mesh.write('S = ' + str(ray_fix) + ';' + '\n')
+        gen_mesh.write('S = ' + str(ray_fix) + ';' + '\n' + '\n')
     if config == 'cyl_sph' and geo_p == 'ray_sph':
         gen_mesh.write('R = ' + str(rho) + ';' + '\n')
-        gen_mesh.write('S = ' + str(ray_fix) + ';' + '\n')
+        gen_mesh.write('S = ' + str(ray_fix) + ';' + '\n' + '\n')
     if config == 'cyl_sph' and geo_p == 'ray_cyl':
         gen_mesh.write('R = ' + str(ray_fix) + ';' + '\n')
-        gen_mesh.write('S = ' + str(rho) + ';' + '\n')
+        gen_mesh.write('S = ' + str(rho) + ';' + '\n' + '\n')
+
+    # centre de la maille
+
+    gen_mesh.write('xc = ' + str(xcen) + ';' + '\n')
+    gen_mesh.write('yc = ' + str(ycen) + ';' + '\n')
+    gen_mesh.write('zc = ' + str(zcen) + ';' + '\n' + '\n')
 
     # bornes du domaine
 
@@ -173,11 +187,11 @@ def creer_maill_per_gpar(config, geo_p, xyzinfsup, rho, ray_fix, res):
     gen_mesh.write('zmin = ' + str(zinf) + ';' + '\n')
     gen_mesh.write('xmax = ' + str(xsup) + ';' + '\n')
     gen_mesh.write('ymax = ' + str(ysup) + ';' + '\n')
-    gen_mesh.write('zmax = ' + str(zsup) + ';' + '\n')
+    gen_mesh.write('zmax = ' + str(zsup) + ';' + '\n' + '\n')
 
     # resolution
 
-    gen_mesh.write('step = ' + str(round(1./res, 2)))
+    gen_mesh.write('step = ' + str(round(1./res, 2)) + ';' + '\n' + '\n')
 
     # utilisation du canevas
 
@@ -208,9 +222,9 @@ def creer_maill_per_gpar(config, geo_p, xyzinfsup, rho, ray_fix, res):
 def snapshot_sph_per(cen,r,res,typ_sol):
 
     # mesh_prefix = 'cubesphere_periodique_triangle_'
-    nom_fichier_avecgpar = mesh_prefix + '_rayc' + str(int(round(100*r,2))) + '_sur' + str(res)
-    creer_maill_per_gpar(config, geo_p, xyzinfsup, r, 0., res)
-    mesh = Mesh(mesh_repository + nom_fichier_avecgpar + '.xml')
+    nom_fichier_avecgpar = mesh_prefix + 'rayc' + str(int(round(100*r,2))) + '_sur' + str(res)
+    # creer_maill_per_gpar(config, geo_p, xyzinfsup, r, 0., res)
+    mesh_s_r = Mesh(mesh_repository + nom_fichier_avecgpar + '.xml')
 
     # c_x,c_y,c_z=cen[0],cen[1],cen[2]
     # if typ_msh=='gms':
@@ -224,7 +238,7 @@ def snapshot_sph_per(cen,r,res,typ_sol):
     V = VectorFunctionSpace(mesh_s_r, 'P', 2, constrained_domain = PeriodicBoundary())
 
     ## On definit l'interface fluide-solide, periodique a geometrie spherique
-    l_cen=[]
+    l_cen = []
     for i in range(-1,2):
         for j in range(-1,2):
             for k in range(-1,2):
@@ -246,42 +260,80 @@ def snapshot_sph_per(cen,r,res,typ_sol):
 
     ## On resoud le probleme faible, avec une condition de type Neumann au bord de l'obstacle
     normale = FacetNormal(mesh_s_r)
-    nb_noeuds=V.dim()
+    nb_noeuds = V.dim()
     u = TrialFunction(V)
     v = TestFunction(V)
-    a=tr(dot((grad(u)).T, grad(v)))*dx
-    L=-dot(normale,v)*ds(num_sphere)
+    a = tr(dot((grad(u)).T, grad(v)))*dx
+    l = -dot(normale,v)*ds(num_sphere)
+
     ### Resolution
-    if typ_sol=='default':
-        solve(a==L,u)
-    elif typ_sol=='bic_cyr':
-        u=Function(V)
-        solver_correction = KrylovSolver("bicgstab", "amg")
-        solver_correction.parameters["absolute_tolerance"] = 1e-6
-        solver_correction.parameters["relative_tolerance"] = 1e-6
-        solver_correction.parameters["maximum_iterations"] = 5000
-        solver_correction.parameters["error_on_nonconvergence"]= True
-        solver_correction.parameters["monitor_convergence"] = True
-        solver_correction.parameters["report"] = True
-        AA=assemble(a)
-        LL=assemble(L)
-        solver_correction.solve(AA,u.vector(),LL)
-    ## Annulation de la valeur moyenne
-    porosity=1-(4/3)*pi*r**3
-    moy_u_x=assemble(u[0]*dx)/porosity
-    moy_u_y=assemble(u[1]*dx)/porosity
-    moy_u_z=assemble(u[2]*dx)/porosity
-    moy=Function(V)
-    moy=Constant((moy_u_x,moy_u_y,moy_u_z))
-    print("Valeur moyenne de u :",[moy_u_x,moy_u_y,moy_u_z])
-    moy_V=interpolate(moy,V)
-    moy_Vv=moy_V.vector().get_local()
-    u_v=u.vector().get_local()
-    chi_v=u_v-moy_Vv
-    chi=Function(V)
-    chi.vector().set_local(chi_v)
-    chi=u
-    # Resultat : snapshot
+
+    u1 = Function(V)
+    A = assemble(a)
+    L = assemble(l)
+
+    ## solveur de krylov pour un probleme bien pose, dans un hyperplan
+    if typ_sol == 'kr_null_vect':
+
+        solver = dolfin.PETScKrylovSolver("cg")
+
+        solver.parameters["absolute_tolerance"] = 1e-6
+        solver.parameters["relative_tolerance"] = 1e-6
+        solver.parameters["maximum_iterations"] = 5000
+        solver.parameters["error_on_nonconvergence"] = True
+        solver.parameters["monitor_convergence"] = True
+        solver.parameters["report"] = True
+
+        solver.set_operator(A)
+
+        null_vec = dolfin.Vector(u1.vector())
+        V.dofmap().set(null_vec, 1.0)
+        null_vec *= 1.0/(dolfin.norm(null_vec, norm_type = 'l2'))
+
+        null_space = dolfin.VectorSpaceBasis([null_vec])
+        dolfin.as_backend_type(A).set_nullspace(null_space)
+        null_space.orthogonalize(L)
+
+        # Resolution et restitution de chi
+        solver.solve(u1.vector(), L)
+        chi = u1
+
+    ## autres solveurs : probleme mal pose a piori
+    else:
+        if typ_sol=='default':
+            solve(a==L,u)
+        elif typ_sol=='bic_cyr':
+            u = Function(V)
+            solver_correction = KrylovSolver("bicgstab", "amg")
+            solver_correction.parameters["absolute_tolerance"] = 1e-6
+            solver_correction.parameters["relative_tolerance"] = 1e-6
+            solver_correction.parameters["maximum_iterations"] = 5000
+            solver_correction.parameters["error_on_nonconvergence"]= True
+            solver_correction.parameters["monitor_convergence"] = True
+            solver_correction.parameters["report"] = True
+            # # AA=assemble(a)
+            # # LL=assemble(L)
+            # # solver_correction.solve(AA,u.vector(),LL)
+            # A=assemble(a)
+            # L=assemble(l)
+            solver_correction.solve(A,u.vector(),L)
+        # Annulation de la valeur moyenne
+        porosity=1-(4/3)*pi*r**3
+        moy_u_x=assemble(u[0]*dx)/porosity
+        moy_u_y=assemble(u[1]*dx)/porosity
+        moy_u_z=assemble(u[2]*dx)/porosity
+        moy=Function(V)
+        moy=Constant((moy_u_x,moy_u_y,moy_u_z))
+        print("Valeur moyenne de u :",[moy_u_x,moy_u_y,moy_u_z])
+        moy_V=interpolate(moy,V)
+        moy_Vv=moy_V.vector().get_local()
+        u_v=u.vector().get_local()
+        chi_v=u_v-moy_Vv
+        chi=Function(V)
+        chi.vector().set_local(chi_v)
+        chi=u
+
+    ### Resultat : snapshot
     return(chi)
 
 def snapshot_cyl_per(top,r,res,typ_sol):### ------------------> resolution : avec gmsh
@@ -314,38 +366,75 @@ def snapshot_cyl_per(top,r,res,typ_sol):### ------------------> resolution : ave
     u = TrialFunction(V)
     v = TestFunction(V)
     a=tr(dot((grad(u)).T, grad(v)))*dx
-    L=-dot(normale,v)*ds(num_cyl)
+    l=-dot(normale,v)*ds(num_cyl)
+
     ### Resolution
-    if typ_sol=='default':
-        solve(a==L,u)
-    elif typ_sol=='bic_cyr':
-        u=Function(V)
-        solver_correction = KrylovSolver("bicgstab", "amg")
-        solver_correction.parameters["absolute_tolerance"] = 1e-6
-        solver_correction.parameters["relative_tolerance"] = 1e-6
-        solver_correction.parameters["maximum_iterations"] = 5000
-        solver_correction.parameters["error_on_nonconvergence"]= True
-        solver_correction.parameters["monitor_convergence"] = True
-        solver_correction.parameters["report"] = True
-        AA=assemble(a)
-        LL=assemble(L)
-        solver_correction.solve(AA,u.vector(),LL)
-    ## Annulation de la valeur moyenne
-    porosity=1-pi*r**2
-    moy_u_x=assemble(u[0]*dx)/porosity
-    moy_u_y=assemble(u[1]*dx)/porosity
-    moy_u_z=assemble(u[2]*dx)/porosity
-    moy=Function(V)
-    moy=Constant((moy_u_x,moy_u_y,moy_u_z))
-    print("Valeur moyenne de u :",[moy_u_x,moy_u_y,moy_u_z])
-    moy_V=interpolate(moy,V)
-    moy_Vv=moy_V.vector().get_local()
-    u_v=u.vector().get_local()
-    chi_v=u_v-moy_Vv
-    chi=Function(V)
-    chi.vector().set_local(chi_v)
-    chi=u
-    # Resultat : snapshot
+    u1 = Function(V)
+    A = assemble(a)
+    L = assemble(l)
+
+    ## solveur de krylov pour un probleme bien pose, dans un hyperplan
+    if typ_sol == 'kr_null_vect':
+
+        solver = dolfin.PETScKrylovSolver("cg")
+
+        solver.parameters["absolute_tolerance"] = 1e-6
+        solver.parameters["relative_tolerance"] = 1e-6
+        solver.parameters["maximum_iterations"] = 5000
+        solver.parameters["error_on_nonconvergence"] = True
+        solver.parameters["monitor_convergence"] = True
+        solver.parameters["report"] = True
+
+        solver.set_operator(A)
+
+        null_vec = dolfin.Vector(u1.vector())
+        V.dofmap().set(null_vec, 1.0)
+        null_vec *= 1.0/(dolfin.norm(null_vec, norm_type = 'l2'))
+
+        null_space = dolfin.VectorSpaceBasis([null_vec])
+        dolfin.as_backend_type(A).set_nullspace(null_space)
+        null_space.orthogonalize(L)
+
+        # Resolution et restitution de chi
+        solver.solve(u1.vector(), L)
+        chi = u1
+
+    ## probleme mal pose a priori
+    else:
+        if typ_sol=='default':
+            solve(a==l,u)
+        elif typ_sol=='bic_cyr':
+            u=Function(V)
+            solver_correction = KrylovSolver("bicgstab", "amg")
+            solver_correction.parameters["absolute_tolerance"] = 1e-6
+            solver_correction.parameters["relative_tolerance"] = 1e-6
+            solver_correction.parameters["maximum_iterations"] = 5000
+            solver_correction.parameters["error_on_nonconvergence"]= True
+            solver_correction.parameters["monitor_convergence"] = True
+            solver_correction.parameters["report"] = True
+            # # AA=assemble(a)
+            # # LL=assemble(L)
+            # # solver_correction.solve(AA,u.vector(),LL)
+            # A=assemble(a)
+            # L=assemble(l)
+            solver_correction.solve(A,u.vector(),L)
+        ## Annulation de la valeur moyenne
+        porosity=1-pi*r**2
+        moy_u_x=assemble(u[0]*dx)/porosity
+        moy_u_y=assemble(u[1]*dx)/porosity
+        moy_u_z=assemble(u[2]*dx)/porosity
+        moy=Function(V)
+        moy=Constant((moy_u_x,moy_u_y,moy_u_z))
+        print("Valeur moyenne de u :",[moy_u_x,moy_u_y,moy_u_z])
+        moy_V=interpolate(moy,V)
+        moy_Vv=moy_V.vector().get_local()
+        u_v=u.vector().get_local()
+        chi_v=u_v-moy_Vv
+        chi=Function(V)
+        chi.vector().set_local(chi_v)
+        chi=u
+
+    ### Resultat : snapshot
     return(chi)
 
 def snapshot_compl_per(rho, ray_fix, config, res, typ_sol):### ------------------> resolution : avec gmsh
@@ -354,14 +443,14 @@ def snapshot_compl_per(rho, ray_fix, config, res, typ_sol):### -----------------
     # mesh_prefix = 'cube2sph_periodique_triangle_'
     # mesh_prefix = 'cubecylsph_periodique_triangle_'
     if config == '2sph':
-        nom_fichier_avecgpar = mesh_prefix + '_rayc' + str(int(round(100*rho,2))) + '_rayp' + str(int(round(100*ray_fix,2))) + '_sur' + str(res)
+        nom_fichier_avecgpar = mesh_prefix + 'rayc' + str(int(round(100*rho,2))) + '_rayp' + str(int(round(100*ray_fix,2))) + '_sur' + str(res)
     elif config == 'cylsph' and geo_p == 'ray_sph':
-        nom_fichier_avecgpar = mesh_prefix + '_rayc' + str(int(round(100*rho,2))) + '_rayp' + str(int(round(100*ray_fix,2))) + '_sur' + str(res)
+        nom_fichier_avecgpar = mesh_prefix + 'rayc' + str(int(round(100*rho,2))) + '_rayp' + str(int(round(100*ray_fix,2))) + '_sur' + str(res)
     elif config == 'cylsph' and geo_p == 'ray_cyl':
-        nom_fichier_avecgpar = mesh_prefix + '_rayc' + str(int(round(100*ray_fix,2))) + '_rayp' + str(int(round(100*rho,2))) + '_sur' + str(res)
+        nom_fichier_avecgpar = mesh_prefix + 'rayc' + str(int(round(100*ray_fix,2))) + '_rayp' + str(int(round(100*rho,2))) + '_sur' + str(res)
 
     ## creation du maillage
-    creer_maill_per_gpar(config, geo_p, xyzinfsup, rho, ray_fix, res)
+    # creer_maill_per_gpar(config, geo_p, xyzinfsup, rho, ray_fix, res)
     mesh = Mesh(mesh_repository + nom_fichier_avecgpar + '.xml')
 
     ## VFS pour le probleme variationnel
@@ -370,7 +459,7 @@ def snapshot_compl_per(rho, ray_fix, config, res, typ_sol):### -----------------
 
     ## On definit la bordure du domaine, sur laquelle integrer le second membre "L" de l'equation en dimension finie
     boundaries = MeshFunction('size_t', mesh, mesh_repository + nom_fichier_avecgpar + "_facet_region" + ".xml")
-    print('Facettes : ',mesh.num_edges())
+    print('Facettes : ', mesh.num_edges())
     ds = Measure("ds")(subdomain_data=boundaries)
 
     ## Marquage des bordures pour la condition de Neumann
@@ -383,42 +472,78 @@ def snapshot_compl_per(rho, ray_fix, config, res, typ_sol):### -----------------
     u = TrialFunction(V)
     v = TestFunction(V)
     a=tr(dot((grad(u)).T, grad(v)))*dx
-    L=-dot(normale,v)*ds(num_solid_boundary)
+    l=-dot(normale,v)*ds(num_solid_boundary)
 
     ### Resolution
-    if typ_sol=='default':
-        solve(a==L,u)
-    elif typ_sol=='bic_cyr':
-        u=Function(V)
-        solver_correction = KrylovSolver("bicgstab", "amg")
-        solver_correction.parameters["absolute_tolerance"] = 1e-6
-        solver_correction.parameters["relative_tolerance"] = 1e-6
-        solver_correction.parameters["maximum_iterations"] = 5000
-        solver_correction.parameters["error_on_nonconvergence"]= True
-        solver_correction.parameters["monitor_convergence"] = True
-        solver_correction.parameters["report"] = True
-        AA=assemble(a)
-        LL=assemble(L)
-        solver_correction.solve(AA,u.vector(),LL)
-    ## Annulation de la valeur moyenne
-    if config=='2sph':
-        porosity=1-(4/3)*pi*(r_cen**3+r_per**3)
-    elif config=='cylsph':
-        porosity=1-(4/3)*pi*r_cen**3-pi*r_per**2
-    moy_u_x=assemble(u[0]*dx)/porosity
-    moy_u_y=assemble(u[1]*dx)/porosity
-    moy_u_z=assemble(u[2]*dx)/porosity
-    moy=Function(V)
-    moy=Constant((moy_u_x,moy_u_y,moy_u_z))
-    print("Valeur moyenne de u :",[moy_u_x,moy_u_y,moy_u_z])
-    moy_V=interpolate(moy,V)
-    moy_Vv=moy_V.vector().get_local()
-    u_v=u.vector().get_local()
-    chi_v=u_v-moy_Vv
-    chi=Function(V)
-    chi.vector().set_local(chi_v)
-    chi=u
-    # Resultat : snapshot
+    u1 = Function(V)
+    A = assemble(a)
+    L = assemble(l)
+
+    ## solveur de krylov pour un probleme bien pose, dans un hyperplan
+    if typ_sol == 'kr_null_vect':
+
+        solver = dolfin.PETScKrylovSolver("cg")
+
+        solver.parameters["absolute_tolerance"] = 1e-6
+        solver.parameters["relative_tolerance"] = 1e-6
+        solver.parameters["maximum_iterations"] = 5000
+        solver.parameters["error_on_nonconvergence"] = True
+        solver.parameters["monitor_convergence"] = True
+        solver.parameters["report"] = True
+
+        solver.set_operator(A)
+
+        null_vec = dolfin.Vector(u1.vector())
+        V.dofmap().set(null_vec, 1.0)
+        null_vec *= 1.0/(dolfin.norm(null_vec, norm_type = 'l2'))
+
+        null_space = dolfin.VectorSpaceBasis([null_vec])
+        dolfin.as_backend_type(A).set_nullspace(null_space)
+        null_space.orthogonalize(L)
+
+        # Resolution et restitution de chi
+        solver.solve(u1.vector(), L)
+        chi = u1
+
+    ## probleme mal pose a priori
+    else:
+        if typ_sol=='default':
+            solve(a==l,u)
+        elif typ_sol=='bic_cyr':
+            u=Function(V)
+            solver_correction = KrylovSolver("bicgstab", "amg")
+            solver_correction.parameters["absolute_tolerance"] = 1e-6
+            solver_correction.parameters["relative_tolerance"] = 1e-6
+            solver_correction.parameters["maximum_iterations"] = 5000
+            solver_correction.parameters["error_on_nonconvergence"]= True
+            solver_correction.parameters["monitor_convergence"] = True
+            solver_correction.parameters["report"] = True
+            # # AA=assemble(a)
+            # # LL=assemble(L)
+            # # solver_correction.solve(AA,u.vector(),LL)
+            # A=assemble(a)
+            # L=assemble(l)
+            solver_correction.solve(A,u.vector(),L)
+        ## Annulation de la valeur moyenne
+        if config=='2sph':
+            porosity=1-(4/3)*pi*(r_cen**3+r_per**3)
+        elif config=='cylsph':
+            porosity=1-(4/3)*pi*r_cen**3-pi*r_per**2
+        moy_u_x=assemble(u[0]*dx)/porosity
+        moy_u_y=assemble(u[1]*dx)/porosity
+        moy_u_z=assemble(u[2]*dx)/porosity
+        moy=Function(V)
+        moy=Constant((moy_u_x,moy_u_y,moy_u_z))
+        print("Valeur moyenne de u :",[moy_u_x,moy_u_y,moy_u_z])
+        moy_V=interpolate(moy,V)
+        moy_Vv=moy_V.vector().get_local()
+        u_v=u.vector().get_local()
+        chi_v=u_v-moy_Vv
+        chi=Function(V)
+        chi.vector().set_local(chi_v)
+        chi=u
+
+    ### Resultat : snapshot
     return(chi)
 
 ############################# Pour tester la periodicite d'un champ : impression des valeurs du champ ou de son gradient, ou representation graphique #############################
