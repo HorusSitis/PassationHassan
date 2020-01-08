@@ -1,5 +1,6 @@
 // canevas
 
+
 /// choix du rayon variable : effectue dans le script python DDD_fun_obj
 
 rayon_sph=R;

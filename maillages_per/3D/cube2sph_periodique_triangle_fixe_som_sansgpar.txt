@@ -3,28 +3,9 @@
 /// traduction des instructions communiquees depuis python
 
 pas=step;
-rayon_int = R;
 rayon_som = S;
 
 
-// Caracteristique maillage cube 
-
-// xmin=0.;
-// xmax=1.;
-// ymin=0.;
-// ymax=1.;
-// zmin=0.;
-// zmax=1.;
-
-// Caracteristique sphere interieure
-// xc=0.5;
-// yc=0.5;
-// zc=0.5;
-
-// rayon_int=0.05;
-
-// Caracteristique sphere aux sommets : rayon fixe
-// rayon_som=0.15;
 
 /// numerotation
 
@@ -123,14 +104,7 @@ Point(npcu+7) = {xmax,ymax,zmax,pas};
 Point(npcu+8) = {xmin,ymax,zmax,pas};
 
 
-// Points definissant la sphere interieure
-Point(npin+1) = {xc,yc,zc,pas};
-Point(npin+2) = {xc+rayon_int,yc,zc,pas};
-Point(npin+3) = {xc,yc+rayon_int,zc,pas};
-Point(npin+4) = {xc-rayon_int,yc,zc,pas};
-Point(npin+5) = {xc,yc-rayon_int,zc,pas};
-Point(npin+6) = {xc,yc,zc+rayon_int,pas};
-Point(npin+7) = {xc,yc,zc-rayon_int,pas};
+
 
 
 // Aretes : on respecte l'orientation de la base xyz dans le choix des numerotations
@@ -181,23 +155,7 @@ Circle(nars+24)={npar+16,npcu+8,npar+22};
 
 
 
-// Arcs centres a l'interieur du domaine
 
-///z=
-Circle(nari+1)={npin+2,npin+1,npin+3};
-Circle(nari+2)={npin+3,npin+1,npin+4};
-Circle(nari+3)={npin+4,npin+1,npin+5};
-Circle(nari+4)={npin+5,npin+1,npin+2};
-///y=
-Circle(nari+5)={npin+2,npin+1,npin+6};
-Circle(nari+6)={npin+6,npin+1,npin+4};
-Circle(nari+7)={npin+4,npin+1,npin+7};
-Circle(nari+8)={npin+7,npin+1,npin+2};
-///x=
-Circle(nari+9)={npin+6,npin+1,npin+5};
-Circle(nari+10)={npin+5,npin+1,npin+7};
-Circle(nari+11)={npin+7,npin+1,npin+3};
-Circle(nari+12)={npin+3,npin+1,npin+6};
 
 
 // Contours des faces puis faces
@@ -249,28 +207,7 @@ Ruled Surface(nSsom+6)={nls+6};
 Ruled Surface(nSsom+7)={nls+7};
 Ruled Surface(nSsom+8)={nls+8};
 
-// Sphere interieure
-//z>=zc
-Line Loop(nli+1)={nari+1,nari+12,-(nari+5)};
-Line Loop(nli+2)={nari+2,-(nari+6),-(nari+12)};
-Line Loop(nli+3)={nari+3,-(nari+9),nari+6};
-Line Loop(nli+4)={nari+4,nari+5,nari+9};
-//z<=zc
-Line Loop(nli+5)={nari+4,-(nari+8),-(nari+10)};
-Line Loop(nli+6)={nari+3,nari+10,-(nari+7)};
-Line Loop(nli+7)={nari+2,nari+7,nari+11};
-Line Loop(nli+8)={nari+1,-(nari+11),nari+8};
 
-Ruled Surface(nSint+1)={nli+1};
-Ruled Surface(nSint+2)={nli+2};
-Ruled Surface(nSint+3)={nli+3};
-Ruled Surface(nSint+4)={nli+4};
-Ruled Surface(nSint+5)={nli+5};
-Ruled Surface(nSint+6)={nli+6};
-Ruled Surface(nSint+7)={nli+7};
-Ruled Surface(nSint+8)={nli+8};
-
-Surface Loop(num_surf_int)={nSint+1,-(nSint+2),nSint+3,-(nSint+4),-(nSint+5),(nSint+6),-(nSint+7),(nSint+8)};
 
 // Surface fluide-fluide : assemblage des faces planes et periodicite
 
@@ -291,11 +228,11 @@ Periodic Surface nFPl+2 {(nldr+1),(nars+17),(nldr+6),(nars+20),(nldr+9),(nars+19
 
 // Volume a mailler
 
-Volume(num_vol)={num_surf_int,num_surf_ff};//nSsom+1,nSsom+2,nSsom+3,nSsom+4,nSsom+5,nSsom+6,nSsom+7,nSsom+8,(nFPl+1),(nFPl+3),(nFPl+5),(nFPl+6),(nFPl+4),(nFPl+2)};//
+Volume(num_vol)={num_surf_ff};//nSsom+1,nSsom+2,nSsom+3,nSsom+4,nSsom+5,nSsom+6,nSsom+7,nSsom+8,(nFPl+1),(nFPl+3),(nFPl+5),(nFPl+6),(nFPl+4),(nFPl+2)};//
 
 // Surfaces et volume physiques
 
-Physical Surface(nPhys_sol)={num_surf_int,nSsom+1,nSsom+2,nSsom+3,nSsom+4,nSsom+5,nSsom+6,nSsom+7,nSsom+8};
+Physical Surface(nPhys_sol)={nSsom+1,nSsom+2,nSsom+3,nSsom+4,nSsom+5,nSsom+6,nSsom+7,nSsom+8};
 Physical Surface(nPhys_ff)={(nFPl+1),(nFPl+3),(nFPl+5),(nFPl+6),(nFPl+4),(nFPl+2)};//,num_surf_ff
 
 Physical Volume(nPhys_fluide)={num_vol};
