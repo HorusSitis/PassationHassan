@@ -204,13 +204,14 @@ T_chi_rom=np.zeros((3,3))
 for k in range(0,3):
     for l in range(0,3):
         T_chi_rom[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
+T_chi_rom_omega = T_chi_rom/cell_vol
 ## Integrale de l'identite sur le domaine fluide
 ### Calcul de la porosite
 porosity = epsilon_p(r_nouv, config, geo_p, ray_fix)
 ### Integration du terme constant du coefficient d diffusion, sur le domaine fluide
-D=porosity*np.eye(3)
+D = porosity*np.eye(3)
 ## Calcul et affichage du tenseur Dhom
-Dhom_kMOR=D_k*(D+T_chi_rom.T)
+Dhom_kMOR=D_k*(D + T_chi_rom_omega.T)
 
 print('Coefficient Dhom_k11 '+conf_mess+', '+geo_mess+' valeur '+str(rho)+' MOR :',Dhom_kMOR[0,0])
 
@@ -278,12 +279,13 @@ T_chi_fom=np.zeros((3,3))
 for k in range(0,3):
     for l in range(0,3):
         T_chi_fom[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
+T_chi_fom_omega = T_chi_fom/cell_vol
 ## Integrale de l'identite sur le domaine fluide : voir ce qui precede avec la porosite
 print('Noeuds :',V_nouv.dim())
 print('Porosite :',porosity)
 
 ## Calcul et affichage du tenseur Dhom
-Dhom_kMEF=D_k*(D+T_chi_fom.T)
+Dhom_kMEF=D_k*(D+T_chi_fom_omega.T)
 print('Coefficient Dhom_k11 '+conf_mess+', '+geo_mess+' valeur '+str(rho)+ ' MEF :',Dhom_kMEF[0,0])
 
 ## Comparaison
@@ -291,11 +293,11 @@ print('Coefficient Dhom_k11 '+conf_mess+', '+geo_mess+' valeur '+str(rho)+ ' MEF
 err_rel_dhom=100*(Dhom_kMOR[0,0]-Dhom_kMEF[0,0])/Dhom_kMEF[0,0]
 print('Erreur relative Dhom MEF-MOR :', err_rel_dhom , ' pourcent')
 
-err_rel_ig=100*(T_chi_rom[0,0]-T_chi_fom[0,0])/T_chi_fom[0,0]
+err_rel_ig=100*(T_chi_rom_omega[0,0]-T_chi_fom_omega[0,0])/T_chi_fom_omega[0,0]
 print('Erreur relative int_grad MEF-MOR :', err_rel_ig , ' pourcent')
 
-var_rel_ig = 100*(np.sqrt(2*(T_chi_rom[0,0]**2 + T_chi_fom[0,0]**2)/((T_chi_rom[0,0] + T_chi_fom[0,0])**2) - 1))
-var_rel_ig_yy = 100*(np.sqrt(2*(T_chi_rom[1,1]**2 + T_chi_fom[1,1]**2)/((T_chi_rom[1,1] + T_chi_fom[1,1])**2) - 1))
+var_rel_ig = 100*(np.sqrt(2*(T_chi_rom_omega[0,0]**2 + T_chi_fom_omega[0,0]**2)/((T_chi_rom_omega[0,0] + T_chi_fom_omega[0,0])**2) - 1))
+var_rel_ig_yy = 100*(np.sqrt(2*(T_chi_rom_omega[1,1]**2 + T_chi_fom_omega[1,1]**2)/((T_chi_rom_omega[1,1] + T_chi_fom_omega[1,1])**2) - 1))
 
 ## On enregistre et imprime le temps d'execution de SE4
 
@@ -326,8 +328,8 @@ if Report :
     print('Coefficient Dhom_k11 MEF :',Dhom_kMEF[0,0])
     print('Erreur relative MEF-MOR :',err_rel_dhom,'pourcent')
     print('%'*78)
-    print('Coefficient int_grad11 MOR :',T_chi_rom[0,0])
-    print('Coefficient int_grad11 MEF :',T_chi_fom[0,0])
+    print('Coefficient int_grad11 MOR :',T_chi_rom_omega[0,0])
+    print('Coefficient int_grad11 MEF :',T_chi_fom_omega[0,0])
     print('Erreur relative MEF-MOR :',err_rel_ig,'pourcent')
     print('%'*78)
     ## Temps de calcul a evaluer ##
@@ -372,8 +374,8 @@ if Report :
 registre_pg.write(str(r_nouv)+'&')
 registre_pg.write(str(V_nouv.dim())+'&')
 
-registre_pg.write(str(round(T_chi_rom[0,0], 4))+'&')
-registre_pg.write(str(round(T_chi_fom[0,0], 4))+'&')
+registre_pg.write(str(round(T_chi_rom_omega[0,0], 4))+'&')
+registre_pg.write(str(round(T_chi_fom_omega[0,0], 4))+'&')
 registre_pg.write(str(round(err_rel_ig, 2))+'\\'+'%'+'&')
 
 registre_pg.write(str(round(1./R_rom_Nmaill, 2))+'\\'+'\\'+'\n')
@@ -406,8 +408,8 @@ registre_gr.write('\\'+'hline'+'\n')
 
 ## ecriture des resultats dans les vecteurs arr_
 
-arr_int_grad_fem[i] = T_chi_fom[0,0]
-arr_int_grad_rom[i] = T_chi_rom[0,0]
+arr_int_grad_fem[i] = T_chi_fom_omega[0,0]
+arr_int_grad_rom[i] = T_chi_rom_omega[0,0]
 
 arr_nodes[i] = V_nouv.dim()
 
