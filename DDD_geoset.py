@@ -118,9 +118,9 @@ repertoire_parent='Res3D/'
 
 # -------------------- Geometrie du probleme -------------------- #
 
-# config = 'sph_un'
+config = 'sph_un'
 # config = 'cyl_un'
-config = 'cylsph'
+# config = 'cylsph'
 # config = '2sph'
 
 ray_fix = 0.36

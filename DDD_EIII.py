@@ -4,38 +4,35 @@
 
 # maillage du domaine fixe
 
-mesh_dir="maillages_per/3D/"
+mesh_dir='maillages_per/3D/'
 
 ## inclusions simples ou rayons lies
-if dom_fixe=="am":
-    mesh_f_name=mesh_dir+"cube_periodique_triangle"+"_"+dom_fixe+"_sur"+str(res_gmsh)+"_fixe.xml"
-## inclusions multiples, unique rayon variable
-elif dom_fixe=="solid":
-    mesh_fixe_prefix=mesh_dir+"cube"+config+"_periodique_triangle_"
-    if config=='2sph':
-        mesh_f_name=mesh_fixe_prefix+"fixe"+str(int(round(100*r_v_0,2)))+"sur"+str(res_gmsh)+".xml"
-    elif config=='cylsph':
-        ## rayon du cylindre aux aretes ou de la sphere centrale fixes a 0.15 ##
-        if geo_p=='ray_sph':
-            mesh_f_name=mesh_fixe_prefix+str(int(round(100*r_c_0,2)))+"fixe"+"sur"+str(res_gmsh)+".xml"
-        elif geo_p=='ray_cyl':
-            if fixe_comp=='cyl_sph':
-                mesh_f_name=mesh_fixe_prefix+"fixe"+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)+".xml"
-            elif fixe_comp=='sph_un':
-                mesh_f_name=mesh_dir+"cubesphere_periodique_triangle_"+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)+".xml"
-elif dom_fixe=="ray_min":
-    fixe_comp=True#utilisation du domaine fixe avec annulation du rayon du cylindre dans le fichier general
-    if config=='cylsph':
-        if geo_p=='ray_sph':
-            mesh_f_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_c_0,2)))+str(int(round(100*r_min,2)))+"sur"+str(res_gmsh)+".xml"
-        elif geo_p=='ray_cyl':
-            mesh_f_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_min,2)))+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)+".xml"
 
-mesh_fixe=Mesh(mesh_f_name)
+if dom_fixe == 'am':
+    mesh_f_name = 'cube_periodique_triangle' + '_' + dom_fixe + '_sur' + str(res_gmsh) + 'fixe'
+
+## inclusions multiples, unique rayon variable
+elif dom_fixe == 'solid':
+    # mesh_fixe_prefix ='cube' + config + '_periodique_triangle_'
+    mesh_fixe_prefix = mesh_prefix
+    if config == '2sph':
+        mesh_f_name = mesh_fixe_prefix + 'fixe_som' + '_rayp' + str(int(round(100*ray_fix,2))) + '_sur' + str(res_gmsh)
+
+elif dom_fixe == 'ray_min':
+    # utilisation du domaine fixe avec annulation du rayon du cylindre dans le fichier general
+    fixe_comp = True
+    if config == 'cylsph':
+        if geo_p == 'ray_sph':
+            mesh_f_name = mesh_prefix + 'rayc' + str(int(round(100*rho_appr_min,2))) + '_rayp' + str(int(round(100*ray_fix,2))) + '_sur' + str(res_gmsh)
+
+        elif geo_p == 'ray_cyl':
+            mesh_f_name = mesh_prefix + 'rayc' + str(int(round(100*ray_fix,2))) + '_rayp' + str(int(round(100*rho_appr_min,2))) + '_sur' + str(res_gmsh)
+
+mesh_fixe = Mesh(mesh_repository + mesh_f_name + '.xml')
 
 # fonctions test du domaine fixe
 
-V_fixe=VectorFunctionSpace(mesh_fixe,'P',2,constrained_domain=PeriodicBoundary())
+V_fixe = VectorFunctionSpace(mesh_fixe, 'P', 2, constrained_domain=PeriodicBoundary())
 
 ### ------------ Etapes reproduites : dependances directes de Main3D ------------ ###
 
@@ -47,30 +44,30 @@ from PO23D import *
 
 # Chargement de la matrice des snapshots
 
-u_name='Usnap_'+dom_fixe+'_'+str(N_snap)+'_'+config+'_'+geo_p+'_'+"res"+str(res)+'_'+ordo+'_'+computer
+u_name = 'Usnap_' + dom_fixe + '_' + str(N_snap) + '_' + config + '_' + geo_p + '_' + 'res'+str(res)+'_'+ordo+'_'+computer
 print(u_name)
 with sh.open(repertoire_parent+u_name) as u_loa:
- Usnap = u_loa["maliste"]
+ Usnap = u_loa['maliste']
 
 #
 ## matrice de correlation
 #print(Usnap[0:5,0:5])
-C=mat_corr_temp(V_fixe,N_snap,Usnap)
-B=C-C.T
+C = mat_corr_temp(V_fixe, N_snap, Usnap)
+B = C-C.T
 #print(B[0:10,0:10])
 #print(C[0:5,0:5])
 #
 ## Calcul des coefficients aleatoires et la base POD
-vp_A_phi=mat_a_mat_phi(N_snap,Usnap,C,V_fixe,'L2')
+vp_A_phi = mat_a_mat_phi(N_snap, Usnap, C, V_fixe, 'L2')
 #
-val_propres=vp_A_phi[0]
-Aleat=vp_A_phi[1]
+val_propres = vp_A_phi[0]
+Aleat = vp_A_phi[1]
 ## Attention les objets ranges dans tableau suivant sont des vecteurs
-Phi_prime_v=vp_A_phi[2]
+Phi_prime_v = vp_A_phi[2]
 #
 ## Sortie du spectre de la matrice des snapshots, qui doit servir a choisir la taille du modele reduit
 #
-print("Valeurs propres POD :",val_propres)
+print('Valeurs propres POD :', val_propres)
 #res, res_fixe=20 : energie [71%, 24%, 5%, 0.37%, 0.058%, 0%, 0%, 0%]
 
 #plot()
@@ -80,14 +77,14 @@ print("Valeurs propres POD :",val_propres)
 
 ## Enregistrement de la matrice de la base POD, sous la forme vectorielle
 
-phi_name='Phi'+dom_fixe+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_'+"res"+str(res)+'_'+ordo+'_'+computer
+phi_name='Phi'+dom_fixe+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_'+'res'+str(res)+'_'+ordo+'_'+computer
 
 with sh.open(repertoire_parent+phi_name) as p_sto:
- p_sto["maliste"] = Phi_prime_v
+ p_sto['maliste'] = Phi_prime_v
 
 ## Pour reintroduire la base de POD dans l'espace des fonctions definies dans le domaine fixe
 
-#mesh_fixe=Mesh("maillages_per/3D/cubesphere_periodique_triangle_0001fixe.xml")
+#mesh_fixe=Mesh('maillages_per/3D/cubesphere_periodique_triangle_0001fixe.xml')
 #V_fixe=V=VectorFunctionSpace(mesh_fixe, 'P', 3, constrained_domain=PeriodicBoundary())
 
 ## Tests : orthogonalite ou orthonrmalite de Phi_prime
@@ -127,11 +124,11 @@ for i in range(N_snap):
     phi.vector().set_local(Phi_prime_v[:,i])
     plot(phi, linewidth=lw)
     r=0.05*(i+1)
-    plt.title("Mode "+str(i+1),fontsize=40)
+    plt.title('Mode '+str(i+1),fontsize=40)
     if fig_todo=='':#aff':
         plt.show()
     else:
-        plt.savefig("Figures3D/phi_"+str(i+1)+"_"+config+'_'+geo_p+"_res"+str(res)+".png")
+        plt.savefig('Figures3D/phi_'+str(i+1)+'_'+config+'_'+geo_p+'_res'+str(res)+'.png')
     plt.close()
 
 # Energie et energie cumulee des modes spatiaux, choix du nombre de modes
@@ -151,7 +148,7 @@ plt.yscale('log')
 if fig_todo=='aff':
     plt.show()
 else:
-    plt.savefig("Figures3D/ener_vp_"+config+'_'+geo_p+"_res"+str(res)+".png")
+    plt.savefig('Figures3D/ener_vp_'+config+'_'+geo_p+'_res'+str(res)+'.png')
 plt.close()
 
 plt.plot(absc,ener_pour_cumul, linewidth=2)
@@ -161,7 +158,7 @@ plt.ylabel('pourcentage_energie_cumule')
 if fig_todo=='aff':
     plt.show()
 else:
-    plt.savefig("Figures3D/ener_cumul_vp_"+config+'_'+geo_p+"_res"+str(res)+".png")
+    plt.savefig('Figures3D/ener_cumul_vp_'+config+'_'+geo_p+'_res'+str(res)+'.png')
 plt.close()
 
 ## Choix du nombre de modes, avec une valeur seuil d'energie a atteindre avec les vacteurs de la base POD
