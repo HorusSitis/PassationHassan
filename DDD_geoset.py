@@ -72,18 +72,6 @@ class PeriodicBoundary(SubDomain):
                 y[i]=x[i]
 
 
-### ------------ Important : liste des rayons pour l'apprentissage et les tests ------------ ###
-
-N_snap = 8
-
-rho_appr_min = 0.1
-# rho_appr_min = 0.2
-rho_appr_max = 0.8
-# rho_appr_max = 0.9
-
-list_rho_appr = np.linspace(rho_appr_min, rho_appr_max, N_snap)
-list_rho_test = np.linspace(0.11, 0.44, 4)
-
 
 # parametres pour l'execution des etapes : affichage, tests de periodicite etc
 
@@ -91,7 +79,9 @@ fig_todo='save'
 typ_msh='gms'#''
 D_k=1.0
 
-N_snap=len(list_rho_appr)
+# N_snap=len(list_rho_appr)
+
+N_snap = 8
 
 npas_err=10
 # typ_sol='bic_cyr'#'default'#seulement si res=10##
@@ -116,6 +106,8 @@ gen_snap='seq'
 # repertoire pour les resultats
 repertoire_parent='Res3D/'
 
+
+
 # -------------------- Geometrie du probleme -------------------- #
 
 config = 'sph_un'
@@ -124,6 +116,33 @@ config = 'sph_un'
 # config = '2sph'
 
 ray_fix = 0.36
+
+### ------------ Important : liste des rayons pour l'apprentissage et les tests ------------ ###
+
+N_snap = 8
+
+## apprentissage
+if config == 'sph_un' or ray_fix <= 0.5:
+
+    rho_appr_min = 0.1
+    # rho_appr_min = 0.2
+    rho_appr_max = 0.8
+    # rho_appr_max = 0.9
+
+    list_rho_appr = np.linspace(rho_appr_min, rho_appr_max, N_snap)
+
+
+## test
+
+rho_diff = (rho_appr_max - rho_appr_min)/(N_snap - 1)
+rho_test_min = rho_appr_min + 0.5*rho_diff
+rho_test_max = rho_appr_max - 0.5*rho_diff
+
+list_rho_test = np.array([0.35])
+list_rho_test = np.array([0.35, 0.65])
+# list_rho_test = np.linspace(0.11, 0.44, 4)
+# list_rho_test = np.linspace(rho_test_min, rho_test_max, N_snap - 1)
+
 
 ### inclusions simples
 if config == 'sph_un':
@@ -179,6 +198,27 @@ elif config == 'cylsph':
         geo_mess='rayon de la sphere variable'
     elif geo_p=='ray_linked':
         geo_mess='rayons lies'
+
+
+
+
+## ------------ Registre pour les performances des tests ------------ ##
+
+if config == 'sph_un' or config == 'cyl_un':
+    rg_perf_fact = ''
+else:
+    rg_perf_fact = '_rayf' + str(int(round(ray_fix, 2)))
+
+registre_perf_num = dict()
+
+registre_perf_num['int_grad_fem'] = 'Perf3D/' + 'IG_fem_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+registre_perf_num['int_grad_rom'] = 'Perf3D/' + 'IG_rom_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+registre_perf_num['nodes'] = 'Perf3D/' + 'nodes_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+registre_perf_num['err_rel'] = 'Perf3D/' + 'err_rel_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+registre_perf_num['var_rel'] = 'Perf3D/' + 'var_rel_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+registre_perf_num['var_rel_yy'] = 'Perf3D/' + 'var_rel_yy_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+registre_perf_num['t'] = 'Perf3D/' + 'tps_exec_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+
 
 ## ------------ Porosite ------------ ##
 

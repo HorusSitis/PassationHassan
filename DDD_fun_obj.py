@@ -226,14 +226,6 @@ def snapshot_sph_per(cen,r,res,typ_sol):
     # creer_maill_per_gpar(config, geo_p, xyzinfsup, r, 0., res)
     mesh_s_r = Mesh(mesh_repository + nom_fichier_avecgpar + '.xml')
 
-    # c_x,c_y,c_z=cen[0],cen[1],cen[2]
-    # if typ_msh=='gms':
-    #     #print("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml")
-    #     mesh_s_r=Mesh("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml")
-    # else:
-    #     print('pfrrh')
-    # mesh_s_r=creer_maill_sph([c_x,c_y,c_z],r,res)
-
     # On pose et on resoud le probleme aux elements finis
     V = VectorFunctionSpace(mesh_s_r, 'P', 2, constrained_domain = PeriodicBoundary())
 

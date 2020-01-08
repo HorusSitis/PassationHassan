@@ -59,12 +59,12 @@ def snap_compl_ray(N_par):
     rho = list_rho_appr[N_par]
     ## deux spheres ##
     if geo_p=='ray':
-        chi_compl=snapshot_compl_per(rho,r_v_0,config,res_gmsh,typ_sol)
+        chi_compl=snapshot_compl_per(rho,ray_fix,config,res_gmsh,typ_sol)
     ## un cylindre et une sphere ##
     elif geo_p=='ray_sph':
-        chi_compl=snapshot_compl_per(rho,r_c_0,config,res_gmsh,typ_sol)
+        chi_compl=snapshot_compl_per(rho,ray_fix,config,res_gmsh,typ_sol)
     elif geo_p=='ray_cyl':
-        chi_compl=snapshot_compl_per(r_s_0,rho,config,res_gmsh,typ_sol)
+        chi_compl=snapshot_compl_per(ray_fix,rho,config,res_gmsh,typ_sol)
     ## on vectorise la fonction calculee par MEF ##
     chi_compl_v=chi_compl.vector().get_local()
     ## on renvoie un vecteur etiquete, utilisable avec l'option 'par8' ##

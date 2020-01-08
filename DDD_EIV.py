@@ -231,18 +231,20 @@ start=time.time()
 ## On reinitialise le champ chi_nouv pour la methode des elements finis
 
 #res=20
+cen_snap_ray=[(xinf + xsup)/2., (zinf + zsup)/2., (zinf + zsup)/2.]
+
 if config=='sph_un':
     chi_nouv=snapshot_sph_per(cen_snap_ray,r_nouv,res,typ_sol)
 elif config=='cyl_un':
     chi_nouv=snapshot_cyl_per(top_snap_ray,r_nouv,res,typ_sol)
 elif config=='2sph':
     if geo_p=='ray':
-        chi_nouv=snapshot_compl_per(r_nouv,r_v_0,config,res_gmsh,typ_sol)
+        chi_nouv=snapshot_compl_per(r_nouv,ray_fix,config,res_gmsh,typ_sol)
 elif config=='cylsph':
     if geo_p=='ray_sph':
-        chi_nouv=snapshot_compl_per(r_nouv,r_c_0,config,res_gmsh,typ_sol)
+        chi_nouv=snapshot_compl_per(r_nouv,ray_fix,config,res_gmsh,typ_sol)
     elif geo_p=='ray_cyl':
-        chi_nouv=snapshot_compl_per(r_s_0,r_nouv,config,res_gmsh,typ_sol)
+        chi_nouv=snapshot_compl_per(ray_fix,r_nouv,config,res_gmsh,typ_sol)
 
 ## Exploitation du champ ainsi obtenu
 rho=r_nouv
@@ -278,7 +280,7 @@ for k in range(0,3):
         T_chi_fom[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
 ## Integrale de l'identite sur le domaine fluide : voir ce qui precede avec la porosite
 print('Noeuds :',V_nouv.dim())
-print('Porosite :',por)
+print('Porosite :',porosity)
 
 ## Calcul et affichage du tenseur Dhom
 Dhom_kMEF=D_k*(D+T_chi_fom.T)
@@ -291,6 +293,9 @@ print('Erreur relative Dhom MEF-MOR :', err_rel_dhom , ' pourcent')
 
 err_rel_ig=100*(T_chi_rom[0,0]-T_chi_fom[0,0])/T_chi_fom[0,0]
 print('Erreur relative int_grad MEF-MOR :', err_rel_ig , ' pourcent')
+
+var_rel_ig = 100*(np.sqrt(2*(T_chi_rom[0,0]**2 + T_chi_fom[0,0]**2)/((T_chi_rom[0,0] + T_chi_fom[0,0])**2) - 1))
+var_rel_ig_yy = 100*(np.sqrt(2*(T_chi_rom[1,1]**2 + T_chi_fom[1,1]**2)/((T_chi_rom[1,1] + T_chi_fom[1,1])**2) - 1))
 
 ## On enregistre et imprime le temps d'execution de SE4
 
@@ -312,7 +317,7 @@ if Report :
     print('Resultats '+conf_mess+', '+geo_mess+' valeur '+str(r_nouv)+' :')
     print('#'*78)    #
     ## Porosite ##
-    print('Porosite :',por)
+    print('Porosite :',porosity)
     ## Generation du maillage : temps d'execution ... ##
     print('Maillage :',t_meshing,'secondes')
     ## Dhom, erreur, et temps d'execution ##
@@ -363,7 +368,8 @@ if Report :
 
 ## ecriture des resultats dans le tableau _pg
 
-registre_pg.write(str(2*r_nouv)+'&')
+# registre_pg.write(str(2*r_nouv)+'&')
+registre_pg.write(str(r_nouv)+'&')
 registre_pg.write(str(V_nouv.dim())+'&')
 
 registre_pg.write(str(round(T_chi_rom[0,0], 4))+'&')
@@ -378,7 +384,8 @@ registre_pg.write('\\'+'hline'+'\n')
 
 ## ecriture des ersultats dans le tableau _gr
 
-registre_gr.write(str(2*r_nouv)+'&')
+# registre_gr.write(str(2*r_nouv)+'&')
+registre_gr.write(str(r_nouv)+'&')
 registre_gr.write(str(V_nouv.dim())+'&')
 
 registre_gr.write(str(round(100*(t_phi_nouv/t_rom), 2))+'\\'+'%'+'&')
@@ -404,8 +411,9 @@ arr_int_grad_rom[i] = T_chi_rom[0,0]
 
 arr_nodes[i] = V_nouv.dim()
 
-ar_err_rel[i] = err_rel_ig
-ar_var_rel[i] = var_rel_ig
+arr_err_rel[i] = err_rel_ig
+arr_var_rel[i] = var_rel_ig
+arr_var_rel_yy[i] = var_rel_ig_yy
 
 # arr_t_fem[i] = t_fem
 # arr_t_phi_n[i] = t_phi_nouv
