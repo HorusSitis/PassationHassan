@@ -1,40 +1,4 @@
-# -*- coding: utf-8 -*-
-
-# from fenics import *
-#
-# from dolfin import *
-# from mshr import *
-# import matplotlib.pyplot as plt
-# import numpy as np
-# from math import sqrt
-# from math import exp
-# import sys
-
-# tol=1e-10
-# xinf=0.0
-# yinf=0.0
-# zinf=0.0
-# xsup=1.0
-# ysup=1.0
-# zsup=1.0
-#
-# typ_msh='gms'
-
-############################# Une classe de sous domaines pour tous les calculs : structure periodique avec repetition de la cellule elementaire #############################
-
-# dimension=3
-#
-# class PeriodicBoundary(SubDomain):
-#  # Left boundary is "target domain" G
-#  def inside(self, x, on_boundary):
-#   return on_boundary and not(near(x[0],xsup,tol) or near(x[1],ysup,tol) or near(x[2],zsup,tol))
-#  # Map right boundary (R) to left boundary (G), top to bottom, back to front
-#  def map(self, x, y):
-#   for i in range(dimension):
-#    if near(x[i],1.0,tol):
-#     y[i]=0.0
-#    else:
-#     y[i]=x[i]
+# -*- coding: utf-8 -*
 
 ############################# Pour creer des maillages, avec des familles de cellules elementaires #############################
 
@@ -219,7 +183,7 @@ def creer_maill_per_gpar(config, geo_p, xyzinfsup, rho, ray_fix, res):
 
 ############################# Pour creer des snapshots, inclusion circulaire periodique unique #############################
 
-def snapshot_sph_per(cen,r,res,typ_sol):
+def snapshot_sph_per(cen, r, res, typ_sol):
 
     # mesh_prefix = 'cubesphere_periodique_triangle_'
     nom_fichier_avecgpar = mesh_prefix + 'rayc' + str(int(round(100*r,2))) + '_sur' + str(res)
@@ -265,65 +229,29 @@ def snapshot_sph_per(cen,r,res,typ_sol):
     L = assemble(l)
 
     ## solveur de krylov pour un probleme bien pose, dans un hyperplan
-    if typ_sol == 'kr_null_vect':
 
-        solver = dolfin.PETScKrylovSolver("cg")
+    solver = dolfin.PETScKrylovSolver("cg")
 
-        solver.parameters["absolute_tolerance"] = 1e-6
-        solver.parameters["relative_tolerance"] = 1e-6
-        solver.parameters["maximum_iterations"] = 5000
-        solver.parameters["error_on_nonconvergence"] = True
-        solver.parameters["monitor_convergence"] = True
-        solver.parameters["report"] = True
+    solver.parameters["absolute_tolerance"] = 1e-6
+    solver.parameters["relative_tolerance"] = 1e-6
+    solver.parameters["maximum_iterations"] = 5000
+    solver.parameters["error_on_nonconvergence"] = True
+    solver.parameters["monitor_convergence"] = True
+    solver.parameters["report"] = True
 
-        solver.set_operator(A)
+    solver.set_operator(A)
 
-        null_vec = dolfin.Vector(u1.vector())
-        V.dofmap().set(null_vec, 1.0)
-        null_vec *= 1.0/(dolfin.norm(null_vec, norm_type = 'l2'))
+    null_vec = dolfin.Vector(u1.vector())
+    V.dofmap().set(null_vec, 1.0)
+    null_vec *= 1.0/(dolfin.norm(null_vec, norm_type = 'l2'))
 
-        null_space = dolfin.VectorSpaceBasis([null_vec])
-        dolfin.as_backend_type(A).set_nullspace(null_space)
-        null_space.orthogonalize(L)
+    null_space = dolfin.VectorSpaceBasis([null_vec])
+    dolfin.as_backend_type(A).set_nullspace(null_space)
+    null_space.orthogonalize(L)
 
-        # Resolution et restitution de chi
-        solver.solve(u1.vector(), L)
-        chi = u1
-
-    ## autres solveurs : probleme mal pose a piori
-    else:
-        if typ_sol=='default':
-            solve(a==L,u)
-        elif typ_sol=='bic_cyr':
-            u = Function(V)
-            solver_correction = KrylovSolver("bicgstab", "amg")
-            solver_correction.parameters["absolute_tolerance"] = 1e-6
-            solver_correction.parameters["relative_tolerance"] = 1e-6
-            solver_correction.parameters["maximum_iterations"] = 5000
-            solver_correction.parameters["error_on_nonconvergence"]= True
-            solver_correction.parameters["monitor_convergence"] = True
-            solver_correction.parameters["report"] = True
-            # # AA=assemble(a)
-            # # LL=assemble(L)
-            # # solver_correction.solve(AA,u.vector(),LL)
-            # A=assemble(a)
-            # L=assemble(l)
-            solver_correction.solve(A,u.vector(),L)
-        # Annulation de la valeur moyenne
-        porosity=1-(4/3)*pi*r**3
-        moy_u_x=assemble(u[0]*dx)/porosity
-        moy_u_y=assemble(u[1]*dx)/porosity
-        moy_u_z=assemble(u[2]*dx)/porosity
-        moy=Function(V)
-        moy=Constant((moy_u_x,moy_u_y,moy_u_z))
-        print("Valeur moyenne de u :",[moy_u_x,moy_u_y,moy_u_z])
-        moy_V=interpolate(moy,V)
-        moy_Vv=moy_V.vector().get_local()
-        u_v=u.vector().get_local()
-        chi_v=u_v-moy_Vv
-        chi=Function(V)
-        chi.vector().set_local(chi_v)
-        chi=u
+    # Resolution et restitution de chi
+    solver.solve(u1.vector(), L)
+    chi = u1
 
     ### Resultat : snapshot
     return(chi)
