@@ -3,42 +3,37 @@
 #################################################################################################
 ## Etape IV : Predictions. Choisir les parametres du probleme a resoudre par le modele reduit.#
 
-# maillage du domaine fixe
+# mesh_repository = 'maillages_per/' + str(dimension) + 'D/'
+# if config == 'sph_un':
+#     mesh_prefix = 'cubesphere_periodique_triangle_'
+# elif config == '2sph':
+#     mesh_prefix = 'cube2sph_periodique_triangle_'
+# elif config == 'cylsph':
+#     mesh_prefix = 'cubecylsph_periodique_triangle_'
 
-mesh_dir="maillages_per/3D/"
+## maillage du domaine fixe
 
-## inclusions simples ou rayons lies
-
-if dom_fixe=="am":
-    mesh_f_name=mesh_dir+"cube_periodique_triangle"+"_"+dom_fixe+"_sur"+str(res_gmsh)+"_fixe.xml"
+if dom_fixe == 'am':
+    mesh_f_name = 'cube_periodique_triangle' + '_' + dom_fixe + '_sur' + str(res_gmsh) + 'fixe'
 ## inclusions multiples, unique rayon variable
-elif dom_fixe=="solid":
-    mesh_fixe_prefix=mesh_dir+"cube"+config+"_periodique_triangle_"
-    if config=='2sph':
-        mesh_f_name=mesh_fixe_prefix+"fixe"+str(int(round(100*r_v_0,2)))+"sur"+str(res_gmsh)+".xml"
-    elif config=='cylsph':
-        ## rayon du cylindre aux aretes ou de la sphere centrale fixes a 0.15 ##
-        if geo_p=='ray_sph':
-            mesh_f_name=mesh_fixe_prefix+str(int(round(100*r_c_0,2)))+"fixe"+"sur"+str(res_gmsh)+".xml"
-        elif geo_p=='ray_cyl':
-            if fixe_comp=='cyl_sph':
-                mesh_f_name=mesh_fixe_prefix+"fixe"+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)+".xml"
-            elif fixe_comp=='sph_un':
-                mesh_f_name=mesh_dir+"cubesphere_periodique_triangle_"+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)+".xml"
-elif dom_fixe=="ray_min":
+elif dom_fixe == 'solid':
+    # mesh_fixe_prefix ='cube' + config + '_periodique_triangle_'
+    mesh_fixe_prefix = mesh_prefix
+    if config == '2sph':
+        mesh_f_name = mesh_fixe_prefix + 'fixe_som' + '_rayp' + str(int(round(100*ray_fix,2))) + '_sur' + str(res_gmsh)
+elif dom_fixe == 'ray_min':
     # utilisation du domaine fixe avec annulation du rayon du cylindre dans le fichier general
-    fixe_comp=True
-    if config=='cylsph':
-        if geo_p=='ray_sph':
-            mesh_f_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_c_0,2)))+str(int(round(100*r_min,2)))+"sur"+str(res_gmsh)+".xml"
-        elif geo_p=='ray_cyl':
-            mesh_f_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_min,2)))+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)+".xml"
+    fixe_comp = True
+    if config == 'cylsph':
+        if geo_p == 'ray_sph':
+            mesh_f_name = mesh_prefix + 'rayc' + str(int(round(100*rho_appr_min,2))) + '_rayp' + str(int(round(100*ray_fix,2))) + '_sur' + str(res_gmsh)
+        elif geo_p == 'ray_cyl':
+            mesh_f_name = mesh_prefix + 'rayc' + str(int(round(100*ray_fix,2))) + '_rayp' + str(int(round(100*rho_appr_min,2))) + '_sur' + str(res_gmsh)
 
-mesh_fixe=Mesh(mesh_f_name)
+mesh_fixe = Mesh(mesh_repository + mesh_f_name + '.xml')
 
 # fonctions test du domaine fixe
-
-V_fixe=VectorFunctionSpace(mesh_fixe,'P',2,constrained_domain=PeriodicBoundary())
+V_fixe = VectorFunctionSpace(mesh_fixe,'P',2,constrained_domain=PeriodicBoundary())
 
 # Performances
 
@@ -46,23 +41,33 @@ import time
 
 ### ------------ Etapes reproduites : dependances directes de Main3D ------------ ###
 
-nb_modes=N_mor
+nb_modes = N_mor
 
-if config=='sph_un':
-    mesh_n_name=mesh_dir+"cubesphere_periodique_triangle_"+str(int(round(100*r_nouv,2)))+"sur"+str(res_gmsh)
-elif config=='cyl_un':
-    mesh_n_name=mesh_dir+"cubecylindre_periodique_triangle_"+str(int(round(100*r_nouv,2)))+"sur"+str(res_gmsh)
-if config=='2sph':
-    mesh_n_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_nouv,2)))+str(int(round(100*r_v_0,2)))+"sur"+str(res_gmsh)
-elif config=='cylsph':
-    if geo_p=='ray_sph':
-        mesh_n_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_c_0,2)))+str(int(round(100*r_nouv,2)))+"sur"+str(res_gmsh)
-    elif geo_p=='ray_cyl':
-        mesh_n_name=mesh_dir+"cube"+config+"_periodique_triangle_"+str(int(round(100*r_nouv,2)))+str(int(round(100*r_s_0,2)))+"sur"+str(res_gmsh)
 
-mesh_nouv=Mesh(mesh_n_name+".xml")
+# --------------------- SE0 : maillage et fonctions tests du domaine fixe --------------------- #
 
-V_nouv=VectorFunctionSpace(mesh_nouv, "P", 2, constrained_domain=PeriodicBoundary())
+start_mesh = time.time()
+
+if config == 'sph_un':
+    mesh_nouv_name = mesh_prefix + 'rayc' + str(int(round(100*r_nouv,2))) + '_sur' + str(res)
+elif config == '2sph':
+    mesh_nouv_name = mesh_prefix + 'rayc' + str(int(round(100*r_nouv,2))) + '_rayp' + str(int(round(100*ray_fix,2))) + '_sur' + str(res)
+elif config == 'cylsph' and geo_p == 'ray_sph':
+    mesh_nouv_name = mesh_prefix + 'rayc' + str(int(round(100*r_nouv,2))) + '_rayp' + str(int(round(100*ray_fix,2))) + '_sur' + str(res)
+elif config == 'cylsph' and geo_p == 'ray_cyl':
+    mesh_nouv_name = mesh_prefix + 'rayc' + str(int(round(100*ray_fix,2))) + '_rayp' + str(int(round(100*r_nouv,2))) + '_sur' + str(res)
+
+# generation des fichiers avec gmsh
+creer_maill_per_gpar(config, geo_p, xyzinfsup, r_nouv, ray_fix, res_gmsh)
+
+# appelle le maillage reconverti depuis maillages_per/3D
+mesh_nouv = Mesh(mesh_repository + mesh_nouv_name + '.xml')
+
+# fin de la generation du maillage courant
+end_mesh = time.time()
+
+# creation de l'espace des champs admissibles
+V_nouv = VectorFunctionSpace(mesh_nouv, 'P', 2, constrained_domain=PeriodicBoundary())
 
 
 # --------------------- SE1 : projection de la base POD sur le nouveau domaine --------------------- #
@@ -73,12 +78,12 @@ start=time.time()
 
 ## Taille du maillage du domaine fixe ##
 
-nb_noeuds_fixe=V_fixe.dim()
+nb_noeuds_fixe = V_fixe.dim()
 
 ## Chargement de la base POD complete
 
 if ind_res:
-    phi_name='Phi'+dom_fixe+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_'+"res"+str(res)+'_'+ordo+'_'+computer
+    phi_name='Phi'+dom_fixe+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_'+'res'+str(res)+'_'+ordo+'_'+computer
 elif ind_fixe:
     phi_name='Phi'+dom_fixe+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
 else:
@@ -86,7 +91,7 @@ else:
 
 
 with sh.open(repertoire_parent+phi_name) as phi_loa:
-    Phi_prime_v = phi_loa["maliste"]
+    Phi_prime_v = phi_loa['maliste']
 
 ## Creation de la base POD tronquee, sous forme vectorielle
 
@@ -153,6 +158,7 @@ end=time.time()
 t_rom_linear=end-start
 
 print('se2 faite', t_int_Ab + t_rom_linear, 'secondes')
+
 # --------------------- SE3 : calcul du nouveau champ de vecteurs, affichage --------------------- #
 
 ## On reinitialise le temps de calcul ##
@@ -166,55 +172,43 @@ chi_nouv=Function(V_nouv)
 chi_nouv.vector().set_local(chi_nouv_v)
 
 plot(chi_nouv, linewidth=lw)
-plt.title("Rho = 0,"+str(int(round(100*r_nouv,2))),fontsize=40)
+plt.title('Rho = 0,'+str(int(round(100*r_nouv,2))),fontsize=40)
 if fig_todo=='aff':
     plt.show()
 elif fig_todo=='save':
-    plt.savefig("Figures3D/sol_rom"+str(int(round(100*r_nouv,2)))+"_sur"+str(N_snap)+config+'_'+geo_p+"res"+str(res)+".png")
+    plt.savefig('Figures3D/sol_rom'+str(int(round(100*r_nouv,2)))+'_sur'+str(N_snap)+config+'_'+geo_p+'res'+str(res)+'.png')
 plt.close()
 
 ## Exploitation du champ ainsi obtenu
 r=r_nouv
 rho=r_nouv
 
-# Affichage des valeurs et erreurs de la solution periodique, quelle que soit la configuration
-
-if config=='sph_un' or config=='cyl_un':
-    err_per_gr(cen_snap_ray,r_nouv,chi_nouv,npas_err,fig_todo)
-elif config=='2sph':
-    err_per_gr_compl(config,r_v_0,chi_nouv,npas_err,fig_todo)
-elif config=='cylsph':
-    if geo_p=='ray_sph':
-        err_per_gr_compl(config,r_c_0,chi_nouv,npas_err,fig_todo)
-    elif geo_p=='ray_cyl':
-        err_per_gr_compl(config,r_nouv,chi_nouv,npas_err,fig_todo)
+## a faire avec une instruction conditionnelle
+# # Affichage des valeurs et erreurs de la solution periodique, quelle que soit la configuration
+#
+# if config=='sph_un' or config=='cyl_un':
+#     err_per_gr(cen_snap_ray,r_nouv,chi_nouv,npas_err,fig_todo)
+# elif config=='2sph':
+#     err_per_gr_compl(config,r_v_0,chi_nouv,npas_err,fig_todo)
+# elif config=='cylsph':
+#     if geo_p=='ray_sph':
+#         err_per_gr_compl(config,r_c_0,chi_nouv,npas_err,fig_todo)
+#     elif geo_p=='ray_cyl':
+#         err_per_gr_compl(config,r_nouv,chi_nouv,npas_err,fig_todo)
 
 
 # Tenseur de diffusion homogeneise
+
 ## Integrale de chi sur le domaine fluide
 T_chi_rom=np.zeros((3,3))
 for k in range(0,3):
     for l in range(0,3):
         T_chi_rom[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
-        #print("Integrale ",assemble(grad(chi_nouv)[k,l]*dx))
 ## Integrale de l'identite sur le domaine fluide
 ### Calcul de la porosite
-if config=='sph_un':
-    por=1-4/3*pi*r_nouv**3
-elif config=='cyl_un':
-    por=1-pi*r_nouv**2
-elif config=='2sph':
-    por=1-4/3*pi*(r_nouv**3+r_v_0**3)
-elif config=='cylsph':
-    if geo_p=='ray_sph':
-        r_s=r_nouv
-        r_c=r_c_0
-    elif geo_p=='ray_cyl':
-        r_s=r_s_0
-        r_c=r_nouv
-    por=1-4/3*pi*r_s**3-pi*r_c**2
+porosity = epsilon_p(r_nouv, config, geo_p, ray_fix)
 ### Integration du terme constant du coefficient d diffusion, sur le domaine fluide
-D=por*np.eye(3)
+D=porosity*np.eye(3)
 ## Calcul et affichage du tenseur Dhom
 Dhom_kMOR=D_k*(D+T_chi_rom.T)
 
@@ -255,24 +249,25 @@ rho=r_nouv
 r=r_nouv
 
 plot(chi_nouv, linewidth=lw)
-plt.title("Rho = 0,"+str(int(round(100*r_nouv,2))),fontsize=40)
+plt.title('Rho = 0,'+str(int(round(100*r_nouv,2))),fontsize=40)
 if fig_todo=='aff':
     plt.show()
 elif fig_todo=='save':
-    plt.savefig("Figures3D/sol_rom"+str(int(round(100*r_nouv,2)))+"_sur"+str(N_snap)+config+'_'+geo_p+"res"+str(res)+".png")
+    plt.savefig('Figures3D/sol_rom'+str(int(round(100*r_nouv,2)))+'_sur'+str(N_snap)+config+'_'+geo_p+'res'+str(res)+'.png')
 plt.close()
 
-# Affichage des valeurs et erreurs de la solution periodique, quelle que soit la configuration
-if config=='sph_un' or config=='cyl_un':
-    #err_per_ind_01(chi_n,cen,r,npas_err)
-    err_per_gr(cen_snap_ray,r_nouv,chi_nouv,npas_err,fig_todo)
-elif config=='2sph':
-    err_per_gr_compl(config,r_v_0,chi_nouv,npas_err,fig_todo)
-elif config=='cylsph':
-    if geo_p=='ray_sph':
-        err_per_gr_compl(config,r_c_0,chi_nouv,npas_err,fig_todo)
-    elif geo_p=='ray_cyl':
-        err_per_gr_compl(config,r_nouv,chi_nouv,npas_err,fig_todo)
+## a faire avec une instruction conditionnelle
+# # Affichage des valeurs et erreurs de la solution periodique, quelle que soit la configuration
+# if config=='sph_un' or config=='cyl_un':
+#     #err_per_ind_01(chi_n,cen,r,npas_err)
+#     err_per_gr(cen_snap_ray,r_nouv,chi_nouv,npas_err,fig_todo)
+# elif config=='2sph':
+#     err_per_gr_compl(config,r_v_0,chi_nouv,npas_err,fig_todo)
+# elif config=='cylsph':
+#     if geo_p=='ray_sph':
+#         err_per_gr_compl(config,r_c_0,chi_nouv,npas_err,fig_todo)
+#     elif geo_p=='ray_cyl':
+#         err_per_gr_compl(config,r_nouv,chi_nouv,npas_err,fig_todo)
 
 
 # Tenseur de diffusion homogeneise
@@ -394,3 +389,36 @@ registre_gr.write(str(round(100*(t_rom_Dhom/t_rom), 2))+'\\'+'%'+'\\'+'\\'+'\n')
 
 
 registre_gr.write('\\'+'hline'+'\n')
+
+
+##############################################################################
+##############################################################################
+##############################################################################
+##############################################################################
+
+
+## ecriture des resultats dans les vecteurs arr_
+
+arr_int_grad_fem[i] = T_chi_fom[0,0]
+arr_int_grad_rom[i] = T_chi_rom[0,0]
+
+arr_nodes[i] = V_nouv.dim()
+
+ar_err_rel[i] = err_rel_ig
+ar_var_rel[i] = var_rel_ig
+
+# arr_t_fem[i] = t_fem
+# arr_t_phi_n[i] = t_phi_nouv
+# arr_t_Ab[i] = t_int_Ab
+# arr_t_solve[i] = t_rom_linear
+# arr_t_dhom[i] = t_rom_Dhom
+
+arr_t[i, 0] = t_fem
+
+t_rom = t_phi_nouv + t_int_Ab + t_rom_linear + t_rom_Dhom
+arr_t[i, 1] = t_rom
+
+arr_t[i, 2] = t_phi_nouv
+arr_t[i, 3] = t_int_Ab
+arr_t[i, 4] = t_rom_linear
+arr_t[i, 5] = t_rom_Dhom
