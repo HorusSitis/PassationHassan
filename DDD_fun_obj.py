@@ -119,18 +119,110 @@ def creer_maill_cyl(top,r,slices_cyl,res):#valable quel que soit la position de 
     #
     return(mesh)
 
+############################# Pour creer des maillages avec gmsh, a partir de fichiers .txt en guise de canevas #############################
+
+def creer_maill_per_gpar(config, geo_p, xyzinfsup, rho, ray_fix, res):
+
+    xinf = xyinfsup[0][0]
+    yinf = xyinfsup[0][1]
+    zinf = xyinfsup[0][2]
+    xsup = xyinfsup[1][0]
+    ysup = xyinfsup[1][1]
+    zsup = xyinfsup[1][2]
+
+    # if config == 'sph_un':
+    #     mesh_prefix = 'cubesphre_periodique_triangle_'
+    # elif config == '2sph':
+    #     mesh_prefix = 'cube2sph_periodique_triangle_'
+    # elif config == 'cylsph':
+    #     mesh_prefix = 'cubecylsph_periodique_triangle_'
+
+    ### on cree le fichier qui code le maillage pour gmsh
+    mesh_name = mesh_prefix + 'sansgpar'
+    fichier_sansentete = open(mesh_repository + mesh_name + '.txt', 'r')
+
+    if config == 'sph_un':
+        nom_fichier_avecgpar = mesh_prefix + '_rayc' + str(int(round(100*rho,2))) + '_sur' + str(res)
+    elif config == '2sph':
+        nom_fichier_avecgpar = mesh_prefix + '_rayc' + str(int(round(100*rho,2))) + '_rayp' + str(int(round(100*ray_fix,2))) + '_sur' + str(res)
+    elif config == 'cylsph' and geo_p == 'ray_sph':
+        nom_fichier_avecgpar = mesh_prefix + '_rayc' + str(int(round(100*rho,2))) + '_rayp' + str(int(round(100*ray_fix,2))) + '_sur' + str(res)
+    elif config == 'cylsph' and geo_p == 'ray_cyl':
+        nom_fichier_avecgpar = mesh_prefix + '_rayc' + str(int(round(100*ray_fix,2))) + '_rayp' + str(int(round(100*rho,2))) + '_sur' + str(res)
+
+    gen_mesh = open(mesh_repository + nom_fichier_avecgpar + '.txt', 'w')
+
+    # parametres geometriques
+
+    if config == 'sph_un':
+        gen_mesh.write('R = ' + str(rho) + ';' + '\n')
+    if config == 'cube2sph':
+        gen_mesh.write('R = ' + str(rho) + ';' + '\n')
+        gen_mesh.write('S = ' + str(ray_fix) + ';' + '\n')
+    if config == 'cyl_sph' and geo_p == 'ray_sph':
+        gen_mesh.write('R = ' + str(rho) + ';' + '\n')
+        gen_mesh.write('S = ' + str(ray_fix) + ';' + '\n')
+    if config == 'cyl_sph' and geo_p == 'ray_cyl':
+        gen_mesh.write('R = ' + str(ray_fix) + ';' + '\n')
+        gen_mesh.write('S = ' + str(rho) + ';' + '\n')
+
+    # bornes du domaine
+
+    gen_mesh.write('xmin = ' + str(xinf) + ';' + '\n')
+    gen_mesh.write('ymin = ' + str(yinf) + ';' + '\n')
+    gen_mesh.write('zmin = ' + str(zinf) + ';' + '\n')
+    gen_mesh.write('xmax = ' + str(xsup) + ';' + '\n')
+    gen_mesh.write('ymax = ' + str(ysup) + ';' + '\n')
+    gen_mesh.write('zmax = ' + str(zsup) + ';' + '\n')
+
+    # resolution
+
+    gen_mesh.write('step = ' + str(round(1./res, 2)))
+
+    # utilisation du canevas
+
+    for line in fichier_sansentete :
+        gen_mesh.write(line)
+
+    gen_mesh.close()
+    fichier_sansentete.close()
+
+    ### Conversion du fichier texte obtenu et stockage du maillage en fichiers .xml
+    os.rename(mesh_repository + nom_fichier_avecgpar + '.txt', mesh_repository + nom_fichier_avecgpar + '.geo')
+
+    ### on genere le maillage avec gmsh
+    os.system('gmsh -' + str(dimension) + ' ' + mesh_repository + nom_fichier_avecgpar + '.geo')
+
+    if fig_todo == 'aff':
+        ## affichage du maillage genere selon les parametres d'entree
+        os.system('gmsh ' + mesh_repository + nom_fichier_avecgpar + '.msh')
+
+    ### on convertit le maillage avec dolfin
+    os.system('dolfin-convert ' + mesh_repository + nom_fichier_avecgpar + '.msh' + ' ' + mesh_repository + nom_fichier_avecgpar + '.xml')
+
+    ### pas de sortie pour la procedure
+    return()
+
 ############################# Pour creer des snapshots, inclusion circulaire periodique unique #############################
 
 def snapshot_sph_per(cen,r,res,typ_sol):
-    c_x,c_y,c_z=cen[0],cen[1],cen[2]
-    if typ_msh=='gms':
-        #print("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml")
-        mesh_s_r=Mesh("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml")
-    else:
-        print('pfrrh')
-    mesh_s_r=creer_maill_sph([c_x,c_y,c_z],r,res)
+
+    # mesh_prefix = 'cubesphere_periodique_triangle_'
+    nom_fichier_avecgpar = mesh_prefix + '_rayc' + str(int(round(100*r,2))) + '_sur' + str(res)
+    creer_maill_per_gpar(config, geo_p, xyzinfsup, r, 0., res)
+    mesh = Mesh(mesh_repository + nom_fichier_avecgpar + '.xml')
+
+    # c_x,c_y,c_z=cen[0],cen[1],cen[2]
+    # if typ_msh=='gms':
+    #     #print("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml")
+    #     mesh_s_r=Mesh("maillages_per/3D/cubesphere_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml")
+    # else:
+    #     print('pfrrh')
+    # mesh_s_r=creer_maill_sph([c_x,c_y,c_z],r,res)
+
     # On pose et on resoud le probleme aux elements finis
-    V=VectorFunctionSpace(mesh_s_r, 'P', 2, constrained_domain=PeriodicBoundary())
+    V = VectorFunctionSpace(mesh_s_r, 'P', 2, constrained_domain = PeriodicBoundary())
+
     ## On definit l'interface fluide-solide, periodique a geometrie spherique
     l_cen=[]
     for i in range(-1,2):
@@ -140,6 +232,7 @@ def snapshot_sph_per(cen,r,res,typ_sol):
     class inclusion_periodique(SubDomain):
         def inside(self,x,on_boundary):
             return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[2]-c[2]), (-r-tol, r+tol)) for c in l_cen]))#points de la frontiere du systeme compris dans la boule de centre et rayons cen et r, pour la norme infinie
+
     ## Utilisation des classes definies precedemment : mesure de la limite du domaine fluide
     Gamma_sf = inclusion_periodique()
     boundaries = MeshFunction("size_t", mesh_s_r, mesh_s_r.topology().dim()-1)
@@ -148,8 +241,9 @@ def snapshot_sph_per(cen,r,res,typ_sol):
     boundaries.set_all(1)
     Gamma_sf.mark(boundaries, 7)
     ds = Measure("ds")(subdomain_data=boundaries)
-    num_ff=1
-    num_sphere=7
+    num_ff = 1
+    num_sphere = 7
+
     ## On resoud le probleme faible, avec une condition de type Neumann au bord de l'obstacle
     normale = FacetNormal(mesh_s_r)
     nb_noeuds=V.dim()
@@ -254,25 +348,35 @@ def snapshot_cyl_per(top,r,res,typ_sol):### ------------------> resolution : ave
     # Resultat : snapshot
     return(chi)
 
-def snapshot_compl_per(r_cen,r_per,config,res,typ_sol):### ------------------> resolution : avec gmsh
-    ##
-    mesh_prefix="maillages_per/3D/"
-    if config=='2sph':
-        mesh_name="cube"+config+"_periodique_triangle_"+str(int(round(100*r_cen,2)))+str(int(round(100*r_per,2)))+"sur"+str(res)
-    elif config=='cylsph':
-        mesh_name="cube"+config+"_periodique_triangle_"+str(int(round(100*r_per,2)))+str(int(round(100*r_cen,2)))+"sur"+str(res)
-    print('Maillage pour solution EF : ',mesh_name)
-    ## Maillage : condition de resolution et de configuration
-    mesh=Mesh(mesh_prefix+mesh_name+".xml")
-    V=VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
+def snapshot_compl_per(rho, ray_fix, config, res, typ_sol):### ------------------> resolution : avec gmsh
+
+    ## convention : nommage du fichier .xml de maillage
+    # mesh_prefix = 'cube2sph_periodique_triangle_'
+    # mesh_prefix = 'cubecylsph_periodique_triangle_'
+    if config == '2sph':
+        nom_fichier_avecgpar = mesh_prefix + '_rayc' + str(int(round(100*rho,2))) + '_rayp' + str(int(round(100*ray_fix,2))) + '_sur' + str(res)
+    elif config == 'cylsph' and geo_p == 'ray_sph':
+        nom_fichier_avecgpar = mesh_prefix + '_rayc' + str(int(round(100*rho,2))) + '_rayp' + str(int(round(100*ray_fix,2))) + '_sur' + str(res)
+    elif config == 'cylsph' and geo_p == 'ray_cyl':
+        nom_fichier_avecgpar = mesh_prefix + '_rayc' + str(int(round(100*ray_fix,2))) + '_rayp' + str(int(round(100*rho,2))) + '_sur' + str(res)
+
+    ## creation du maillage
+    creer_maill_per_gpar(config, geo_p, xyzinfsup, rho, ray_fix, res)
+    mesh = Mesh(mesh_repository + nom_fichier_avecgpar + '.xml')
+
+    ## VFS pour le probleme variationnel
+    V = VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
     print('Noeuds : ',V.dim())
+
     ## On definit la bordure du domaine, sur laquelle integrer le second membre "L" de l'equation en dimension finie
-    boundaries = MeshFunction('size_t', mesh, mesh_prefix+mesh_name+"_facet_region"+".xml")
+    boundaries = MeshFunction('size_t', mesh, mesh_repository + nom_fichier_avecgpar + "_facet_region" + ".xml")
     print('Facettes : ',mesh.num_edges())
     ds = Measure("ds")(subdomain_data=boundaries)
+
     ## Marquage des bordures pour la condition de Neumann
     num_solid_boundary=1700
     print("Numero de la frontiere physique sf :",num_solid_boundary)
+
     ## On resoud le probleme faible, avec une condition de type Neumann au bord de l'obstacle
     normale = FacetNormal(mesh)
     nb_noeuds=V.dim()
@@ -280,6 +384,7 @@ def snapshot_compl_per(r_cen,r_per,config,res,typ_sol):### ------------------> r
     v = TestFunction(V)
     a=tr(dot((grad(u)).T, grad(v)))*dx
     L=-dot(normale,v)*ds(num_solid_boundary)
+
     ### Resolution
     if typ_sol=='default':
         solve(a==L,u)

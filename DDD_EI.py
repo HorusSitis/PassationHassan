@@ -20,15 +20,7 @@ def snap_sph_ray(N_par):
 
     return([N_par,chi_r_v])
 
-# #if geo_p=='cen':
-# #ray_snap_cen=0.25
-# #csr_list=[[0.5,0.5,0.05*k] for k in range(1,1+N_snap)]
-# #c_par : parametre scalaire pour la position du centre
-# def snap_sph_cen(c_par):
-#     cen_snap_ray=csr_list[c_par-1]
-#     chi_c=snapshot_sph_per(cen_snap_ray,ray_snap_cen,res_gmsh)
-#     chi_c_v=chi_c.vector().get_local()
-#     return([c_par,chi_c_v])
+
 
 ## Cylindre unique
 
@@ -42,15 +34,7 @@ def snap_cyl_ray(N_par):
     chi_r_v=chi_r.vector().get_local()
     return([r_par,chi_r_v])
 
-# #if geo_p=='axe':
-# #ray_snap_axe=0.25
-# asr_list=[[0.5,0.3+0.05*k] for k in range(1,1+N_snap)]
-# #c_par : parametre scalaire pour la position du centre
-# def snap_cyl_axe(c_par):
-#     cen_snap_ray=csr_list[c_par-1]
-#     chi_c=snapshot_sph_per(axe_snap_ray,ray_snap_axe,res)
-#     chi_c_v=chi_c.vector().get_local()
-#     return([c_par,chi_c_v])
+
 
 
 
@@ -58,13 +42,15 @@ r_s_0=0
 r_c_0=0
 r_v_0=0
 
-if config=='2sph':
-    r_v_0=0.15
-elif config=='cylsph':
-    if geo_p=='ray_cyl':
-        r_s_0=0.15
-    elif geo_p=='ray_sph':
-        r_c_0=0.15
+### ray_fix et son usage sont fixes dans DDD_geoset ###
+
+# if config=='2sph':
+#     r_v_0=0.15
+# elif config=='cylsph':
+#     if geo_p=='ray_cyl':
+#         ray_fix=0.3
+#     elif geo_p=='ray_sph':
+#         ray_fix=0.3
 
 
 def snap_compl_ray(N_par):
@@ -85,6 +71,15 @@ def snap_compl_ray(N_par):
 
 
 
+# ------------------------- Generation sequentielle des maillages, conditionnellement ------------------------- #
+
+if not mesh_appr_done:
+
+    for n in range(0,N_snap):
+        rho = list_rho_appr[n]
+
+        # xyzinfsup est importe depuis DDD_geoset
+        creer_maill_per_gpar(config, geo_p, xyzinfsup, rho, ray_fix)
 
 
 

@@ -20,7 +20,7 @@ import numpy as np
 
 # Choix de la resolution du maillage : nombre de noeuds par cote du cube
 
-res_gmsh=10
+res_gmsh=20
 
 typ_msh='gms'
 # typ_msh=''
@@ -39,7 +39,12 @@ xsup=1.0
 ysup=1.0
 zsup=1.0
 
+xyinfsup = [[xinf, yinf, zinf], [xsup, ysup, zsup]]
+
 dimension=3
+
+# mesh_repository = 'maillages_per/2D/'
+mesh_repository = 'maillages_per/' + str(dimension) + 'D/'
 
 if res_gmsh==10:
     lw=0.27
@@ -113,6 +118,8 @@ config='sph_un'
 # config='cylsph'
 # config='2sph'
 
+ray_fix = 0.3
+
 ### inclusions simples
 if config=='sph_un':
 
@@ -166,6 +173,17 @@ elif config=='cylsph':
         geo_mess='rayon de la sphere variable'
     elif geo_p=='ray_linked':
         geo_mess='rayons lies'
+
+
+## ------------ Pour les noms de fichiers de maillages ------------ ##
+
+
+if config == 'sph_un':
+    mesh_prefix = 'cubesphre_periodique_triangle_'
+elif config == '2sph':
+    mesh_prefix = 'cube2sph_periodique_triangle_'
+elif config == 'cylsph':
+    mesh_prefix = 'cubecylsph_periodique_triangle_'
 
 ## ------------ Etape lL 1demi : Affichage de microstructures periodiques ------------ ##
 
