@@ -5,7 +5,7 @@
 
 ## Boucle pour la creation des snapshots, avec un parametre pouvant etre le rayon d'une inclusion circulaire, ou l'emplacement de son centre
 
-# Pour avoir des fonctions "top-level" a paralleliser
+# Pour avoir des fonctions 'top-level' a paralleliser
 
 ## Sphere unique
 
@@ -152,17 +152,17 @@ if not snap_done:
             list_chi_v.append(chi_n_v)
 
     # Liste des snapshots : sauvegarde, on precise l'identite de la machine qui a effectue le calcul
-    l_name='Lchi_'+str(N_snap)+'_'+config+'_'+geo_p+'_'+"sur"+str(res)+'_'+ordo+'_'+computer
+    l_name='Lchi_'+str(N_snap)+'_'+config+'_'+geo_p+'_'+'sur'+str(res)+'_'+ordo+'_'+computer
     # sauvegarde de la liste des solutions indexees calculees avec la methode des elements finis
     with sh.open(repertoire_parent+l_name) as l_sto:
-        l_sto["maliste"] = list_chi_v
+        l_sto['maliste'] = list_chi_v
 
 # Matrice des snapshots : plus tard, voir l'etape II
 
 else :
-    l_name='Lchi_'+str(N_snap)+'_'+config+'_'+geo_p+'_'+"sur"+str(res)+'_'+ordo+'_'+computer
+    l_name='Lchi_'+str(N_snap)+'_'+config+'_'+geo_p+'_'+'sur'+str(res)+'_'+ordo+'_'+computer
     with sh.open(repertoire_parent+l_name) as l_loa:
-        list_chi_v = l_loa["maliste"]
+        list_chi_v = l_loa['maliste']
 
 # --------------------------------------------------------------------------------- #
 
@@ -207,13 +207,13 @@ for n in range(0,N_snap):
     plt.tight_layout(pad=0)
 
     if r < 0.1:
-        plt.title("Rho = 0,0" + str(int(round(100*r, 2))), fontsize=40)
+        plt.title('Rho = 0,0' + str(int(round(100*r, 2))), fontsize=40)
     else:
-        plt.title("Rho = 0," + str(int(round(100*r, 2))), fontsize=40)
+        plt.title('Rho = 0,' + str(int(round(100*r, 2))), fontsize=40)
     if fig_todo=='aff':
         plt.show()
     else:
-        plt.savefig("Figures3D/sol_" + str(n) + "_sur" + str(N_snap) + config + '_' + geo_p + "res" + str(res) + ".png")
+        plt.savefig('Figures3D/sol_' + str(n) + '_sur' + str(N_snap) + config + '_' + geo_p + 'res' + str(res) + '.png')
 
     plt.close()
 
@@ -236,30 +236,27 @@ for n in range(0,N_snap):
     for k in range(0,3):
         for l in range(0,3):
             T_chi[k,l]=assemble(grad(chi_n)[k,l]*dx)
-    #print(T_chi)
+    T_chi_omega = T_chi/cell_vol
 
     ## Integrale de l'identite sur le domaine fluide
-    # if config == 'sph_un':
-    #     por=1-4/3*pi*r**3
-    # elif config=='cyl_un':
-    #     por=1-pi*r**2
-    # elif config=='2sph':
-    #     por=1-4/3*pi*(r_s**3+r_v**3)
-    # elif config=='cylsph' :
-    #     por=1-4/3*pi*r_s**3-pi*r_c**2
 
-    # D=por*np.eye(3)
     porosity = epsilon_p(r, config, geo_p, ray_fix)
 
     D = porosity*np.eye(3)
     ## Calcul et affichage du tenseur Dhom
-    Dhom_k = D_k*(D+T_chi.T)
-    #print(('Tenseur Dhom_k',Dhom_k))
-    print("Noeuds",V_n.dim())
-    print("Porosite :", porosity)
-    print('Coefficient Dhom_k11EF, snapshot '+str(n)+", "+conf_mess+', '+geo_mess+" :",Dhom_k[0,0])
-    integ=assemble(chi_n[1]*dx)
-    print('Valeur moyenne : ',integ)
+    Dhom_k = D_k*(D + T_chi_omega.T)
+    print('#'*78)
+    print('Noeuds', V_n.dim())
+    print('Porosite :', porosity)
+    print('-'*78)
+    print('Tenseur IG ', T_chi_omega)
+    print('-'*78)
+    print('Tenseur Dhom_k ', Dhom_k)
+    print('Coefficient Dhom_k 11 ', Dhom_k[0,0])
+    print('%'*78)
+    integ = assemble(chi_n[1]*dx)/(cell_vol*porosity)
+    print('Valeur moyenne : ', integ)
+    print('#'*78)
 
     ## Anisotropie
     mod_diag=max(abs(Dhom_k[0,0]),abs(Dhom_k[1,1]),abs(Dhom_k[2,2]))
@@ -271,4 +268,6 @@ for n in range(0,N_snap):
         for j in range(i+1,3):
             if abs(Dhom_k[i,j])>mod_ndiag:
                 mod_ndiag=abs(Dhom_k[i,j])
-    #print("Anisotropie : ",mod_ndiag/mod_diag)
+    print('Anisotropie : ',mod_ndiag/mod_diag)
+    print('#'*78)
+    print('#'*78)
