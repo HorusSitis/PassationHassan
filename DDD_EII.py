@@ -281,6 +281,7 @@ for n in range(0, N_snap):
         for k in range(0,3):
             for l in range(0,3):
                 T_chi[k,l]=assemble(grad(chi_n)[k,l]*dx)
+        T_chi_omega = T_chi/cell_vol
         ##
         if geo_p=='ray':
             class DomPhysFluide(SubDomain):
@@ -303,24 +304,26 @@ for n in range(0, N_snap):
         for k in range(0,3):
             for l in range(0,3):
                 T_chi_restr_prime[k,l]=assemble(grad(chi_prime_n)[k,l]*dxf(12829))
+        T_chi_restr_prime_omega=T_chi_restr_prime/cell_vol
         ##
         T_chi_prime=np.zeros((3,3))
         for k in range(0,3):
             for l in range(0,3):
                 T_chi_prime[k,l]=assemble(grad(chi_prime_n)[k,l]*dxf)
+        T_chi_prime_omega=T_chi_prime/cell_vol
         ## les trois coefficients a comparer
         ###
-        D=porosity*np.eye(3)
-        integr_k_postprime=D_k*(D+T_chi.T)
-        Dhom_k_postprime=integr_k_postprime*(1/por_fix)#por en dimensionnel
+        D = porosity*np.eye(3)
+        integr_k_postprime = D_k*(D+T_chi_omega.T)
+        Dhom_k_postprime = integr_k_postprime#*(1/por_fix)
         ###
-        D=porosity*np.eye(3)
-        integr_k_restr_prime=D_k*(D+T_chi_restr_prime.T)
-        Dhom_k_restr_prime=integr_k_restr_prime*(1/por_fix)
+        D = porosity*np.eye(3)
+        integr_k_restr_prime = D_k*(D+T_chi_restr_prime_omega.T)
+        Dhom_k_restr_prime = integr_k_restr_prime#*(1/por_fix)
         ###
-        D_prime=por_fix*np.eye(3)
-        integr_k_prime=D_k*(D_prime+T_chi_prime.T)
-        Dhom_k_prime=integr_k_prime*(1/por_fix)
+        D_prime = por_fix*np.eye(3)
+        integr_k_prime = D_k*(D_prime+T_chi_prime_omega.T)
+        Dhom_k_prime = integr_k_prime#*(1/por_fix)
         ##
     elif test_Dhom and config == 'cyl_un':
         mesh_name = 'cubecylindre_periodique_triangle_'+str(int(round(100*r,2)))+'sur'+str(res)
@@ -335,11 +338,12 @@ for n in range(0, N_snap):
         for k in range(0,3):
             for l in range(0,3):
                 T_chi[k,l]=assemble(grad(chi_n)[k,l]*dx)
+        T_chi_omega = T_chi/cell_vol
         ## a remplacer ##
         porosity = epsilon_p(r, config, geo_p, r_f)
         D=porosity*np.eye(3)
-        integr_k_postprime=D_k*(D+T_chi.T)
-        Dhom_k_postprime=integr_k_postprime*(1/por_fix)#por en dimensionnel
+        integr_k_postprime=D_k*(D+T_chi_omega.T)
+        Dhom_k_postprime=integr_k_postprime#*(1/por_fix)#por en dimensionnel
 
     ## ------------------------ Sphere unique, test ------------------------ ##
     elif test_Dhom and config == 'sph_un':
@@ -357,6 +361,7 @@ for n in range(0, N_snap):
         for k in range(0,3):
             for l in range(0,3):
                 T_chi[k,l]=assemble(grad(chi_n)[k,l]*dx)
+        T_chi_omega=T_chi/cell_vol
         ##
         class DomPhysFluide(SubDomain):
             def inside(self, x, on_boundary):
@@ -365,36 +370,45 @@ for n in range(0, N_snap):
         subdomains = MeshFunction('size_t',mesh_fixe,mesh_fixe.topology().dim())
         subdomains.set_all(1)
         dom_courant.mark(subdomains,12829)
+        ##
         dxf = Measure('dx', domain = mesh_fixe, subdomain_data=subdomains)
         T_chi_restr_prime=np.zeros((3,3))
         for k in range(0,3):
             for l in range(0,3):
                 T_chi_restr_prime[k,l]=assemble(grad(chi_prime_n)[k,l]*dxf(12829))
+        T_chi_restr_prime_omega=T_chi_restr_prime/cell_vol
         ##
         T_chi_prime=np.zeros((3,3))
         for k in range(0,3):
             for l in range(0,3):
                 T_chi_prime[k,l]=assemble(grad(chi_prime_n)[k,l]*dxf)
+        T_chi_prime_omega=T_chi_prime/cell_vol
         ## les trois coefficients a comparer
         ###
         D = porosity*np.eye(3)
-        integr_k_postprime = D_k*(D+T_chi.T)
-        Dhom_k_postprime = integr_k_postprime*(1/por_fix)#por en dimensionnel
+        integr_k_postprime = D_k*(D+T_chi_omega.T)
+        Dhom_k_postprime = integr_k_postprime#*(1/por_fix)
         ###
         D = porosity*np.eye(3)
-        integr_k_restr_prime = D_k*(D+T_chi_restr_prime.T)
-        Dhom_k_restr_prime = integr_k_restr_prime*(1/por_fix)
+        integr_k_restr_prime = D_k*(D+T_chi_restr_prime_omega.T)
+        Dhom_k_restr_prime = integr_k_restr_prime#*(1/por_fix)
         ###
         D_prime = por_fix*np.eye(3)
-        integr_k_prime = D_k*(D_prime+T_chi_prime.T)
-        Dhom_k_prime = integr_k_prime*(1/por_fix)
+        integr_k_prime = D_k*(D_prime+T_chi_prime_omega.T)
+        Dhom_k_prime = integr_k_prime#*(1/por_fix)
         ##
     if test_Dhom:
+        print('#'*78)
         print('Geometrie : ' + conf_mess + ', ' + geo_mess + ', ' + str(int(round(100*r, 2))))
-        print('DUsnap fixe :', Dhom_k_prime[0,0], 'porosite fixe',por_fix)
-        print('DUsnap fixe restreint au domaine courant :', Dhom_k_restr_prime[0,0], 'porosite', porosity)
-        print('DUsnap physique :', Dhom_k_postprime[0,0], 'porosite', porosity)
-        print()
+        print('%'*78)
+        print('Porosite fixe', por_fix)
+        print('DUsnap fixe :', Dhom_k_prime[0,0])
+        print('-'*78)
+        print('DUsnap fixe restreint au domaine courant :', Dhom_k_restr_prime[0,0])
+        print('%'*78)
+        print('Porosite', porosity)
+        print('DUsnap physique :', Dhom_k_postprime[0,0])
+        print('%'*78)
     ###
     # Dans ce cas, les faces du cube sont entieres
     ##err_per_gr(cen,r,chi_prime_n,npas_err,fig_todo)
