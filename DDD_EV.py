@@ -26,6 +26,10 @@ nb_modes = N_mor
 arr_int_grad_fem = np.load(registre_perf_num['int_grad_fem'] + '.npy')
 arr_int_grad_rom = np.load(registre_perf_num['int_grad_rom'] + '.npy')
 
+if config == 'cylsph':
+    arr_int_grad_yy_fem = np.load(registre_perf_num['int_grad_yy_fem'] + '.npy')
+    arr_int_grad_yy_rom = np.load(registre_perf_num['int_grad_yy_rom'] + '.npy')
+
 arr_nodes = np.load(registre_perf_num['nodes'] + '.npy')
 
 arr_err_rel = np.load(registre_perf_num['err_rel'] + '.npy')
@@ -46,34 +50,59 @@ fig_1 = plt.figure()
 plt.plot(arr_rho, arr_int_grad_fem, 'b+', arr_rho, arr_int_grad_rom, 'rx', markeredgewidth = 5, markersize = 20)# 'k')
 
 pl.xlabel('rho', size = 26)
-pl.ylabel('IG(rho)_11')
+pl.ylabel('IG(rho)_11', size = 26)
 
 if fig_todo == 'aff':
     pl.title('Top left coefficient of int_grad, FEM versus ROM')
     pl.show()
 elif fig_todo == 'save':
-    pl.savefig('Figures3D/' + 'int_grad_FeRoM_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh) + '.png')
+    pl.savefig(figures_repository + 'int_grad_FeRoM_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh) + '.png')
 pl.close()
 
-fig_2 = plt.figure()
+if config == 'cylsph':
+    #
+    fig_1bis = plt.figure()
 
-pl.plot(arr_rho, arr_err_rel, linewidth = 2.2, color = 'green')
+    plt.plot(arr_rho, arr_int_grad_yy_fem, 'b+', arr_rho, arr_int_grad_yy_rom, 'rx', markeredgewidth = 5, markersize = 20)# 'k')
 
-pl.xlabel('rho', size = 26)
-pl.ylabel('Error(IG(rho)_11) (%)')
+    pl.xlabel('rho', size = 26)
+    pl.ylabel('IG(rho)_22', size = 26)
 
-if fig_todo == 'aff':
-    pl.show()
-elif fig_todo == 'save':
-    pl.savefig('Figures3D/' + 'err_rel_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh) + '.png')# + '_res' + str(pars['resolution']) + '_snap' + str(i+1) + '.png')
-pl.close()
+    if fig_todo == 'aff':
+        pl.title('Top left coefficient of int_grad_yy, FEM versus ROM')
+        pl.show()
+    elif fig_todo == 'save':
+        pl.savefig(figures_repository + 'int_grad_yy_FeRoM_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh) + '.png')
+    pl.close()
+
+# fig_2 = plt.figure()
+#
+# pl.plot(arr_rho, arr_err_rel, linewidth = 2.2, color = 'green')
+#
+# pl.xlabel('rho', size = 26)
+# pl.ylabel('Error(IG(rho)_11) (%)')
+#
+# if fig_todo == 'aff':
+#     pl.show()
+# elif fig_todo == 'save':
+#     pl.savefig(figures_repository + 'err_rel_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh) + '.png')# + '_res' + str(pars['resolution']) + '_snap' + str(i+1) + '.png')
+# pl.close()
 
 fig_2bis = plt.figure()
 
 pl.plot(arr_rho, arr_var_rel, linewidth = 2.2, color = 'green')
 
+#
+t_rel_var = 0.1*np.ones(N_snap)
+plt.plot(list_rho_appr, t_rel_var, 'k--', linewidth = 3)
+
+#
+t_rel_var = 0.1*np.ones(N_snap)
+plt.plot(list_rho_appr, t_rel_var, 'k--', linewidth = 3)
+
 pl.xlabel('rho', size = 26)
-pl.ylabel('RelV(IG(rho)_11) (%)', size = 26)
+# pl.ylabel('RelV(IG(rho)_11) (%)', size = 26)
+pl.ylabel('RelV(IG(rho)_11)', size = 26)
 
 plt.xlim(arr_rho[0] - 0.05, arr_rho[len(arr_rho) - 1] + 0.05)
 
@@ -83,8 +112,33 @@ pl.yscale('log')
 if fig_todo == 'aff':
     pl.show()
 elif fig_todo == 'save':
-    pl.savefig('Figures3D/' + 'var_rel_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh) + '.png')# + '_res' + str(pars['resolution']) + '_snap' + str(i+1) + '.png')
+    pl.savefig(figures_repository + 'var_rel_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh) + '.png')# + '_res' + str(pars['resolution']) + '_snap' + str(i+1) + '.png')
 pl.close()
+
+if config == 'cylsph':
+    ##
+    fig_2ter = plt.figure()
+
+    pl.plot(arr_rho, arr_var_rel_yy, linewidth = 2.2, color = 'green')
+
+    #
+    t_rel_var = 0.1*np.ones(N_snap)
+    plt.plot(list_rho_appr, t_rel_var, 'k--', linewidth = 3)
+
+    pl.xlabel('rho', size = 26)
+    # pl.ylabel('RelV(IG(rho)_11) (%)', size = 26)
+    pl.ylabel('RelV(IG(rho)_22)', size = 26)
+
+    plt.xlim(arr_rho[0] - 0.05, arr_rho[len(arr_rho) - 1] + 0.05)
+
+    plt.ylim(0.1*min(arr_var_rel_yy), 10*max(arr_var_rel_yy))
+    pl.yscale('log')
+
+    if fig_todo == 'aff':
+        pl.show()
+    elif fig_todo == 'save':
+        pl.savefig(figures_repository + 'var_rel_yy_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh) + '.png')# + '_res' + str(pars['resolution']) + '_snap' + str(i+1) + '.png')
+    pl.close()
 
 fig_3, ax_3 = plt.subplots()
 
@@ -122,7 +176,7 @@ if fig_todo == 'aff':
     plt.title('Time elapsed to compute Dhom : FEM vs ROM')
     plt.show()
 elif fig_todo == 'save':
-    plt.savefig('Figures3D/' + 'perf_temp_' + 'logscale_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh) + '.png')
+    plt.savefig(figures_repository + 'perf_temp_' + 'logscale_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh) + '.png')
 
 plt.close()
 
@@ -150,6 +204,6 @@ if fig_todo == 'aff':
     plt.title('Time elapsed to compute Dhom : FEM vs ROM')
     plt.show()
 elif fig_todo == 'save':
-    plt.savefig('Figures3D/' + 'perf_temp_' + 'linscale_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh) + '.png')
+    plt.savefig(figures_repository + 'perf_temp_' + 'linscale_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh) + '.png')
 
 plt.close()

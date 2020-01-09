@@ -202,11 +202,6 @@ elif config == 'cylsph':
         geo_mess='rayons lies'
 
 
-
-
-
-
-
 ## ------------ Porosite ------------ ##
 
 size = (xsup - xinf)
@@ -277,12 +272,6 @@ ind_res=True#False###----------> on precise la resolution du maillage, qui appar
 
 
 
-
-
-
-
-
-
 ## ------------ Registre pour les performances des tests ------------ ##
 
 # if config == 'sph_un' or config == 'cyl_un':
@@ -294,6 +283,12 @@ registre_perf_num = dict()
 
 registre_perf_num['int_grad_fem'] = 'Perf3D/' + 'IG_fem_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
 registre_perf_num['int_grad_rom'] = 'Perf3D/' + 'IG_rom_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+
+if config == 'cylsph':
+    registre_perf_num['int_grad_yy_fem'] = 'Perf3D/' + 'IG_yy_fem_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+    registre_perf_num['int_grad_yy_rom'] = 'Perf3D/' + 'IG_yy_rom_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+
+
 registre_perf_num['nodes'] = 'Perf3D/' + 'nodes_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
 registre_perf_num['err_rel'] = 'Perf3D/' + 'err_rel_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
 registre_perf_num['var_rel'] = 'Perf3D/' + 'var_rel_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)

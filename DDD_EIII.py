@@ -36,26 +36,16 @@ V_fixe = VectorFunctionSpace(mesh_fixe, 'P', 2, constrained_domain=PeriodicBound
 
 ### ------------ Etapes reproduites : dependances directes de Main3D ------------ ###
 
-
-
-##
-from PO23D import *
-##
-
 # Chargement de la matrice des snapshots
 
-# u_name = 'Usnap_' + dom_fixe + '_' + str(N_snap) + '_' + config + '_' + geo_p + '_' + 'res' + str(res) + '_' + ordo + '_' + computer
 print(u_name)
 with sh.open(repertoire_parent+u_name) as u_loa:
     Usnap = u_loa['maliste']
 
 #
 ## matrice de correlation
-#print(Usnap[0:5,0:5])
 C = mat_corr_temp(V_fixe, N_snap, Usnap)
 B = C-C.T
-#print(B[0:10,0:10])
-#print(C[0:5,0:5])
 #
 ## Calcul des coefficients aleatoires et la base POD
 vp_A_phi = mat_a_mat_phi(N_snap, Usnap, C, V_fixe, 'L2')
@@ -68,24 +58,13 @@ Phi_prime_v = vp_A_phi[2]
 ## Sortie du spectre de la matrice des snapshots, qui doit servir a choisir la taille du modele reduit
 #
 print('Valeurs propres POD :', val_propres)
-#res, res_fixe=20 : energie [71%, 24%, 5%, 0.37%, 0.058%, 0%, 0%, 0%]
-
-#plot()
-#plt.show()
-#plt.savefig()
-#plt.close()
 
 ## Enregistrement de la matrice de la base POD, sous la forme vectorielle
-
-# phi_name='Phi'+dom_fixe+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_'+'res'+str(res)+'_'+ordo+'_'+computer
 
 with sh.open(repertoire_parent+phi_name) as p_sto:
     p_sto['maliste'] = Phi_prime_v
 
 ## Pour reintroduire la base de POD dans l'espace des fonctions definies dans le domaine fixe
-
-#mesh_fixe=Mesh('maillages_per/3D/cubesphere_periodique_triangle_0001fixe.xml')
-#V_fixe=V=VectorFunctionSpace(mesh_fixe, 'P', 3, constrained_domain=PeriodicBoundary())
 
 ## Tests : orthogonalite ou orthonrmalite de Phi_prime
 ui=Function(V_fixe)

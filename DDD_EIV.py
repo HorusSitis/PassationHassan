@@ -91,16 +91,6 @@ start=time.time()
 
 nb_noeuds_fixe = V_fixe.dim()
 
-# ## Chargement de la base POD complete
-#
-# if ind_res:
-#     phi_name='Phi'+dom_fixe+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_'+'res'+str(res)+'_'+ordo+'_'+computer
-# elif ind_fixe:
-#     phi_name='Phi'+dom_fixe+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
-# else:
-#     phi_name='Phi'+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
-
-
 with sh.open(repertoire_parent+phi_name) as phi_loa:
     Phi_prime_v = phi_loa['maliste']
 
@@ -195,17 +185,17 @@ r=r_nouv
 rho=r_nouv
 
 ## a faire avec une instruction conditionnelle
-# # Affichage des valeurs et erreurs de la solution periodique, quelle que soit la configuration
-#
-# if config=='sph_un' or config=='cyl_un':
-#     err_per_gr(cen_snap_ray,r_nouv,chi_nouv,npas_err,fig_todo)
-# elif config=='2sph':
-#     err_per_gr_compl(config,r_v_0,chi_nouv,npas_err,fig_todo)
-# elif config=='cylsph':
-#     if geo_p=='ray_sph':
-#         err_per_gr_compl(config,r_c_0,chi_nouv,npas_err,fig_todo)
-#     elif geo_p=='ray_cyl':
-#         err_per_gr_compl(config,r_nouv,chi_nouv,npas_err,fig_todo)
+if err_per_calc:
+    # Affichage des valeurs et erreurs de la solution periodique, quelle que soit la configuration
+    if config=='sph_un' or config=='cyl_un':
+        err_per_gr(cen_snap_ray,r_nouv,chi_nouv,npas_err,fig_todo)
+    elif config=='2sph':
+        err_per_gr_compl(config,r_v_0,chi_nouv,npas_err,fig_todo)
+    elif config=='cylsph':
+        if geo_p=='ray_sph':
+            err_per_gr_compl(config,r_c_0,chi_nouv,npas_err,fig_todo)
+        elif geo_p=='ray_cyl':
+            err_per_gr_compl(config,r_nouv,chi_nouv,npas_err,fig_todo)
 
 
 # Tenseur de diffusion homogeneise
@@ -271,26 +261,28 @@ elif fig_todo=='save':
 plt.close()
 
 ## a faire avec une instruction conditionnelle
-# # Affichage des valeurs et erreurs de la solution periodique, quelle que soit la configuration
-# if config=='sph_un' or config=='cyl_un':
-#     #err_per_ind_01(chi_n,cen,r,npas_err)
-#     err_per_gr(cen_snap_ray,r_nouv,chi_nouv,npas_err,fig_todo)
-# elif config=='2sph':
-#     err_per_gr_compl(config,r_v_0,chi_nouv,npas_err,fig_todo)
-# elif config=='cylsph':
-#     if geo_p=='ray_sph':
-#         err_per_gr_compl(config,r_c_0,chi_nouv,npas_err,fig_todo)
-#     elif geo_p=='ray_cyl':
-#         err_per_gr_compl(config,r_nouv,chi_nouv,npas_err,fig_todo)
-
+if err_per_calc:
+    # Affichage des valeurs et erreurs de la solution periodique, quelle que soit la configuration
+    if config=='sph_un' or config=='cyl_un':
+        #err_per_ind_01(chi_n,cen,r,npas_err)
+        err_per_gr(cen_snap_ray,r_nouv,chi_nouv,npas_err,fig_todo)
+    elif config=='2sph':
+        err_per_gr_compl(config,r_v_0,chi_nouv,npas_err,fig_todo)
+    elif config=='cylsph':
+        if geo_p=='ray_sph':
+            err_per_gr_compl(config,r_c_0,chi_nouv,npas_err,fig_todo)
+        elif geo_p=='ray_cyl':
+            err_per_gr_compl(config,r_nouv,chi_nouv,npas_err,fig_todo)
 
 # Tenseur de diffusion homogeneise
+
 ## Integrale de chi sur le domaine fluide
-T_chi_fom=np.zeros((3,3))
-for k in range(0,3):
-    for l in range(0,3):
-        T_chi_fom[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
+T_chi_fom = np.zeros((3, 3))
+for k in range(0, 3):
+    for l in range(0, 3):
+        T_chi_fom[k,l] = assemble(grad(chi_nouv)[k, l]*dx)
 T_chi_fom_omega = T_chi_fom/cell_vol
+
 ## Integrale de l'identite sur le domaine fluide : voir ce qui precede avec la porosite
 print('Noeuds :',V_nouv.dim())
 print('Porosite :',porosity)
@@ -300,23 +292,25 @@ Dhom_kMEF=D_k*(D+T_chi_fom_omega.T)
 print('Coefficient Dhom_k11 '+conf_mess+', '+geo_mess+' valeur '+str(rho)+ ' MEF :',Dhom_kMEF[0,0])
 
 ## Comparaison
-
-err_rel_dhom=100*(Dhom_kMOR[0,0]-Dhom_kMEF[0,0])/Dhom_kMEF[0,0]
+err_rel_dhom = 100*(Dhom_kMOR[0,0] - Dhom_kMEF[0,0])/Dhom_kMEF[0,0]
 print('Erreur relative Dhom MEF-MOR :', err_rel_dhom , ' pourcent')
 
-err_rel_ig=100*(T_chi_rom_omega[0,0]-T_chi_fom_omega[0,0])/T_chi_fom_omega[0,0]
+err_rel_ig = 100*(T_chi_rom_omega[0,0] - T_chi_fom_omega[0,0])/T_chi_fom_omega[0,0]
 print('Erreur relative int_grad MEF-MOR :', err_rel_ig , ' pourcent')
 
-var_rel_ig = 100*(np.sqrt(2*(T_chi_rom_omega[0,0]**2 + T_chi_fom_omega[0,0]**2)/((T_chi_rom_omega[0,0] + T_chi_fom_omega[0,0])**2) - 1))
-var_rel_ig_yy = 100*(np.sqrt(2*(T_chi_rom_omega[1,1]**2 + T_chi_fom_omega[1,1]**2)/((T_chi_rom_omega[1,1] + T_chi_fom_omega[1,1])**2) - 1))
+# var_rel_ig = 100*(np.sqrt(2*(T_chi_rom_omega[0,0]**2 + T_chi_fom_omega[0,0]**2)/((T_chi_rom_omega[0,0] + T_chi_fom_omega[0,0])**2) - 1))
+# var_rel_ig_yy = 100*(np.sqrt(2*(T_chi_rom_omega[1,1]**2 + T_chi_fom_omega[1,1]**2)/((T_chi_rom_omega[1,1] + T_chi_fom_omega[1,1])**2) - 1))
+
+var_rel_ig = (np.sqrt(2*(T_chi_rom_omega[0,0]**2 + T_chi_fom_omega[0,0]**2)/((T_chi_rom_omega[0,0] + T_chi_fom_omega[0,0])**2) - 1))
+var_rel_ig_yy = (np.sqrt(2*(T_chi_rom_omega[1,1]**2 + T_chi_fom_omega[1,1]**2)/((T_chi_rom_omega[1,1] + T_chi_fom_omega[1,1])**2) - 1))
 
 ## On enregistre et imprime le temps d'execution de SE4
 
 end=time.time()
 
-t_fem=end-start
+t_fem=end - start
 
-print('se4 faite ',t_fem,' secondes')
+print('se4 faite ', t_fem, ' secondes')
 
 ##############################################################################
 ########################## Evaluation de la methode ##########################
@@ -422,17 +416,16 @@ registre_gr.write('\\'+'hline'+'\n')
 arr_int_grad_fem[i] = T_chi_fom_omega[0,0]
 arr_int_grad_rom[i] = T_chi_rom_omega[0,0]
 
+if config == 'cylsph':
+    arr_int_grad_yy_fem[i] = T_chi_fom_omega[0,0]
+    arr_int_grad_yy_rom[i] = T_chi_rom_omega[0,0]
+
 arr_nodes[i] = V_nouv.dim()
 
 arr_err_rel[i] = err_rel_ig
 arr_var_rel[i] = var_rel_ig
 arr_var_rel_yy[i] = var_rel_ig_yy
 
-# arr_t_fem[i] = t_fem
-# arr_t_phi_n[i] = t_phi_nouv
-# arr_t_Ab[i] = t_int_Ab
-# arr_t_solve[i] = t_rom_linear
-# arr_t_dhom[i] = t_rom_Dhom
 
 arr_t[i, 0] = t_fem
 
