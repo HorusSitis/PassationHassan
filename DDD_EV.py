@@ -75,6 +75,11 @@ if config == 'cylsph':
         pl.savefig(figures_repository + 'int_grad_yy_FeRoM_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh) + '.png')
     pl.close()
 
+
+
+#
+t_rel_var = 0.1*np.ones(N_snap)
+
 # fig_2 = plt.figure()
 #
 # pl.plot(arr_rho, arr_err_rel, linewidth = 2.2, color = 'green')
@@ -85,19 +90,13 @@ if config == 'cylsph':
 # if fig_todo == 'aff':
 #     pl.show()
 # elif fig_todo == 'save':
-#     pl.savefig(figures_repository + 'err_rel_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh) + '.png')# + '_res' + str(pars['resolution']) + '_snap' + str(i+1) + '.png')
+#     pl.savefig(figures_repository + 'err_rel_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh) + '.png')
 # pl.close()
 
 fig_2bis = plt.figure()
 
 pl.plot(arr_rho, arr_var_rel, linewidth = 2.2, color = 'green')
 
-#
-t_rel_var = 0.1*np.ones(N_snap)
-plt.plot(list_rho_appr, t_rel_var, 'k--', linewidth = 3)
-
-#
-t_rel_var = 0.1*np.ones(N_snap)
 plt.plot(list_rho_appr, t_rel_var, 'k--', linewidth = 3)
 
 pl.xlabel('rho', size = 26)
@@ -106,13 +105,13 @@ pl.ylabel('RelV(IG(rho)_11)', size = 26)
 
 plt.xlim(arr_rho[0] - 0.05, arr_rho[len(arr_rho) - 1] + 0.05)
 
-plt.ylim(0.1*min(arr_var_rel), 10*max(arr_var_rel))
+plt.ylim(0.1*min(arr_var_rel), 0.5)# 10*max(arr_var_rel))
 pl.yscale('log')
 
 if fig_todo == 'aff':
     pl.show()
 elif fig_todo == 'save':
-    pl.savefig(figures_repository + 'var_rel_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh) + '.png')# + '_res' + str(pars['resolution']) + '_snap' + str(i+1) + '.png')
+    pl.savefig(figures_repository + 'var_rel_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh) + '.png')
 pl.close()
 
 if config == 'cylsph':
@@ -121,8 +120,8 @@ if config == 'cylsph':
 
     pl.plot(arr_rho, arr_var_rel_yy, linewidth = 2.2, color = 'green')
 
-    #
-    t_rel_var = 0.1*np.ones(N_snap)
+    # #
+    # t_rel_var = 0.1*np.ones(N_snap)
     plt.plot(list_rho_appr, t_rel_var, 'k--', linewidth = 3)
 
     pl.xlabel('rho', size = 26)
