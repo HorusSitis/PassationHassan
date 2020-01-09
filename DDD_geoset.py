@@ -21,6 +21,8 @@ import numpy as np
 # Choix de la resolution du maillage : nombre de noeuds par cote du cube
 
 res_gmsh=10
+# res_gmsh=20
+# res_gmsh=25
 
 typ_msh='gms'
 # typ_msh=''
@@ -46,18 +48,14 @@ dimension=3
 # mesh_repository = 'maillages_per/2D/'
 mesh_repository = 'maillages_per/' + str(dimension) + 'D/'
 
-if res_gmsh==10:
+if res_gmsh==5:
     lw=0.27
-elif res_gmsh==20:
+elif res_gmsh==10:
     lw=0.15
-elif res_gmsh==50:
+elif res_gmsh == 20 or res_gmsh == 25:
     lw=0.01
 
-# r_s_0=0.15
-# r_v_0=0.15
-# r_c_0=0.15
-#
-# r_min=0.05
+
 
 class PeriodicBoundary(SubDomain):
     # Left boundary is 'target domain' G
@@ -112,10 +110,15 @@ repertoire_parent='Res3D/'
 
 config = 'sph_un'
 # config = 'cyl_un'
-# config = 'cylsph'
+config = 'cylsph'
 # config = '2sph'
 
-ray_fix = 0.36
+## pour le rom
+# ray_fix = 0.36
+
+ray_fix = 0.39
+## pour des exemples avec MEF
+# ray_fix = 0.5
 
 ### ------------ Important : liste des rayons pour l'apprentissage et les tests ------------ ###
 
@@ -131,9 +134,7 @@ if config == 'sph_un' or ray_fix <= 0.5:
 
     list_rho_appr = np.linspace(rho_appr_min, rho_appr_max, N_snap)
 
-
 ## test
-
 rho_diff = (rho_appr_max - rho_appr_min)/(N_snap - 1)
 rho_test_min = rho_appr_min + 0.5*rho_diff
 rho_test_max = rho_appr_max - 0.5*rho_diff
@@ -143,6 +144,7 @@ list_rho_test = np.array([0.35])
 # list_rho_test = np.linspace(0.11, 0.44, 4)
 list_rho_test = np.linspace(rho_test_min, rho_test_max, N_snap - 1)
 
+### ------------ Parametres geometriques : configurations ------------ ###
 
 ### inclusions simples
 if config == 'sph_un':
@@ -187,13 +189,13 @@ elif config == 'cylsph':
     dom_fixe = 'ray_min'
 
     geo_p = 'ray_sph'
-    geo_p = 'ray_cyl'
+    # geo_p = 'ray_cyl'
 
     ##
     if geo_p=='ray_cyl':
         geo_mess='rayon du cylindre variable'
         ## utilisation du domaine fixe avec annulation du rayon du cylindre dans le fichier general ##
-        fixe_comp='cyl_sph'#'sph_un'#'ray_min'#
+        fixe_comp='cylsph'#'sph_un'#'ray_min'#
     elif geo_p=='ray_sph':
         geo_mess='rayon de la sphere variable'
     elif geo_p=='ray_linked':
@@ -248,7 +250,6 @@ def epsilon_p(r, config, geo_p, r_f):
 
 ## ------------ Pour les noms de fichiers de maillages ------------ ##
 
-
 if config == 'sph_un':
     mesh_prefix = 'cubesphere_periodique_triangle_'
 elif config == '2sph':
@@ -263,13 +264,19 @@ cem_color='grey'
 sand_color='orange'
 fluid_color='cyan'
 
+## -------------------- Etape III -------------------- ##
+
+seuil_ener = 99.99
+
 ## -------------------- Etape IV -------------------- ##
 
-N_mor=3
-t_meshing=1.89
-r_nouv=0.33#0.44#0.22#0.11#
+# N_mor=3
+# t_meshing=1.89
+# r_nouv=0.33#0.44#0.22#0.11#
 
 # La mesure du temps d'execution doit se faire avec l'option 'save' de fig_todo
 
 ind_fixe=True##-----------> dom_fixe devant le 'Phi'
 ind_res=True#False###----------> on precise la resolution du maillage, qui apparaît ou non dans le fichier contenant Phi
+
+## -------------------- Etape V -------------------- ##

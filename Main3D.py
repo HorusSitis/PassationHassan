@@ -13,7 +13,7 @@ from dolfin import *
 from mshr import *
 import matplotlib.pyplot as plt
 import numpy as np
-from math import sqrt
+from math import sqrt, log
 
 import sys
 import os
@@ -30,6 +30,14 @@ import time
 
 import marshal as ma
 import shelve as sh
+
+# affichage etc
+
+import pylab as pl
+
+import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+import matplotlib.gridspec as gridspec
 
 ## Paquets specifiques a la 3d ##
 
@@ -54,20 +62,23 @@ exec(open('DDD_fun_obj.py', encoding='utf-8').read())
 E_=False
 E_lL=False
 
-EI=True
-mesh_appr_done = True
-snap_done=True
+EI = True
+mesh_appr_done = False
+snap_done = False
+err_per_calc = False
 
 mesh_ex_done = False
-EII=False
-exsnap_done=False
-test_Dhom=False
+EII = True
+exsnap_done = False
+test_Dhom = True
 
-EIII=False
+EIII = False
 
-EIV=False
-Interpolation=True
-Report=True
+EIV = False
+Interpolation = True
+Report = True
+
+EV = False
 
 
 # nom de l'appareil utilise pour generer les donnees enregistre_pges
@@ -104,10 +115,28 @@ if EIII :
 
 ## -------------------- Etape IV -------------------- ##
 
+# registre_N_mor_name = 'Perf3D/' + 'N_mor_' + 'ener_nu10E' + expo + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+
 if EIV and res_gmsh!=50:
 
     if Interpolation:
 
+
+        # tableaux contenant les performances du ROM
+        arr_int_grad_fem = np.zeros(len(list_rho_test))
+        arr_int_grad_rom = np.zeros(len(list_rho_test))
+
+        arr_nodes = np.zeros(len(list_rho_test))
+
+        arr_err_rel = np.zeros(len(list_rho_test))
+        arr_var_rel = np.zeros(len(list_rho_test))
+        arr_var_rel_yy = np.zeros(len(list_rho_test))
+
+        ## pour l'instant : on en compte pas le temps de maillage, identique pour FEM et ROM
+
+        arr_t = np.zeros((len(list_rho_test), 6))
+
+        # fichiers pour enregistrer textuellement les performances du ROM
         nom_fichier_pg='Perf3D/' + 'pg_' + computer + 'res' + str(res_gmsh) + config + geo_p + 'Nmor' + str(N_mor)
         nom_fichier_gr='Perf3D/' + 'gr_' + computer + 'res' + str(res_gmsh) + config + geo_p + 'Nmor' + str(N_mor)
 
@@ -152,8 +181,9 @@ if EIV and res_gmsh!=50:
 
         registre_gr.write('\\'+'hline'+'\n')
 
-        for rho in list_rho_test:
+        for i in range(len(list_rho_test)):
 
+            rho = list_rho_test[i]
             r_nouv=rho
             exec(open("DDD_EIV.py").read())
 
@@ -170,6 +200,15 @@ if EIV and res_gmsh!=50:
 
         os.rename(nom_fichier_pg + '.txt', nom_tab_latex_pg + '.tex')
         os.rename(nom_fichier_gr + '.txt', nom_tab_latex_gr + '.tex')
+
+        # sauvegarde des performances
+        np.save(registre_perf_num['int_grad_fem'] + '.npy', arr_int_grad_fem)
+        np.save(registre_perf_num['int_grad_rom'] + '.npy', arr_int_grad_rom)
+        np.save(registre_perf_num['nodes'] + '.npy', arr_nodes)
+        np.save(registre_perf_num['err_rel'] + '.npy', arr_err_rel)
+        np.save(registre_perf_num['var_rel'] + '.npy', arr_var_rel)
+        np.save(registre_perf_num['var_rel_yy'] + '.npy', arr_var_rel_yy)
+        np.save(registre_perf_num['t'] + '.npy', arr_t)
 
     else:
         exec(open("DDD_EIV_fixe.py").read())
@@ -222,3 +261,8 @@ if EIV and res_gmsh!=50:
 #     with open("DDD_EIV.py",'r') as op:
 #      exec(op.read())
 #   registre_pg.close()
+
+
+## -------------------- Etape V -------------------- ##
+if EV :
+    exec(open("DDD_EV.py").read())

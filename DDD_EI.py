@@ -59,7 +59,7 @@ def snap_compl_ray(N_par):
     ## on vectorise la fonction calculee par MEF ##
     chi_compl_v=chi_compl.vector().get_local()
     ## on renvoie un vecteur etiquete, utilisable avec l'option 'par8' ##
-    return([rho_par,chi_compl_v])
+    return([N_par,chi_compl_v])
 
 
 
@@ -208,18 +208,19 @@ for n in range(0, N_snap):
 
     plt.close()
 
-    # Affichage des valeurs et erreurs de la solution periodique, quelle que soit la configuration
-    #err_per_ind_01(chi_n,cen,r,npas_err)
-    if config == 'cyl_un' and geo_p == 'ray':
-        cen = [(xinf + xsup)/2., yinf, (zinf + zsup)/2.]
-        # on triche un peu : on prend une face prevee d'une demie-sphere au lieu d'une face privee du disque frontal du cylindre
-    if config == '2sph':
-        err_per_gr_compl(config, r_fixe, chi_n, npas_err, fig_todo)
-    elif config == 'cylsph':
-        err_per_gr_compl(config, r_fixe, chi_n, npas_err, fig_todo)
-    else:
-        cen = [(xinf + xsup)/2., (yinf + ysup)/2., (zinf + zsup)/2.]
-        err_per_gr(cen, r, chi_n, npas_err, fig_todo)
+    if err_per_calc:
+        # Affichage des valeurs et erreurs de la solution periodique, quelle que soit la configuration
+        #err_per_ind_01(chi_n,cen,r,npas_err)
+        if config == 'cyl_un' and geo_p == 'ray':
+            cen = [(xinf + xsup)/2., yinf, (zinf + zsup)/2.]
+            # on triche un peu : on prend une face prevee d'une demie-sphere au lieu d'une face privee du disque frontal du cylindre
+        if config == '2sph':
+            err_per_gr_compl(config, ray_fix, chi_n, npas_err, fig_todo)
+        elif config == 'cylsph':
+            err_per_gr_compl(config, ray_fix, chi_n, npas_err, fig_todo)
+        else:
+            cen = [(xinf + xsup)/2., (yinf + ysup)/2., (zinf + zsup)/2.]
+            err_per_gr(cen, r, chi_n, npas_err, fig_todo)
 
     # Tenseur de diffusion homogeneise
     ## Integrale de chi sur le domaine fluide
@@ -241,13 +242,15 @@ for n in range(0, N_snap):
     print('Porosite :', porosity)
     print('Volume de la cellule :', cell_vol)
     print('-'*78)
-    print('Tenseur IG ', T_chi_omega)
+    # print('Tenseur IG ', T_chi_omega)
+    print('Tenseur IG : diag ', [T_chi_omega[0, 0], T_chi_omega[1, 1], T_chi_omega[2, 2]])
     print('-'*78)
-    print('Tenseur Dhom_k ', Dhom_k)
+    # print('Tenseur Dhom_k ', Dhom_k)
+    print('Tenseur Dhom_k : diag', [Dhom_k[0, 0], Dhom_k[1, 1], Dhom_k[2, 2]])
     print('Coefficient Dhom_k 11 ', Dhom_k[0,0])
     print('%'*78)
-    integ = assemble(chi_n[1]*dx)/(cell_vol*porosity)
-    print('Valeur moyenne : ', integ)
+    # integ = assemble(chi_n[1]*dx)/(cell_vol*porosity)
+    # print('Valeur moyenne : ', integ)
     print('#'*78)
 
     ## Anisotropie

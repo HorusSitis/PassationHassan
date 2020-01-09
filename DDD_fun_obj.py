@@ -131,10 +131,10 @@ def creer_maill_per_gpar(config, geo_p, xyzinfsup, rho, ray_fix, res):
     if config == 'cube2sph':
         gen_mesh.write('R = ' + str(rho) + ';' + '\n')
         gen_mesh.write('S = ' + str(ray_fix) + ';' + '\n' + '\n')
-    if config == 'cyl_sph' and geo_p == 'ray_sph':
+    if config == 'cylsph' and geo_p == 'ray_sph':
         gen_mesh.write('R = ' + str(rho) + ';' + '\n')
         gen_mesh.write('S = ' + str(ray_fix) + ';' + '\n' + '\n')
-    if config == 'cyl_sph' and geo_p == 'ray_cyl':
+    if config == 'cylsph' and geo_p == 'ray_cyl':
         gen_mesh.write('R = ' + str(ray_fix) + ';' + '\n')
         gen_mesh.write('S = ' + str(rho) + ';' + '\n' + '\n')
 
@@ -229,7 +229,6 @@ def snapshot_sph_per(cen, r, res, typ_sol):
     L = assemble(l)
 
     ## solveur de krylov pour un probleme bien pose, dans un hyperplan
-
     solver = dolfin.PETScKrylovSolver("cg")
 
     solver.parameters["absolute_tolerance"] = 1e-6
@@ -294,65 +293,29 @@ def snapshot_cyl_per(top,r,res,typ_sol):### ------------------> resolution : ave
     L = assemble(l)
 
     ## solveur de krylov pour un probleme bien pose, dans un hyperplan
-    if typ_sol == 'kr_null_vect':
+    solver = dolfin.PETScKrylovSolver("cg")
 
-        solver = dolfin.PETScKrylovSolver("cg")
+    solver.parameters["absolute_tolerance"] = 1e-6
+    solver.parameters["relative_tolerance"] = 1e-6
+    solver.parameters["maximum_iterations"] = 5000
+    solver.parameters["error_on_nonconvergence"] = True
+    solver.parameters["monitor_convergence"] = True
+    solver.parameters["report"] = True
 
-        solver.parameters["absolute_tolerance"] = 1e-6
-        solver.parameters["relative_tolerance"] = 1e-6
-        solver.parameters["maximum_iterations"] = 5000
-        solver.parameters["error_on_nonconvergence"] = True
-        solver.parameters["monitor_convergence"] = True
-        solver.parameters["report"] = True
+    solver.set_operator(A)
 
-        solver.set_operator(A)
+    null_vec = dolfin.Vector(u1.vector())
+    V.dofmap().set(null_vec, 1.0)
+    null_vec *= 1.0/(dolfin.norm(null_vec, norm_type = 'l2'))
 
-        null_vec = dolfin.Vector(u1.vector())
-        V.dofmap().set(null_vec, 1.0)
-        null_vec *= 1.0/(dolfin.norm(null_vec, norm_type = 'l2'))
+    null_space = dolfin.VectorSpaceBasis([null_vec])
+    dolfin.as_backend_type(A).set_nullspace(null_space)
+    null_space.orthogonalize(L)
 
-        null_space = dolfin.VectorSpaceBasis([null_vec])
-        dolfin.as_backend_type(A).set_nullspace(null_space)
-        null_space.orthogonalize(L)
+    # Resolution et restitution de chi
+    solver.solve(u1.vector(), L)
+    chi = u1
 
-        # Resolution et restitution de chi
-        solver.solve(u1.vector(), L)
-        chi = u1
-
-    ## probleme mal pose a priori
-    else:
-        if typ_sol=='default':
-            solve(a==l,u)
-        elif typ_sol=='bic_cyr':
-            u=Function(V)
-            solver_correction = KrylovSolver("bicgstab", "amg")
-            solver_correction.parameters["absolute_tolerance"] = 1e-6
-            solver_correction.parameters["relative_tolerance"] = 1e-6
-            solver_correction.parameters["maximum_iterations"] = 5000
-            solver_correction.parameters["error_on_nonconvergence"]= True
-            solver_correction.parameters["monitor_convergence"] = True
-            solver_correction.parameters["report"] = True
-            # # AA=assemble(a)
-            # # LL=assemble(L)
-            # # solver_correction.solve(AA,u.vector(),LL)
-            # A=assemble(a)
-            # L=assemble(l)
-            solver_correction.solve(A,u.vector(),L)
-        ## Annulation de la valeur moyenne
-        porosity=1-pi*r**2
-        moy_u_x=assemble(u[0]*dx)/porosity
-        moy_u_y=assemble(u[1]*dx)/porosity
-        moy_u_z=assemble(u[2]*dx)/porosity
-        moy=Function(V)
-        moy=Constant((moy_u_x,moy_u_y,moy_u_z))
-        print("Valeur moyenne de u :",[moy_u_x,moy_u_y,moy_u_z])
-        moy_V=interpolate(moy,V)
-        moy_Vv=moy_V.vector().get_local()
-        u_v=u.vector().get_local()
-        chi_v=u_v-moy_Vv
-        chi=Function(V)
-        chi.vector().set_local(chi_v)
-        chi=u
 
     ### Resultat : snapshot
     return(chi)
@@ -400,68 +363,28 @@ def snapshot_compl_per(rho, ray_fix, config, res, typ_sol):### -----------------
     L = assemble(l)
 
     ## solveur de krylov pour un probleme bien pose, dans un hyperplan
-    if typ_sol == 'kr_null_vect':
+    solver = dolfin.PETScKrylovSolver("cg")
 
-        solver = dolfin.PETScKrylovSolver("cg")
+    solver.parameters["absolute_tolerance"] = 1e-6
+    solver.parameters["relative_tolerance"] = 1e-6
+    solver.parameters["maximum_iterations"] = 5000
+    solver.parameters["error_on_nonconvergence"] = True
+    solver.parameters["monitor_convergence"] = True
+    solver.parameters["report"] = True
 
-        solver.parameters["absolute_tolerance"] = 1e-6
-        solver.parameters["relative_tolerance"] = 1e-6
-        solver.parameters["maximum_iterations"] = 5000
-        solver.parameters["error_on_nonconvergence"] = True
-        solver.parameters["monitor_convergence"] = True
-        solver.parameters["report"] = True
+    solver.set_operator(A)
 
-        solver.set_operator(A)
+    null_vec = dolfin.Vector(u1.vector())
+    V.dofmap().set(null_vec, 1.0)
+    null_vec *= 1.0/(dolfin.norm(null_vec, norm_type = 'l2'))
 
-        null_vec = dolfin.Vector(u1.vector())
-        V.dofmap().set(null_vec, 1.0)
-        null_vec *= 1.0/(dolfin.norm(null_vec, norm_type = 'l2'))
+    null_space = dolfin.VectorSpaceBasis([null_vec])
+    dolfin.as_backend_type(A).set_nullspace(null_space)
+    null_space.orthogonalize(L)
 
-        null_space = dolfin.VectorSpaceBasis([null_vec])
-        dolfin.as_backend_type(A).set_nullspace(null_space)
-        null_space.orthogonalize(L)
-
-        # Resolution et restitution de chi
-        solver.solve(u1.vector(), L)
-        chi = u1
-
-    ## probleme mal pose a priori
-    else:
-        if typ_sol=='default':
-            solve(a==l,u)
-        elif typ_sol=='bic_cyr':
-            u=Function(V)
-            solver_correction = KrylovSolver("bicgstab", "amg")
-            solver_correction.parameters["absolute_tolerance"] = 1e-6
-            solver_correction.parameters["relative_tolerance"] = 1e-6
-            solver_correction.parameters["maximum_iterations"] = 5000
-            solver_correction.parameters["error_on_nonconvergence"]= True
-            solver_correction.parameters["monitor_convergence"] = True
-            solver_correction.parameters["report"] = True
-            # # AA=assemble(a)
-            # # LL=assemble(L)
-            # # solver_correction.solve(AA,u.vector(),LL)
-            # A=assemble(a)
-            # L=assemble(l)
-            solver_correction.solve(A,u.vector(),L)
-        ## Annulation de la valeur moyenne
-        if config=='2sph':
-            porosity=1-(4/3)*pi*(r_cen**3+r_per**3)
-        elif config=='cylsph':
-            porosity=1-(4/3)*pi*r_cen**3-pi*r_per**2
-        moy_u_x=assemble(u[0]*dx)/porosity
-        moy_u_y=assemble(u[1]*dx)/porosity
-        moy_u_z=assemble(u[2]*dx)/porosity
-        moy=Function(V)
-        moy=Constant((moy_u_x,moy_u_y,moy_u_z))
-        print("Valeur moyenne de u :",[moy_u_x,moy_u_y,moy_u_z])
-        moy_V=interpolate(moy,V)
-        moy_Vv=moy_V.vector().get_local()
-        u_v=u.vector().get_local()
-        chi_v=u_v-moy_Vv
-        chi=Function(V)
-        chi.vector().set_local(chi_v)
-        chi=u
+    # Resolution et restitution de chi
+    solver.solve(u1.vector(), L)
+    chi = u1
 
     ### Resultat : snapshot
     return(chi)
