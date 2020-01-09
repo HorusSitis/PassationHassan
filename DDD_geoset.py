@@ -73,7 +73,9 @@ class PeriodicBoundary(SubDomain):
 
 # parametres pour l'execution des etapes : affichage, tests de periodicite etc
 
-fig_todo='save'
+fig_todo = 'aff'
+fig_todo = 'save'
+
 typ_msh='gms'#''
 D_k=1.0
 
@@ -209,20 +211,17 @@ cell_vol = size**dimension
 
 def epsilon_p(r, config, geo_p, r_f):
 
-    # size = (xsup - xinf)
-    # cell_vol = size**dimension
-
     if config == 'sph_un':
         fluid_vol = cell_vol - 4/3*pi*r**3
     elif config=='cyl_un':
-        fluid_vol = cell_vol - pi*r**2
+        fluid_vol = cell_vol - size*pi*r**2
     elif config=='2sph':
         fluid_vol = cell_vol - 4/3*pi*(r**3+r_f**3)
     elif config=='cylsph' :
         if geo_p == 'ray_sph':
-            fluid_vol = cell_vol - 4/3*pi*r**3-pi*r_f**2
+            fluid_vol = cell_vol - 4/3*pi*r**3 - size*pi*r_f**2
         elif geo_p == 'ray_cyl':
-            fluid_vol = cell_vol - 4/3*pi*r_f**3-pi*r**2
+            fluid_vol = cell_vol - 4/3*pi*r_f**3 - size*pi*r**2
 
     epsilon_p = fluid_vol/cell_vol
 
@@ -239,10 +238,10 @@ elif config == 'cylsph':
 
 ## ------------ Etape lL 1demi : Affichage de microstructures periodiques ------------ ##
 
-nb_lcells=5
-cem_color='grey'
-sand_color='orange'
-fluid_color='cyan'
+nb_lcells = 5
+cem_color = 'grey'
+sand_color = 'orange'
+fluid_color = 'cyan'
 
 ## -------------------- Etape III -------------------- ##
 
@@ -265,8 +264,8 @@ registre_N_mor_name = 'Perf3D/' + 'N_mor_' + 'ener_nu10E' + expo + config + '_' 
 
 # La mesure du temps d'execution doit se faire avec l'option 'save' de fig_todo
 
-ind_fixe=True##-----------> dom_fixe devant le 'Phi'
-ind_res=True#False###----------> on precise la resolution du maillage, qui apparaît ou non dans le fichier contenant Phi
+ind_fixe = True ##-----------> dom_fixe devant le 'Phi'
+ind_res = True #False ###----------> on precise la resolution du maillage, qui apparait ou non dans le fichier contenant Phi
 
 ## -------------------- Etape V -------------------- ##
 
