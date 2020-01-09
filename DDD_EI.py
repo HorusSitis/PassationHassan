@@ -11,57 +11,43 @@
 
 #if geo_p=='ray':
 # cen_snap_ray=[0.5,0.5,0.5]
-cen_snap_ray=[(xinf + xsup)/2., (zinf + zsup)/2., (zinf + zsup)/2.]
+cen_snap_ray=[(xinf + xsup)/2., (yinf + ysup)/2., (zinf + zsup)/2.]
 def snap_sph_ray(N_par):
     # rho : on utilise la liste d'apprentissage definie dans DDD_geoset
     rho = list_rho_appr[N_par]
 
-    chi_r=snapshot_sph_per(cen_snap_ray, rho, res_gmsh, typ_sol)
-    chi_r_v=chi_r.vector().get_local()
+    chi_r = snapshot_sph_per(cen_snap_ray, rho, res_gmsh)
+    chi_r_v = chi_r.vector().get_local()
 
     return([N_par,chi_r_v])
 
-
-
-## Cylindre unique
-
-#if geo_p=='ray':
-axe_snap_ray=[0.5,0.5]
-def snap_cyl_ray(N_par):
-    # rho : on utilise la liste d'apprentissage definie dans DDD_geoset
-    rho = list_rho_appr[N_par]
-
-    chi_r=snapshot_cyl_per(axe_snap_ray,rho,res_gmsh,typ_sol)
-    chi_r_v=chi_r.vector().get_local()
-    return([r_par,chi_r_v])
-
-
-
-
-
+# ## Cylindre unique
+#
+# #if geo_p=='ray':
+# axe_snap_ray=[0.5,0.5]
+# def snap_cyl_ray(N_par):
+#     # rho : on utilise la liste d'apprentissage definie dans DDD_geoset
+#     rho = list_rho_appr[N_par]
+#
+#     chi_r=snapshot_cyl_per(axe_snap_ray,rho,res_gmsh,typ_sol)
+#     chi_r_v=chi_r.vector().get_local()
+#     return([r_par,chi_r_v])
 
 ### ray_fix et son usage sont fixes dans DDD_geoset ###
-
-
-
 
 def snap_compl_ray(N_par):
     # rho : on utilise la liste d'apprentissage definie dans DDD_geoset
     rho = list_rho_appr[N_par]
     ## deux spheres ##
-    if geo_p=='ray':
-        chi_compl=snapshot_compl_per(rho,ray_fix,config,res_gmsh,typ_sol)
+    if geo_p == 'ray':
+        chi_compl = snapshot_compl_per(rho, ray_fix, config, res_gmsh)
     ## un cylindre et une sphere ##
-    elif geo_p=='ray_sph':
-        chi_compl=snapshot_compl_per(rho,ray_fix,config,res_gmsh,typ_sol)
-    elif geo_p=='ray_cyl':
-        chi_compl=snapshot_compl_per(ray_fix,rho,config,res_gmsh,typ_sol)
+    elif config == 'cylsph':# or config == '2sph':
+        chi_compl = snapshot_compl_per(rho, ray_fix, config, res_gmsh)
     ## on vectorise la fonction calculee par MEF ##
-    chi_compl_v=chi_compl.vector().get_local()
+    chi_compl_v = chi_compl.vector().get_local()
     ## on renvoie un vecteur etiquete, utilisable avec l'option 'par8' ##
-    return([N_par,chi_compl_v])
-
-
+    return([N_par, chi_compl_v])
 
 # ------------------------- Generation sequentielle des maillages, conditionnellement ------------------------- #
 
@@ -69,11 +55,8 @@ if not mesh_appr_done:
 
     for n in range(0,N_snap):
         rho = list_rho_appr[n]
-
         # xyzinfsup est importe depuis DDD_geoset
         creer_maill_per_gpar(config, geo_p, xyzinfsup, rho, ray_fix, res_gmsh)
-
-    # sys.exit()
 
 # ------------------------- Snapshots, conditionnellement ------------------------- #
 
@@ -102,9 +85,9 @@ if not snap_done:
             else:
                 list_chi_n_v=pool.map(snap_compl_ray,(N for N in range(0,N_snap)))
     ### Generation sequentielle des snapshots, pour des tests de la methode des elements finis ###
-    elif gen_snap=='seq':
-        start=time.time()
-        list_chi_n_v=[]
+    elif gen_snap == 'seq':
+        start = time.time()
+        list_chi_n_v = []
         for n in range(0,N_snap):
             print('='*60)
             print('Snapshot ' + str(n + 1))
@@ -130,20 +113,19 @@ if not snap_done:
     #     list_chi_n_v=[]
     # -------- enregistrement des fonctions vectorisees dans une liste -------- #
     # Construction de la liste des snapshots vectorises : cas d'un parametre geometrique definissant un ordre - lien avec la porosite ; ou non.
-    list_chi_v=[]
-    if geo_p=='ray' or config=='compl':
-        for n in range(0,N_snap):
-            for i in range(0,N_snap):
-                if list_chi_n_v[i][0]==n:
-                    chi_n_v=list_chi_n_v[i][1]
-                    list_chi_v.append(chi_n_v)
-    else:
+    list_chi_v = []
+    # if geo_p == 'ray' or config == 'compl':
+    for n in range(0,N_snap):
         for i in range(0,N_snap):
-            chi_n_v=list_chi_n_v[i][1]
-            list_chi_v.append(chi_n_v)
+            if list_chi_n_v[i][0]==n:
+                chi_n_v=list_chi_n_v[i][1]
+                list_chi_v.append(chi_n_v)
+    # else:
+    #     for i in range(0, N_snap):
+    #         chi_n_v = list_chi_n_v[i][1]
+    #         list_chi_v.append(chi_n_v)
 
     # Liste des snapshots : sauvegarde, on precise l'identite de la machine qui a effectue le calcul
-    # l_name='Lchi_'+str(N_snap)+'_'+config+'_'+geo_p+'_'+'sur'+str(res)+'_'+ordo+'_'+computer
     # sauvegarde de la liste des solutions indexees calculees avec la methode des elements finis
     with sh.open(repertoire_parent+l_name) as l_sto:
         l_sto['maliste'] = list_chi_v
@@ -151,7 +133,6 @@ if not snap_done:
 # Matrice des snapshots : plus tard, voir l'etape II
 
 else :
-    # l_name='Lchi_'+str(N_snap)+'_'+config+'_'+geo_p+'_'+'sur'+str(res)+'_'+ordo+'_'+computer
     with sh.open(repertoire_parent+l_name) as l_loa:
         list_chi_v = l_loa['maliste']
 
@@ -247,7 +228,7 @@ for n in range(0, N_snap):
     print('-'*78)
     # print('Tenseur Dhom_k ', Dhom_k)
     print('Tenseur Dhom_k : diag', [Dhom_k[0, 0], Dhom_k[1, 1], Dhom_k[2, 2]])
-    print('Coefficient Dhom_k 11 ', Dhom_k[0,0])
+    print('Coefficient Dhom_k 11 ', Dhom_k[0, 0])
     print('%'*78)
     # integ = assemble(chi_n[1]*dx)/(cell_vol*porosity)
     # print('Valeur moyenne : ', integ)

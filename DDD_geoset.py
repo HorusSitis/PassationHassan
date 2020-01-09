@@ -74,7 +74,7 @@ class PeriodicBoundary(SubDomain):
 # parametres pour l'execution des etapes : affichage, tests de periodicite etc
 
 fig_todo = 'aff'
-fig_todo = 'save'
+# fig_todo = 'save'
 
 typ_msh='gms'#''
 D_k=1.0
@@ -112,7 +112,7 @@ repertoire_parent='Res3D/'
 
 config = 'sph_un'
 # config = 'cyl_un'
-config = 'cylsph'
+# config = 'cylsph'
 # config = '2sph'
 
 ## pour le rom

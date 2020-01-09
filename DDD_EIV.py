@@ -241,12 +241,9 @@ elif config=='cyl_un':
     chi_nouv=snapshot_cyl_per(top_snap_ray,r_nouv,res,typ_sol)
 elif config=='2sph':
     if geo_p=='ray':
-        chi_nouv=snapshot_compl_per(r_nouv,ray_fix,config,res_gmsh,typ_sol)
-elif config=='cylsph':
-    if geo_p=='ray_sph':
-        chi_nouv=snapshot_compl_per(r_nouv,ray_fix,config,res_gmsh,typ_sol)
-    elif geo_p=='ray_cyl':
-        chi_nouv=snapshot_compl_per(ray_fix,r_nouv,config,res_gmsh,typ_sol)
+        chi_nouv = snapshot_compl_per(r_nouv, ray_fix, config, res_gmsh)
+elif config == 'cylsph':# or config == '2sph':
+    chi_compl = snapshot_compl_per(r_nouv, ray_fix, config, res_gmsh)
 
 ## Exploitation du champ ainsi obtenu
 rho=r_nouv
@@ -284,8 +281,8 @@ for k in range(0, 3):
 T_chi_fom_omega = T_chi_fom/cell_vol
 
 ## Integrale de l'identite sur le domaine fluide : voir ce qui precede avec la porosite
-print('Noeuds :',V_nouv.dim())
-print('Porosite :',porosity)
+print('Noeuds :', V_nouv.dim())
+print('Porosite :', porosity)
 
 ## Calcul et affichage du tenseur Dhom
 Dhom_kMEF=D_k*(D+T_chi_fom_omega.T)
@@ -297,9 +294,6 @@ print('Erreur relative Dhom MEF-MOR :', err_rel_dhom , ' pourcent')
 
 err_rel_ig = 100*(T_chi_rom_omega[0,0] - T_chi_fom_omega[0,0])/T_chi_fom_omega[0,0]
 print('Erreur relative int_grad MEF-MOR :', err_rel_ig , ' pourcent')
-
-# var_rel_ig = 100*(np.sqrt(2*(T_chi_rom_omega[0,0]**2 + T_chi_fom_omega[0,0]**2)/((T_chi_rom_omega[0,0] + T_chi_fom_omega[0,0])**2) - 1))
-# var_rel_ig_yy = 100*(np.sqrt(2*(T_chi_rom_omega[1,1]**2 + T_chi_fom_omega[1,1]**2)/((T_chi_rom_omega[1,1] + T_chi_fom_omega[1,1])**2) - 1))
 
 var_rel_ig = (np.sqrt(2*(T_chi_rom_omega[0,0]**2 + T_chi_fom_omega[0,0]**2)/((T_chi_rom_omega[0,0] + T_chi_fom_omega[0,0])**2) - 1))
 var_rel_ig_yy = (np.sqrt(2*(T_chi_rom_omega[1,1]**2 + T_chi_fom_omega[1,1]**2)/((T_chi_rom_omega[1,1] + T_chi_fom_omega[1,1])**2) - 1))

@@ -100,7 +100,6 @@ pl.plot(arr_rho, arr_var_rel, linewidth = 2.2, color = 'green')
 plt.plot(list_rho_appr, t_rel_var, 'k--', linewidth = 3)
 
 pl.xlabel('rho', size = 26)
-# pl.ylabel('RelV(IG(rho)_11) (%)', size = 26)
 pl.ylabel('RelV(IG(rho)_11)', size = 26)
 
 plt.xlim(arr_rho[0] - 0.05, arr_rho[len(arr_rho) - 1] + 0.05)

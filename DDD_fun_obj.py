@@ -183,7 +183,7 @@ def creer_maill_per_gpar(config, geo_p, xyzinfsup, rho, ray_fix, res):
 
 ############################# Pour creer des snapshots, inclusion circulaire periodique unique #############################
 
-def snapshot_sph_per(cen, r, res, typ_sol):
+def snapshot_sph_per(cen, r, res):
 
     # mesh_prefix = 'cubesphere_periodique_triangle_'
     nom_fichier_avecgpar = mesh_prefix + 'rayc' + str(int(round(100*r,2))) + '_sur' + str(res)
@@ -320,7 +320,7 @@ def snapshot_cyl_per(top,r,res,typ_sol):### ------------------> resolution : ave
     ### Resultat : snapshot
     return(chi)
 
-def snapshot_compl_per(rho, ray_fix, config, res, typ_sol):### ------------------> resolution : avec gmsh
+def snapshot_compl_per(rho, ray_fix, config, res):### ------------------> resolution : avec gmsh
 
     ## convention : nommage du fichier .xml de maillage
     # mesh_prefix = 'cube2sph_periodique_triangle_'
@@ -338,7 +338,7 @@ def snapshot_compl_per(rho, ray_fix, config, res, typ_sol):### -----------------
 
     ## VFS pour le probleme variationnel
     V = VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
-    print('Noeuds : ',V.dim())
+    print('Noeuds : ', V.dim())
 
     ## On definit la bordure du domaine, sur laquelle integrer le second membre "L" de l'equation en dimension finie
     boundaries = MeshFunction('size_t', mesh, mesh_repository + nom_fichier_avecgpar + "_facet_region" + ".xml")
@@ -346,16 +346,16 @@ def snapshot_compl_per(rho, ray_fix, config, res, typ_sol):### -----------------
     ds = Measure("ds")(subdomain_data=boundaries)
 
     ## Marquage des bordures pour la condition de Neumann
-    num_solid_boundary=1700
-    print("Numero de la frontiere physique sf :",num_solid_boundary)
+    num_solid_boundary = 1700
+    print("Numero de la frontiere physique sf :", num_solid_boundary)
 
     ## On resoud le probleme faible, avec une condition de type Neumann au bord de l'obstacle
     normale = FacetNormal(mesh)
-    nb_noeuds=V.dim()
+    nb_noeuds = V.dim()
     u = TrialFunction(V)
     v = TestFunction(V)
-    a=tr(dot((grad(u)).T, grad(v)))*dx
-    l=-dot(normale,v)*ds(num_solid_boundary)
+    a = tr(dot((grad(u)).T, grad(v)))*dx
+    l = -dot(normale,v)*ds(num_solid_boundary)
 
     ### Resolution
     u1 = Function(V)
