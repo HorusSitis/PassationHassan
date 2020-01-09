@@ -2,14 +2,24 @@
 # if config == 'sph_un' or config == 'cyl_un':
 #     rg_perf_fact = ''
 # else:
-#     rg_perf_fact = '_rayf' + str(int(round(ray_fix, 2)))
+    # rg_perf_fact = '_rayf' + str(int(round(100*ray_fix, 2)))
 #
 
+## ------------ Import de la valeur de N_mor : utile ? ------------ ##
+
+# nu = 1 - seuil_ener/100
+# nu_log = log(nu)/log(10)
+# expo = str(int(round(nu_log, 0)))
+#
+# registre_N_mor_name = 'Perf3D/' + 'N_mor_' + 'ener_nu10E' + expo + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
 
 
+tab_N_mor = np.load(registre_N_mor_name + '.npy')
+N_mor = tab_N_mor[0]
 
+nb_modes = N_mor
 
-
+## ------------ Import des performances des tests ------------ ##
 
 
 # tableaux contenant les performances du ROM
@@ -28,14 +38,18 @@ arr_t = np.load(registre_perf_num['t'] + '.npy')
 arr_rho = np.array(list_rho_test)
 arr_x = np.arange(len(arr_t[0, :]))
 
+## ------------ Figures ------------ ##
+
 #
 fig_1 = plt.figure()
 
 plt.plot(arr_rho, arr_int_grad_fem, 'b+', arr_rho, arr_int_grad_rom, 'rx', markeredgewidth = 5, markersize = 20)# 'k')
 
-pl.title('Top left coefficient of int_grad, FEM versus ROM')
+pl.xlabel('rho', size = 26)
+pl.ylabel('IG(rho)_11')
 
 if fig_todo == 'aff':
+    pl.title('Top left coefficient of int_grad, FEM versus ROM')
     pl.show()
 elif fig_todo == 'save':
     pl.savefig('Figures3D/' + 'int_grad_FeRoM_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh) + '.png')
@@ -45,8 +59,8 @@ fig_2 = plt.figure()
 
 pl.plot(arr_rho, arr_err_rel, linewidth = 2.2, color = 'green')
 
-pl.xlabel('Tested radius')
-pl.ylabel('Error (%)')
+pl.xlabel('rho', size = 26)
+pl.ylabel('Error(IG(rho)_11) (%)')
 
 if fig_todo == 'aff':
     pl.show()
@@ -58,8 +72,8 @@ fig_2bis = plt.figure()
 
 pl.plot(arr_rho, arr_var_rel, linewidth = 2.2, color = 'green')
 
-pl.xlabel('Tested radius')
-pl.ylabel('RelV (%)')
+pl.xlabel('rho', size = 26)
+pl.ylabel('RelV(IG(rho)_11) (%)', size = 26)
 
 plt.xlim(arr_rho[0] - 0.05, arr_rho[len(arr_rho) - 1] + 0.05)
 
@@ -100,7 +114,7 @@ plt.xlim(-1, len(arr_t[0, :]))
 plt.ylim(2*10**(-6), max(arr_t[:, 0]/tps_fem_moy))
 pl.yscale('log')
 
-plt.ylabel('tps/t_FEM_moy')
+plt.ylabel('tps/t_FEM_moy', size = 26)
 
 pl.xticks(arr_x, BarName, rotation = 0)
 
@@ -128,7 +142,7 @@ for i in range(len(list_rho_test)):
 plt.xlim(-1, len(arr_t[0, :]))
 plt.ylim(0, max(arr_t[:, 0]/tps_fem_moy))
 
-plt.ylabel('tps/t_FEM_moy')
+plt.ylabel('tps/t_FEM_moy', size = 26)
 
 pl.xticks(arr_x, BarName, rotation = 0)
 

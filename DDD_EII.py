@@ -208,13 +208,13 @@ if not exsnap_done:
             if list_chi_n_prime_v[i][0] == n:
                 Usnap[:, n]=list_chi_n_prime_v[i][1]
     # Stockage de la matrice des snapshots
-    u_name = 'Usnap_' + dom_fixe + '_' + str(N_snap) + '_' + config + '_' + geo_p + '_' + 'res' + str(res) + '_' + ordo + '_' + computer
+    # u_name = 'Usnap_' + dom_fixe + '_' + str(N_snap) + '_' + config + '_' + geo_p + '_' + 'res' + str(res) + '_' + ordo + '_' + computer
     #
     with sh.open(repertoire_parent+u_name) as u_sto:
         u_sto['maliste'] = Usnap
 else:
     # Chargement de la matrice des snapshots
-    u_name = 'Usnap_' + dom_fixe + '_' + str(N_snap) + '_' + config + '_' + geo_p + '_' + 'res' + str(res) + '_' + ordo + '_' + computer
+    # u_name = 'Usnap_' + dom_fixe + '_' + str(N_snap) + '_' + config + '_' + geo_p + '_' + 'res' + str(res) + '_' + ordo + '_' + computer
     with sh.open(repertoire_parent + u_name) as u_loa:
         Usnap = u_loa['maliste']
 

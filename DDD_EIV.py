@@ -41,8 +41,17 @@ import time
 
 ### ------------ Etapes reproduites : dependances directes de Main3D ------------ ###
 
-nb_modes = N_mor
+# nu = 1 - seuil_ener/100
+# nu_log = log(nu)/log(10)
+# expo = str(int(round(nu_log, 0)))
+#
+# registre_N_mor_name = 'Perf3D/' + 'N_mor_' + 'ener_nu10E' + expo + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+# np.save(registre_Nmor_name + '.npy')
 
+# tab_N_mor = np.load(registre_N_mor_name + '.npy')
+# N_mor = tab_N_mor[0]
+
+nb_modes = N_mor
 
 # --------------------- SE0 : maillage et fonctions tests du domaine fixe --------------------- #
 
@@ -66,6 +75,8 @@ mesh_nouv = Mesh(mesh_repository + mesh_nouv_name + '.xml')
 # fin de la generation du maillage courant
 end_mesh = time.time()
 
+t_meshing = end_mesh - start_mesh
+
 # creation de l'espace des champs admissibles
 V_nouv = VectorFunctionSpace(mesh_nouv, 'P', 2, constrained_domain=PeriodicBoundary())
 
@@ -80,14 +91,14 @@ start=time.time()
 
 nb_noeuds_fixe = V_fixe.dim()
 
-## Chargement de la base POD complete
-
-if ind_res:
-    phi_name='Phi'+dom_fixe+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_'+'res'+str(res)+'_'+ordo+'_'+computer
-elif ind_fixe:
-    phi_name='Phi'+dom_fixe+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
-else:
-    phi_name='Phi'+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+# ## Chargement de la base POD complete
+#
+# if ind_res:
+#     phi_name='Phi'+dom_fixe+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_'+'res'+str(res)+'_'+ordo+'_'+computer
+# elif ind_fixe:
+#     phi_name='Phi'+dom_fixe+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+# else:
+#     phi_name='Phi'+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
 
 
 with sh.open(repertoire_parent+phi_name) as phi_loa:
@@ -133,9 +144,9 @@ start=time.time()
 ## On ecrit les deux tenseurs qui comportent les coefficients de l'equation du modele reduit : ceux-ci dependent des vecteurs de la base POD projetee
 
 if config=='sph_un' or config=='cyl_un':
-    Coeff=calc_Ab_3D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,cen_snap_ray,nb_modes,config)
+    Coeff=calc_Ab_3D(V_nouv, mesh_nouv, Phi_nouv_v, r_nouv, cen_snap_ray, nb_modes, config)
 else:
-    Coeff=calc_Ab_compl_3D(mesh_n_name,Phi_nouv_v,nb_modes)
+    Coeff=calc_Ab_compl_3D(mesh_repository + mesh_nouv_name, Phi_nouv_v, nb_modes)
 
 A=Coeff[0]
 b=Coeff[1]

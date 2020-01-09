@@ -47,9 +47,13 @@ from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
 import mpl_toolkits.mplot3d.art3d as art3d
 from matplotlib.patches import Circle, PathPatch
 
+# nom de l'appareil utilise pour generer les donnees enregistre_pges
+computer='MECALAC_29x8'#'T1700_35x8'#
+
 # Parametres geometriques : topologie et longueurs
 
-from DDD_geoset import *
+# from DDD_geoset import *
+exec(open('DDD_geoset.py', encoding='utf-8').read())
 
 # Fonctions maison
 
@@ -62,14 +66,14 @@ exec(open('DDD_fun_obj.py', encoding='utf-8').read())
 E_=False
 E_lL=False
 
-EI = True
-mesh_appr_done = False
-snap_done = False
+EI = False
+mesh_appr_done = True
+snap_done = True
 err_per_calc = False
 
-mesh_ex_done = False
-EII = True
-exsnap_done = False
+mesh_ex_done = True
+EII = False
+exsnap_done = True
 test_Dhom = True
 
 EIII = False
@@ -78,11 +82,10 @@ EIV = False
 Interpolation = True
 Report = True
 
-EV = False
+EV = True
 
 
-# nom de l'appareil utilise pour generer les donnees enregistre_pges
-computer='MECALAC_29x8'#'T1700_35x8'#
+
 
 
 ## ------------ Etape lL 1demi : Affichage de microstructures periodiques ------------ ##
@@ -107,8 +110,11 @@ if EII :
 
 ## -------------------- Etape III -------------------- ##
 
-from PO23D import *
+# from PO23D import *
+exec(open("PO23D.py").read())
+
 #rempUsnap='par8'#'seq'
+# seuil_ener = 99.99
 
 if EIII :
     exec(open("DDD_EIII.py").read())
@@ -119,8 +125,10 @@ if EIII :
 
 if EIV and res_gmsh!=50:
 
-    if Interpolation:
+    tab_N_mor = np.load(registre_N_mor_name + '.npy')
+    N_mor = tab_N_mor[0]
 
+    if Interpolation:
 
         # tableaux contenant les performances du ROM
         arr_int_grad_fem = np.zeros(len(list_rho_test))

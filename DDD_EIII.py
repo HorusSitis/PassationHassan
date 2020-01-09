@@ -44,7 +44,7 @@ from PO23D import *
 
 # Chargement de la matrice des snapshots
 
-u_name = 'Usnap_' + dom_fixe + '_' + str(N_snap) + '_' + config + '_' + geo_p + '_' + 'res' + str(res) + '_' + ordo + '_' + computer
+# u_name = 'Usnap_' + dom_fixe + '_' + str(N_snap) + '_' + config + '_' + geo_p + '_' + 'res' + str(res) + '_' + ordo + '_' + computer
 print(u_name)
 with sh.open(repertoire_parent+u_name) as u_loa:
     Usnap = u_loa['maliste']
@@ -77,7 +77,7 @@ print('Valeurs propres POD :', val_propres)
 
 ## Enregistrement de la matrice de la base POD, sous la forme vectorielle
 
-phi_name='Phi'+dom_fixe+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_'+'res'+str(res)+'_'+ordo+'_'+computer
+# phi_name='Phi'+dom_fixe+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_'+'res'+str(res)+'_'+ordo+'_'+computer
 
 with sh.open(repertoire_parent+phi_name) as p_sto:
     p_sto['maliste'] = Phi_prime_v
@@ -164,7 +164,7 @@ plt.close()
 ## Choix du nombre de modes, avec une valeur seuil d'energie a atteindre avec les vacteurs de la base POD
 nb_modes=0
 
-seuil_ener=99.99#9
+# seuil_ener=99.99#9
 
 i=0
 while ener_pour_cumul[i]<seuil_ener or i==0:
@@ -176,3 +176,17 @@ Nseuil=i
 
 print('Energie '+str(seuil_ener)+' pourcent, '+conf_mess+', '+geo_mess+' , resolution '+str(res_gmsh)+' :')
 print(Nseuil)
+
+## ------------ Stockage de la valeur de N_mor ------------ ##
+
+# if config == 'sph_un' or config == 'cyl_un':
+#     rg_perf_fact = ''
+# else:
+#     rg_perf_fact = '_rayf' + str(int(round(ray_fix, 2)))
+
+# nu = 1 - seuil_ener/100
+# nu_log = log(nu)/log(10)
+# expo = str(int(round(nu_log, 0)))
+
+# registre_N_mor_name = 'Perf3D/' + 'N_mor_' + 'ener_nu10E' + expo + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+np.save(registre_N_mor_name + '.npy', np.array([Nseuil]))

@@ -5,10 +5,10 @@ Created on Thu Jun  7 12:20:45 2018
 @author: ghraieb
 """
 
-from fenics import *
-from math import *
-import numpy as np
-import matplotlib.pyplot as plt
+# from fenics import *
+# from math import *
+# import numpy as np
+# import matplotlib.pyplot as plt
 
 #########################################
 ####Matrice de Correlation temporelle####

@@ -204,22 +204,7 @@ elif config == 'cylsph':
 
 
 
-## ------------ Registre pour les performances des tests ------------ ##
 
-if config == 'sph_un' or config == 'cyl_un':
-    rg_perf_fact = ''
-else:
-    rg_perf_fact = '_rayf' + str(int(round(ray_fix, 2)))
-
-registre_perf_num = dict()
-
-registre_perf_num['int_grad_fem'] = 'Perf3D/' + 'IG_fem_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
-registre_perf_num['int_grad_rom'] = 'Perf3D/' + 'IG_rom_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
-registre_perf_num['nodes'] = 'Perf3D/' + 'nodes_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
-registre_perf_num['err_rel'] = 'Perf3D/' + 'err_rel_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
-registre_perf_num['var_rel'] = 'Perf3D/' + 'var_rel_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
-registre_perf_num['var_rel_yy'] = 'Perf3D/' + 'var_rel_yy_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
-registre_perf_num['t'] = 'Perf3D/' + 'tps_exec_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
 
 
 ## ------------ Porosite ------------ ##
@@ -266,13 +251,22 @@ fluid_color='cyan'
 
 ## -------------------- Etape III -------------------- ##
 
+if config == 'sph_un' or config == 'cyl_un':
+    rg_perf_fact = ''
+else:
+    rg_perf_fact = '_rayf' + str(int(round(100*ray_fix, 2)))
+
 seuil_ener = 99.99
+
+nu = 1 - seuil_ener/100
+nu_log = log(nu)/log(10)
+expo = str(int(round(nu_log, 0)))
+
+registre_N_mor_name = 'Perf3D/' + 'N_mor_' + 'ener_nu10E' + expo + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+
 
 ## -------------------- Etape IV -------------------- ##
 
-# N_mor=3
-# t_meshing=1.89
-# r_nouv=0.33#0.44#0.22#0.11#
 
 # La mesure du temps d'execution doit se faire avec l'option 'save' de fig_todo
 
@@ -280,3 +274,46 @@ ind_fixe=True##-----------> dom_fixe devant le 'Phi'
 ind_res=True#False###----------> on precise la resolution du maillage, qui apparaît ou non dans le fichier contenant Phi
 
 ## -------------------- Etape V -------------------- ##
+
+
+
+
+
+
+
+
+
+## ------------ Registre pour les performances des tests ------------ ##
+
+# if config == 'sph_un' or config == 'cyl_un':
+#     rg_perf_fact = ''
+# else:
+#     rg_perf_fact = '_rayf' + str(int(round(100*ray_fix, 2)))
+
+registre_perf_num = dict()
+
+registre_perf_num['int_grad_fem'] = 'Perf3D/' + 'IG_fem_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+registre_perf_num['int_grad_rom'] = 'Perf3D/' + 'IG_rom_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+registre_perf_num['nodes'] = 'Perf3D/' + 'nodes_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+registre_perf_num['err_rel'] = 'Perf3D/' + 'err_rel_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+registre_perf_num['var_rel'] = 'Perf3D/' + 'var_rel_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+registre_perf_num['var_rel_yy'] = 'Perf3D/' + 'var_rel_yy_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+registre_perf_num['t'] = 'Perf3D/' + 'tps_exec_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+
+## ------------ Registres de snapshots et vecteurs POD ------------ ##
+
+## Solutions physiques vectorisees
+l_name='Lchi_'+str(N_snap)+'_'+config+'_'+geo_p+'_'+'sur'+str(res)+'_'+ordo+'_'+computer
+
+## Snapshots vectorises utilisables pour la POD
+u_name = 'Usnap_' + dom_fixe + '_' + str(N_snap) + '_' + config + '_' + geo_p + '_' + 'res' + str(res) + '_' + ordo + '_' + computer
+
+## Chargement de la base POD complete
+phi_name='Phi'+dom_fixe+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_'+'res'+str(res)+'_'+ordo+'_'+computer
+
+# if ind_res:
+#     phi_name='Phi'+dom_fixe+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_'+'res'+str(res)+'_'+ordo+'_'+computer
+# elif ind_fixe:
+#     phi_name='Phi'+dom_fixe+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
+# else:
+#     phi_name='Phi'+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_'+ordo+'_'+computer
