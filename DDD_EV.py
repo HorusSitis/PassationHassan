@@ -163,7 +163,8 @@ for i in range(len(list_rho_test)):
 
 plt.xlim(-1, len(arr_t[0, :]))
 
-plt.ylim(2*10**(-6), max(arr_t[:, 0]/tps_fem_moy))
+# plt.ylim(2*10**(-6), max(arr_t[:, 0]/tps_fem_moy))
+plt.ylim(2*10**(-6), max(arr_t[:, 1]/tps_fem_moy))
 pl.yscale('log')
 
 plt.ylabel('tps/t_FEM_moy', size = 26)
@@ -192,7 +193,8 @@ for i in range(len(list_rho_test)):
     plt.bar(arr_x + i*width, arr_t[i, :]/tps_fem_moy, width, color = ['blue', 'red', 'green', 'green', 'green', 'green'])
 
 plt.xlim(-1, len(arr_t[0, :]))
-plt.ylim(0, max(arr_t[:, 0]/tps_fem_moy))
+# plt.ylim(0, max(arr_t[:, 0]/tps_fem_moy))
+plt.ylim(2*10**(-6), max(arr_t[:, 1]/tps_fem_moy))
 
 plt.ylabel('tps/t_FEM_moy', size = 26)
 
