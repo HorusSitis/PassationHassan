@@ -49,8 +49,8 @@ fig_1 = plt.figure()
 
 plt.plot(arr_rho, arr_int_grad_fem, 'b+', arr_rho, arr_int_grad_rom, 'rx', markeredgewidth = 5, markersize = 20)# 'k')
 
-pl.xlabel('rho', size = 26)
-pl.ylabel('IG(rho)_11', size = 26)
+pl.xlabel(r'$\rho$', size = 26)
+pl.ylabel(r'$\mathcal{IG}(\rho)_{11}$', size = 26)
 
 if fig_todo == 'aff':
     pl.title('Top left coefficient of int_grad, FEM versus ROM')
@@ -65,8 +65,8 @@ if config == 'cylsph':
 
     plt.plot(arr_rho, arr_int_grad_yy_fem, 'b+', arr_rho, arr_int_grad_yy_rom, 'rx', markeredgewidth = 5, markersize = 20)# 'k')
 
-    pl.xlabel('rho', size = 26)
-    pl.ylabel('IG(rho)_22', size = 26)
+    pl.xlabel(r'$\rho$', size = 26)
+    pl.ylabel(r'$\mathcal{IG}(\rho)_{22}$', size = 26)
 
     if fig_todo == 'aff':
         pl.title('Top left coefficient of int_grad_yy, FEM versus ROM')
@@ -99,8 +99,8 @@ pl.plot(arr_rho, arr_var_rel, linewidth = 2.2, color = 'green')
 
 plt.plot(list_rho_appr, t_rel_var, 'k--', linewidth = 3)
 
-pl.xlabel('rho', size = 26)
-pl.ylabel('RelV(IG(rho)_11)', size = 26)
+pl.xlabel(r'$\rho$', size = 26)
+pl.ylabel(r'$\mathcal{R}V \ \mathcal{IG}(\rho)_{11}$', size = 26)
 
 plt.xlim(arr_rho[0] - 0.05, arr_rho[len(arr_rho) - 1] + 0.05)
 
@@ -123,9 +123,8 @@ if config == 'cylsph':
     # t_rel_var = 0.1*np.ones(N_snap)
     plt.plot(list_rho_appr, t_rel_var, 'k--', linewidth = 3)
 
-    pl.xlabel('rho', size = 26)
-    # pl.ylabel('RelV(IG(rho)_11) (%)', size = 26)
-    pl.ylabel('RelV(IG(rho)_22)', size = 26)
+    pl.xlabel(r'$\rho$', size = 26)
+    pl.ylabel(r'$\mathcal{R}V \ \mathcal{IG}(\rho)_{22}$', size = 26)
 
     plt.xlim(arr_rho[0] - 0.05, arr_rho[len(arr_rho) - 1] + 0.05)
 
