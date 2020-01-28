@@ -203,16 +203,17 @@ def snapshot_sph_per(cen, r, res):
         def inside(self,x,on_boundary):
             return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[2]-c[2]), (-r-tol, r+tol)) for c in l_cen]))#points de la frontiere du systeme compris dans la boule de centre et rayons cen et r, pour la norme infinie
 
-    ## Utilisation des classes definies precedemment : mesure de la limite du domaine fluide
+    ## Utilisation de la classe definie precedemment : mesure de la limite du domaine fluide
     Gamma_sf = inclusion_periodique()
     boundaries = MeshFunction("size_t", mesh_s_r, mesh_s_r.topology().dim()-1)
-    print('Facettes : ',mesh_s_r.num_edges())
     # On attribue une valeur par defaut aux frontieres du domaine fluide, qui concerne plus particulierement l'interface fluide-fluide
+    num_fluid_boundary = 1
+    num_solid_boundary = 7
     boundaries.set_all(1)
     Gamma_sf.mark(boundaries, 7)
+
+    print('Facettes : ', mesh_s_r.num_edges())
     ds = Measure("ds")(subdomain_data=boundaries)
-    num_ff = 1
-    num_sphere = 7
 
     ## On resoud le probleme faible, avec une condition de type Neumann au bord de l'obstacle
     normale = FacetNormal(mesh_s_r)
@@ -220,7 +221,7 @@ def snapshot_sph_per(cen, r, res):
     u = TrialFunction(V)
     v = TestFunction(V)
     a = tr(dot((grad(u)).T, grad(v)))*dx
-    l = -dot(normale,v)*ds(num_sphere)
+    l = -dot(normale,v)*ds(num_solid_boundary)
 
     ### Resolution
 
@@ -320,7 +321,7 @@ def snapshot_cyl_per(top,r,res,typ_sol):### ------------------> resolution : ave
     ### Resultat : snapshot
     return(chi)
 
-def snapshot_compl_per(rho, ray_fix, config, res):### ------------------> resolution : avec gmsh
+def snapshot_compl_per(rho, ray_fix, config, geo_p, res):### ------------------> resolution : avec gmsh
 
     ## convention : nommage du fichier .xml de maillage
     # mesh_prefix = 'cube2sph_periodique_triangle_'
@@ -342,12 +343,48 @@ def snapshot_compl_per(rho, ray_fix, config, res):### ------------------> resolu
 
     ## On definit la bordure du domaine, sur laquelle integrer le second membre "L" de l'equation en dimension finie
     boundaries = MeshFunction('size_t', mesh, mesh_repository + nom_fichier_avecgpar + "_facet_region" + ".xml")
-    print('Facettes : ', mesh.num_edges())
-    ds = Measure("ds")(subdomain_data=boundaries)
-
     ## Marquage des bordures pour la condition de Neumann
     num_solid_boundary = 1700
     print("Numero de la frontiere physique sf :", num_solid_boundary)
+
+    # ## Marquage des facettes de Gamma_sf a l'aide d'un objet SubDomain
+    # xcen = (xinf + xsup)/2.
+    # ycen = (yinf + ysup)/2.
+    # zcen = (zinf + zsup)/2.
+    # if geo_p == 'ray_sph':
+    #     class inclusion_periodique(SubDomain):
+    #         def inside(self, x, on_boundary):
+    #             return (on_boundary and (
+    #                     (x[0]-xcen)**2 + (x[0]-xcen)**2 + (x[0]-xcen)**2 <= rho**2 + tol
+    #                     or (x[0] - xinf)**2 + (x[2] - zinf)**2 <= ray_fix**2 + tol
+    #                     or (x[0] - xsup)**2 + (x[2] - zinf)**2 <= ray_fix**2 + tol
+    #                     or (x[0] - xinf)**2 + (x[2] - zsup)**2 <= ray_fix**2 + tol
+    #                     or (x[0] - xsup)**2 + (x[2] - zsup)**2 <= ray_fix**2 + tol
+    #                     )
+    #                     )
+    # elif geo_p == 'ray_cyl':
+    #     class inclusion_periodique(SubDomain):
+    #         def inside(self, x, on_boundary):
+    #             return (on_boundary and (
+    #                     (x[0]-xcen)**2 + (x[0]-xcen)**2 + (x[0]-xcen)**2 <= ray_fix**2 + tol
+    #                     or (x[0] - xinf)**2 + (x[2] - zinf)**2 <= rho**2 + tol
+    #                     or (x[0] - xsup)**2 + (x[2] - zinf)**2 <= rho**2 + tol
+    #                     or (x[0] - xinf)**2 + (x[2] - zsup)**2 <= rho**2 + tol
+    #                     or (x[0] - xsup)**2 + (x[2] - zsup)**2 <= rho**2 + tol
+    #                     )
+    #                     )
+    # ## Utilisation de la classe definie precedemment : mesure de la limite du domaine fluide
+    # Gamma_sf = inclusion_periodique()
+    # boundaries = MeshFunction("size_t", mesh, mesh.topology().dim()-1)
+    # # On attribue une valeur par defaut aux frontieres du domaine fluide, qui concerne plus particulierement l'interface fluide-fluide
+    # num_fluid_boundary = 1
+    # num_solid_boundary = 1700
+    # boundaries.set_all(1)
+    # Gamma_sf.mark(boundaries, 1700)
+
+    ## creation de la mesure sur l'espace des fonctions tests
+    print('Facettes : ', mesh.num_edges())
+    ds = Measure("ds")(subdomain_data=boundaries)
 
     ## On resoud le probleme faible, avec une condition de type Neumann au bord de l'obstacle
     normale = FacetNormal(mesh)
