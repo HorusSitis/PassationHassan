@@ -38,12 +38,13 @@ def snap_sph_ray(N_par):
 def snap_compl_ray(N_par):
     # rho : on utilise la liste d'apprentissage definie dans DDD_geoset
     rho = list_rho_appr[N_par]
-    ## deux spheres ##
-    if geo_p == 'ray':
-        chi_compl = snapshot_compl_per(rho, ray_fix, config, res_gmsh)
-    ## un cylindre et une sphere ##
-    elif config == 'cylsph':# or config == '2sph':
-        chi_compl = snapshot_compl_per(rho, ray_fix, config, res_gmsh)
+    # ## deux spheres ##
+    # if geo_p == 'ray':
+    #     chi_compl = snapshot_compl_per(rho, ray_fix, config, res_gmsh)
+    # ## un cylindre et une sphere ##
+    # elif config == 'cylsph':
+    #     chi_compl = snapshot_compl_per(rho, ray_fix, config, res_gmsh)
+    chi_compl = snapshot_compl_per(rho, ray_fix, config, geo_p, res_gmsh)
     ## on vectorise la fonction calculee par MEF ##
     chi_compl_v = chi_compl.vector().get_local()
     ## on renvoie un vecteur etiquete, utilisable avec l'option 'par8' ##
@@ -179,9 +180,9 @@ for n in range(0, N_snap):
     plt.tight_layout(pad=0)
 
     if r < 0.1:
-        plt.title('Rho = 0,0' + str(int(round(100*r, 2))), fontsize=40)
+        plt.title(r'$\rho = $ 0,0' + str(int(round(100*r, 2))), fontsize=40)
     else:
-        plt.title('Rho = 0,' + str(int(round(100*r, 2))), fontsize=40)
+        plt.title(r'$\rho = $ 0,' + str(int(round(100*r, 2))), fontsize=40)
     if fig_todo=='aff':
         plt.show()
     else:
