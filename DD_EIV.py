@@ -4,6 +4,8 @@
 ## Etape IV : Predictions. Choisir les parametres du probleme a resoudre par le modele reduit. ##
 #################################################################################################
 
+# from tools_chi import *
+
 # Definition du domaine Omega_fixe :
 if dom_fixe == 'am':
     mesh_fixe_name = 'maillage_fixe2d_am'#.xml'
@@ -27,14 +29,17 @@ if config == 'compl':
 else:
     mesh_name = mesh_prefix + mention + str(int(round(100*rho,2)))
 
+print('%'*80)
+print('Maillage rom : ' + mesh_name)
+print('%'*80)
 
 # appelle le maillage reconverti depuis maillages_per/2D
-mesh_nouv = Mesh(mesh_repository + mesh_name + '.xml')
+mesh_nouv_rom = Mesh(mesh_repository + mesh_name + '.xml')
 
 end_mesh = time.time()
 
 # pointe vers le meme maillage que la fonction snapshot_ de DD_fun_obj
-V_nouv = VectorFunctionSpace(mesh_nouv, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
+V_nouv = VectorFunctionSpace(mesh_nouv_rom, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
 
 # Performances
 tps_mesh = end_mesh - start_mesh
@@ -105,9 +110,9 @@ start=time.time()
 ## On ecrit les deux tenseurs qui comportent les coefficients de l'equation du modele reduit : ceux-ci dependent des vecteurs de la base POD projetee
 
 if test_snap=='i_per':
-    Coeff=calc_Ab_2D(V_nouv,mesh_nouv,Phi_nouv_v,r_nouv,cen_snap_ray,nb_modes)
+    Coeff=calc_Ab_2D(V_nouv,mesh_nouv_rom,Phi_nouv_v,r_nouv,cen_snap_ray,nb_modes)
 else:
-    Coeff=calc_Ab_compl(V_nouv,mesh_nouv,Phi_nouv_v,nb_modes,test_snap)
+    Coeff=calc_Ab_compl(V_nouv,mesh_nouv_rom,Phi_nouv_v,nb_modes,test_snap)
     print('modele reduit complexe utilise')
 
 A=Coeff[0]
@@ -138,13 +143,13 @@ print('se2 faite', t_int_Ab + t_rom_linear, 'secondes')
 
 start=time.time()
 
-## On initialise et affiche le champ chi_nouv
+## On initialise et affiche le champ chi_nouv_rom
 
-chi_nouv_v=np.dot(Phi_nouv_v,a_nouv)
-chi_nouv=Function(V_nouv)
-chi_nouv.vector().set_local(chi_nouv_v)
+chi_nouv_rom_v=np.dot(Phi_nouv_v,a_nouv)
+chi_nouv_rom=Function(V_nouv)
+chi_nouv_rom.vector().set_local(chi_nouv_rom_v)
 
-plot(chi_nouv)#, linewidth=0.55)
+plot(chi_nouv_rom)#, linewidth=0.55)
 plt.title('Solution ROM', fontsize=30)#'Rho = 0,'+str(int(round(100*r_nouv,2))),fontsize=40)
 if fig_todo=='aff':
     plt.show()
@@ -163,7 +168,7 @@ rho=r_nouv
 T_chi_rom=np.zeros((2,2))
 for k in range(0,2):
     for l in range(0,2):
-        T_chi_rom[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
+        T_chi_rom[k,l]=assemble(grad(chi_nouv_rom)[k,l]*dx)
 ## Integrale de l'identite sur le domaine fluide
 if config!='compl':
     por=(1-pi*r**2)
@@ -188,14 +193,14 @@ print('se3 faite ',t_rom_Dhom,' secondes')
 
 start=time.time()
 
-## On reinitialise le champ chi_nouv pour la methode des elements finis
+## On reinitialise le champ chi_nouv_full pour la methode des elements finis
 
 
 if test_snap=='i_per':
-    chi_nouv=snapshot_circ_per(cen_snap_ray,r_nouv,res)
+    chi_nouv_full=snapshot_circ_per(cen_snap_ray,r_nouv,res)
 else:
-    # chi_nouv=snapshot_compl_per(geo_p,r_nouv,cen_snap_ray,mention,test_snap)
-    chi_nouv=snapshot_compl_per(geo_p,r_nouv, cen_snap_ray, test_snap, ray_p)# mention,
+    # chi_nouv_full=snapshot_compl_per(geo_p,r_nouv,cen_snap_ray,mention,test_snap)
+    chi_nouv_full=snapshot_compl_per(geo_p,r_nouv, cen_snap_ray, test_snap, ray_p)# mention,
 
 ## Exploitation du champ ainsi obtenu
 rho=r_nouv
@@ -204,14 +209,14 @@ r=r_nouv
 # Affichage des valeurs et erreurs de la solution periodique, quelle que soit la configuration
 #err_per_ind_01(chi_n,cen,r,npas_err)
 for npas_test in []:#30,40]:#7,15,16,60,125,250]:
-    err_per_gr(cen_snap_ray,r_nouv,chi_nouv,npas_test,fig_todo)
+    err_per_gr(cen_snap_ray,r_nouv,chi_nouv_full,npas_test,fig_todo)
 
 # Tenseur de diffusion homogeneise
 ## Integrale de chi sur le domaine fluide
 T_chi_fom=np.zeros((2,2))
 for k in range(0,2):
     for l in range(0,2):
-        T_chi_fom[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
+        T_chi_fom[k,l]=assemble(grad(chi_nouv_full)[k,l]*dx)
 ## Integrale de l'identite sur le domaine fluide
 if config!='compl':
     por=(1-pi*r**2)
@@ -226,7 +231,7 @@ print('Coefficient Dhom_k11 '+conf_mess+', '+geo_mess+' valeur '+str(rho)+ ' MEF
 
 ## Sortie graphique
 
-plot(chi_nouv)#, linewidth=0.55)
+plot(chi_nouv_full)#, linewidth=0.55)
 plt.title('Solution EF',fontsize=30)
 if fig_todo=='aff':
     plt.show()
@@ -243,7 +248,10 @@ err_rel_ig=100*(T_chi_rom[0,0]-T_chi_fom[0,0])/T_chi_fom[0,0]
 print('Erreur relative int_grad MEF-MOR :', err_rel_ig , ' pourcent')
 
 var_rel_ig = 100*(np.sqrt(2*(T_chi_rom[0,0]**2 + T_chi_fom[0,0]**2)/((T_chi_rom[0,0] + T_chi_fom[0,0])**2) - 1))
-var_rel_ig_yy = 100*(np.sqrt(2*(T_chi_rom[1,1]**2 + T_chi_fom[1,1]**2)/((T_chi_rom[1,1] + T_chi_fom[1,1])**2) - 1))
+if config == 'compl':
+    var_rel_ig_yy = 100*(np.sqrt(2*(T_chi_rom[1,1]**2 + T_chi_fom[1,1]**2)/((T_chi_rom[1,1] + T_chi_fom[1,1])**2) - 1))
+
+
 
 ## On enregistre et imprime le temps d'execution de SE4
 
@@ -252,6 +260,12 @@ end=time.time()
 t_fem=end-start
 
 print('se4 faite ',t_fem,' secondes')
+
+chi_nouv_rom.set_allow_extrapolation(True)
+# chi_nouv_rom_prime = interpolate(chi_nouv_rom, V_nouv)
+chi_nouv_full_prime = interpolate(chi_nouv_full, V_nouv)
+
+var_rel_chi = 100*var_rel_func(chi_nouv_rom, chi_nouv_full_prime)
 
 ##############################################################################
 ########################## Evaluation de la methode ##########################
@@ -274,6 +288,9 @@ if Report :
     print('Coefficient int_grad11 MOR :',T_chi_rom[0,0])
     print('Coefficient int_grad11 MEF :',T_chi_fom[0,0])
     print('Erreur relative MEF-MOR :',err_rel_ig,'pourcent')
+    print('%'*78)
+    print('Variance relative MEF-MOR IG :',var_rel_ig,'pourcent')
+    print('Variance relative MEF-MOR chi :',var_rel_chi,'pourcent')
     print('%'*78)
     ## Temps de calcul a evaluer ##
     t_rom = t_phi_nouv + t_int_Ab + t_rom_linear + t_rom_Dhom
@@ -337,11 +354,7 @@ arr_nodes[i] = V_nouv.dim()
 arr_err_rel[i] = err_rel_ig
 arr_var_rel[i] = var_rel_ig
 
-# arr_t_fem[i] = t_fem
-# arr_t_phi_n[i] = t_phi_nouv
-# arr_t_Ab[i] = t_int_Ab
-# arr_t_solve[i] = t_rom_linear
-# arr_t_dhom[i] = t_rom_Dhom
+arr_var_rel_chi[i] = var_rel_chi
 
 arr_t[i, 0] = t_fem
 

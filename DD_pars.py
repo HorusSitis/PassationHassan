@@ -304,6 +304,8 @@ registre_perf_num['var_rel'] = 'Perf2D/' + 'var_rel_' + config + '_' + geo_p + r
 registre_perf_num['var_rel_yy'] = 'Perf2D/' + 'var_rel_yy_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
 registre_perf_num['t'] = 'Perf2D/' + 'tps_exec_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
 
+registre_perf_num['var_rel_chi'] = 'Perf2D/' + 'var_rel_chi_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+
 ## ------------ Registres de snapshots et vecteurs POD ------------ ##
 
 ## Solutions physiques vectorisees

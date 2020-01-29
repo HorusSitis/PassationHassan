@@ -43,6 +43,9 @@ arr_var_rel = np.load(registre_perf_num['var_rel'] + '.npy')
 if config == 'compl':
     arr_var_rel_yy = np.load(registre_perf_num['var_rel_yy'] + '.npy')
 
+
+arr_var_rel_chi = np.load(registre_perf_num['var_rel_chi'] + '.npy')
+
 arr_t = np.load(registre_perf_num['t'] + '.npy')
 
 
@@ -52,12 +55,15 @@ arr_t = np.load(registre_perf_num['t'] + '.npy')
 arr_rho = np.array(list_rho_test)
 arr_x = np.arange(len(arr_t[0, :]))
 
-#
+# valeurs d'IG : rom et full teste
 fig_1 = plt.figure()
 
 plt.plot(arr_rho, arr_int_grad_fem, 'bo', arr_rho, arr_int_grad_rom, 'r*', markersize = 20)# 'k')
 
-pl.title('Top left coefficient of int_grad, FEM versus ROM')
+# pl.title('Top left coefficient of int_grad, FEM versus ROM')
+
+pl.xlabel(r'$\rho$', size = 20)
+pl.ylabel(r'$\mathcal{IG}_{11}$', size = 20)
 
 if fig_todo == 'aff':
     pl.show()
@@ -65,12 +71,13 @@ elif fig_todo == 'save':
     pl.savefig('Figures2D/' + 'int_grad_FeRoM_' + 'cer_un_ray' + '.png')
 pl.close()
 
+# erreur relative en pourcent : rom avec full ; obsolete
 fig_2 = plt.figure()
 
 pl.plot(arr_rho, arr_err_rel, linewidth = 2.2, color = 'green')
 
-pl.xlabel('Tested radius')
-pl.ylabel('Error (%)')
+pl.xlabel(r'$\rho$', size = 20)
+pl.ylabel('Error (%)', size = 20)
 
 if fig_todo == 'aff':
     pl.show()
@@ -78,12 +85,13 @@ elif fig_todo == 'save':
     pl.savefig('Figures2D/' + 'err_rel_' + 'cer_un_ray' + '.png')# + '_res' + str(pars['resolution']) + '_snap' + str(i+1) + '.png')
 pl.close()
 
+# variance relative en pourcent : coefficient 11 d'IG ; pas de prise en charge des feometries bidimensionnelles anisotropes
 fig_2bis = plt.figure()
 
 pl.plot(arr_rho, arr_var_rel, linewidth = 2.2, color = 'green')
 
-pl.xlabel('Tested radius')
-pl.ylabel('RelV (%)')
+pl.xlabel(r'$\rho$', size = 20)
+pl.ylabel(r'$\mathcal{R} \ V(\mathcal{IG}_{11}) \ (\%)$', size = 20)
 
 plt.xlim(arr_rho[0] - 0.05, arr_rho[len(arr_rho) - 1] + 0.05)
 
@@ -95,6 +103,27 @@ if fig_todo == 'aff':
 elif fig_todo == 'save':
     pl.savefig('Figures2D/' + 'var_rel_' + 'cer_un_ray' + '.png')# + '_res' + str(pars['resolution']) + '_snap' + str(i+1) + '.png')
 pl.close()
+
+# variance relative en pourcent : champs de vecteurs, H^1
+fig_2ter = plt.figure()
+
+pl.plot(arr_rho, arr_var_rel_chi, linewidth = 2.2, color = 'green')
+
+pl.xlabel(r'$\rho$', size = 20)
+pl.ylabel(r'$\mathcal{R} \ V(\chi) \ (\%)$', size = 20)
+
+plt.xlim(arr_rho[0] - 0.05, arr_rho[len(arr_rho) - 1] + 0.05)
+
+plt.ylim(0.1*min(arr_var_rel_chi), 10*max(arr_var_rel_chi))
+pl.yscale('log')
+
+if fig_todo == 'aff':
+    pl.show()
+elif fig_todo == 'save':
+    pl.savefig('Figures2D/' + 'var_rel_chi_' + 'cer_un_ray' + '.png')# + '_res' + str(pars['resolution']) + '_snap' + str(i+1) + '.png')
+pl.close()
+
+# performances temporelles comparees : full, rom et ses etapes ; avec des histogrammes
 
 fig_3, ax_3 = plt.subplots()
 
@@ -136,6 +165,7 @@ elif fig_todo == 'save':
 
 plt.close()
 
+# meme chose que _3 ; avec une echelle lineaire pour le temps
 fig_4, ax_4 = plt.subplots()
 
 # tps_fem_moy = sum(arr_t[:, 0])/len(list_rho_test)
