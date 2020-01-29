@@ -55,8 +55,6 @@ nb_noeuds_fixe = V_fixe.dim()
 
 ## Chargement de la base POD complete
 
-phi_name = 'Phi' + dom_fixe + '_dim' + str(N_snap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+'res'+str(res)+'_'+ordo+'_'+computer
-
 with sh.open(repertoire_parent+phi_name) as phi_loa:
     Phi_prime_v = phi_loa['maliste']
 
@@ -336,8 +334,8 @@ arr_int_grad_rom[i] = T_chi_rom[0,0]
 
 arr_nodes[i] = V_nouv.dim()
 
-ar_err_rel[i] = err_rel_ig
-ar_var_rel[i] = var_rel_ig
+arr_err_rel[i] = err_rel_ig
+arr_var_rel[i] = var_rel_ig
 
 # arr_t_fem[i] = t_fem
 # arr_t_phi_n[i] = t_phi_nouv

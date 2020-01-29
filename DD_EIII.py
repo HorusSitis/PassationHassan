@@ -22,7 +22,6 @@ nb_noeuds = V_fixe.dim()
 
 ## Chargement de la matrice des snapshots
 
-u_name = 'Usnap_' + dom_fixe + str(N_snap) + '_'+config + '_' + geo_p + '_deg' + str(VFS_degree) + '_' + ordo + '_' + computer
 print(repertoire_parent+u_name)
 
 with sh.open(repertoire_parent + u_name) as u_loa:
@@ -45,7 +44,6 @@ Phi_prime_v = vp_A_phi[2]
 
 ## Enregistrement de la matrice de la base POD, sous la forme vectorielle
 
-phi_name='Phi' + dom_fixe + '_dim' + str(N_snap) + '_' + config + '_' + geo_p + '_deg' + str(VFS_degree) + '_' + 'res' + str(res) + '_' + ordo + '_' + computer
 print(phi_name)
 
 with sh.open(repertoire_parent + phi_name) as p_sto:
@@ -152,3 +150,11 @@ print('Valeurs propres :',val_propres)
 #     list_DPhi.append(1+int_grad)
 #
 # print('Dhom POD-ROM :',list_DPhi)
+
+
+
+## ------------ Stockage de la valeur de N_mor ------------ ##
+
+# registre_N_mor_name = 'Perf2D/' + 'N_mor_' + 'ener_nu10E' + expo + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+
+np.save(registre_N_mor_name + '.npy', np.array([Nseuil]))

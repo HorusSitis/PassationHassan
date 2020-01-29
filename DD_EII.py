@@ -77,7 +77,7 @@ mesh_fixe = Mesh(mesh_fixe_name + '.xml')
 #     mesh_name = mesh_prefix + str(int(round(100*r,2))) + '_rayp' + str(int(round(100*ray_p,2)))
 # else:
 #     mesh_name = mesh_prefix + mention + str(int(round(100*r,2)))
-# 
+#
 #
 # mesh = Mesh(mesh_repository + mesh_name + '.xml')
 # sys.exit()
@@ -139,14 +139,11 @@ if not exsnap_done:
                 Usnap[:,n]=list_chi_n_prime_v[i][1]
 
     # Stochage de la matrice des snapshots
-    u_name='Usnap_'+dom_fixe+str(N_snap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
-    #
     with sh.open(repertoire_parent+u_name) as u_sto:
         u_sto['maliste'] = Usnap
 
 else:
     # Chargement de la matrice des snapshots
-    u_name='Usnap_'+dom_fixe+str(N_snap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
     print(repertoire_parent+u_name)
     with sh.open(repertoire_parent+u_name) as u_loa:
         Usnap = u_loa['maliste']

@@ -18,8 +18,8 @@ import numpy as np
 fixe_aff=False
 
 # fig_todo=''
-# fig_todo='aff'
-fig_todo='save'
+fig_todo='aff'
+# fig_todo='save'
 
 import time
 
@@ -250,10 +250,67 @@ gen_snap = 'par8'
 # # non prepare dans EI-II
 # gen_snap = 'seq_par'
 
-## ---------- Etape III ---------- ##
+## -------------------- Etape III -------------------- ##
 
-seuil_ener_pour=99.99
+if config == 'cer_un':
+    rg_perf_fact = ''
+    ray_fix = 0
+else:
+    ray_fix = ray_p
+    rg_perf_fact = '_rayf' + str(int(round(100*ray_fix, 2)))
+
+if config == 'sph_un' or config == 'cyl_un':
+    rg_perf_fact = ''
+else:
+    rg_perf_fact = '_rayf' + str(int(round(100*ray_fix, 2)))
+
+seuil_ener_pour = 99.99
+
+from math import log
+
+nu = 1 - seuil_ener_pour/100
+nu_log = log(nu)/log(10)
+expo = str(int(round(nu_log, 0)))
+
+registre_N_mor_name = 'Perf2D/' + 'N_mor_' + 'ener_nu10E' + expo + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
 
 ## ---------- Etape IV ---------- ##
 
-N_mor=2
+
+
+## ---------- Etape V ---------- ##
+
+
+
+## ------------ Registre pour les performances des tests ------------ ##
+
+
+
+
+
+registre_perf_num = dict()
+
+registre_perf_num['int_grad_fem'] = 'Perf2D/' + 'IG_fem_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+registre_perf_num['int_grad_rom'] = 'Perf2D/' + 'IG_rom_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+
+if config == 'compl':
+    registre_perf_num['int_grad_yy_fem'] = 'Perf2D/' + 'IG_yy_fem_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+    registre_perf_num['int_grad_yy_rom'] = 'Perf2D/' + 'IG_yy_rom_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+
+
+registre_perf_num['nodes'] = 'Perf2D/' + 'nodes_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+registre_perf_num['err_rel'] = 'Perf2D/' + 'err_rel_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+registre_perf_num['var_rel'] = 'Perf2D/' + 'var_rel_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+registre_perf_num['var_rel_yy'] = 'Perf2D/' + 'var_rel_yy_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+registre_perf_num['t'] = 'Perf2D/' + 'tps_exec_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
+
+## ------------ Registres de snapshots et vecteurs POD ------------ ##
+
+## Solutions physiques vectorisees
+l_name='Lchi_'+str(N_snap)+'_'+config+'_'+geo_p+'_'+'sur'+str(res)+'_'+ordo+'_'+computer
+
+## Snapshots vectorises utilisables pour la POD
+u_name = 'Usnap_' + dom_fixe + '_' + str(N_snap) + '_' + config + '_' + geo_p + '_' + 'res' + str(res) + '_' + ordo + '_' + computer
+
+## Chargement de la base POD complete
+phi_name='Phi'+dom_fixe+'_dim'+str(N_snap)+'_'+config+'_'+geo_p+'_'+'res'+str(res)+'_'+ordo+'_'+computer

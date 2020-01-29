@@ -50,7 +50,8 @@ from mshr import *
 
 # Parametres
 
-from DD_pars import *
+# from DD_pars import *
+exec(open('DD_pars.py', encoding = 'utf8').read())
 
 # Fonctions 2D
 
@@ -69,18 +70,20 @@ snap_done = True
 
 err_eval = False
 
-mesh_ex_done = False
+mesh_ex_done = True
 EII = False
-exsnap_done = False
+exsnap_done = True
 
 test_Dhom = False
 
 EIII = False
 
-EIV = True
+EIV = False
 Report = True
 
 # EIVfixe=False
+
+EV = True
 
 ### ------------ Etape 0 : Generation de microstructures periodiques aleatoires ------------ ###
 
@@ -142,19 +145,13 @@ if EIV :
 
     arr_nodes = np.zeros(len(list_rho_test))
 
-    ar_err_rel = np.zeros(len(list_rho_test))
-    ar_var_rel = np.zeros(len(list_rho_test))
+    arr_err_rel = np.zeros(len(list_rho_test))
+    arr_var_rel = np.zeros(len(list_rho_test))
+    arr_var_rel_yy = np.zeros(len(list_rho_test))
 
     ## pour l'instant : on en compte pas le temps de maillage, identique pour FEM et ROM
 
     ## performances temporelles
-    # arr_t_fem = np.zeros(len(list_rho_test))
-    #
-    # arr_t_phi_n = np.zeros(len(list_rho_test))
-    # arr_t_Ab = np.zeros(len(list_rho_test))
-    # arr_t_solve = np.zeros(len(list_rho_test))
-    # arr_t_dhom = np.zeros(len(list_rho_test))
-
     arr_t = np.zeros((len(list_rho_test), 6))
 
     # fichiers pour enregistrer textuellement les performances du ROM
@@ -214,6 +211,20 @@ if EIV :
     registre_pg.close()
     registre_gr.close()
 
+    # sauvegarde des performances
+    np.save(registre_perf_num['int_grad_fem'] + '.npy', arr_int_grad_fem)
+    np.save(registre_perf_num['int_grad_rom'] + '.npy', arr_int_grad_rom)
+    if config == 'compl':
+        np.save(registre_perf_num['int_grad_yy_fem'] + '.npy', arr_int_grad_yy_fem)
+        np.save(registre_perf_num['int_grad_yy_rom'] + '.npy', arr_int_grad_yy_rom)
+
+    np.save(registre_perf_num['nodes'] + '.npy', arr_nodes)
+    np.save(registre_perf_num['err_rel'] + '.npy', arr_err_rel)
+    np.save(registre_perf_num['var_rel'] + '.npy', arr_var_rel)
+    if config == 'compl':
+        np.save(registre_perf_num['var_rel_yy'] + '.npy', arr_var_rel_yy)
+    np.save(registre_perf_num['t'] + '.npy', arr_t)
+
     # nom_tab_latex_pg = '../GitLab/rom_diffeo_dhom/latex_article/' + 'pg_' + config + '_res' + str(res_gmsh) + '_raydeb_o' + str(int(100*2*list_rho_appr[0]))
     # nom_tab_latex_gr = '../GitLab/rom_diffeo_dhom/latex_article/' + 'gr_' + config + '_res' + str(res_gmsh) + '_raydeb_o' + str(int(100*2*list_rho_appr[0]))
 
@@ -227,118 +238,12 @@ if EIV :
     os.rename(nom_fichier_pg + '.txt', nom_tab_latex_pg + '.tex')
     os.rename(nom_fichier_gr + '.txt', nom_tab_latex_gr + '.tex')
 
-    # representations graphiques
-    arr_rho = np.array(list_rho_test)
-    arr_x = np.arange(len(arr_t[0, :]))
 
-    #
-    fig_1 = plt.figure()
+## -------------------- Etape V -------------------- ##
 
-    plt.plot(arr_rho, arr_int_grad_fem, 'bo', arr_rho, arr_int_grad_rom, 'r*', markersize = 20)# 'k')
+figures_repository = 'Figures3D/'
+figures_repository = '../GitLab/rom_diffeo_dhom/figures_interp/'
 
-    pl.title('Top left coefficient of int_grad, FEM versus ROM')
 
-    if fig_todo == 'aff':
-        pl.show()
-    elif fig_todo == 'save':
-        pl.savefig('Figures2D/' + 'int_grad_FeRoM_' + 'cer_un_ray' + '.png')
-    pl.close()
-
-    fig_2 = plt.figure()
-
-    pl.plot(arr_rho, ar_err_rel, linewidth = 2.2, color = 'green')
-
-    pl.xlabel('Tested radius')
-    pl.ylabel('Error (%)')
-
-    if fig_todo == 'aff':
-        pl.show()
-    elif fig_todo == 'save':
-        pl.savefig('Figures2D/' + 'err_rel_' + 'cer_un_ray' + '.png')# + '_res' + str(pars['resolution']) + '_snap' + str(i+1) + '.png')
-    pl.close()
-
-    fig_2bis = plt.figure()
-
-    pl.plot(arr_rho, ar_var_rel, linewidth = 2.2, color = 'green')
-
-    pl.xlabel('Tested radius')
-    pl.ylabel('RelV (%)')
-
-    plt.xlim(arr_rho[0] - 0.05, arr_rho[len(arr_rho) - 1] + 0.05)
-
-    plt.ylim(0.1*min(ar_var_rel), 10*max(ar_var_rel))
-    pl.yscale('log')
-
-    if fig_todo == 'aff':
-        pl.show()
-    elif fig_todo == 'save':
-        pl.savefig('Figures2D/' + 'var_rel_' + 'cer_un_ray' + '.png')# + '_res' + str(pars['resolution']) + '_snap' + str(i+1) + '.png')
-    pl.close()
-
-    fig_3, ax_3 = plt.subplots()
-
-    tps_fem_moy = sum(arr_t[:, 0])/len(list_rho_test)
-
-    print('='*75)
-    print('Moyenne EF :', tps_fem_moy)
-    print('Performances :', arr_t)
-    print('='*75)
-
-    # print('Performances par rayon :', heights)
-    print('='*75)
-    width = 0.05
-    BarName = ['T FEM', 'T ROM', 'T interp Phi', 'T Ab', 'T solve', 'T dhom']
-
-    for i in range(len(list_rho_test)):
-        print('x =', arr_x + i*width)
-        print('y =', arr_t[i, :]/tps_fem_moy)
-        print('%'*75)
-        plt.bar(arr_x + i*width, arr_t[i, :]/tps_fem_moy, width, color = ['blue', 'red', 'green', 'green', 'green', 'green'])
-
-    # plt.bar(arr_x, arr_heights, width, align = 'center')
-    # plt.bar(arr_x, heights, width, stacked = True, align = 'center')
-
-    plt.xlim(-1, len(arr_t[0, :]))
-
-    plt.ylim(2*10**(-6), max(arr_t[:, 0]/tps_fem_moy))
-    pl.yscale('log')
-
-    plt.ylabel('tps/t_FEM_moy')
-
-    pl.xticks(arr_x, BarName, rotation = 0)
-
-    if fig_todo == 'aff':
-        plt.title('Time elapsed to compute Dhom : FEM vs ROM')
-        plt.show()
-    elif fig_todo == 'save':
-        plt.savefig('Figures2D/' + 'perf_temp_' + 'logscale_' + 'cer_un_ray' + '.png')
-
-    plt.close()
-
-    fig_4, ax_4 = plt.subplots()
-
-    # tps_fem_moy = sum(arr_t[:, 0])/len(list_rho_test)
-
-    width = 0.05
-    BarName = ['T FEM', 'T ROM', 'T interp Phi', 'T Ab', 'T solve', 'T dhom']
-
-    for i in range(len(list_rho_test)):
-        print('x =', arr_x + i*width)
-        print('y =', arr_t[i, :]/tps_fem_moy)
-        print('%'*75)
-        plt.bar(arr_x + i*width, arr_t[i, :]/tps_fem_moy, width, color = ['blue', 'red', 'green', 'green', 'green', 'green'])
-
-    plt.xlim(-1, len(arr_t[0, :]))
-    plt.ylim(0, max(arr_t[:, 0]/tps_fem_moy))
-
-    plt.ylabel('tps/t_FEM_moy')
-
-    pl.xticks(arr_x, BarName, rotation = 0)
-
-    if fig_todo == 'aff':
-        plt.title('Time elapsed to compute Dhom : FEM vs ROM')
-        plt.show()
-    elif fig_todo == 'save':
-        plt.savefig('Figures2D/' + 'perf_temp_' + 'linscale_' + 'cer_un_ray' + '.png')
-
-    plt.close()
+if EV :
+    exec(open("DD_EV.py").read())
