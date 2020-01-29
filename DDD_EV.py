@@ -34,7 +34,10 @@ arr_nodes = np.load(registre_perf_num['nodes'] + '.npy')
 
 arr_err_rel = np.load(registre_perf_num['err_rel'] + '.npy')
 arr_var_rel = np.load(registre_perf_num['var_rel'] + '.npy')
-arr_var_rel_yy = np.load(registre_perf_num['var_rel_yy'] + '.npy')
+if config == 'cylsph':
+    arr_var_rel_yy = np.load(registre_perf_num['var_rel_yy'] + '.npy')
+
+arr_var_rel_chi = np.load(registre_perf_num['var_rel_chi'] + '.npy')
 
 arr_t = np.load(registre_perf_num['t'] + '.npy')
 
@@ -136,6 +139,31 @@ if config == 'cylsph':
     elif fig_todo == 'save':
         pl.savefig(figures_repository + 'var_rel_yy_' + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh) + '.png')# + '_res' + str(pars['resolution']) + '_snap' + str(i+1) + '.png')
     pl.close()
+
+# variance relative en pourcent : champs de vecteurs, H^1
+fig_2quater = plt.figure()
+
+# print('%'*80)
+# print(arr_var_rel_chi)
+# print('%'*80)
+
+pl.plot(arr_rho, arr_var_rel_chi, linewidth = 2.2, color = 'green')
+
+pl.xlabel(r'$\rho$', size = 20)
+pl.ylabel(r'$\mathcal{R} \ V(\chi) \ (\%)$', size = 20)
+
+plt.xlim(arr_rho[0] - 0.05, arr_rho[len(arr_rho) - 1] + 0.05)
+
+plt.ylim(0.1*min(arr_var_rel_chi), 10*max(arr_var_rel_chi))
+pl.yscale('log')
+
+if fig_todo == 'aff':
+    pl.show()
+elif fig_todo == 'save':
+    pl.savefig('Figures2D/' + 'var_rel_chi_' + 'cer_un_ray' + '.png')# + '_res' + str(pars['resolution']) + '_snap' + str(i+1) + '.png')
+pl.close()
+
+# performances temporelles comparees : full, rom et ses etapes ; avec des histogrammes
 
 fig_3, ax_3 = plt.subplots()
 

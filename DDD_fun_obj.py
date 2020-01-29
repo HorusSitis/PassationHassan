@@ -256,7 +256,7 @@ def snapshot_sph_per(cen, r, res):
     ### Resultat : snapshot
     return(chi)
 
-def snapshot_cyl_per(top,r,res,typ_sol):### ------------------> resolution : avec gmsh
+def snapshot_cyl_per(top, r, res):### ------------------> resolution : avec gmsh
     t_x,t_z=top[0],top[1]
     mesh_name="maillages_per/3D/cubecylindre_periodique_triangle_"+str(int(round(100*r,2)))+"sur"+str(res)+".xml"
     mesh_c_r=Mesh(mesh_name)

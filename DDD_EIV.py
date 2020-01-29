@@ -166,13 +166,13 @@ print('se2 faite', t_int_Ab + t_rom_linear, 'secondes')
 
 start=time.time()
 
-## On initialise et affiche le champ chi_nouv
+## On initialise et affiche le champ chi_nouv_rom
 
-chi_nouv_v=np.dot(Phi_nouv_v,a_nouv)
-chi_nouv=Function(V_nouv)
-chi_nouv.vector().set_local(chi_nouv_v)
+chi_nouv_rom_v=np.dot(Phi_nouv_v,a_nouv)
+chi_nouv_rom=Function(V_nouv)
+chi_nouv_rom.vector().set_local(chi_nouv_rom_v)
 
-plot(chi_nouv, linewidth=lw)
+plot(chi_nouv_rom, linewidth=lw)
 plt.title('Rho = 0,'+str(int(round(100*r_nouv,2))),fontsize=40)
 if fig_todo=='aff':
     plt.show()
@@ -188,14 +188,14 @@ rho=r_nouv
 if err_per_calc:
     # Affichage des valeurs et erreurs de la solution periodique, quelle que soit la configuration
     if config=='sph_un' or config=='cyl_un':
-        err_per_gr(cen_snap_ray,r_nouv,chi_nouv,npas_err,fig_todo)
+        err_per_gr(cen_snap_ray,r_nouv,chi_nouv_rom,npas_err,fig_todo)
     elif config=='2sph':
-        err_per_gr_compl(config,r_v_0,chi_nouv,npas_err,fig_todo)
+        err_per_gr_compl(config,r_v_0,chi_nouv_rom,npas_err,fig_todo)
     elif config=='cylsph':
         if geo_p=='ray_sph':
-            err_per_gr_compl(config,r_c_0,chi_nouv,npas_err,fig_todo)
+            err_per_gr_compl(config,r_c_0,chi_nouv_rom,npas_err,fig_todo)
         elif geo_p=='ray_cyl':
-            err_per_gr_compl(config,r_nouv,chi_nouv,npas_err,fig_todo)
+            err_per_gr_compl(config,r_nouv,chi_nouv_rom,npas_err,fig_todo)
 
 
 # Tenseur de diffusion homogeneise
@@ -204,7 +204,7 @@ if err_per_calc:
 T_chi_rom=np.zeros((3,3))
 for k in range(0,3):
     for l in range(0,3):
-        T_chi_rom[k,l]=assemble(grad(chi_nouv)[k,l]*dx)
+        T_chi_rom[k,l]=assemble(grad(chi_nouv_rom)[k,l]*dx)
 T_chi_rom_omega = T_chi_rom/cell_vol
 ## Integrale de l'identite sur le domaine fluide
 ### Calcul de la porosite
@@ -230,18 +230,18 @@ print('se3 faite ',t_rom_Dhom,' secondes')
 
 start=time.time()
 
-## On reinitialise le champ chi_nouv pour la methode des elements finis
+## On reinitialise le champ chi_nouv_full pour la methode des elements finis
 
 #res=20
 cen_snap_ray=[(xinf + xsup)/2., (zinf + zsup)/2., (zinf + zsup)/2.]
 
 if config=='sph_un':
-    chi_nouv=snapshot_sph_per(cen_snap_ray,r_nouv,res,typ_sol)
+    chi_nouv_full=snapshot_sph_per(cen_snap_ray,r_nouv,res)
 elif config=='cyl_un':
-    chi_nouv=snapshot_cyl_per(top_snap_ray,r_nouv,res,typ_sol)
+    chi_nouv_full=snapshot_cyl_per(top_snap_ray,r_nouv,res)
 elif config=='2sph':
     if geo_p=='ray':
-        chi_nouv = snapshot_compl_per(r_nouv, ray_fix, config, res_gmsh)
+        chi_nouv_full = snapshot_compl_per(r_nouv, ray_fix, config, res_gmsh)
 elif config == 'cylsph':# or config == '2sph':
     chi_compl = snapshot_compl_per(r_nouv, ray_fix, config, res_gmsh)
 
@@ -249,7 +249,7 @@ elif config == 'cylsph':# or config == '2sph':
 rho=r_nouv
 r=r_nouv
 
-plot(chi_nouv, linewidth=lw)
+plot(chi_nouv_full, linewidth=lw)
 plt.title('Rho = 0,'+str(int(round(100*r_nouv,2))),fontsize=40)
 if fig_todo=='aff':
     plt.show()
@@ -262,14 +262,14 @@ if err_per_calc:
     # Affichage des valeurs et erreurs de la solution periodique, quelle que soit la configuration
     if config=='sph_un' or config=='cyl_un':
         #err_per_ind_01(chi_n,cen,r,npas_err)
-        err_per_gr(cen_snap_ray,r_nouv,chi_nouv,npas_err,fig_todo)
+        err_per_gr(cen_snap_ray,r_nouv,chi_nouv_full,npas_err,fig_todo)
     elif config=='2sph':
-        err_per_gr_compl(config,r_v_0,chi_nouv,npas_err,fig_todo)
+        err_per_gr_compl(config,r_v_0,chi_nouv_full,npas_err,fig_todo)
     elif config=='cylsph':
         if geo_p=='ray_sph':
-            err_per_gr_compl(config,r_c_0,chi_nouv,npas_err,fig_todo)
+            err_per_gr_compl(config,r_c_0,chi_nouv_full,npas_err,fig_todo)
         elif geo_p=='ray_cyl':
-            err_per_gr_compl(config,r_nouv,chi_nouv,npas_err,fig_todo)
+            err_per_gr_compl(config,r_nouv,chi_nouv_full,npas_err,fig_todo)
 
 # Tenseur de diffusion homogeneise
 
@@ -277,7 +277,7 @@ if err_per_calc:
 T_chi_fom = np.zeros((3, 3))
 for k in range(0, 3):
     for l in range(0, 3):
-        T_chi_fom[k,l] = assemble(grad(chi_nouv)[k, l]*dx)
+        T_chi_fom[k,l] = assemble(grad(chi_nouv_full)[k, l]*dx)
 T_chi_fom_omega = T_chi_fom/cell_vol
 
 ## Integrale de l'identite sur le domaine fluide : voir ce qui precede avec la porosite
@@ -306,6 +306,12 @@ t_fem=end - start
 
 print('se4 faite ', t_fem, ' secondes')
 
+chi_nouv_rom.set_allow_extrapolation(True)
+# chi_nouv_rom_prime = interpolate(chi_nouv_rom, V_nouv)
+chi_nouv_full_prime = interpolate(chi_nouv_full, V_nouv)
+
+var_rel_chi = 100*var_rel_func(chi_nouv_rom, chi_nouv_full_prime)
+
 ##############################################################################
 ########################## Evaluation de la methode ##########################
 ##############################################################################
@@ -330,6 +336,9 @@ if Report :
     print('Coefficient int_grad11 MOR :',T_chi_rom_omega[0,0])
     print('Coefficient int_grad11 MEF :',T_chi_fom_omega[0,0])
     print('Erreur relative MEF-MOR :',err_rel_ig,'pourcent')
+    print('%'*78)
+    print('Variance relative MEF-MOR IG :',var_rel_ig,'pourcent')
+    print('Variance relative MEF-MOR chi :',var_rel_chi,'pourcent')
     print('%'*78)
     ## Temps de calcul a evaluer ##
     t_rom = t_phi_nouv + t_int_Ab + t_rom_linear + t_rom_Dhom
@@ -420,6 +429,7 @@ arr_err_rel[i] = err_rel_ig
 arr_var_rel[i] = var_rel_ig
 arr_var_rel_yy[i] = var_rel_ig_yy
 
+arr_var_rel_chi[i] = var_rel_chi
 
 arr_t[i, 0] = t_fem
 

@@ -146,7 +146,7 @@ V_fixe = VectorFunctionSpace(mesh_fixe,'P',2,constrained_domain=PeriodicBoundary
 
 # Chargement de la liste des snapshots physiques
 
-l_name='Lchi_' + str(N_snap) + '_'+config + '_' + geo_p + '_' + 'sur' + str(res) + '_' + ordo + '_' + computer
+# l_name='Lchi_' + str(N_snap) + '_'+config + '_' + geo_p + '_' + 'sur' + str(res) + '_' + ordo + '_' + computer
 print(l_name)
 with sh.open(repertoire_parent + l_name) as l_loa:
     list_chi_v = l_loa['maliste']
