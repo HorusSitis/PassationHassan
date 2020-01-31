@@ -296,7 +296,8 @@ err_rel_ig = 100*(T_chi_rom_omega[0,0] - T_chi_fom_omega[0,0])/T_chi_fom_omega[0
 print('Erreur relative int_grad MEF-MOR :', err_rel_ig , ' pourcent')
 
 var_rel_ig = (np.sqrt(2*(T_chi_rom_omega[0,0]**2 + T_chi_fom_omega[0,0]**2)/((T_chi_rom_omega[0,0] + T_chi_fom_omega[0,0])**2) - 1))
-var_rel_ig_yy = (np.sqrt(2*(T_chi_rom_omega[1,1]**2 + T_chi_fom_omega[1,1]**2)/((T_chi_rom_omega[1,1] + T_chi_fom_omega[1,1])**2) - 1))
+if config == 'cylsph':
+    var_rel_ig_yy = (np.sqrt(2*(T_chi_rom_omega[1,1]**2 + T_chi_fom_omega[1,1]**2)/((T_chi_rom_omega[1,1] + T_chi_fom_omega[1,1])**2) - 1))
 
 ## On enregistre et imprime le temps d'execution de SE4
 
@@ -427,7 +428,8 @@ arr_nodes[i] = V_nouv.dim()
 
 arr_err_rel[i] = err_rel_ig
 arr_var_rel[i] = var_rel_ig
-arr_var_rel_yy[i] = var_rel_ig_yy
+if config == 'cylsph':
+    arr_var_rel_yy[i] = var_rel_ig_yy
 
 arr_var_rel_chi[i] = var_rel_chi
 

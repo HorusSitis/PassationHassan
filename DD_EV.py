@@ -137,7 +137,7 @@ print('='*75)
 # print('Performances par rayon :', heights)
 print('='*75)
 width = 0.05
-BarName = ['T FEM', 'T ROM', 'T interp Phi', 'T Ab', 'T solve', 'T dhom']
+BarName = [r'$t_{FEM}$', r'$t_{ROM}$', r'$t_{\phi^{\tilde{\rho}}}$', r'$t_{Ab}$', r'$t_{solve}$', r'$t_{D^{hom}}$']
 
 for i in range(len(list_rho_test)):
     print('x =', arr_x + i*width)
@@ -153,15 +153,16 @@ plt.xlim(-1, len(arr_t[0, :]))
 plt.ylim(2*10**(-6), max(arr_t[:, 0]/tps_fem_moy))
 pl.yscale('log')
 
-plt.ylabel('tps/t_FEM_moy')
+plt.ylabel(r'$tps/\langle t_{FEM}\rangle$', size = 20)
 
-pl.xticks(arr_x, BarName, rotation = 0)
+pl.xticks(arr_x, BarName, rotation = 0, size = 20)
 
 if fig_todo == 'aff':
     plt.title('Time elapsed to compute Dhom : FEM vs ROM')
     plt.show()
 elif fig_todo == 'save':
-    plt.savefig('Figures2D/' + 'perf_temp_' + 'logscale_' + 'cer_un_ray' + '.png')
+    # plt.savefig('Figures2D/' + 'perf_temp_' + 'logscale_' + 'cer_un_ray' + '.png')
+    plt.savefig('../GitLab/rom_diffeo_dhom/figures_interp/' + 'perf_temp_' + 'logscale_' + 'cer_un_ray' + '.png')
 
 plt.close()
 
@@ -171,7 +172,8 @@ fig_4, ax_4 = plt.subplots()
 # tps_fem_moy = sum(arr_t[:, 0])/len(list_rho_test)
 
 width = 0.05
-BarName = ['T FEM', 'T ROM', 'T interp Phi', 'T Ab', 'T solve', 'T dhom']
+BarName = [r'$t_{FEM}$', r'$t_{ROM}$', r'$t_{\phi^{\tilde{\rho}}}$', r'$t_{Ab}$', r'$t_{solve}$', r'$t_{D^{hom}}$']
+# BarName = ['T FEM', 'T ROM', 'T interp Phi', 'T Ab', 'T solve', 'T dhom']
 
 for i in range(len(list_rho_test)):
     print('x =', arr_x + i*width)
@@ -182,14 +184,15 @@ for i in range(len(list_rho_test)):
 plt.xlim(-1, len(arr_t[0, :]))
 plt.ylim(0, max(arr_t[:, 0]/tps_fem_moy))
 
-plt.ylabel('tps/t_FEM_moy')
+plt.ylabel(r'$tps/\langle t_{FEM}\rangle$', size = 20)
 
-pl.xticks(arr_x, BarName, rotation = 0)
+pl.xticks(arr_x, BarName, rotation = 0, size = 20)
 
 if fig_todo == 'aff':
     plt.title('Time elapsed to compute Dhom : FEM vs ROM')
     plt.show()
 elif fig_todo == 'save':
-    plt.savefig('Figures2D/' + 'perf_temp_' + 'linscale_' + 'cer_un_ray' + '.png')
+    plt.savefig('../GitLab/rom_diffeo_dhom/figures_interp/' + 'perf_temp_' + 'linscale_' + 'cer_un_ray' + '.png')
+    # plt.savefig('Figures2D/' + 'perf_temp_' + 'linscale_' + 'cer_un_ray' + '.png')
 
 plt.close()

@@ -19,7 +19,7 @@ fixe_aff=False
 
 # fig_todo=''
 fig_todo='aff'
-# fig_todo='save'
+fig_todo='save'
 
 import time
 
@@ -166,7 +166,7 @@ N_snap = 8
 if config != 'compl' or (config == 'compl' and geo_p == 'diag'):
     rho_appr_min = 0.1
     rho_appr_max = 0.8
-    list_rho_test = np.linspace(0.15, 0.85, 8)
+    list_rho_test = np.linspace(0.15, 0.75, 7)
 elif config == 'compl' and geo_p == 'hor':
     rho_appr_min = 0.07
     rho_appr_max = 0.56

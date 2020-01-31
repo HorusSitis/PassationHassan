@@ -346,13 +346,15 @@ registre_gr.write('\\'+'hline'+'\n')
 
 ## ecriture des resultats dans les vecteurs arr_
 
-arr_int_grad_fem[i] = T_chi_fom[0,0]
-arr_int_grad_rom[i] = T_chi_rom[0,0]
+arr_int_grad_fem[i] = T_chi_fom[0,0]/cell_vol
+arr_int_grad_rom[i] = T_chi_rom[0,0]/cell_vol
 
 arr_nodes[i] = V_nouv.dim()
 
 arr_err_rel[i] = err_rel_ig
 arr_var_rel[i] = var_rel_ig
+if config == 'compl':
+    arr_var_rel_yy[i] = var_rel_ig_yy
 
 arr_var_rel_chi[i] = var_rel_chi
 

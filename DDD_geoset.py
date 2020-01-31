@@ -21,7 +21,7 @@ import numpy as np
 # Choix de la resolution du maillage : nombre de noeuds par cote du cube
 
 res_gmsh=10
-# res_gmsh=20
+res_gmsh=20
 # res_gmsh=25
 
 typ_msh='gms'
@@ -74,7 +74,7 @@ class PeriodicBoundary(SubDomain):
 # parametres pour l'execution des etapes : affichage, tests de periodicite etc
 
 fig_todo = 'aff'
-# fig_todo = 'save'
+fig_todo = 'save'
 
 typ_msh='gms'#''
 D_k=1.0
