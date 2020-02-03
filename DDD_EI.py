@@ -83,8 +83,8 @@ if not snap_done:
                 list_chi_n_v=pool.map(snap_cyl_ray,(N for N in range(0,N_snap)))
             # elif geo_p=='axe':
             #     list_chi_n_v=pool.map(snap_cyl_axe,(N for N in range(0,N_snap)))
-            else:
-                list_chi_n_v=pool.map(snap_compl_ray,(N for N in range(0,N_snap)))
+        else:
+            list_chi_n_v=pool.map(snap_compl_ray,(N for N in range(0,N_snap)))
     ### Generation sequentielle des snapshots, pour des tests de la methode des elements finis ###
     elif gen_snap == 'seq':
         start = time.time()
@@ -139,6 +139,13 @@ else :
 
 # --------------------------------------------------------------------------------- #
 
+# mesh_name = 'maillages_per/3D/cube2sph_periodique_triangle_rayc10_rayp39_sur10.xml'
+# mesh = Mesh(mesh_name)
+# print(mesh_name)
+# plot(mesh)
+# print('%'*80)
+# sys.exit()
+
 # Exploitation des solution du probleme aux elements finis
 res=res_gmsh
 
@@ -169,6 +176,8 @@ for n in range(0, N_snap):
     print(mesh_repository + nom_fichier_avecgpar + '.xml')
     mesh = Mesh(mesh_repository + nom_fichier_avecgpar + '.xml')
 
+    # plot(mesh)
+    # sys.exit()
     V_n = VectorFunctionSpace(mesh, 'P', 2, constrained_domain = PeriodicBoundary())
 
     # On restitue la forme fonctionnelle du snapshot courant

@@ -20,8 +20,9 @@ import numpy as np
 
 # Choix de la resolution du maillage : nombre de noeuds par cote du cube
 
-res_gmsh=10
-res_gmsh=20
+res_gmsh=5
+# res_gmsh=10
+# res_gmsh=20
 # res_gmsh=25
 
 typ_msh='gms'
@@ -98,9 +99,9 @@ typ_refi='vol'#'front'#
 # apprentissage : calcul parallele ou sequentiel, prise en compte de la resolution
 
 # gen_snap='par8'
-# gen_snap='par4'
+gen_snap='par4'
 # gen_snap='par2'
-gen_snap='seq'
+# gen_snap='seq'
 # gen_snap='seq_par'
 
 # repertoire pour les resultats

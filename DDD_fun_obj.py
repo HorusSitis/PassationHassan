@@ -128,7 +128,7 @@ def creer_maill_per_gpar(config, geo_p, xyzinfsup, rho, ray_fix, res):
 
     if config == 'sph_un':
         gen_mesh.write('R = ' + str(rho) + ';' + '\n' + '\n')
-    if config == 'cube2sph':
+    if config == '2sph':
         gen_mesh.write('R = ' + str(rho) + ';' + '\n')
         gen_mesh.write('S = ' + str(ray_fix) + ';' + '\n' + '\n')
     if config == 'cylsph' and geo_p == 'ray_sph':
