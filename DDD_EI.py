@@ -16,7 +16,9 @@ def snap_sph_ray(N_par):
     # rho : on utilise la liste d'apprentissage definie dans DDD_geoset
     rho = list_rho_appr[N_par]
 
-    chi_r = snapshot_sph_per(cen_snap_ray, rho, res_gmsh)
+    # chi_r = snapshot_sph_per(cen_snap_ray, rho, res_gmsh)
+    chi_r = snapshot_compl_per(rho, 0., config, geo_p, res_gmsh)
+
     chi_r_v = chi_r.vector().get_local()
 
     return([N_par,chi_r_v])
@@ -38,12 +40,7 @@ def snap_sph_ray(N_par):
 def snap_compl_ray(N_par):
     # rho : on utilise la liste d'apprentissage definie dans DDD_geoset
     rho = list_rho_appr[N_par]
-    # ## deux spheres ##
-    # if geo_p == 'ray':
-    #     chi_compl = snapshot_compl_per(rho, ray_fix, config, res_gmsh)
-    # ## un cylindre et une sphere ##
-    # elif config == 'cylsph':
-    #     chi_compl = snapshot_compl_per(rho, ray_fix, config, res_gmsh)
+    # solveur a lancer
     chi_compl = snapshot_compl_per(rho, ray_fix, config, geo_p, res_gmsh)
     ## on vectorise la fonction calculee par MEF ##
     chi_compl_v = chi_compl.vector().get_local()
@@ -75,7 +72,9 @@ if not snap_done:
         pool=multiprocessing.Pool(processes=nproc)
         if config=='sph_un':
             if geo_p=='ray':
-                list_chi_n_v=pool.map(snap_sph_ray,(N for N in range(0,N_snap)))
+                ray_fix = 0.
+                # list_chi_n_v=pool.map(snap_sph_ray,(N for N in range(0,N_snap)))
+                list_chi_n_v=pool.map(snap_compl_ray,(N for N in range(0,N_snap)))
             # elif geo_p=='cen':
             #     list_chi_n_v=pool.map(snap_sph_cen,(N for N in range(0,N_snap)))
         elif config=='cyl_un':
@@ -176,7 +175,7 @@ for n in range(0, N_snap):
     print(mesh_repository + nom_fichier_avecgpar + '.xml')
     mesh = Mesh(mesh_repository + nom_fichier_avecgpar + '.xml')
 
-    # plot(mesh)
+    plot(mesh)
     # sys.exit()
     V_n = VectorFunctionSpace(mesh, 'P', 2, constrained_domain = PeriodicBoundary())
 
@@ -204,7 +203,7 @@ for n in range(0, N_snap):
         #err_per_ind_01(chi_n,cen,r,npas_err)
         if config == 'cyl_un' and geo_p == 'ray':
             cen = [(xinf + xsup)/2., yinf, (zinf + zsup)/2.]
-            # on triche un peu : on prend une face prevee d'une demie-sphere au lieu d'une face privee du disque frontal du cylindre
+            # on triche un peu : on prend une face privee d'une demie-sphere au lieu d'une face privee du disque frontal du cylindre
         if config == '2sph':
             err_per_gr_compl(config, ray_fix, chi_n, npas_err, fig_todo)
         elif config == 'cylsph':

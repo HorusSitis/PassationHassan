@@ -238,7 +238,7 @@ def snapshot_sph_per(cen, r, res):
     L = assemble(l)
 
     ## solveur de krylov pour un probleme bien pose, dans un hyperplan
-    solver = dolfin.PETScKrylovSolver("cg")
+    solver = PETScKrylovSolver("cg")
 
     solver.parameters["absolute_tolerance"] = 1e-6
     solver.parameters["relative_tolerance"] = 1e-6
@@ -249,12 +249,12 @@ def snapshot_sph_per(cen, r, res):
 
     solver.set_operator(A)
 
-    null_vec = dolfin.Vector(u1.vector())
+    null_vec = Vector(u1.vector())
     V.dofmap().set(null_vec, 1.0)
-    null_vec *= 1.0/(dolfin.norm(null_vec, norm_type = 'l2'))
+    null_vec *= 1.0/(norm(null_vec, norm_type = 'l2'))
 
-    null_space = dolfin.VectorSpaceBasis([null_vec])
-    dolfin.as_backend_type(A).set_nullspace(null_space)
+    null_space = VectorSpaceBasis([null_vec])
+    as_backend_type(A).set_nullspace(null_space)
     null_space.orthogonalize(L)
 
     # Resolution et restitution de chi
@@ -302,7 +302,7 @@ def snapshot_cyl_per(top, r, res):### ------------------> resolution : avec gmsh
     L = assemble(l)
 
     ## solveur de krylov pour un probleme bien pose, dans un hyperplan
-    solver = dolfin.PETScKrylovSolver("cg")
+    solver = PETScKrylovSolver("cg")
 
     solver.parameters["absolute_tolerance"] = 1e-6
     solver.parameters["relative_tolerance"] = 1e-6
@@ -313,18 +313,17 @@ def snapshot_cyl_per(top, r, res):### ------------------> resolution : avec gmsh
 
     solver.set_operator(A)
 
-    null_vec = dolfin.Vector(u1.vector())
+    null_vec = Vector(u1.vector())
     V.dofmap().set(null_vec, 1.0)
-    null_vec *= 1.0/(dolfin.norm(null_vec, norm_type = 'l2'))
+    null_vec *= 1.0/(norm(null_vec, norm_type = 'l2'))
 
-    null_space = dolfin.VectorSpaceBasis([null_vec])
-    dolfin.as_backend_type(A).set_nullspace(null_space)
+    null_space = VectorSpaceBasis([null_vec])
+    as_backend_type(A).set_nullspace(null_space)
     null_space.orthogonalize(L)
 
     # Resolution et restitution de chi
     solver.solve(u1.vector(), L)
     chi = u1
-
 
     ### Resultat : snapshot
     return(chi)
@@ -332,9 +331,12 @@ def snapshot_cyl_per(top, r, res):### ------------------> resolution : avec gmsh
 def snapshot_compl_per(rho, ray_fix, config, geo_p, res):### ------------------> resolution : avec gmsh
 
     ## convention : nommage du fichier .xml de maillage
+    # mesh_prefix = 'cubesphere_periodique_triangle_'
     # mesh_prefix = 'cube2sph_periodique_triangle_'
     # mesh_prefix = 'cubecylsph_periodique_triangle_'
-    if config == '2sph':
+    if config == 'sph_un':
+        nom_fichier_avecgpar = mesh_prefix + 'rayc' + str(int(round(100*rho,2))) + '_sur' + str(res)
+    elif config == '2sph':
         nom_fichier_avecgpar = mesh_prefix + 'rayc' + str(int(round(100*rho,2))) + '_rayp' + str(int(round(100*ray_fix,2))) + '_sur' + str(res)
     elif config == 'cylsph' and geo_p == 'ray_sph':
         nom_fichier_avecgpar = mesh_prefix + 'rayc' + str(int(round(100*rho,2))) + '_rayp' + str(int(round(100*ray_fix,2))) + '_sur' + str(res)
@@ -347,60 +349,17 @@ def snapshot_compl_per(rho, ray_fix, config, geo_p, res):### ------------------>
 
     ## VFS pour le probleme variationnel
     V = VectorFunctionSpace(mesh, 'P', 2, constrained_domain=PeriodicBoundary())
-    print('Noeuds : ', V.dim())
+    # print('Noeuds : ', V.dim())
 
-    ## On definit la bordure du domaine, sur laquelle integrer le second membre "L" de l'equation en dimension finie
+    ### On definit la bordure du domaine, sur laquelle integrer le second membre "L" de l'equation en dimension finie
     boundaries = MeshFunction('size_t', mesh, mesh_repository + nom_fichier_avecgpar + "_facet_region" + ".xml")
+
     ## Marquage des bordures pour la condition de Neumann
-    num_solid_boundary = 1700
+    if config == 'sph_un':
+        num_solid_boundary = 17
+    elif config in ['cubecylsph', '2sph']:
+        num_solid_boundary = 1700
     print("Numero de la frontiere physique sf :", num_solid_boundary)
-
-    ## Marquage des facettes de Gamma_sf a l'aide d'un objet SubDomain
-    # xcen = (xinf + xsup)/2.
-    # ycen = (yinf + ysup)/2.
-    # zcen = (zinf + zsup)/2.
-    # if geo_p == 'ray_sph':
-    #     class inclusion_periodique(SubDomain):
-    #         def inside(self, x, on_boundary):
-    #             return (on_boundary and (
-    #                     (x[0]-xcen)**2 + (x[0]-xcen)**2 + (x[0]-xcen)**2 <= rho**2 + tol
-    #                     or (x[0] - xinf)**2 + (x[2] - zinf)**2 <= ray_fix**2 + tol
-    #                     or (x[0] - xsup)**2 + (x[2] - zinf)**2 <= ray_fix**2 + tol
-    #                     or (x[0] - xinf)**2 + (x[2] - zsup)**2 <= ray_fix**2 + tol
-    #                     or (x[0] - xsup)**2 + (x[2] - zsup)**2 <= ray_fix**2 + tol
-    #                     )
-    #                     )
-    # elif geo_p == 'ray_cyl':
-    #     class inclusion_periodique(SubDomain):
-    #         def inside(self, x, on_boundary):
-    #             return (on_boundary and (
-    #                     (x[0]-xcen)**2 + (x[0]-xcen)**2 + (x[0]-xcen)**2 <= ray_fix**2 + tol
-    #                     or (x[0] - xinf)**2 + (x[2] - zinf)**2 <= rho**2 + tol
-    #                     or (x[0] - xsup)**2 + (x[2] - zinf)**2 <= rho**2 + tol
-    #                     or (x[0] - xinf)**2 + (x[2] - zsup)**2 <= rho**2 + tol
-    #                     or (x[0] - xsup)**2 + (x[2] - zsup)**2 <= rho**2 + tol
-    #                     )
-    #                     )
-    # ## Utilisation de la classe definie precedemment : mesure de la limite du domaine fluide
-    # Gamma_sf = inclusion_periodique()
-
-    # class SolidBoundary(SubDomain):
-    #     def inside(self, x, on_boundary):
-    #         return(on_boundary and not(
-    #             near(x[0], xinf, tol) or near(x[0], xsup, tol) or
-    #             near(x[1], yinf, tol) or near(x[1], ysup, tol) or
-    #             near(x[2], zinf, tol) or near(x[2], zsup, tol)
-    #             ))
-    #
-    # ## Utilisation de la classe definie precedemment : mesure de la limite du domaine fluide
-    # Gamma_sf = SolidBoundary()
-    # #
-    # boundaries = MeshFunction("size_t", mesh, mesh.topology().dim()-1)
-    # # On attribue une valeur par defaut aux frontieres du domaine fluide, qui concerne plus particulierement l'interface fluide-fluide
-    # num_fluid_boundary = 1
-    # num_solid_boundary = 1700
-    # boundaries.set_all(1)
-    # Gamma_sf.mark(boundaries, 1700)
 
     ## creation de la mesure sur l'espace des fonctions tests
     print('Facettes : ', mesh.num_edges())
@@ -420,7 +379,7 @@ def snapshot_compl_per(rho, ray_fix, config, geo_p, res):### ------------------>
     L = assemble(l)
 
     ## solveur de krylov pour un probleme bien pose, dans un hyperplan
-    solver = dolfin.PETScKrylovSolver("cg")
+    solver = PETScKrylovSolver("cg")
 
     solver.parameters["absolute_tolerance"] = 1e-6
     solver.parameters["relative_tolerance"] = 1e-6
@@ -431,12 +390,12 @@ def snapshot_compl_per(rho, ray_fix, config, geo_p, res):### ------------------>
 
     solver.set_operator(A)
 
-    null_vec = dolfin.Vector(u1.vector())
+    null_vec = Vector(u1.vector())
     V.dofmap().set(null_vec, 1.0)
-    null_vec *= 1.0/(dolfin.norm(null_vec, norm_type = 'l2'))
+    null_vec *= 1.0/(norm(null_vec, norm_type = 'l2'))
 
-    null_space = dolfin.VectorSpaceBasis([null_vec])
-    dolfin.as_backend_type(A).set_nullspace(null_space)
+    null_space = VectorSpaceBasis([null_vec])
+    as_backend_type(A).set_nullspace(null_space)
     null_space.orthogonalize(L)
 
     # Resolution et restitution de chi
