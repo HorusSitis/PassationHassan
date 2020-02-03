@@ -193,25 +193,33 @@ def snapshot_sph_per(cen, r, res):
     # On pose et on resoud le probleme aux elements finis
     V = VectorFunctionSpace(mesh_s_r, 'P', 2, constrained_domain = PeriodicBoundary())
 
-    ## On definit l'interface fluide-solide, periodique a geometrie spherique
-    l_cen = []
-    for i in range(-1,2):
-        for j in range(-1,2):
-            for k in range(-1,2):
-                l_cen.append([cen[0]+i,cen[1]+j,cen[2]+k])
-    class inclusion_periodique(SubDomain):
-        def inside(self,x,on_boundary):
-            return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[2]-c[2]), (-r-tol, r+tol)) for c in l_cen]))#points de la frontiere du systeme compris dans la boule de centre et rayons cen et r, pour la norme infinie
+    # ## On definit l'interface fluide-solide, periodique a geometrie spherique
+    # l_cen = []
+    # for i in range(-1,2):
+    #     for j in range(-1,2):
+    #         for k in range(-1,2):
+    #             l_cen.append([cen[0]+i,cen[1]+j,cen[2]+k])
+    # class inclusion_periodique(SubDomain):
+    #     def inside(self,x,on_boundary):
+    #         return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[2]-c[2]), (-r-tol, r+tol)) for c in l_cen]))#points de la frontiere du systeme compris dans la boule de centre et rayons cen et r, pour la norme infinie
+    #
+    # ## Utilisation de la classe definie precedemment : mesure de la limite du domaine fluide
+    # Gamma_sf = inclusion_periodique()
+    # boundaries = MeshFunction("size_t", mesh_s_r, mesh_s_r.topology().dim()-1)
+    # # On attribue une valeur par defaut aux frontieres du domaine fluide, qui concerne plus particulierement l'interface fluide-fluide
+    # num_fluid_boundary = 1
+    # num_solid_boundary = 7
+    # boundaries.set_all(1)
+    # Gamma_sf.mark(boundaries, 7)
 
-    ## Utilisation de la classe definie precedemment : mesure de la limite du domaine fluide
-    Gamma_sf = inclusion_periodique()
-    boundaries = MeshFunction("size_t", mesh_s_r, mesh_s_r.topology().dim()-1)
-    # On attribue une valeur par defaut aux frontieres du domaine fluide, qui concerne plus particulierement l'interface fluide-fluide
-    num_fluid_boundary = 1
-    num_solid_boundary = 7
-    boundaries.set_all(1)
-    Gamma_sf.mark(boundaries, 7)
+    ## Autre methode : depuis les surfaces physiques generees par Gmsh
+    ## On definit la bordure du domaine, sur laquelle integrer le second membre "L" de l'equation en dimension finie
+    boundaries = MeshFunction('size_t', mesh_s_r, mesh_repository + nom_fichier_avecgpar + "_facet_region" + ".xml")
+    ## Marquage des bordures pour la condition de Neumann
+    num_solid_boundary = 17
+    print("Numero de la frontiere physique sf :", num_solid_boundary)
 
+    ## creation de la mesure sur l'espace des fonctions tests
     print('Facettes : ', mesh_s_r.num_edges())
     ds = Measure("ds")(subdomain_data=boundaries)
 
@@ -347,7 +355,7 @@ def snapshot_compl_per(rho, ray_fix, config, geo_p, res):### ------------------>
     num_solid_boundary = 1700
     print("Numero de la frontiere physique sf :", num_solid_boundary)
 
-    # ## Marquage des facettes de Gamma_sf a l'aide d'un objet SubDomain
+    ## Marquage des facettes de Gamma_sf a l'aide d'un objet SubDomain
     # xcen = (xinf + xsup)/2.
     # ycen = (yinf + ysup)/2.
     # zcen = (zinf + zsup)/2.
@@ -375,6 +383,18 @@ def snapshot_compl_per(rho, ray_fix, config, geo_p, res):### ------------------>
     #                     )
     # ## Utilisation de la classe definie precedemment : mesure de la limite du domaine fluide
     # Gamma_sf = inclusion_periodique()
+
+    # class SolidBoundary(SubDomain):
+    #     def inside(self, x, on_boundary):
+    #         return(on_boundary and not(
+    #             near(x[0], xinf, tol) or near(x[0], xsup, tol) or
+    #             near(x[1], yinf, tol) or near(x[1], ysup, tol) or
+    #             near(x[2], zinf, tol) or near(x[2], zsup, tol)
+    #             ))
+    #
+    # ## Utilisation de la classe definie precedemment : mesure de la limite du domaine fluide
+    # Gamma_sf = SolidBoundary()
+    # #
     # boundaries = MeshFunction("size_t", mesh, mesh.topology().dim()-1)
     # # On attribue une valeur par defaut aux frontieres du domaine fluide, qui concerne plus particulierement l'interface fluide-fluide
     # num_fluid_boundary = 1
