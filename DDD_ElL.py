@@ -64,225 +64,212 @@ from matplotlib.transforms import Affine2D
 
 #nb_lcells=
 #r=ray_snap_cen
-cen=cen_snap_ray
+# cen=cen_snap_ray
 #cen_snap_ray=0.35
 
-r_cyl=0.25
-r_sph=0.35
+r_cyl=0.5
+r_sph=0.7
 r_sph_v=0.2
 
 # ------------ code à éxécuter pour réaliser et exploiter les figures ------------ #
 
 
-if config=='sphère unique':
- # initialisation du graphique
- fig = plt.figure()
- ax = fig.add_subplot(111, projection='3d')
- # taille du graphique
- ax.set_xlim((0,nb_lcells))
- ax.set_ylim((0,nb_lcells))
- ax.set_zlim((0,nb_lcells))
- # couleur de fond
- ##fig.patch.set_facecolor(fluid_color)
- ##fig.patch.set_alpha(0.7)
- ax.set_axis_bgcolor(fluid_color)
- # pour un paramétrage des surfaces
- u = np.linspace(0, 2 * np.pi, 100)
- v = np.linspace(0, np.pi, 100)
- # inclusions, placées périodiquement
- for i in range(0,nb_lcells):
-  for j in range(0,nb_lcells):
-   for k in range(0,nb_lcells):
-    x = 0.5+i+r_sph*np.outer(np.cos(u), np.sin(v))## outer : produit terme à terme
-    y = 0.5+j+r_sph*np.outer(np.sin(u), np.sin(v))
-    z = 0.5+k+r_sph*np.outer(np.ones(np.size(u)), np.cos(v))
-    ax.plot_surface(x, y, z, linewidth=0, antialiased=False, color=cem_color)
- # grille
- ax.xaxis.set_major_locator(plt.MultipleLocator(1.0))
- ax.yaxis.set_major_locator(plt.MultipleLocator(1.0))
- ax.zaxis.set_major_locator(plt.MultipleLocator(1.0))
- ax.grid(which='major', axis='x', linewidth=0.85, linestyle='-', color='0.45')
- ax.grid(which='major', axis='y', linewidth=0.85, linestyle='-', color='0.45')
- ax.grid(which='major', axis='z', linewidth=0.85, linestyle='-', color='0.45')
- ax.set_xticklabels([])
- ax.set_yticklabels([])
- ax.set_zticklabels([])
- # instruction pour la sortie
- if fig_todo=='aff':
-  plt.show()
- elif fig_todo=='save':
-  plt.savefig("Figures3D/macro_micro"+"_Lsurl"+str(nb_lcells)+"unique_par"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r_sph,2)))+".png")
- plt.close()
- #############################################################################################################
- #############################################################################################################
-elif config=='cylindre unique':
- # initialisation du graphique
- fig = plt.figure()
- ax = fig.add_subplot(111, projection='3d')
- # taille du graphique
- ax.set_xlim((0,nb_lcells))
- ax.set_ylim((0,nb_lcells))
- ax.set_zlim((0,nb_lcells))
- # couleur de fond
- ax.set_axis_bgcolor(fluid_color)
- # pour un paramétrage des surfaces
- theta = np.linspace(0, 2 * np.pi, 100)
- h = np.linspace(0, nb_lcells, 100)
- rc = np.linspace(0,r_cyl,100)
- # inclusions, placées périodiquement
- ## cylindres
- for i in range(0,nb_lcells):
-  for j in range(0,nb_lcells):
-   x = 0.5+i+r_cyl*np.outer(np.cos(theta),np.ones(np.size(h)))
-   y = np.outer(np.ones(np.size(theta)),h)
-   z = 0.5+j+r_cyl*np.outer(np.sin(theta),np.ones(np.size(h)))
-   ax.plot_surface(x, y, z, linewidth=0, antialiased=False, color=cem_color)
- ## disques
- for i in range(0,nb_lcells):
-  for j in range(0,nb_lcells):
-   #p = Circle((5, 5), 3)
-   #ax.add_patch(p)
-   #art3d.pathpatch_2d_to_3d(p, z=0, zdir="x")
-   p_ij1 = Circle((0.5+i, 0.5+j), r_cyl, color=cem_color)
-   p_ij2 = Circle((0.5+i, 0.5+j), r_cyl, color=cem_color)
-   ax.add_patch(p_ij1)
-   art3d.pathpatch_2d_to_3d(p_ij1, z=0, zdir="y")
-   ax.add_patch(p_ij2)
-   #sys.exit()#------------------------------------------
-   art3d.pathpatch_2d_to_3d(p_ij2, z=nb_lcells, zdir="y")#z=nb_lcells
- # grille
- ax.xaxis.set_major_locator(plt.MultipleLocator(1.0))
- ax.yaxis.set_major_locator(plt.MultipleLocator(1.0))
- ax.zaxis.set_major_locator(plt.MultipleLocator(1.0))
- ax.grid(which='major', axis='x', linewidth=0.85, linestyle='-', color='0.45')
- ax.grid(which='major', axis='y', linewidth=0.85, linestyle='-', color='0.45')
- ax.grid(which='major', axis='z', linewidth=0.85, linestyle='-', color='0.45')
- ax.set_xticklabels([])
- ax.set_yticklabels([])
- ax.set_zticklabels([])
- # instruction pour la sortie
- if fig_todo=='aff':
-  plt.show()
- elif fig_todo=='save':
-  plt.savefig("Figures3D/macro_micro"+"_Lsurl"+str(nb_lcells)+"unique_cyl"+str(int(round(100*r_cyl,2)))+".png")
- plt.close()
- #############################################################################################################
- #############################################################################################################
-elif config=='compl' and geo_p=='deux sphères':
- # initialisation du graphique
- fig = plt.figure()
- ax = fig.add_subplot(111, projection='3d')
- # taille du graphique
- ax.set_xlim((0,nb_lcells))
- ax.set_ylim((0,nb_lcells))
- ax.set_zlim((0,nb_lcells))
- # couleur de fond
- ax.set_axis_bgcolor(fluid_color)
- # pour un paramétrage des surfaces
- u = np.linspace(0, 2 * np.pi, 100)
- v = np.linspace(0, np.pi, 100)
- # inclusions, placées périodiquement
- for i in range(0,nb_lcells):
-  for j in range(0,nb_lcells):
-   for k in range(0,nb_lcells):
-    xc = 0.5+i+r_sph*np.outer(np.cos(u), np.sin(v))## outer : produit cartésien
-    yc = 0.5+j+r_sph*np.outer(np.sin(u), np.sin(v))
-    zc = 0.5+k+r_sph*np.outer(np.ones(np.size(u)), np.cos(v))
-    ax.plot_surface(xc, yc, zc, linewidth=0, antialiased=False, color=sand_color)
- for i in range(0,1+nb_lcells):
-  for j in range(0,1+nb_lcells):
-   for k in range(0,1+nb_lcells):
-    xv = 0.+i+r_sph_v*np.outer(np.cos(u), np.sin(v))
-    yv = 0.+j+r_sph_v*np.outer(np.sin(u), np.sin(v))
-    zv = 0.+k+r_sph_v*np.outer(np.ones(np.size(u)), np.cos(v))
-    ax.plot_surface(xv, yv, zv, linewidth=0, antialiased=False, color=cem_color)
- # grille
- ax.xaxis.set_major_locator(plt.MultipleLocator(1.0))
- ax.yaxis.set_major_locator(plt.MultipleLocator(1.0))
- ax.zaxis.set_major_locator(plt.MultipleLocator(1.0))
- ax.grid(which='major', axis='x', linewidth=0.85, linestyle='-', color='0.45')
- ax.grid(which='major', axis='y', linewidth=0.85, linestyle='-', color='0.45')
- ax.grid(which='major', axis='z', linewidth=0.85, linestyle='-', color='0.45')
- ax.set_xticklabels([])
- ax.set_yticklabels([])
- ax.set_zticklabels([])
- # instruction pour la sortie
- if fig_todo=='aff':
-  plt.show()
- elif fig_todo=='save':
-  plt.savefig("Figures3D/macro_micro"+"_Lsurl"+str(nb_lcells)+"diag_par"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r_sph,2)))+".png")
- plt.close()
- #############################################################################################################
- #############################################################################################################
-elif config=='compl' and geo_p=='sphère et cylindre':
- # initialisation du graphique
- fig = plt.figure()
- ax = fig.add_subplot(111, projection='3d')
- # taille du graphique
- ax.set_xlim((0,nb_lcells))
- ax.set_ylim((0,nb_lcells))
- ax.set_zlim((0,nb_lcells))
- # couleur de fond
- ##fig.patch.set_facecolor(fluid_color)
- ##fig.patch.set_alpha(0.7)
- ax.set_axis_bgcolor(fluid_color)
- # pour un paramétrage des surfaces liées à la sphère
- u = np.linspace(0, 2 * np.pi, 100)
- v = np.linspace(0, np.pi, 100)
- # inclusions, placées périodiquement
- for i in range(0,nb_lcells):
-  for j in range(0,nb_lcells):
-   for k in range(0,nb_lcells):
-    x = 0.5+i+r_sph*np.outer(np.cos(u), np.sin(v))## outer : produit cartésien
-    y = 0.5+j+r_sph*np.outer(np.sin(u), np.sin(v))
-    z = 0.5+k+r_sph*np.outer(np.ones(np.size(u)), np.cos(v))
-    ax.plot_surface(x, y, z, linewidth=0, antialiased=False, color=sand_color)
- # pour un paramétrage des surfaces liées au cylindre
- theta = np.linspace(0, 2 * np.pi, 100)
- h = np.linspace(0, nb_lcells, 100)
- rc = np.linspace(0,r_cyl,100)
- # inclusions, placées périodiquement
- ## cylindres
- for i in range(0,1+nb_lcells):
-  for j in range(0,1+nb_lcells):
-   x = 0.+i+r_cyl*np.outer(np.cos(theta),np.ones(np.size(h)))
-   y = np.outer(np.ones(np.size(theta)),h)
-   z = 0.+j+r_cyl*np.outer(np.sin(theta),np.ones(np.size(h)))
-   ax.plot_surface(x, y, z, linewidth=0, antialiased=False, color=cem_color)
- ## disques
- for i in range(0,nb_lcells):
-  for j in range(0,nb_lcells):
-   p_ij1 = Circle((0.+i, 0.+j), r_cyl, color=cem_color)
-   p_ij2 = Circle((0.+i, 0.+j), r_cyl, color=cem_color)
-   ax.add_patch(p_ij1)
-   art3d.pathpatch_2d_to_3d(p_ij1, z=0, zdir="y")
-   ax.add_patch(p_ij2)
-   #sys.exit()#------------------------------------------
-   art3d.pathpatch_2d_to_3d(p_ij2, z=nb_lcells, zdir="y")
- # grille
- ax.xaxis.set_major_locator(plt.MultipleLocator(1.0))
- ax.yaxis.set_major_locator(plt.MultipleLocator(1.0))
- ax.zaxis.set_major_locator(plt.MultipleLocator(1.0))
- ax.grid(which='major', axis='x', linewidth=0.85, linestyle='-', color='0.45')
- ax.grid(which='major', axis='y', linewidth=0.85, linestyle='-', color='0.45')
- ax.grid(which='major', axis='z', linewidth=0.85, linestyle='-', color='0.45')
- ax.set_xticklabels([])
- ax.set_yticklabels([])
- ax.set_zticklabels([])
- # instruction pour la sortie
- if fig_todo=='aff':
-  plt.show()
- elif fig_todo=='save':
-  plt.savefig("Figures3D/macro_micro"+"_Lsurl"+str(nb_lcells)+"sph_cyl_par"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r_sph,2)))+".png")
- plt.close()
-
-
-
-
-
-
-
-
-
-
-
+if config=='sph_un':
+    cen=cen_snap_ray
+    # initialisation du graphique
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    # taille du graphique
+    ax.set_xlim((xinf, xinf + nb_lcells*(xsup - xinf)))
+    ax.set_ylim((xinf, xinf + nb_lcells*(xsup - xinf)))
+    ax.set_zlim((xinf, xinf + nb_lcells*(xsup - xinf)))
+    # couleur de fond
+    ##fig.patch.set_facecolor(fluid_color)
+    ##fig.patch.set_alpha(0.7)
+    ax.set_axis_bgcolor(fluid_color)
+    # pour un paramétrage des surfaces
+    u = np.linspace(0, 2 * np.pi, 100)
+    v = np.linspace(0, np.pi, 100)
+    # inclusions, placées périodiquement
+    for i in range(0,nb_lcells):
+        for j in range(0,nb_lcells):
+            for k in range(0,nb_lcells):
+                x = 0.5*(xsup + xinf)+i*(xsup - xinf)+r_sph*np.outer(np.cos(u), np.sin(v))## outer : produit terme à terme
+                y = 0.5*(xsup + xinf)+j*(xsup - xinf)+r_sph*np.outer(np.sin(u), np.sin(v))
+                z = 0.5*(xsup + xinf)+k*(xsup - xinf)+r_sph*np.outer(np.ones(np.size(u)), np.cos(v))
+                ax.plot_surface(x, y, z, linewidth=0, antialiased=False, color=cem_color)
+    # grille
+    ax.xaxis.set_major_locator(plt.MultipleLocator(1.0))
+    ax.yaxis.set_major_locator(plt.MultipleLocator(1.0))
+    ax.zaxis.set_major_locator(plt.MultipleLocator(1.0))
+    ax.grid(which='major', axis='x', linewidth=0.85, linestyle='-', color='0.45')
+    ax.grid(which='major', axis='y', linewidth=0.85, linestyle='-', color='0.45')
+    ax.grid(which='major', axis='z', linewidth=0.85, linestyle='-', color='0.45')
+    ax.set_xticklabels([])
+    ax.set_yticklabels([])
+    ax.set_zticklabels([])
+    # instruction pour la sortie
+    if fig_todo=='aff':
+        plt.show()
+    elif fig_todo=='save':
+        # plt.savefig("Figures3D/macro_micro"+"_Lsurl"+str(nb_lcells)+"unique_par"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r_sph,2)))+".png")
+        plt.savefig("Figures3D/macro_micro"+"_Lsurl"+str(nb_lcells)+'_'+config+'_l_article'+".png")
+    plt.close()
+    #############################################################################################################
+    #############################################################################################################
+elif config=='cyl_un':
+    # initialisation du graphique
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    # taille du graphique
+    ax.set_xlim((xinf, xinf + nb_lcells*(xsup - xinf)))
+    ax.set_ylim((xinf, xinf + nb_lcells*(xsup - xinf)))
+    ax.set_zlim((xinf, xinf + nb_lcells*(xsup - xinf)))
+    # couleur de fond
+    ax.set_axis_bgcolor(fluid_color)
+    # pour un paramétrage des surfaces
+    theta = np.linspace(0, 2 * np.pi, 100)
+    h = np.linspace(0, nb_lcells, 100)
+    rc = np.linspace(0,r_cyl,100)
+    # inclusions, placées périodiquement
+    ## cylindres
+    for i in range(0,nb_lcells):
+        for j in range(0,nb_lcells):
+            x = 0.5*(xsup + xinf)+i*(xsup - xinf)+r_cyl*np.outer(np.cos(theta),np.ones(np.size(h)))
+            y = np.outer(np.ones(np.size(theta)),h)
+            z = 0.5*(xsup + xinf)+j*(xsup - xinf)+r_cyl*np.outer(np.sin(theta),np.ones(np.size(h)))
+            ax.plot_surface(x, y, z, linewidth=0, antialiased=False, color=cem_color)
+    ## disques
+    for i in range(0,nb_lcells):
+        for j in range(0,nb_lcells):
+            p_ij1 = Circle((0.5*(xsup + xinf)+i*(xsup - xinf), 0.5*(xsup + xinf)+j*(xsup - xinf)), r_cyl, color=cem_color)
+            p_ij2 = Circle((0.5*(xsup + xinf)+i*(xsup - xinf), 0.5*(xsup + xinf)+j*(xsup - xinf)), r_cyl, color=cem_color)
+            ax.add_patch(p_ij1)
+            art3d.pathpatch_2d_to_3d(p_ij1, z=0, zdir="y")
+            ax.add_patch(p_ij2)
+            art3d.pathpatch_2d_to_3d(p_ij2, z=nb_lcells, zdir="y")
+    # grille
+    ax.xaxis.set_major_locator(plt.MultipleLocator(1.0))
+    ax.yaxis.set_major_locator(plt.MultipleLocator(1.0))
+    ax.zaxis.set_major_locator(plt.MultipleLocator(1.0))
+    ax.grid(which='major', axis='x', linewidth=0.85, linestyle='-', color='0.45')
+    ax.grid(which='major', axis='y', linewidth=0.85, linestyle='-', color='0.45')
+    ax.grid(which='major', axis='z', linewidth=0.85, linestyle='-', color='0.45')
+    ax.set_xticklabels([])
+    ax.set_yticklabels([])
+    ax.set_zticklabels([])
+    # instruction pour la sortie
+    if fig_todo=='aff':
+        plt.show()
+    elif fig_todo=='save':
+        plt.savefig("Figures3D/macro_micro"+"_Lsurl"+str(nb_lcells)+"unique_cyl"+str(int(round(100*r_cyl,2)))+".png")
+    plt.close()
+    #############################################################################################################
+    #############################################################################################################
+elif config=='2sph':
+    # initialisation du graphique
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    # taille du graphique
+    ax.set_xlim((xinf, xinf + nb_lcells*(xsup - xinf)))
+    ax.set_ylim((xinf, xinf + nb_lcells*(xsup - xinf)))
+    ax.set_zlim((xinf, xinf + nb_lcells*(xsup - xinf)))
+    # couleur de fond
+    ax.set_axis_bgcolor(fluid_color)
+    # pour un paramétrage des surfaces
+    u = np.linspace(0, 2 * np.pi, 100)
+    v = np.linspace(0, np.pi, 100)
+    # inclusions, placées périodiquement
+    for i in range(0,nb_lcells):
+        for j in range(0,nb_lcells):
+            for k in range(0,nb_lcells):
+                xc = 0.5*(xsup + xinf)+i*(xsup - xinf)+r_sph*np.outer(np.cos(u), np.sin(v))## outer : produit cartésien
+                yc = 0.5*(xsup + xinf)+j*(xsup - xinf)+r_sph*np.outer(np.sin(u), np.sin(v))
+                zc = 0.5*(xsup + xinf)+k*(xsup - xinf)+r_sph*np.outer(np.ones(np.size(u)), np.cos(v))
+                ax.plot_surface(xc, yc, zc, linewidth=0, antialiased=False, color=sand_color)
+    for i in range(0,1+nb_lcells):
+        for j in range(0,1+nb_lcells):
+            for k in range(0,1+nb_lcells):
+                xv = xinf+i*(xsup - xinf)+r_sph_v*np.outer(np.cos(u), np.sin(v))
+                yv = xinf+j*(xsup - xinf)+r_sph_v*np.outer(np.sin(u), np.sin(v))
+                zv = xinf+k*(xsup - xinf)+r_sph_v*np.outer(np.ones(np.size(u)), np.cos(v))
+                ax.plot_surface(xv, yv, zv, linewidth=0, antialiased=False, color=cem_color)
+    # grille
+    ax.xaxis.set_major_locator(plt.MultipleLocator(1.0))
+    ax.yaxis.set_major_locator(plt.MultipleLocator(1.0))
+    ax.zaxis.set_major_locator(plt.MultipleLocator(1.0))
+    ax.grid(which='major', axis='x', linewidth=0.85, linestyle='-', color='0.45')
+    ax.grid(which='major', axis='y', linewidth=0.85, linestyle='-', color='0.45')
+    ax.grid(which='major', axis='z', linewidth=0.85, linestyle='-', color='0.45')
+    ax.set_xticklabels([])
+    ax.set_yticklabels([])
+    ax.set_zticklabels([])
+    # instruction pour la sortie
+    if fig_todo=='aff':
+        plt.show()
+    elif fig_todo=='save':
+        plt.savefig("Figures3D/macro_micro"+"_Lsurl"+str(nb_lcells)+"diag_par"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r_sph,2)))+".png")
+    plt.close()
+    #############################################################################################################
+    #############################################################################################################
+elif config=='cylsph':
+    # initialisation du graphique
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    # taille du graphique
+    ax.set_xlim((xinf, xinf + nb_lcells*(xsup - xinf)))
+    ax.set_ylim((xinf, xinf + nb_lcells*(xsup - xinf)))
+    ax.set_zlim((xinf, xinf + nb_lcells*(xsup - xinf)))
+    # couleur de fond
+    ##fig.patch.set_facecolor(fluid_color)
+    ##fig.patch.set_alpha(0.7)
+    ax.set_axis_bgcolor(fluid_color)
+    # pour un paramétrage des surfaces liées à la sphère
+    u = np.linspace(0, 2 * np.pi, 100)
+    v = np.linspace(0, np.pi, 100)
+    # inclusions, placées périodiquement
+    for i in range(0,nb_lcells):
+        for j in range(0,nb_lcells):
+            for k in range(0,nb_lcells):
+                x = 0.5*(xsup + xinf)+i*(xsup - xinf)+r_sph*np.outer(np.cos(u), np.sin(v))## outer : produit cartésien
+                y = 0.5*(xsup + xinf)+j*(xsup - xinf)+r_sph*np.outer(np.sin(u), np.sin(v))
+                z = 0.5*(xsup + xinf)+k*(xsup - xinf)+r_sph*np.outer(np.ones(np.size(u)), np.cos(v))
+                ax.plot_surface(x, y, z, linewidth=0, antialiased=False, color=sand_color)
+    # pour un paramétrage des surfaces liées au cylindre
+    theta = np.linspace(0, 2 * np.pi, 100)
+    h = np.linspace(xinf, xinf + nb_lcells*(xsup - xinf), 100)
+    rc = np.linspace(0,r_cyl,100)
+    # inclusions, placées périodiquement
+    ## cylindres
+    for i in range(0,1+nb_lcells):
+        for j in range(0,1+nb_lcells):
+            x = xinf+i*(xsup - xinf)+r_cyl*np.outer(np.cos(theta),np.ones(np.size(h)))
+            y = np.outer(np.ones(np.size(theta)),h)
+            z = xinf+j*(xsup - xinf)+r_cyl*np.outer(np.sin(theta),np.ones(np.size(h)))
+            ax.plot_surface(x, y, z, linewidth=0, antialiased=False, color=cem_color)
+    ## disques
+    for i in range(0,nb_lcells):
+        for j in range(0,nb_lcells):
+            p_ij1 = Circle((xinf+i*(xsup - xinf), xinf+j*(xsup - xinf)), r_cyl, color=cem_color)
+            p_ij2 = Circle((xinf+i*(xsup - xinf), xinf+j*(xsup - xinf)), r_cyl, color=cem_color)
+            ax.add_patch(p_ij1)
+            art3d.pathpatch_2d_to_3d(p_ij1, z=xinf, zdir="y")
+            ax.add_patch(p_ij2)
+            art3d.pathpatch_2d_to_3d(p_ij2, z=(xsup - xinf)*nb_lcells, zdir="y")
+    # grille
+    ax.xaxis.set_major_locator(plt.MultipleLocator(1.0))
+    ax.yaxis.set_major_locator(plt.MultipleLocator(1.0))
+    ax.zaxis.set_major_locator(plt.MultipleLocator(1.0))
+    ax.grid(which='major', axis='x', linewidth=0.85, linestyle='-', color='0.45')
+    ax.grid(which='major', axis='y', linewidth=0.85, linestyle='-', color='0.45')
+    ax.grid(which='major', axis='z', linewidth=0.85, linestyle='-', color='0.45')
+    ax.set_xticklabels([])
+    ax.set_yticklabels([])
+    ax.set_zticklabels([])
+    # instruction pour la sortie
+    if fig_todo=='aff':
+        plt.show()
+    elif fig_todo=='save':
+        # plt.savefig("Figures3D/macro_micro"+"_Lsurl"+str(nb_lcells)+"sph_cyl_par"+str(int(round(100*cen[0],2)))+str(int(round(100*cen[1],2)))+str(int(round(100*r_sph,2)))+".png")
+        plt.savefig("Figures3D/macro_micro"+"_Lsurl"+str(nb_lcells)+'_'+config+'_l_article'+".png")
+    plt.close()
