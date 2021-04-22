@@ -31,10 +31,10 @@ mesh_repository = 'maillages_per/2D/'
 
 tol=1e-10
 
-# xinf=-1.0
-# yinf=-1.0
-xinf=0.
-yinf=0.
+xinf=-1.0
+yinf=-1.0
+# xinf=0.
+# yinf=0.
 xsup=1.0
 ysup=1.0
 
@@ -174,9 +174,9 @@ elif config == 'compl' and geo_p == 'hor':
 
 list_rho_appr = np.linspace(rho_appr_min, rho_appr_max, N_snap)
 
-# choix du type de maillage
-
+# --------------------- Important : pas des maillages --------------------- #
 res_gmsh = 25
+# ------------------------------------------ #
 
 typ_msh='gms'
 # typ_msh=''
@@ -185,13 +185,14 @@ if typ_msh=='gms':
     res=res_gmsh
     res_fixe=res_gmsh
 
-# raffinement de maillages : ocouronnes, volumes
+# ------------------------------------------ #
 
-Nrefine=1
+# raffinement de maillages : ocouronnes, volumes
+Nrefine = 1
 
 # crow=(1/res_gmsh)*1e-1
 
-typ_refi='front'
+typ_refi = 'front'
 # typ_refi='vol'
 
 lg_crow=-1
@@ -201,6 +202,9 @@ if typ_refi=='vol':
     refi_mess='Couronne : '+str(crow)
 elif typ_refi=='front':
     refi_mess='Surface'
+
+# ------------------------------------------ #
+# ------------------------------------------ #
 
 # nom de l'appareil utilise pour generer les donnees enregistrees
 computer='MECALAC_29x8'##'T1700_35x8'##
