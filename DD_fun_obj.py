@@ -145,7 +145,7 @@ def snapshot_circ_per(cen,r,res):
 
     # solveur de krylov pour un probleme bien pose, dans un hyperplan
 
-    solver = dolfin.PETScKrylovSolver("cg")
+    solver = PETScKrylovSolver("cg")
 
     solver.parameters["absolute_tolerance"] = 1e-6
     solver.parameters["relative_tolerance"] = 1e-6
@@ -156,12 +156,12 @@ def snapshot_circ_per(cen,r,res):
 
     solver.set_operator(A)
 
-    null_vec = dolfin.Vector(u1.vector())
+    null_vec = Vector(u1.vector())
     V.dofmap().set(null_vec, 1.0)
-    null_vec *= 1.0/(dolfin.norm(null_vec, norm_type = 'l2'))
+    null_vec *= 1.0/(norm(null_vec, norm_type = 'l2'))
 
-    null_space = dolfin.VectorSpaceBasis([null_vec])
-    dolfin.as_backend_type(A).set_nullspace(null_space)
+    null_space = VectorSpaceBasis([null_vec])
+    as_backend_type(A).set_nullspace(null_space)
     null_space.orthogonalize(L)
 
     # Resolution et restitution de chi

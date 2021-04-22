@@ -15,7 +15,7 @@ import shelve as sh
 
 from fenics import *
 from dolfin import *
-#from mshr import *
+#### --- from mshr import * --- ###
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.gridspec as gridspec

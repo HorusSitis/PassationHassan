@@ -7,7 +7,7 @@ import sys
 
 # from fenics import *
 from dolfin import *
-from mshr import *
+# ### --- from mshr import * --- ###
 # import matplotlib.pyplot as plt
 import numpy as np
 
@@ -176,7 +176,7 @@ list_rho_appr = np.linspace(rho_appr_min, rho_appr_max, N_snap)
 
 # choix du type de maillage
 
-res_gmsh = 100
+res_gmsh = 25
 
 typ_msh='gms'
 # typ_msh=''

@@ -7,7 +7,7 @@ Created on Mon Jul  9 11:52:27 2018
 
 from fenics import *
 from dolfin import *
-from mshr import *
+### --- from mshr import * --- ###
 import matplotlib.pyplot as plt
 import numpy as np
 from math import *

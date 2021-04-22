@@ -46,7 +46,7 @@ import shelve as sh
 
 from fenics import *
 from dolfin import *
-from mshr import *
+### --- from mshr import * --- ###
 
 # Parametres
 
@@ -70,9 +70,9 @@ snap_done = True
 
 err_eval = False
 
-mesh_ex_done = True
-EII = False
-exsnap_done = True
+mesh_ex_done = False
+EII = True
+exsnap_done = False
 
 test_Dhom = False
 
@@ -83,7 +83,7 @@ Report = True
 
 # EIVfixe=False
 
-EV = True
+EV = False
 
 ### ------------ Etape 0 : Generation de microstructures periodiques aleatoires ------------ ###
 
@@ -111,7 +111,7 @@ if EI :
 ## ---------- Etape II : int_grad eventuellement sur dom_fixe ---------- ##
 
 if EII :
-    exec(open('DD_EII.py').read())
+    exec(open('DD_EII.py', encoding='utf-8').read())
 
 if exsnap_done and test_Dhom :
     exec(open('DD_EIIintgrad.py', encoding='utf-8').read())

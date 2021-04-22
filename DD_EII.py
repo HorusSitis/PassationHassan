@@ -10,7 +10,7 @@
 
 with sh.open(repertoire_parent+l_name) as l_loa:
     list_chi_v = l_loa['maliste']
-sys.exit('!'*100)
+# sys.exit('!'*100)
 # Extrapolation au domaine Omega_fixe :
 if dom_fixe == 'am':
     mesh_fixe_name = 'maillages_per/2D/maillage_fixe2d_am'#.xml'
