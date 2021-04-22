@@ -92,7 +92,7 @@ for n in range(0,nb_modes):
         plt.title('Phi '+str(n+1)+' sur Omega_nouv',fontsize=30)
         plt.show()
     elif fig_todo=='save':
-        plt.savefig('Figures2D/phi_nouv_'+str(n+1)+'_'+config+'_'+geo_p+'.png')
+        plt.savefig('Figures2D/phi_nouv_'+str(n+1)+'_'+config+'_'+geo_p+'_res'+str(res_gmsh)+'.png')
     plt.close()
     # on range le vecteur de POD interpolee dans la matrice Phi_nouv_v
     Phi_nouv_v[:,n]=phi_n_nouv.vector().get_local()
@@ -158,7 +158,7 @@ plt.title('Solution ROM', fontsize=30)#'Rho = 0,'+str(int(round(100*r_nouv,2))),
 if fig_todo=='aff':
     plt.show()
 else:
-    plt.savefig('Figures2D/solROM_'+config+'_'+geo_p+str(int(round(100*r_nouv,2)))+'.png')
+    plt.savefig('Figures2D/solROM_'+config+'_'+geo_p+str(int(round(100*r_nouv,2)))+'_res'+str(res_gmsh)+'.png')
 plt.close()
 
 ## Exploitation du champ ainsi obtenu
@@ -242,7 +242,7 @@ plt.title('Solution EF',fontsize=30)
 if fig_todo=='aff':
     plt.show()
 else:
-    plt.savefig('Figures2D/solFEM_'+config+'_'+geo_p+str(int(round(100*r_nouv,2)))+'.png')
+    plt.savefig('Figures2D/solFEM_'+config+'_'+geo_p+str(int(round(100*r_nouv,2)))+'_res'+str(res_gmsh)+'.png')
 plt.close()
 
 ## Comparaison

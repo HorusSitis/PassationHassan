@@ -91,7 +91,7 @@ plot(mesh_fixe, linewidth=lw_bis)
 if fig_todo=='aff':
     plt.show()
 elif fig_todo == 'save':
-    plt.savefig('Figures2D/maillage_gmsh_per_fix_'+config+geo_p+'_res'+str(res_gmsh)+'png')
+    plt.savefig('Figures2D/maillage_gmsh_per_fix_'+config+geo_p+'_res'+str(res_gmsh)+'.png')
 plt.close()
 # Extrapolation des solutions du probleme physique
 
@@ -178,7 +178,7 @@ for n in range(0,N_snap):
         plt.title('Snapshot '+str(n+1),fontsize=40)
         plt.show()
     else:
-        plt.savefig('Figures2D/snap_'+str(n+1)+'_sur'+str(N_snap)+config+'_'+geo_p+'_res'+str(res_gmsh)+'png')
+        plt.savefig('Figures2D/snap_'+str(n+1)+'_sur'+str(N_snap)+config+'_'+geo_p+'_res'+str(res_gmsh)+'.png')
     plt.close()
 
     # Affichage des composantes scalaires : interpolee

@@ -92,7 +92,7 @@ for i in range(N_snap):
         plt.title('Phi '+str(i+1)+' sur domaine fixe')
         plt.show()
     else:
-        plt.savefig('Figures2D/phi_'+str(i+1)+'_'+config+'_'+geo_p+'_res'+str(res_gmsh)+'png')
+        plt.savefig('Figures2D/phi_'+str(i+1)+'_'+config+'_'+geo_p+'_res'+str(res_gmsh)+'.png')
     plt.close()
 
 
@@ -112,7 +112,7 @@ plt.yscale('log')
 if fig_todo=='aff':
     plt.show()
 else:
-    plt.savefig('Figures2D/ener_vp_'+config+'_'+geo_p+'_res'+str(res_gmsh)+'png')
+    plt.savefig('Figures2D/ener_vp_'+config+'_'+geo_p+'_res'+str(res_gmsh)+'.png')
 plt.close()
 
 plt.plot(absc,ener_pour_cumul)
@@ -121,7 +121,7 @@ plt.ylabel('pourcentage_energie_cumule')
 if fig_todo=='aff':
     plt.show()
 else:
-    plt.savefig('Figures2D/ener_cumul_vp_'+config+'_'+geo_p+'_res'+str(res_gmsh)+'png')
+    plt.savefig('Figures2D/ener_cumul_vp_'+config+'_'+geo_p+'_res'+str(res_gmsh)+'.png')
 plt.close()
 
 ## Choix du nombre de modes, avec une valeur seuil d'energie a atteindre avec les vacteurs de la base POD

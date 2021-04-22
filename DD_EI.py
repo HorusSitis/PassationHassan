@@ -143,7 +143,7 @@ for n in range(0,N_snap):
             if fig_todo=='aff':
                 plt.show()
             elif fig_todo=='save' and r==0.5:
-                plt.savefig('Figures2D/maillage_gmsh_per_'+config+geo_p+'_ray'+str(int(round(100*r,2)))+'_res'+str(res_gmsh)+'png')
+                plt.savefig('Figures2D/maillage_gmsh_per_'+config+geo_p+'_ray'+str(int(round(100*r,2)))+'_res'+str(res_gmsh)+'.png')
             plt.close()
         else:
             mesh=creer_maill_circ(cen,r,res)
@@ -158,7 +158,7 @@ for n in range(0,N_snap):
     #         if fig_todo=='aff':
     #             plt.show()
     #         elif fig_todo=='save' and (r==0.5):
-    #             plt.savefig('Figures2D/maillage_gmsh_per_'+config+geo_p+'_ray'+str(int(round(100*r,2)))+'_res'+str(res_gmsh)+'png')
+    #             plt.savefig('Figures2D/maillage_gmsh_per_'+config+geo_p+'_ray'+str(int(round(100*r,2)))+'_res'+str(res_gmsh)+'.png')
     #         plt.close()
     #     else:
     #         mesh=creer_maill_circ([c_x,c_y],r,res)
@@ -173,7 +173,7 @@ for n in range(0,N_snap):
         if fig_todo=='aff':
             plt.show()
         elif fig_todo=='save' and (r==0.5):
-            plt.savefig('Figures2D/maillage_gmsh_per_' + config + geo_p + '_ray' + str(int(round(100*r,2)))+'_res'+str(res_gmsh)+'png')
+            plt.savefig('Figures2D/maillage_gmsh_per_' + config + geo_p + '_ray' + str(int(round(100*r,2)))+'_res'+str(res_gmsh)+'.png')
         plt.close()
 
     V_n=VectorFunctionSpace(mesh, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
@@ -194,7 +194,7 @@ for n in range(0,N_snap):
     if fig_todo=='aff':
         plt.show()
     elif fig_todo=='save':
-        plt.savefig('Figures2D/sol_'+str(n+1)+'_sur'+str(N_snap)+config+'_'+geo_p+'_res'+str(res_gmsh)+'png')
+        plt.savefig('Figures2D/sol_'+str(n+1)+'_sur'+str(N_snap)+config+'_'+geo_p+'_res'+str(res_gmsh)+'.png')
     plt.close()
     if err_eval:
         if config!='compl':
