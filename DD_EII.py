@@ -90,6 +90,8 @@ V_fixe = VectorFunctionSpace(mesh_fixe, 'P', VFS_degree, constrained_domain=Peri
 plot(mesh_fixe, linewidth=lw_bis)
 if fig_todo=='aff':
     plt.show()
+elif fig_todo == 'save':
+    plt.savefig('Figures2D/maillage_gmsh_per_fix_'+config+geo_p+'_res'+str(res_gmsh)+'png')
 plt.close()
 # Extrapolation des solutions du probleme physique
 
