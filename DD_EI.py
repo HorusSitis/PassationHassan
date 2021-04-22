@@ -2,6 +2,9 @@
 ## Etape I : realisation des cliches, avec la methode des elements finis. Calcul du tenseur d'homogeneisation. Stockage dans snap2D/ ##
 #######################################################################################################################################
 
+print('='*100)
+print('Etape I, dimension 2')
+print('='*100)
 
 # if typ_msh=='gms':
 #     res_fixe=res_gmsh
@@ -54,7 +57,7 @@ if not mesh_appr_done:
     for n in range(0,N_snap):
         rho = list_rho_appr[n]
 
-        creer_maill_per_gpar(config, geo_p, mention, xyinfsup, rho, ray_p)
+        creer_maill_per_gpar(config, geo_p, mention, xyinfsup, rho, ray_p, res_gmsh)
 # sys.exit()
 # ------------------------- Snapshots, conditionnellement ------------------------- #
 

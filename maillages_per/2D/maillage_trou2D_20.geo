@@ -1,3 +1,4 @@
+pas_mesh = 0.04;
 R = 0.2;
 xmin = -1.0;
 ymin = -1.0;
@@ -7,7 +8,7 @@ cx = 0.0;
 cy = 0.0;
 //// canevas
 
-pas_mesh=0.01;
+// pas_mesh=0.01;
 
 
 // cx=0.5;

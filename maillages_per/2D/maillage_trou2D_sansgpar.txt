@@ -1,6 +1,6 @@
 //// canevas
 
-pas_mesh=0.01;
+// pas_mesh=0.01;
 
 
 // cx=0.5;

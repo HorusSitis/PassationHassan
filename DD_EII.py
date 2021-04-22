@@ -2,7 +2,9 @@
 ######################################### Etape II : extrapolation des cliches, domaine_fixe ########################################
 #####################################################################################################################################
 
-
+print('='*100)
+print('Etape II, dimension 2')
+print('='*100)
 
 # Chargement de la liste des snapshots physiques
 
@@ -34,6 +36,8 @@ if not mesh_ex_done:
     fichier_sansentete = open(mesh_fixe_name + '_sansxyinfsup' + '.txt', 'r')
 
     gen_mesh = open(mesh_fixe_name + '.txt', 'w')
+
+    gen_mesh.write('pas_mesh = ' + str(round(1./res_gmsh, 2)) + ';' + '\n')
 
     if geo_p == 'ray_min':
         gen_mesh.write('R = ' + str(rho_appr_min) + ';' + '\n')

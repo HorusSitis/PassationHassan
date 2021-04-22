@@ -42,7 +42,7 @@ def creer_maill_circ(cen,r,res):#valable quel que soit la position de l'inclusio
     return(mesh)
 
 # def creer_maill_simpl_per_gpar(config, geo_p, mention, xyinfsup, rho):
-def creer_maill_per_gpar(config, geo_p, mention, xyinfsup, rho, ray_p):
+def creer_maill_per_gpar(config, geo_p, mention, xyinfsup, rho, ray_p, resolution):
 
     xinf = xyinfsup[0][0]
     yinf = xyinfsup[0][1]
@@ -65,6 +65,8 @@ def creer_maill_per_gpar(config, geo_p, mention, xyinfsup, rho, ray_p):
         nom_fichier_avecgpar = mesh_prefix + mention + str(int(round(100*rho,2)))
 
     gen_mesh = open(mesh_repository + nom_fichier_avecgpar + '.txt', 'w')
+
+    gen_mesh.write('pas_mesh = ' + str(round(1./resolution, 2)) + ';' + '\n')    
 
     gen_mesh.write('R = ' + str(rho) + ';' + '\n')
     if config == 'compl':
