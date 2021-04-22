@@ -46,7 +46,7 @@ import shelve as sh
 
 from fenics import *
 from dolfin import *
-from mshr import *
+### --- from mshr import * --- ###
 
 # Parametres
 
