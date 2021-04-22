@@ -5,6 +5,10 @@
     # rg_perf_fact = '_rayf' + str(int(round(100*ray_fix, 2)))
 #
 
+print('='*100)
+print('Etape V, dimension 3')
+print('='*100)
+
 ## ------------ Import de la valeur de N_mor : utile ? ------------ ##
 
 # nu = 1 - seuil_ener/100

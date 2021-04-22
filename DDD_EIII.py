@@ -2,6 +2,10 @@
 ## Etape III : en utilisant la methode des snapshots, calcul de la POD et des coefficients aleatoires, toujours dans domaine_fixe ##
 ####################################################################################################################################
 
+print('='*100)
+print('Etape III, dimension 3')
+print('='*100)
+
 # maillage du domaine fixe
 
 mesh_dir='maillages_per/3D/'

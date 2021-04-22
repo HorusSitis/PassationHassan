@@ -3,6 +3,10 @@
 #################################################################################################
 ## Etape IV : Predictions. Choisir les parametres du probleme a resoudre par le modele reduit.#
 
+print('='*100)
+print('Etape IV, dimension 3')
+print('='*100)
+
 # mesh_repository = 'maillages_per/' + str(dimension) + 'D/'
 # if config == 'sph_un':
 #     mesh_prefix = 'cubesphere_periodique_triangle_'

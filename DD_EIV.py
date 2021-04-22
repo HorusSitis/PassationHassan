@@ -4,6 +4,10 @@
 ## Etape IV : Predictions. Choisir les parametres du probleme a resoudre par le modele reduit. ##
 #################################################################################################
 
+print('='*100)
+print('Etape IV, dimension 2')
+print('='*100)
+
 # from tools_chi import *
 
 # Definition du domaine Omega_fixe :
@@ -22,7 +26,7 @@ V_fixe = VectorFunctionSpace(mesh_fixe, 'P', VFS_degree, constrained_domain=Peri
 
 start_mesh = time.time()
 
-creer_maill_per_gpar(config, geo_p, mention, xyinfsup, rho, ray_p)
+creer_maill_per_gpar(config, geo_p, mention, xyinfsup, rho, ray_p, res_gmsh)
 
 if config == 'compl':
     mesh_name = mesh_prefix + str(int(round(100*rho,2))) + '_rayp' + str(int(round(100*ray_p,2)))

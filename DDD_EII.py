@@ -2,6 +2,9 @@
 ######################################### Etape II : extrapolation des cliches, domaine_fixe ########################################
 #####################################################################################################################################
 
+print('='*100)
+print('Etape II, dimension 3')
+print('='*100)
 
 # mesh_dir='maillages_per/3D/'
 # mesh_repository = 'maillages_per/' + str(dimension) + 'D/'

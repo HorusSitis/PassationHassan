@@ -2,6 +2,9 @@
 ## Etape I : realisation des cliches, avec la methode des elements finis. Calcul du tenseur d'homogeneisation. Stockage dans snap2D/ ##
 #######################################################################################################################################
 
+print('='*100)
+print('Etape I, dimension 3')
+print('='*100)
 
 ## Boucle pour la creation des snapshots, avec un parametre pouvant etre le rayon d'une inclusion circulaire, ou l'emplacement de son centre
 

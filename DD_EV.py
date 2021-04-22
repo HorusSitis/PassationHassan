@@ -14,6 +14,9 @@ Created on Wed Jan 29 11:53 2020
 #
 # registre_N_mor_name = 'Perf3D/' + 'N_mor_' + 'ener_nu10E' + expo + config + '_' + geo_p + rg_perf_fact + '_sur' + str(res_gmsh)
 
+print('='*100)
+print('Etape V, dimension 2')
+print('='*100)
 
 tab_N_mor = np.load(registre_N_mor_name + '.npy')
 N_mor = tab_N_mor[0]

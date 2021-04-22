@@ -2,6 +2,10 @@
 ## Etape III : en utilisant la methode des snapshots, calcul de la POD et des coefficients aleatoires, toujours dans domaine_fixe ##
 ####################################################################################################################################
 
+print('='*100)
+print('Etape III, dimension 2')
+print('='*100)
+
 # Definition du domaine Omega_fixe :
 if dom_fixe == 'am':
     mesh_fixe_name = 'maillages_per/2D/maillage_fixe2d_am'#.xml'
