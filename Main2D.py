@@ -62,16 +62,16 @@ exec(open('DD_fun_obj.py', encoding='utf-8').read())
 ##########################################################
 
 E_ = False
-E_lL = False
+E_lL = True
 
-EI = False
-mesh_appr_done = True
-snap_done = True
+EI = True
+mesh_appr_done = False
+snap_done = False
 
 err_eval = False
 
 mesh_ex_done = True
-EII = False
+EII = True
 exsnap_done = True
 
 test_Dhom = False
@@ -83,7 +83,7 @@ Report = True
 
 # EIVfixe=False
 
-EV = True
+EV = False
 
 ### ------------ Etape 0 : Generation de microstructures periodiques aleatoires ------------ ###
 
@@ -139,6 +139,8 @@ elif config == 'compl':
 
 if EIV :
 
+    exec(open('tools_chi.py', encoding='utf-8').read())
+
     # tableaux contenant les performances du ROM
     arr_int_grad_fem = np.zeros(len(list_rho_test))
     arr_int_grad_rom = np.zeros(len(list_rho_test))
@@ -147,7 +149,9 @@ if EIV :
 
     arr_err_rel = np.zeros(len(list_rho_test))
     arr_var_rel = np.zeros(len(list_rho_test))
-    arr_var_rel_yy = np.zeros(len(list_rho_test))
+    if config == 'compl':
+        arr_var_rel_yy = np.zeros(len(list_rho_test))
+    arr_var_rel_chi = np.zeros(len(list_rho_test))
 
     ## pour l'instant : on en compte pas le temps de maillage, identique pour FEM et ROM
 
@@ -223,6 +227,9 @@ if EIV :
     np.save(registre_perf_num['var_rel'] + '.npy', arr_var_rel)
     if config == 'compl':
         np.save(registre_perf_num['var_rel_yy'] + '.npy', arr_var_rel_yy)
+
+    np.save(registre_perf_num['var_rel_chi'] + '.npy', arr_var_rel_chi)
+
     np.save(registre_perf_num['t'] + '.npy', arr_t)
 
     # nom_tab_latex_pg = '../GitLab/rom_diffeo_dhom/latex_article/' + 'pg_' + config + '_res' + str(res_gmsh) + '_raydeb_o' + str(int(100*2*list_rho_appr[0]))

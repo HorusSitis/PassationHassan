@@ -38,7 +38,7 @@ import pylab as pl
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.gridspec as gridspec
-
+#
 ## Paquets specifiques a la 3d ##
 
 from mpl_toolkits.mplot3d.axes3d import get_test_data
@@ -63,17 +63,17 @@ exec(open('DDD_fun_obj.py', encoding='utf-8').read())
 ### ------------ Code a lire : conditions ------------ ###
 ##########################################################
 
-E_=False
-E_lL=False
+E_ = False
+E_lL = True
 
 EI = False
 mesh_appr_done = True
 snap_done = False
 err_per_calc = False
 
-mesh_ex_done = True
+mesh_ex_done = False
 EII = False
-exsnap_done = True
+exsnap_done = False
 test_Dhom = True
 
 EIII = False
@@ -81,7 +81,7 @@ EIII = False
 EIV = False
 Report = True
 
-EV = True
+EV = False
 
 
 
