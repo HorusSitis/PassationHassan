@@ -6,11 +6,11 @@
 
 # Chargement de la liste des snapshots physiques
 
-l_name='Lchi_'+str(N_snap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
+# l_name='Lchi_'+str(N_snap)+'_'+config+'_'+geo_p+'_deg'+str(VFS_degree)+'_'+ordo+'_'+computer
 
 with sh.open(repertoire_parent+l_name) as l_loa:
     list_chi_v = l_loa['maliste']
-
+# sys.exit('!'*100)
 # Extrapolation au domaine Omega_fixe :
 if dom_fixe == 'am':
     mesh_fixe_name = 'maillages_per/2D/maillage_fixe2d_am'#.xml'

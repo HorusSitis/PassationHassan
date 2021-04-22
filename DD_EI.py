@@ -112,6 +112,7 @@ if not snap_done:
     # Matrice des snapshots : plus tard, voir l'etape II
 
 else :
+    # print('!'*100)
     with sh.open(repertoire_parent+l_name) as l_loa:
         list_chi_v = l_loa['maliste']
 

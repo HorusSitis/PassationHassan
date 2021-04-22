@@ -6,7 +6,7 @@ Created on Tue Jul 10 17:18:52 2018
 """
 
 from fenics import *
-from mshr import *
+### --- from mshr import * --- ###
 import matplotlib.pyplot as plt
 import numpy as np
 from calc_POD import *
