@@ -31,10 +31,10 @@ mesh_repository = 'maillages_per/2D/'
 
 tol=1e-10
 
-xinf=-1.0
-yinf=-1.0
-# xinf=0.
-# yinf=0.
+# xinf=-1.0
+# yinf=-1.0
+xinf=0.
+yinf=0.
 xsup=1.0
 ysup=1.0
 
@@ -91,7 +91,7 @@ if config=='cer_un':
         conf_mess = conf_mess+' aux sommets'
         mention = '_som'
     config = config + mention
-    # pour des procedures communes aa toutes les configurations
+    # pour des procedures communes a toutes les configurations
     ray_p = 0.
 elif config=='compl':
     ray_p = 0.3
@@ -215,7 +215,7 @@ from LEc import *
 
 ## ------------ Etape lL 1demi : Affichage de microstructures periodiques ------------ ##
 
-nb_lcells = 1
+nb_lcells = 8
 
 cem_color = 'grey'
 sand_color = 'orange'

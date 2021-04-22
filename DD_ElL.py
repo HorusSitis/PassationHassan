@@ -24,7 +24,7 @@ import matplotlib.gridspec as gridspec
 import sys
 
 ##############################################################################################################################################################
-## Etape 1demi ou lL : réalisation des fugures de microstructures périodiques correspondant aux différentes géométries existantes. Stockage dans Figures2D/ ##
+## Etape 1demi ou lL : réalisation des figures de microstructures périodiques correspondant aux différentes géométries existantes. Stockage dans Figures2D/ ##
 ##############################################################################################################################################################
 
 # ------------ les configurations géométriques sont :
@@ -66,7 +66,7 @@ if config=='cer_un' and cen_snap_ray==[(xinf + xsup)/2.,(xinf + xsup)/2.]:
     # couleur de fond
     ##fig.patch.set_facecolor(fluid_color)
     ##fig.patch.set_alpha(0.7)
-    ax.set_axis_bgcolor(fluid_color)
+    # ax.set_axis_bgcolor(fluid_color)
     # inclusions, placées périodiquement
     for i in range(0,nb_lcells*nb_lcells):
         ax.add_artist(l_discs[i])
@@ -128,7 +128,7 @@ elif config=='compl' and geo_p=='diag':
     ax.set_xlim((xinf, xinf + nb_lcells*(xsup - xinf)))
     ax.set_ylim((xinf, xinf + nb_lcells*(xsup - xinf)))
     # couleur de fond
-    ax.set_axis_bgcolor(fluid_color)
+    # ax.set_axis_bgcolor(fluid_color)
     # inclusions, placées périodiquement
     for i in range(0,nb_lcells*nb_lcells):
         ax.add_artist(l_sand[i])
@@ -161,7 +161,7 @@ elif config=='compl' and geo_p=='hor':
     ax.set_xlim((xinf, xinf + nb_lcells*(xsup - xinf)))
     ax.set_ylim((xinf, xinf + nb_lcells*(xsup - xinf)))
     # couleur de fond
-    ax.set_axis_bgcolor(fluid_color)
+    # ax.set_axis_bgcolor(fluid_color)
     # inclusions, placées périodiquement
     for i in range(0,nb_lcells*nb_lcells):
         ax.add_artist(l_sand[i])

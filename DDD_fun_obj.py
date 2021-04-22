@@ -193,25 +193,6 @@ def snapshot_sph_per(cen, r, res):
     # On pose et on resoud le probleme aux elements finis
     V = VectorFunctionSpace(mesh_s_r, 'P', 2, constrained_domain = PeriodicBoundary())
 
-    # ## On definit l'interface fluide-solide, periodique a geometrie spherique
-    # l_cen = []
-    # for i in range(-1,2):
-    #     for j in range(-1,2):
-    #         for k in range(-1,2):
-    #             l_cen.append([cen[0]+i,cen[1]+j,cen[2]+k])
-    # class inclusion_periodique(SubDomain):
-    #     def inside(self,x,on_boundary):
-    #         return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[2]-c[2]), (-r-tol, r+tol)) for c in l_cen]))#points de la frontiere du systeme compris dans la boule de centre et rayons cen et r, pour la norme infinie
-    #
-    # ## Utilisation de la classe definie precedemment : mesure de la limite du domaine fluide
-    # Gamma_sf = inclusion_periodique()
-    # boundaries = MeshFunction("size_t", mesh_s_r, mesh_s_r.topology().dim()-1)
-    # # On attribue une valeur par defaut aux frontieres du domaine fluide, qui concerne plus particulierement l'interface fluide-fluide
-    # num_fluid_boundary = 1
-    # num_solid_boundary = 7
-    # boundaries.set_all(1)
-    # Gamma_sf.mark(boundaries, 7)
-
     ## Autre methode : depuis les surfaces physiques generees par Gmsh
     ## On definit la bordure du domaine, sur laquelle integrer le second membre "L" de l'equation en dimension finie
     boundaries = MeshFunction('size_t', mesh_s_r, mesh_repository + nom_fichier_avecgpar + "_facet_region" + ".xml")
@@ -385,7 +366,7 @@ def snapshot_compl_per(rho, ray_fix, config, geo_p, res):### ------------------>
     solver.parameters["relative_tolerance"] = 1e-6
     solver.parameters["maximum_iterations"] = 5000
     solver.parameters["error_on_nonconvergence"] = True
-    solver.parameters["monitor_convergence"] = True
+    solver.parameters["monitor_convergence"] = False
     solver.parameters["report"] = True
 
     solver.set_operator(A)

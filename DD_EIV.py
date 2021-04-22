@@ -195,12 +195,14 @@ start=time.time()
 
 ## On reinitialise le champ chi_nouv_full pour la methode des elements finis
 
-
 if test_snap=='i_per':
     chi_nouv_full=snapshot_circ_per(cen_snap_ray,r_nouv,res)
 else:
     # chi_nouv_full=snapshot_compl_per(geo_p,r_nouv,cen_snap_ray,mention,test_snap)
     chi_nouv_full=snapshot_compl_per(geo_p,r_nouv, cen_snap_ray, test_snap, ray_p)# mention,
+
+end_fem = time.time()
+t_fem = end_fem - start
 
 ## Exploitation du champ ainsi obtenu
 rho=r_nouv
@@ -257,9 +259,9 @@ if config == 'compl':
 
 end=time.time()
 
-t_fem=end-start
+t_step = end - start
 
-print('se4 faite ',t_fem,' secondes')
+print('se4 faite ',t_step,' secondes')
 
 chi_nouv_rom.set_allow_extrapolation(True)
 # chi_nouv_rom_prime = interpolate(chi_nouv_rom, V_nouv)

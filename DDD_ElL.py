@@ -86,7 +86,7 @@ if config=='sph_un':
     # couleur de fond
     ##fig.patch.set_facecolor(fluid_color)
     ##fig.patch.set_alpha(0.7)
-    ax.set_axis_bgcolor(fluid_color)
+    # ax.set_axis_bgcolor(fluid_color)
     # pour un paramétrage des surfaces
     u = np.linspace(0, 2 * np.pi, 100)
     v = np.linspace(0, np.pi, 100)
@@ -126,7 +126,7 @@ elif config=='cyl_un':
     ax.set_ylim((xinf, xinf + nb_lcells*(xsup - xinf)))
     ax.set_zlim((xinf, xinf + nb_lcells*(xsup - xinf)))
     # couleur de fond
-    ax.set_axis_bgcolor(fluid_color)
+    # ax.set_axis_bgcolor(fluid_color)
     # pour un paramétrage des surfaces
     theta = np.linspace(0, 2 * np.pi, 100)
     h = np.linspace(0, nb_lcells, 100)
@@ -175,7 +175,7 @@ elif config=='2sph':
     ax.set_ylim((xinf, xinf + nb_lcells*(xsup - xinf)))
     ax.set_zlim((xinf, xinf + nb_lcells*(xsup - xinf)))
     # couleur de fond
-    ax.set_axis_bgcolor(fluid_color)
+    # ax.set_axis_bgcolor(fluid_color)
     # pour un paramétrage des surfaces
     u = np.linspace(0, 2 * np.pi, 100)
     v = np.linspace(0, np.pi, 100)
@@ -223,7 +223,7 @@ elif config=='cylsph':
     # couleur de fond
     ##fig.patch.set_facecolor(fluid_color)
     ##fig.patch.set_alpha(0.7)
-    ax.set_axis_bgcolor(fluid_color)
+    # ax.set_axis_bgcolor(fluid_color)
     # pour un paramétrage des surfaces liées à la sphère
     u = np.linspace(0, 2 * np.pi, 100)
     v = np.linspace(0, np.pi, 100)

@@ -102,8 +102,8 @@ def creer_maill_per_gpar(config, geo_p, mention, xyinfsup, rho, ray_p):
 
 ############################# Pour creer des snapshots, inclusion circulaire periodique unique #############################
 
-def snapshot_circ_per(cen,r,res):
-    c_x,c_y = cen[0],cen[1]
+def snapshot_circ_per(cen ,r, res):
+    c_x, c_y = cen[0], cen[1]
     if cen == [xinf, yinf]:
         mention = '_som'
     else:
@@ -113,23 +113,28 @@ def snapshot_circ_per(cen,r,res):
     mesh_c_r = Mesh(mesh_repository + mesh_name + '.xml')
     # On pose et on resoud le probleme aux elements finis
     V = VectorFunctionSpace(mesh_c_r, 'P', VFS_degree, form_degree=0, constrained_domain=PeriodicBoundary())
-    ## On definit la bordure du domaine, sur laquelle integrer le second membre 'L' de l'equation en dimension finie
-    l_cen=[]
-    for i in range(-1,2):
-        for j in range(-1,2):
-            l_cen.append([cen[0]+2*i,cen[1]+2*j])
-    class inclusion_periodique(SubDomain):
-        def inside(self,x,on_boundary):
-            return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]))#points de la frontiere du dysteme compris dans la boule de centre et rayons cen et r, pour la norme infinie
-    ### Utilisation de la classe definie precedemment
-    Gamma_sf = inclusion_periodique()
-    boundaries = MeshFunction('size_t', mesh_c_r, mesh_c_r.topology().dim()-1)
-    print('Noeuds :',V.dim())
-    print('Facettes : ',mesh_c_r.num_edges())
-    boundaries.set_all(0)
-    Gamma_sf.mark(boundaries, 5)
-    ds = Measure('ds')(subdomain_data=boundaries)
-    num_front_cercle=5
+    # ## On definit la bordure du domaine, sur laquelle integrer le second membre 'L' de l'equation en dimension finie
+    # l_cen=[]
+    # for i in range(-1,2):
+    #     for j in range(-1,2):
+    #         l_cen.append([cen[0]+2*i,cen[1]+2*j])
+    # class inclusion_periodique(SubDomain):
+    #     def inside(self,x,on_boundary):
+    #         return (on_boundary and any([between((x[0]-c[0]), (-r-tol, r+tol)) for c in l_cen]) and any([between((x[1]-c[1]), (-r-tol, r+tol)) for c in l_cen]))#points de la frontiere du dysteme compris dans la boule de centre et rayons cen et r, pour la norme infinie
+    # ### Utilisation de la classe definie precedemment
+    # Gamma_sf = inclusion_periodique()
+    # boundaries = MeshFunction('size_t', mesh_c_r, mesh_c_r.topology().dim()-1)
+    # print('Noeuds :',V.dim())
+    # print('Facettes : ',mesh_c_r.num_edges())
+    # boundaries.set_all(0)
+    # Gamma_sf.mark(boundaries, 5)
+
+    ## Autre methode : avec les marquages effectues sur Gmsh
+    boundaries = MeshFunction('size_t', mesh_c_r, mesh_repository + mesh_name + "_facet_region" + ".xml")
+    num_front_cercle = 10
+    ##
+    ds = Measure('ds')(subdomain_data = boundaries)
+    # num_front_cercle=5
     ## On resoud le probleme faible, avec une condition de type Neumann au bord de l'obstacle
     normale = FacetNormal(mesh_c_r)
     nb_noeuds=V.dim()
@@ -151,7 +156,7 @@ def snapshot_circ_per(cen,r,res):
     solver.parameters["relative_tolerance"] = 1e-6
     solver.parameters["maximum_iterations"] = 5000
     solver.parameters["error_on_nonconvergence"] = True
-    solver.parameters["monitor_convergence"] = True
+    solver.parameters["monitor_convergence"] = False
     solver.parameters["report"] = True
 
     solver.set_operator(A)
