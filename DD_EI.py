@@ -138,12 +138,12 @@ for n in range(0,N_snap):
         if typ_msh=='gms':
             mesh_name='maillage_trou2D_'+str(int(round(100*r,2)))
             mesh=Mesh(mesh_repository+mesh_name+'.xml')
-            plot(mesh)
+            plot(mesh, linewidth=lw_bis)
             plt.tight_layout(pad=0)
             if fig_todo=='aff':
                 plt.show()
-            elif fig_todo=='save' and r==0.25:
-                plt.savefig('Figures2D/maillage_gmsh_per_'+config+geo_p+'_ray'+str(int(round(100*r,2)))+'png')
+            elif fig_todo=='save' and r==0.5:
+                plt.savefig('Figures2D/maillage_gmsh_per_'+config+geo_p+'_ray'+str(int(round(100*r,2)))+'_res'+str(res_gmsh)+'png')
             plt.close()
         else:
             mesh=creer_maill_circ(cen,r,res)
@@ -157,8 +157,8 @@ for n in range(0,N_snap):
     #         plt.tight_layout(pad=0)
     #         if fig_todo=='aff':
     #             plt.show()
-    #         elif fig_todo=='save' and (r==0.25):
-    #             plt.savefig('Figures2D/maillage_gmsh_per_'+config+geo_p+'_ray'+str(int(round(100*r,2)))+'.png')
+    #         elif fig_todo=='save' and (r==0.5):
+    #             plt.savefig('Figures2D/maillage_gmsh_per_'+config+geo_p+'_ray'+str(int(round(100*r,2)))+'_res'+str(res_gmsh)+'png')
     #         plt.close()
     #     else:
     #         mesh=creer_maill_circ([c_x,c_y],r,res)
@@ -168,12 +168,12 @@ for n in range(0,N_snap):
 
         mesh_name = mesh_prefix + str(int(round(100*rho,2))) + '_rayp' + str(int(round(100*ray_p,2)))
         mesh=Mesh(mesh_repository + mesh_name + '.xml')
-        plot(mesh)
+        plot(mesh, linewidth=lw_bis)
         plt.tight_layout(pad=0)
         if fig_todo=='aff':
             plt.show()
-        elif fig_todo=='save' and (r==0.25):
-            plt.savefig('Figures2D/maillage_gmsh_per_' + config + geo_p + '_ray' + str(int(round(100*r,2)))+'.png')
+        elif fig_todo=='save' and (r==0.5):
+            plt.savefig('Figures2D/maillage_gmsh_per_' + config + geo_p + '_ray' + str(int(round(100*r,2)))+'_res'+str(res_gmsh)+'png')
         plt.close()
 
     V_n=VectorFunctionSpace(mesh, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
@@ -184,7 +184,7 @@ for n in range(0,N_snap):
 
     chi_n.vector().set_local(chi_n_v)
     # Figures et erreurs
-    plot(chi_n)
+    plot(chi_n, linewidth=lw_bis)
     # if n==0 and rho_appr_min <1:
     #     plt.title('Rho = 0,0'+str(int(round(100*r,1))), fontsize=40)
     # else:
@@ -194,7 +194,7 @@ for n in range(0,N_snap):
     if fig_todo=='aff':
         plt.show()
     elif fig_todo=='save':
-        plt.savefig('Figures2D/sol_'+str(n+1)+'_sur'+str(N_snap)+config+'_'+geo_p+'.png')
+        plt.savefig('Figures2D/sol_'+str(n+1)+'_sur'+str(N_snap)+config+'_'+geo_p+'_res'+str(res_gmsh)+'png')
     plt.close()
     if err_eval:
         if config!='compl':

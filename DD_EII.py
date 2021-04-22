@@ -87,7 +87,7 @@ mesh_fixe = Mesh(mesh_fixe_name + '.xml')
 # sys.exit()
 V_fixe = VectorFunctionSpace(mesh_fixe, 'P', VFS_degree, constrained_domain=PeriodicBoundary())
 
-plot(mesh_fixe)
+plot(mesh_fixe, linewidth=lw_bis)
 if fig_todo=='aff':
     plt.show()
 plt.close()
@@ -171,12 +171,12 @@ for n in range(0,N_snap):
     chi_prime_n=list_snap[n]
 
     # Affichage des valeurs de la solution interpolee
-    plot(chi_prime_n)
-    plt.title('Snapshot '+str(n+1),fontsize=40)
+    plot(chi_prime_n, linewidth=lw_bis)
     if fig_todo=='aff':
+        plt.title('Snapshot '+str(n+1),fontsize=40)
         plt.show()
     else:
-        plt.savefig('Figures2D/snap_'+str(n+1)+'_sur'+str(N_snap)+config+'_'+geo_p+'.png')
+        plt.savefig('Figures2D/snap_'+str(n+1)+'_sur'+str(N_snap)+config+'_'+geo_p+'_res'+str(res_gmsh)+'png')
     plt.close()
 
     # Affichage des composantes scalaires : interpolee

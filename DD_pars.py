@@ -206,6 +206,10 @@ elif typ_refi=='front':
 # ------------------------------------------ #
 # ------------------------------------------ #
 
+lw_bis = 0.1
+
+# ------------------------------------------ #
+
 # nom de l'appareil utilise pour generer les donnees enregistrees
 computer='MECALAC_29x8'##'T1700_35x8'##
 
